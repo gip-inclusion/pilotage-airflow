@@ -108,6 +108,7 @@ group by
 sorties_par_structure as (
     select
         id_structure_asp id_struct,
+        annee_sortie,
         -- uniquement les motifs utilisés en eiti
         count(motif_sortie) filter (where motif_sortie = 'Sortie automatique') as sortie_automatique,
         count(motif_sortie) filter (where motif_sortie = 'Création ou reprise d''entreprise à son compte (hors EITI)') as sortie_creation_entreprise_hors_eiti,
@@ -132,7 +133,8 @@ sorties_par_structure as (
     where
         sorties.type_siae = 'EITI'
     group by
-        id_structure_asp
+        id_structure_asp,
+        annee_sortie
 )
 select
     conv.denomination_structure,
@@ -147,8 +149,8 @@ select
     sps.* -- sorties par structure
 from
     contrat_par_structure cps
-    left join sorties_par_structure sps on cps.id_struct = sps.id_struct -- attention, pas de donnée annuelle, donc doublons par année
-    left join acc_par_structure aps on cps.id_struct = aps.id_struct
+    left join sorties_par_structure sps on cps.id_struct = sps.id_struct and sps.annee_sortie = cps.annee_embauche
+    left join acc_par_structure aps on cps.id_struct = aps.id_struct 
     left join etp_cons_par_struct cons on cps.id_struct = cons.id_struct and cps.annee_embauche = cons.annee_af
     left join etp_conv_par_struct conv on cons.id_struct = conv.id_struct
         and cons.annee_af = conv.annee_af;
