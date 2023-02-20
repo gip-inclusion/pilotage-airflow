@@ -1,3 +1,4 @@
+drop table if exists igas_eiti_structure;
 create table igas_eiti_structure as 
 -- etp conventionnes 
 with etp_conv_par_struct as (
@@ -7,7 +8,6 @@ with etp_conv_par_struct as (
         af.af_numero_annexe_financiere as id_annexe_financiere,
         date_part('year',
             af.af_date_debut_effet_v2) as annee_af,
-        sum(af.af_etp_postes_insertion) as effectif_mensuel_conv,
         sum((af.af_etp_postes_insertion * ((date_part('year',
                     af_date_fin_effet_v2) - date_part('year',
                     af_date_debut_effet_v2)) * 12 + (date_part('month',
@@ -35,10 +35,8 @@ etp_cons_par_struct as (
         structure.structure_id_siae as id_struct,
         date_part('year',
             af.af_date_debut_effet_v2) as annee_af,
-        sum(emi.emi_part_etp) as nombre_etp_consommes_asp,
         sum(emi.emi_nb_heures_travail) as nombre_heures_travaillees,
-        sum(emi.emi_nb_heures_travail / firmi.rmi_valeur) as nombre_etp_consommes_reels_mensuels,
-        sum(emi.emi_nb_heures_travail / firmi.rmi_valeur * 12) as nombre_etp_consommes_reels_annuels
+        sum(emi.emi_nb_heures_travail / firmi.rmi_valeur) as nombre_etp_consommes_reels_annuels
     from
         "fluxIAE_EtatMensuelIndiv" as emi
     left join "fluxIAE_AnnexeFinanciere_v2" as af on emi.emi_afi_id = af.af_id_annexe_financiere
@@ -110,7 +108,13 @@ sorties_par_structure as (
     select
         id_structure_asp id_struct,
         annee_sortie,
-        -- uniquement les motifs utilisés en eiti
+        --categorie sortie
+        count(categorie_sortie) filter (where categorie_sortie = 'Emploi durable') as emploi_durable,
+        count(categorie_sortie) filter (where categorie_sortie = 'Emploi de transition') as emploi_de_transition,
+        count(categorie_sortie) filter (where categorie_sortie = 'Sorties positives') as sorties_positives,
+        count(categorie_sortie) filter (where categorie_sortie = 'Autres sorties') as autres_sorties, 
+        count(categorie_sortie) filter (where categorie_sortie = 'Retrait des sorties constatées') as retrait_des_sorties_constatées
+       /* -- uniquement les motifs utilisés en eiti
         count(motif_sortie) filter (where motif_sortie = 'Sortie automatique') as sortie_automatique,
         count(motif_sortie) filter (where motif_sortie = 'Création ou reprise d''entreprise à son compte (hors EITI)') as sortie_creation_entreprise_hors_eiti,
         count(motif_sortie) filter (where motif_sortie = 'Sans nouvelle') as sortie_sans_nouvelle,
@@ -128,7 +132,7 @@ sorties_par_structure as (
         count(motif_sortie) filter (where motif_sortie = 'Embauche pour une durée déterminée dans une autre structure IAE') as sortie_cdd_iae,
         count(motif_sortie) filter (where motif_sortie = 'Rupture employeur pour faute grave du salarié') as sortie_faute_grave,
         count(motif_sortie) filter (where motif_sortie = 'Embauche en CDI aidé') as sortie_cdi_aide,
-        count(motif_sortie) filter (where motif_sortie = 'Décision administrative / Décision de justice') as sortie_decision_admin
+        count(motif_sortie) filter (where motif_sortie = 'Décision administrative / Décision de justice') as sortie_decision_admin */
     from
         sorties
     where
@@ -150,9 +154,6 @@ select
     -- conventionnements
     conv.effectif_annuel_conv,
     cons.nombre_etp_consommes_reels_annuels,
-    cons.nombre_etp_consommes_asp,
-    conv.effectif_mensuel_conv,
-    cons.nombre_etp_consommes_reels_mensuels,
     -- accompagnement par structure
     aps.nb_salaries_concernes_illetrisme,
     aps.nb_salaries_accompagnes_illetrisme,
@@ -166,11 +167,15 @@ select
     aps.nb_salaries_accompagnes_mobilite,
     aps.nb_salaries_concernes_surendetement,
     aps.nb_salaries_accompagnes_surendetement,
-
     aps.nb_salaries_concernes_manque_dispo,
     aps.nb_salaries_accompagnes_manque_dispo,
     -- sorties par structure
-    sps.sortie_automatique,
+    sps.emploi_durable,
+    sps.emploi_de_transition,
+    sps.sorties_positives,
+    sps.autres_sorties,
+    sps.retrait_des_sorties_constatées
+   /* sps.sortie_automatique,
     sps.sortie_creation_entreprise_hors_eiti,
     sps.sortie_sans_nouvelle,
     sps.sortie_inactif,
@@ -187,7 +192,7 @@ select
     sps.sortie_cdd_iae,
     sps.sortie_faute_grave,
     sps.sortie_cdi_aide,
-    sps.sortie_decision_admin
+    sps.sortie_decision_admin */
 from
     contrat_par_structure cps
     left join sorties_par_structure sps on cps.id_struct = sps.id_struct and sps.annee_sortie = cps.annee_embauche

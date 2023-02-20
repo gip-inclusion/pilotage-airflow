@@ -1,3 +1,4 @@
+drop table if exists igas_eiti_salarie;
 create table igas_eiti_salarie as
 with formations_par_contrat as (
     select
@@ -18,12 +19,10 @@ etp_par_salarie as (
         structure.structure_denomination as denomination_structure,
         date_part('year',
             af.af_date_debut_effet_v2) as annee_af,
-        sum(emi.emi_part_etp) as nombre_etp_consommes_asp,
         sum(emi.emi_nb_heures_travail) as nombre_heures_travaillees,
         /*Nous calculons directement les ETPs réalisés pour éviter des problèmes de filtres/colonnes/etc sur metabase*/
         /* ETPs réalisés = Nbr heures travaillées / montant d'heures necessaires pour avoir 1 ETP */
-        sum(emi.emi_nb_heures_travail / firmi.rmi_valeur) as nombre_etp_consommes_reels_mensuels,
-        sum((emi.emi_nb_heures_travail / firmi.rmi_valeur) * 12) as nombre_etp_consommes_reels_annuels
+        sum(emi.emi_nb_heures_travail / firmi.rmi_valeur) as nombre_etp_consommes_reels_annuels
     from
         "fluxIAE_EtatMensuelIndiv" as emi
     left join "fluxIAE_AnnexeFinanciere_v2" as af on emi.emi_afi_id = af.af_id_annexe_financiere
@@ -45,7 +44,11 @@ group by
     select
         --salarie.salarie_id as id_salarie,
         salarie.salarie_rci_libelle as civilite,
+        date_part('year', current_date) - salarie.salarie_annee_naissance as age,
+        salarie.salarie_annee_naissance as annee_de_naissance,
         refmotifsort.rms_libelle as motif_sortie,
+        categoriesort.rcs_libelle as categorie_sortie,
+        refmotifsort.rms_libelle, 
         contrat.contrat_date_embauche as date_embauche,
         contrat.contrat_id_ctr as contrat_id,
         formations.nb_formations as nb_formations,
@@ -92,6 +95,7 @@ group by
     left join etp_par_salarie eps on contrat_id_pph = eps.id_salarie
     -- pour récupération du libellé du motif de sortie
     left join "fluxIAE_RefMotifSort" refmotifsort on rms_id = contrat_motif_sortie_id
+    left join  "fluxIAE_RefCategorieSort" as categoriesort on categoriesort.rcs_id = refmotifsort.rcs_id
     left join formations_par_contrat formations on formation_id_ctr = contrat_id_ctr
 where
     contrat_mesure_disp_code = 'EITI_DC';
