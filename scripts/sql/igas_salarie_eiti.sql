@@ -9,6 +9,38 @@ with formations_par_contrat as (
         "fluxIAE_Formations" formations
     group by
         formations.formation_id_ctr
+),
+etp_par_salarie as (
+    select distinct
+        emi.emi_pph_id as id_salarie,
+        --structure.structure_id_siae as id_structure,
+        date_part('year', af.af_date_debut_effet_v2) as annee_af,
+        /* ici on considère bien le salarié qu'une fois pour éviter des doublons et donc sur estimer les ETPs */
+        --emi.emi_afi_id as id_annexe_financiere,
+        /*make_date (cast(emi.emi_sme_annee as integer),
+            cast(emi.emi_sme_mois as integer),
+            1) as date_saisie*/
+        --to_date(emi.emi_date_validation, 'dd/mm/yyyy') as date_validation_declaration,
+        sum(emi.emi_part_etp) as nombre_etp_consommes_asp,
+        sum(emi.emi_nb_heures_travail) as nombre_heures_travaillees,
+        /*Nous calculons directement les ETPs réalisés pour éviter des problèmes de filtres/colonnes/etc sur metabase*/
+        /* ETPs réalisés = Nbr heures travaillées / montant d'heures necessaires pour avoir 1 ETP */
+        sum(emi.emi_nb_heures_travail / firmi.rmi_valeur) as nombre_etp_consommes_reels_mensuels,
+        sum((emi.emi_nb_heures_travail / firmi.rmi_valeur) * 12) as nombre_etp_consommes_reels_annuels
+        --emi.emi_afi_id as identifiant_annexe_fin
+    from
+        "fluxIAE_EtatMensuelIndiv" as emi
+        left join "fluxIAE_AnnexeFinanciere_v2" as af on emi.emi_afi_id = af.af_id_annexe_financiere
+        left join "fluxIAE_RefMontantIae" firmi on af_mesure_dispositif_id = firmi.rme_id
+        left join "fluxIAE_Structure_v2" as structure on af.af_id_structure = structure.structure_id_siae
+    where
+        af.af_mesure_dispositif_code = 'EITI_DC'
+        and firmi.rmi_libelle = 'Nombre d''heures annuelles théoriques pour un salarié à taux plein'
+        and af.af_etat_annexe_financiere_code in('VALIDE', 'PROVISOIRE', 'CLOTURE')
+        and af_mesure_dispositif_code not like '%FDI%'
+    group by 
+        id_salarie,
+        annee_af
 )
 select
     salarie.salarie_id as id_salarie,
@@ -49,13 +81,15 @@ select
         'Oui'
     else
         'Non'
-    end as aide_soc
+    end as aide_soc,
+    eps.*
 from
     "fluxIAE_Salarie" salarie
     -- pour récupération du contrat réalisé pour un salarié
     -- une ligne par salarié et par contrat
     -- pour les EITI il y a un nb très négligeable de salariés ayant eu plusieurs contrats (5)
     left join "fluxIAE_ContratMission" contrat on contrat_id_pph = salarie_id
+    left join etp_par_salarie eps on contrat_id_pph = eps.id_salarie
     -- pour récupération du libellé du motif de sortie
     left join "fluxIAE_RefMotifSort" refmotifsort on rms_id = contrat_motif_sortie_id
     left join formations_par_contrat formations on formation_id_ctr = contrat_id_ctr
