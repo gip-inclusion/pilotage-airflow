@@ -13,6 +13,8 @@ with formations_par_contrat as (
 etp_par_salarie as (
     select distinct
         emi.emi_pph_id as id_salarie,
+        af.af_id_annexe_financiere as id_annexe_financiere,
+        structure.structure_denomination as denomination_structure,
         date_part('year', af.af_date_debut_effet_v2) as annee_af,
         sum(emi.emi_part_etp) as nombre_etp_consommes_asp,
         sum(emi.emi_nb_heures_travail) as nombre_heures_travaillees,
@@ -32,7 +34,9 @@ etp_par_salarie as (
         and af_mesure_dispositif_code not like '%FDI%'
     group by 
         id_salarie,
-        annee_af
+        annee_af,
+        af.af_id_annexe_financiere,
+        structure.structure_denomination
 )
 select
     salarie.salarie_id as id_salarie,
