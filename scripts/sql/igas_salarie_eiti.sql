@@ -13,21 +13,13 @@ with formations_par_contrat as (
 etp_par_salarie as (
     select distinct
         emi.emi_pph_id as id_salarie,
-        --structure.structure_id_siae as id_structure,
         date_part('year', af.af_date_debut_effet_v2) as annee_af,
-        /* ici on considère bien le salarié qu'une fois pour éviter des doublons et donc sur estimer les ETPs */
-        --emi.emi_afi_id as id_annexe_financiere,
-        /*make_date (cast(emi.emi_sme_annee as integer),
-            cast(emi.emi_sme_mois as integer),
-            1) as date_saisie*/
-        --to_date(emi.emi_date_validation, 'dd/mm/yyyy') as date_validation_declaration,
         sum(emi.emi_part_etp) as nombre_etp_consommes_asp,
         sum(emi.emi_nb_heures_travail) as nombre_heures_travaillees,
         /*Nous calculons directement les ETPs réalisés pour éviter des problèmes de filtres/colonnes/etc sur metabase*/
         /* ETPs réalisés = Nbr heures travaillées / montant d'heures necessaires pour avoir 1 ETP */
         sum(emi.emi_nb_heures_travail / firmi.rmi_valeur) as nombre_etp_consommes_reels_mensuels,
         sum((emi.emi_nb_heures_travail / firmi.rmi_valeur) * 12) as nombre_etp_consommes_reels_annuels
-        --emi.emi_afi_id as identifiant_annexe_fin
     from
         "fluxIAE_EtatMensuelIndiv" as emi
         left join "fluxIAE_AnnexeFinanciere_v2" as af on emi.emi_afi_id = af.af_id_annexe_financiere
