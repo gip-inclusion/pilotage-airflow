@@ -100,6 +100,35 @@ where
 group by
     contrat_mission.contrat_id_structure,
     annee_embauche
+),
+sorties_par_structure as (
+    select
+        id_structure_asp id_struct,
+        -- uniquement les motifs utilisés en eiti
+        count(motif_sortie) filter (where motif_sortie = 'Sortie automatique') as sortie_automatique,
+        count(motif_sortie) filter (where motif_sortie = 'Création ou reprise d''entreprise à son compte (hors EITI)') as sortie_creation_entreprise_hors_eiti,
+        count(motif_sortie) filter (where motif_sortie = 'Sans nouvelle') as sortie_sans_nouvelle,
+        count(motif_sortie) filter (where motif_sortie = 'Inactif') as sortie_inactif,
+        count(motif_sortie) filter (where motif_sortie = 'Autre sortie reconnue comme positive') as sortie_positive,
+        count(motif_sortie) filter (where motif_sortie = 'Poursuite au sein de l''EITI sans aide au poste avec un CA supérieur à 70% du salaire médian mensuel') as sortie_poursuite_eiti,
+        count(motif_sortie) filter (where motif_sortie = 'Embauche en CDI non aidé') as sortie_cdi_non_aidé,
+        count(motif_sortie) filter (where motif_sortie = 'Transfert d''employeur') as sortie_transfert_employeur,
+        count(motif_sortie) filter (where motif_sortie = 'Entrée en formation qualifiante ou poursuite de formation qualifiante') as sortie_formation_qualifiante,
+        count(motif_sortie) filter (where motif_sortie = 'Embauche en CDD (sans aide publique à l''emploi) de moins de 6 mois (hors IAE)') as sortie_cdd_moins_6mois_hors_iae,
+        count(motif_sortie) filter (where motif_sortie = 'Embauche en CDD (sans aide publique à l''emploi) d''une durée de 6 mois et plus') as sortie_cdd_plus_6mois,
+        count(motif_sortie) filter (where motif_sortie = 'Au chômage') as sortie_chomage,
+        count(motif_sortie) filter (where motif_sortie = 'Poursuite au sein de l''EITI sans aide au poste avec un CA supérieur au seuil de pauvreté') as sortie_poursuite_eiti,
+        count(motif_sortie) filter (where motif_sortie = 'Prise des droits à la retraite') as sortie_retraite,
+        count(motif_sortie) filter (where motif_sortie = 'Embauche pour une durée déterminée dans une autre structure IAE') as sortie_cdd_iae,
+        count(motif_sortie) filter (where motif_sortie = 'Rupture employeur pour faute grave du salarié') as sortie_faute_grave,
+        count(motif_sortie) filter (where motif_sortie = 'Embauche en CDI aidé') as sortie_cdi_aide,
+        count(motif_sortie) filter (where motif_sortie = 'Décision administrative / Décision de justice') as sortie_decision_admin
+    from
+        sorties
+    where
+        sorties.type_siae = 'EITI'
+    group by
+        id_structure_asp
 )
 select
     cps.*,
@@ -108,9 +137,11 @@ select
     cons.nombre_etp_consommes_asp,
     conv.effectif_mensuel_conv,
     cons.nombre_etp_consommes_reels_mensuels,
-    aps.* -- accompagnement par structure
+    aps.*, -- accompagnement par structure
+    sps.* -- sorties par structure
 from
     contrat_par_structure cps
+    left join sorties_par_structure sps on cps.id_struct = sps.id_struct -- attention, pas de donnée annuelle, donc doublons par année
     left join acc_par_structure aps on cps.id_struct = aps.id_struct
     left join etp_cons_par_struct cons on cps.id_struct = cons.id_struct and cps.annee_embauche = cons.annee_af
     left join etp_conv_par_struct conv on cons.id_struct = conv.id_struct
