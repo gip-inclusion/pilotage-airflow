@@ -142,7 +142,7 @@ sorties_par_structure as (
         annee_sortie
 )
 select
-    cps.id_struct,
+    cons.annee_af,
     conv.denomination_structure,
     conv.id_annexe_financiere,
     -- contrats
