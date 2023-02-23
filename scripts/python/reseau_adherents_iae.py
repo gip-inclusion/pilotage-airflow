@@ -4,7 +4,6 @@ import glob
 
 #database connection
 from sqlalchemy import create_engine
-#from flask_sqlalchemy import sqlalchemy
 
 #librairies
 import pandas as pd
@@ -39,6 +38,6 @@ for file in reseaux_files:
 df = pd.concat(reseaux_df.values())
 
 # import data to database
-engine= sqlalchemy.create_engine("connection information")
-print(bool(engine)) # <- just to keep track of the process
+url = "postgresql://"+user+":"+password+"@"+host+":"+port+"/"+database
+engine= create_engine(url)
 df.to_sql("reseau_iae_adherents",con=engine, if_exists="replace",index=False)
