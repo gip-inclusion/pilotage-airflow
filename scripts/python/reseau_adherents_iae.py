@@ -1,47 +1,44 @@
 import os
 import sys
+import glob
 
 #database connection
 from sqlalchemy import create_engine
-from flask_sqlalchemy import sqlalchemy
+#from flask_sqlalchemy import sqlalchemy
 
 #librairies
 import pandas as pd
 import datetime
 
-#Opening the files
-df_coorace = pd.read_excel("Coorace.xlsx")
-df_fei = pd.read_excel("FEI.xlsx")
-df_emmaus = pd.read_excel("Emmaus.xlsx")
-df_unai = pd.read_excel("Unai.xlsx")
+# add std rule here if col has wrong name
+std_cols = {'N°SIRET': "SIRET",
+            'Numéro de SIRET': "SIRET",
+            "SIREN ou SIRET": "SIRET"}
 
-#Renaming and formatting the columns
-df_emmaus.rename(columns = {'N°SIRET' : "SIRET"}, inplace=True)
-df_fei.rename(columns = {'Numéro de SIRET' : "SIRET"}, inplace=True)
-df_unai['SIRET'].replace(to_replace=' ', regex=True, value="",inplace=True)
+# recover xlsx files from repository containing Reseau.xlsx files
+repo_reseaux = "/Users/lhuber/Documents/Travail 👩‍💻/GIP🇫🇷/PILOTAGE 🏎/data/réseaux/"
+reseaux_files = glob.glob(repo_reseaux+"*.xlsx")
 
-#Creating the new columns
-df_emmaus["Réseau IAE"] = "Emmaus"
-df_fei["Réseau IAE"] = "FEI"
-df_coorace["Réseau IAE"] = "Coorace"
-df_unai["Réseau IAE"] = "Unai"
+reseaux_df = {}
+for file in reseaux_files:
+    # recover reseau name
+    reseau_name = os.path.basename(file).replace(".xlsx", "")
+    # read and clean xlsx
+    reseau_df = pd.read_excel(file)
+    reseau_df.rename(columns=std_cols, inplace=True)
+    reseau_df.drop_duplicates(subset=['SIRET'], inplace=True)
+    reseau_df.replace(to_replace=' ', regex=True, value="", inplace=True)
+    reseau_df["Réseau IAE"] = reseau_name
+    reseau_df['SIRET'] = reseau_df['SIRET'].astype(str)
+    reseau_df['SIRET'].apply(lambda x: str(x).strip())
+    reseau_df["SIRET"].replace(to_replace='.0$', regex=True, value="",inplace=True)
+    reseaux_df[reseau_name] = reseau_df[["SIRET", "Réseau IAE"]]
 
-#dropping the duplicates
-df_emmaus.drop_duplicates(subset=['SIRET'],inplace=True)
-df_fei.drop_duplicates(subset=['SIRET'],inplace=True)
-df_coorace.drop_duplicates(subset=['SIRET'],inplace=True)
-df_unai.drop_duplicates(subset=['SIRET'],inplace=True)
 
-#Concatenating
-df = pd.concat([df_emmaus[["SIRET", "Réseau IAE"]],df_coorace[["SIRET", "Réseau IAE"]],df_fei[["SIRET", "Réseau IAE"]],df_unai[["SIRET", "Réseau IAE"]]])
+# concatenate all dfs
+df = pd.concat(reseaux_df.values())
 
-#final formatting
-df['SIRET'] = df['SIRET'].astype(str)
-df["SIRET"].replace(to_replace='.0$', regex=True, value="",inplace=True)
-df['SIRET'] = df['SIRET'].apply(lambda x: str(x).strip())
-
-#Importing the data
-
+# import data to database
 engine= sqlalchemy.create_engine("connection information")
 print(bool(engine)) # <- just to keep track of the process
 df.to_sql("reseau_iae_adherents",con=engine, if_exists="replace",index=False)
