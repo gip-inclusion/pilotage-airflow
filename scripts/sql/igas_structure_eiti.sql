@@ -1,5 +1,5 @@
-drop table if exists igas_eiti_structure;
-create table igas_eiti_structure as 
+--drop table if exists igas_eiti_structure;
+--create table igas_eiti_structure as 
 -- etp conventionnes 
 with etp_conv_par_struct as (
     select distinct
@@ -58,29 +58,34 @@ acc_par_structure as (
 select 
     structure.structure_id_siae id_struct,
     sum(acc_dif_nb_sal_conc_illetrisme) nb_salaries_concernes_illetrisme,
-    sum(acc_dif_nb_sal_int_ext_illetrisme) nb_salaries_accompagnes_illetrisme,
+    sum(acc_dif_nb_sal_int_illetrisme) nb_salaries_accompagnes_illetrisme_int,
+    sum(acc_dif_nb_sal_ext_illetrisme) nb_salaries_accompagnes_illetrisme_ext,
     sum(acc_dif_nb_sal_conc_sante) nb_salaries_concernes_sante,
-    sum(acc_dif_nb_sal_int_ext_sante) nb_salaries_accompagnes_sante,
+    sum(acc_dif_nb_sal_int_sante) nb_salaries_accompagnes_sante_int,
+    sum(acc_dif_nb_sal_ext_sante) nb_salaries_accompagnes_sante_ext,
     sum(acc_dif_nb_sal_conc_heberg) nb_salaries_concernes_hebergement,
-    sum(acc_dif_nb_sal_int_ext_heberg) nb_salaries_accompagnes_hebergement,
+    sum(acc_dif_nb_sal_int_heberg) nb_salaries_accompagnes_hebergement_int,
+    sum(acc_dif_nb_sal_ext_heberg) nb_salaries_accompagnes_hebergement_ext,
     sum(acc_dif_nb_sal_conc_demarch) nb_salaries_concernes_demarches_admin,
-    sum("acc_dif_nb_sal_int_ext_demarch ") nb_salaries_accompagnes_demarches_admin,
+    sum(acc_dif_nb_sal_int_demarch) nb_salaries_accompagnes_demarches_admin_int,
+    sum(acc_dif_nb_sal_ext_demarch) nb_salaries_accompagnes_demarches_admin_ext,
     sum(acc_dif_nb_sal_conc_mobilite) nb_salaries_concernes_mobilite,
-    sum(acc_dif_nb_sal_int_ext_mobilite) nb_salaries_accompagnes_mobilite,
+    sum(acc_dif_nb_sal_int_mobilite) nb_salaries_accompagnes_mobilite_int,
+    sum(acc_dif_nb_sal_ext_mobilite) nb_salaries_accompagnes_mobilite_ext,
     sum(acc_dif_nb_sal_conc_surendet) nb_salaries_concernes_surendetement,
-    sum(acc_dif_nb_sal_int_ext_surendet) nb_salaries_accompagnes_surendetement,
-    -- bug avec les deux colonnes ci dessous oO
-    --sum("acc_dif_nb_sal_conc_justice ") nb_salaries_concernes_justice,
-    --sum("acc.acc_dif_nb_sal_int_ext_justice ") nb_salaries_accompagnes_justice,
+    sum(acc_dif_nb_sal_int_surendet) nb_salaries_accompagnes_surendetement_int,
+    sum(acc_dif_nb_sal_ext_surendet) nb_salaries_accompagnes_surendetement_ext,
+    sum(acc_dif_nb_sal_ext_justice) nb_salaries_concernes_justice_ext,
+    sum(acc_dif_nb_sal_int_justice) nb_salaries_concernes_justice_int,
     sum(acc_dif_nb_sal_conc_manque_dispo) nb_salaries_concernes_manque_dispo,
-    sum(acc_dif_nb_sal_int_ext_manque_dispo) nb_salaries_accompagnes_manque_dispo
+    sum(acc_dif_nb_sal_int_manque_dispo) nb_salaries_accompagnes_manque_dispo_int,
+    sum(acc_dif_nb_sal_ext_manque_dispo) nb_salaries_accompagnes_manque_dispo_ext
     from
     "FluxIAE_accompagnement" acc
     left join "fluxIAE_AnnexeFinanciere_v2" as af on af.af_id_annexe_financiere = acc.acc_afi_id
     left join "fluxIAE_Structure_v2" as structure on af.af_id_structure = structure.structure_id_siae
     where af.type_siae = 'EITI'
     group by structure.structure_id_siae
-    order by structure.structure_id_siae
 ),
 -- contrats par structure
 contrat_par_structure as (
@@ -156,19 +161,28 @@ select
     cons.nombre_etp_consommes_reels_annuels,
     -- accompagnement par structure
     aps.nb_salaries_concernes_illetrisme,
-    aps.nb_salaries_accompagnes_illetrisme,
+    aps.nb_salaries_accompagnes_illetrisme_int,
+    aps.nb_salaries_accompagnes_illetrisme_ext,
     aps.nb_salaries_concernes_sante,
-    aps.nb_salaries_accompagnes_sante,
+    aps.nb_salaries_accompagnes_sante_int,
+    aps.nb_salaries_accompagnes_sante_ext,
     aps.nb_salaries_concernes_hebergement,
-    aps.nb_salaries_accompagnes_hebergement,
+    aps.nb_salaries_accompagnes_hebergement_int,
+    aps.nb_salaries_accompagnes_hebergement_ext,
     aps.nb_salaries_concernes_demarches_admin,
-    aps.nb_salaries_accompagnes_demarches_admin,
+    aps.nb_salaries_accompagnes_demarches_admin_int,
+    aps.nb_salaries_accompagnes_demarches_admin_ext,
     aps.nb_salaries_concernes_mobilite,
-    aps.nb_salaries_accompagnes_mobilite,
+    aps.nb_salaries_accompagnes_mobilite_int,
+    aps.nb_salaries_accompagnes_mobilite_ext,
     aps.nb_salaries_concernes_surendetement,
-    aps.nb_salaries_accompagnes_surendetement,
+    aps.nb_salaries_accompagnes_surendetement_int,
+    aps.nb_salaries_accompagnes_surendetement_ext,
+    aps.nb_salaries_concernes_justice_ext,
+    aps.nb_salaries_concernes_justice_int,
     aps.nb_salaries_concernes_manque_dispo,
-    aps.nb_salaries_accompagnes_manque_dispo,
+    aps.nb_salaries_accompagnes_manque_dispo_int,
+    aps.nb_salaries_accompagnes_manque_dispo_ext,
     -- sorties par structure
     sps.emploi_durable,
     sps.emploi_de_transition,
