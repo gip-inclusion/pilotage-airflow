@@ -1,5 +1,5 @@
-drop table if exists igas_eiti_salarie;
-create table igas_eiti_salarie as
+--drop table if exists igas_eiti_salarie;
+--create table igas_eiti_salarie as
 with formations_par_contrat as (
     select
         formations.formation_id_ctr,
@@ -85,6 +85,11 @@ group by
         else
             'Non'
         end as aide_soc,
+        case when salarie.salarie_adr_qpv_type is not NULL then
+            'Oui'
+        else
+            'Non'
+        end as qpv,
         eps.*
     from
         "fluxIAE_Salarie" salarie
