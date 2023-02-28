@@ -95,6 +95,7 @@ contrat_par_structure as (
             to_date(contrat_mission.contrat_date_embauche,
                 'DD/MM/YYYY')) as annee_embauche,
         count(*) as nb_contrats,
+        count(distinct contrat_mission.contrat_id_pph) as nb_salaries,
         count(formations.*) as nb_formations,
         sum(formations.formation_duree_jours) as nb_jours_formation,
         sum(formations.formation_duree_heures) as nb_heures_formation,
@@ -152,6 +153,7 @@ select
     conv.id_annexe_financiere,
     -- contrats
     cps.nb_contrats,
+    cps.nb_salaries,
     cps.nb_formations,
     cps.nb_jours_formation,
     cps.nb_heures_formation,
