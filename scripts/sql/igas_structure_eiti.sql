@@ -4,6 +4,7 @@
 with etp_conv_par_struct as (
     select distinct
         structure.structure_id_siae as id_struct,
+        structure.structure_siret_actualise as siret,
         structure.structure_denomination as denomination_structure,
         af.af_numero_annexe_financiere as id_annexe_financiere,
         date_part('year',
@@ -25,6 +26,7 @@ with etp_conv_par_struct as (
         and af_mesure_dispositif_code not like '%FDI%'
     group by
         id_struct,
+        structure.structure_siret_actualise,
         structure.structure_denomination,
         af.af_numero_annexe_financiere,
         annee_af
@@ -151,6 +153,7 @@ select
     cons.annee_af,
     conv.denomination_structure,
     conv.id_annexe_financiere,
+    conv.siret,
     -- contrats
     cps.nb_contrats,
     cps.nb_salaries,
