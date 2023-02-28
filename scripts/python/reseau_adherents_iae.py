@@ -15,7 +15,7 @@ std_cols = {'N°SIRET': "SIRET",
             "SIREN ou SIRET": "SIRET"}
 
 # recover xlsx files from repository containing Reseau.xlsx files
-repo_reseaux = "/Users/lhuber/Documents/Travail 👩‍💻/GIP🇫🇷/PILOTAGE 🏎/data/réseaux/"
+repo_reseaux = "path/to/repo"
 reseaux_files = glob.glob(repo_reseaux+"*.xlsx")
 
 reseaux_df = {}
