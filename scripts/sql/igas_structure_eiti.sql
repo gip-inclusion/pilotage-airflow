@@ -15,18 +15,18 @@ with etp_conv_par_struct as (
     from
         "fluxIAE_AnnexeFinanciere_v2" as af
     left join "fluxIAE_Structure_v2" as structure on af.af_id_structure = structure.structure_id_siae
-    where
-        af.af_mesure_dispositif_code = 'EITI_DC'
-        and af.af_etat_annexe_financiere_code in('VALIDE',
-            'PROVISOIRE',
-            'CLOTURE')
-        and af_mesure_dispositif_code not like '%FDI%'
-    group by
-        id_struct,
-        structure.structure_siret_actualise,
-        structure.structure_denomination,
-        af.af_numero_annexe_financiere,
-        annee_af
+where
+    af.af_mesure_dispositif_code = 'EITI_DC'
+    and af.af_etat_annexe_financiere_code in('VALIDE',
+        'PROVISOIRE',
+        'CLOTURE')
+    and af_mesure_dispositif_code not like '%FDI%'
+group by
+    id_struct,
+    structure.structure_siret_actualise,
+    structure.structure_denomination,
+    af.af_numero_annexe_financiere,
+    annee_af
 ),
 -- etp realises
 etp_cons_par_struct as (
@@ -41,55 +41,60 @@ etp_cons_par_struct as (
     left join "fluxIAE_AnnexeFinanciere_v2" as af on emi.emi_afi_id = af.af_id_annexe_financiere
     left join "fluxIAE_RefMontantIae" firmi on af_mesure_dispositif_id = firmi.rme_id
     left join "fluxIAE_Structure_v2" as structure on af.af_id_structure = structure.structure_id_siae
-    where
-        af.af_mesure_dispositif_code = 'EITI_DC'
-        and firmi.rmi_libelle = 'Nombre d''heures annuelles théoriques pour un salarié à taux plein'
-        and af.af_etat_annexe_financiere_code in('VALIDE',
-            'PROVISOIRE',
-            'CLOTURE')
-        and af_mesure_dispositif_code not like '%FDI%'
-    group by
-        id_struct,
-        annee_af
+where
+    af.af_mesure_dispositif_code = 'EITI_DC'
+    and firmi.rmi_libelle = 'Nombre d''heures annuelles théoriques pour un salarié à taux plein'
+    and af.af_etat_annexe_financiere_code in('VALIDE',
+        'PROVISOIRE',
+        'CLOTURE')
+    and af_mesure_dispositif_code not like '%FDI%'
+group by
+    id_struct,
+    annee_af
 ),
 -- accompagnement spécifique par structure
 acc_par_structure as (
-select 
-    structure.structure_id_siae id_struct,
-    sum(acc_dif_nb_sal_conc_illetrisme) nb_salaries_concernes_illetrisme,
-    sum(acc_dif_nb_sal_int_illetrisme) nb_salaries_accompagnes_illetrisme_int,
-    sum(acc_dif_nb_sal_ext_illetrisme) nb_salaries_accompagnes_illetrisme_ext,
-    sum(acc_dif_nb_sal_conc_sante) nb_salaries_concernes_sante,
-    sum(acc_dif_nb_sal_int_sante) nb_salaries_accompagnes_sante_int,
-    sum(acc_dif_nb_sal_ext_sante) nb_salaries_accompagnes_sante_ext,
-    sum(acc_dif_nb_sal_conc_heberg) nb_salaries_concernes_hebergement,
-    sum(acc_dif_nb_sal_int_heberg) nb_salaries_accompagnes_hebergement_int,
-    sum(acc_dif_nb_sal_ext_heberg) nb_salaries_accompagnes_hebergement_ext,
-    sum(acc_dif_nb_sal_conc_demarch) nb_salaries_concernes_demarches_admin,
-    sum(acc_dif_nb_sal_int_demarch) nb_salaries_accompagnes_demarches_admin_int,
-    sum(acc_dif_nb_sal_ext_demarch) nb_salaries_accompagnes_demarches_admin_ext,
-    sum(acc_dif_nb_sal_conc_mobilite) nb_salaries_concernes_mobilite,
-    sum(acc_dif_nb_sal_int_mobilite) nb_salaries_accompagnes_mobilite_int,
-    sum(acc_dif_nb_sal_ext_mobilite) nb_salaries_accompagnes_mobilite_ext,
-    sum(acc_dif_nb_sal_conc_surendet) nb_salaries_concernes_surendetement,
-    sum(acc_dif_nb_sal_int_surendet) nb_salaries_accompagnes_surendetement_int,
-    sum(acc_dif_nb_sal_ext_surendet) nb_salaries_accompagnes_surendetement_ext,
-    sum(acc_dif_nb_sal_ext_justice) nb_salaries_concernes_justice_ext,
-    sum(acc_dif_nb_sal_int_justice) nb_salaries_concernes_justice_int,
-    sum(acc_dif_nb_sal_conc_manque_dispo) nb_salaries_concernes_manque_dispo,
-    sum(acc_dif_nb_sal_int_manque_dispo) nb_salaries_accompagnes_manque_dispo_int,
-    sum(acc_dif_nb_sal_ext_manque_dispo) nb_salaries_accompagnes_manque_dispo_ext
+    select
+        structure.structure_id_siae id_struct,
+        date_part('year',
+            af.af_date_debut_effet_v2) as annee_af,
+        sum(acc_dif_nb_sal_conc_illetrisme) nb_salaries_concernes_illetrisme,
+        sum(acc_dif_nb_sal_int_illetrisme) nb_salaries_accompagnes_illetrisme_int,
+        sum(acc_dif_nb_sal_ext_illetrisme) nb_salaries_accompagnes_illetrisme_ext,
+        sum(acc_dif_nb_sal_conc_sante) nb_salaries_concernes_sante,
+        sum(acc_dif_nb_sal_int_sante) nb_salaries_accompagnes_sante_int,
+        sum(acc_dif_nb_sal_ext_sante) nb_salaries_accompagnes_sante_ext,
+        sum(acc_dif_nb_sal_conc_heberg) nb_salaries_concernes_hebergement,
+        sum(acc_dif_nb_sal_int_heberg) nb_salaries_accompagnes_hebergement_int,
+        sum(acc_dif_nb_sal_ext_heberg) nb_salaries_accompagnes_hebergement_ext,
+        sum(acc_dif_nb_sal_conc_demarch) nb_salaries_concernes_demarches_admin,
+        sum(acc_dif_nb_sal_int_demarch) nb_salaries_accompagnes_demarches_admin_int,
+        sum(acc_dif_nb_sal_ext_demarch) nb_salaries_accompagnes_demarches_admin_ext,
+        sum(acc_dif_nb_sal_conc_mobilite) nb_salaries_concernes_mobilite,
+        sum(acc_dif_nb_sal_int_mobilite) nb_salaries_accompagnes_mobilite_int,
+        sum(acc_dif_nb_sal_ext_mobilite) nb_salaries_accompagnes_mobilite_ext,
+        sum(acc_dif_nb_sal_conc_surendet) nb_salaries_concernes_surendetement,
+        sum(acc_dif_nb_sal_int_surendet) nb_salaries_accompagnes_surendetement_int,
+        sum(acc_dif_nb_sal_ext_surendet) nb_salaries_accompagnes_surendetement_ext,
+        sum(acc_dif_nb_sal_ext_justice) nb_salaries_concernes_justice_ext,
+        sum(acc_dif_nb_sal_int_justice) nb_salaries_concernes_justice_int,
+        sum(acc_dif_nb_sal_conc_manque_dispo) nb_salaries_concernes_manque_dispo,
+        sum(acc_dif_nb_sal_int_manque_dispo) nb_salaries_accompagnes_manque_dispo_int,
+        sum(acc_dif_nb_sal_ext_manque_dispo) nb_salaries_accompagnes_manque_dispo_ext
     from
-    "FluxIAE_accompagnement" acc
+        "FluxIAE_accompagnement" acc
     left join "fluxIAE_AnnexeFinanciere_v2" as af on af.af_id_annexe_financiere = acc.acc_afi_id
     left join "fluxIAE_Structure_v2" as structure on af.af_id_structure = structure.structure_id_siae
-    where af.type_siae = 'EITI'
-    group by structure.structure_id_siae
+where
+    af.type_siae = 'EITI'
+group by
+    structure.structure_id_siae,
+    annee_af
 ),
 -- contrats par structure
 contrat_par_structure as (
     select
-        contrat_mission.contrat_id_structure as id_struct,       
+        contrat_mission.contrat_id_structure as id_struct,
         date_part('year',
             to_date(contrat_mission.contrat_date_embauche,
                 'DD/MM/YYYY')) as annee_embauche,
@@ -117,12 +122,8 @@ sorties_par_structure as (
         count(categorie_sortie) filter (where categorie_sortie = 'Emploi durable') as emploi_durable,
         count(categorie_sortie) filter (where categorie_sortie = 'Emploi de transition') as emploi_de_transition,
         count(categorie_sortie) filter (where categorie_sortie = 'Sorties positives') as sorties_positives,
-        count(categorie_sortie) filter (where categorie_sortie = 'Autres sorties') as autres_sorties, 
-        count(categorie_sortie) filter (where categorie_sortie = 'Retrait des sorties constatées') as retrait_des_sorties_constatées
-    from
-        sorties
-    where
-        sorties.type_siae = 'EITI'
+        count(categorie_sortie) filter (where categorie_sortie = 'Autres sorties') as autres_sorties,
+        count(categorie_sortie) filter (where categorie_sortie = 'Retrait des sorties constatées') as "retrait_des_sorties_constatées" from sorties where sorties.type_siae = 'EITI'
     group by
         id_structure_asp,
         annee_sortie
@@ -172,11 +173,13 @@ select
     sps.emploi_de_transition,
     sps.sorties_positives,
     sps.autres_sorties,
-    sps.retrait_des_sorties_constatées
-from
-    contrat_par_structure cps
-    left join sorties_par_structure sps on cps.id_struct = sps.id_struct and sps.annee_sortie = cps.annee_embauche
-    left join acc_par_structure aps on cps.id_struct = aps.id_struct 
-    left join etp_cons_par_struct cons on cps.id_struct = cons.id_struct and cps.annee_embauche = cons.annee_af
-    left join etp_conv_par_struct conv on cons.id_struct = conv.id_struct
-        and cons.annee_af = conv.annee_af;
+    sps."retrait_des_sorties_constatées" 
+    from etp_conv_par_struct conv
+    left join etp_cons_par_struct cons on conv.id_struct = cons.id_struct
+        and conv.annee_af = cons.annee_af
+    left join acc_par_structure aps on conv.id_struct = aps.id_struct
+        and conv.annee_af = aps.annee_af
+    left join contrat_par_structure cps on conv.id_struct = cps.id_struct
+        and conv.annee_af = cps.annee_embauche
+    left join sorties_par_structure sps on conv.id_struct = sps.id_struct
+        and conv.annee_af = sps.annee_sortie
