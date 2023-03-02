@@ -1,3 +1,5 @@
+drop table if exists igas_accompagnement_par_eiti;
+create table igas_accompagnement_par_eiti as
 select
     structure.structure_id_siae id_struct,
     date_part('year', af.af_date_debut_effet_v2) as annee_af,

@@ -41,61 +41,61 @@ group by
     af.af_id_annexe_financiere,
     structure.structure_denomination
 )
-    select
-        --salarie.salarie_id as id_salarie,
-        salarie.salarie_rci_libelle as civilite,
-        date_part('year', current_date) - salarie.salarie_annee_naissance as age,
-        salarie.salarie_annee_naissance as annee_de_naissance,
-        refmotifsort.rms_libelle as motif_sortie,
-        categoriesort.rcs_libelle as categorie_sortie,
-        refmotifsort.rms_libelle, 
-        contrat.contrat_date_embauche as date_embauche,
-        contrat.contrat_id_ctr as contrat_id,
-        formations.nb_formations as nb_formations,
-        formations.nb_jours_formation as nb_jours_formation,
-        formations.nb_heures_formation as nb_heures_formation,
-        formations.nb_min_formation as nb_min_formation,
-        case when contrat.contrat_salarie_rqth then
-            'Oui'
-        else
-            'Non'
-        end as rqth,
-        case when contrat.contrat_salarie_aah then
-            'Oui'
-        else
-            'Non'
-        end as aah,
-        case when contrat.contrat_salarie_oeth then
-            'Oui'
-        else
-            'Non'
-        end as oeth,
-        case when contrat.contrat_salarie_ass then
-            'Oui'
-        else
-            'Non'
-        end as ass,
-        case when contrat.contrat_salarie_is_zrr then
-            'Oui'
-        else
-            'Non'
-        end as zrr,
-        case when contrat.contrat_salarie_aide_sociale then
-            'Oui'
-        else
-            'Non'
-        end as aide_soc,
-        eps.*
-    from
-        "fluxIAE_Salarie" salarie
-        -- pour récupération du contrat réalisé pour un salarié
-        -- une ligne par salarié et par contrat
-        -- pour les EITI il y a un nb très négligeable de salariés ayant eu plusieurs contrats (5)
+select
+    --salarie.salarie_id as id_salarie,
+    salarie.salarie_rci_libelle as civilite,
+    date_part('year', current_date) - salarie.salarie_annee_naissance as age,
+    salarie.salarie_annee_naissance as annee_de_naissance,
+    refmotifsort.rms_libelle as motif_sortie,
+    categoriesort.rcs_libelle as categorie_sortie,
+    refmotifsort.rms_libelle,
+    contrat.contrat_date_embauche as date_embauche,
+    contrat.contrat_id_ctr as contrat_id,
+    formations.nb_formations as nb_formations,
+    formations.nb_jours_formation as nb_jours_formation,
+    formations.nb_heures_formation as nb_heures_formation,
+    formations.nb_min_formation as nb_min_formation,
+    case when contrat.contrat_salarie_rqth then
+        'Oui'
+    else
+        'Non'
+    end as rqth,
+    case when contrat.contrat_salarie_aah then
+        'Oui'
+    else
+        'Non'
+    end as aah,
+    case when contrat.contrat_salarie_oeth then
+        'Oui'
+    else
+        'Non'
+    end as oeth,
+    case when contrat.contrat_salarie_ass then
+        'Oui'
+    else
+        'Non'
+    end as ass,
+    case when contrat.contrat_salarie_is_zrr then
+        'Oui'
+    else
+        'Non'
+    end as zrr,
+    case when contrat.contrat_salarie_aide_sociale then
+        'Oui'
+    else
+        'Non'
+    end as aide_soc,
+    eps.*
+from
+    "fluxIAE_Salarie" salarie
+    -- pour récupération du contrat réalisé pour un salarié
+    -- une ligne par salarié et par contrat
+    -- pour les EITI il y a un nb très négligeable de salariés ayant eu plusieurs contrats (5)
     left join "fluxIAE_ContratMission" contrat on contrat_id_pph = salarie_id
     left join etp_par_salarie eps on contrat_id_pph = eps.id_salarie
     -- pour récupération du libellé du motif de sortie
     left join "fluxIAE_RefMotifSort" refmotifsort on rms_id = contrat_motif_sortie_id
-    left join  "fluxIAE_RefCategorieSort" as categoriesort on categoriesort.rcs_id = refmotifsort.rcs_id
+    left join "fluxIAE_RefCategorieSort" as categoriesort on categoriesort.rcs_id = refmotifsort.rcs_id
     left join formations_par_contrat formations on formation_id_ctr = contrat_id_ctr
 where
     contrat_mesure_disp_code = 'EITI_DC';

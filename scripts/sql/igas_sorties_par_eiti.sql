@@ -1,3 +1,5 @@
+drop table if exists igas_sorties_par_eiti;
+create table igas_sorties_par_eiti as
 select
     id_structure_asp id_struct,
     annee_sortie,
