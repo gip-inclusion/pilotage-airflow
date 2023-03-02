@@ -85,7 +85,7 @@ group by
         else
             'Non'
         end as aide_soc,
-        case when salarie.salarie_adr_qpv_type is not NULL then
+        case when salarie.salarie_adr_qpv_type = 'QP' then
             'Oui'
         else
             'Non'
