@@ -1,3 +1,5 @@
+drop table if exists igas_contrat_par_eiti;
+create table igas_contrat_par_eiti as
 select
     contrat_mission.contrat_id_structure as id_struct,
     date_part('year', to_date(contrat_mission.contrat_date_embauche, 'DD/MM/YYYY')) as annee_embauche,
