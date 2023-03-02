@@ -1,5 +1,3 @@
---drop table if exists igas_eiti_structure;
---create table igas_eiti_structure as 
 -- etp conventionnes 
 with etp_conv_par_struct as (
     select distinct
@@ -19,7 +17,6 @@ with etp_conv_par_struct as (
     left join "fluxIAE_Structure_v2" as structure on af.af_id_structure = structure.structure_id_siae
     where
         af.af_mesure_dispositif_code = 'EITI_DC'
-        --date_part('year', af.af_date_debut_effet_v2) >= annee_en_cours - 2
         and af.af_etat_annexe_financiere_code in('VALIDE',
             'PROVISOIRE',
             'CLOTURE')
@@ -122,25 +119,6 @@ sorties_par_structure as (
         count(categorie_sortie) filter (where categorie_sortie = 'Sorties positives') as sorties_positives,
         count(categorie_sortie) filter (where categorie_sortie = 'Autres sorties') as autres_sorties, 
         count(categorie_sortie) filter (where categorie_sortie = 'Retrait des sorties constatées') as retrait_des_sorties_constatées
-       /* -- uniquement les motifs utilisés en eiti
-        count(motif_sortie) filter (where motif_sortie = 'Sortie automatique') as sortie_automatique,
-        count(motif_sortie) filter (where motif_sortie = 'Création ou reprise d''entreprise à son compte (hors EITI)') as sortie_creation_entreprise_hors_eiti,
-        count(motif_sortie) filter (where motif_sortie = 'Sans nouvelle') as sortie_sans_nouvelle,
-        count(motif_sortie) filter (where motif_sortie = 'Inactif') as sortie_inactif,
-        count(motif_sortie) filter (where motif_sortie = 'Autre sortie reconnue comme positive') as sortie_positive,
-        count(motif_sortie) filter (where motif_sortie = 'Poursuite au sein de l''EITI sans aide au poste avec un CA supérieur à 70% du salaire médian mensuel') as sortie_poursuite_eiti_median,
-        count(motif_sortie) filter (where motif_sortie = 'Embauche en CDI non aidé') as sortie_cdi_non_aidé,
-        count(motif_sortie) filter (where motif_sortie = 'Transfert d''employeur') as sortie_transfert_employeur,
-        count(motif_sortie) filter (where motif_sortie = 'Entrée en formation qualifiante ou poursuite de formation qualifiante') as sortie_formation_qualifiante,
-        count(motif_sortie) filter (where motif_sortie = 'Embauche en CDD (sans aide publique à l''emploi) de moins de 6 mois (hors IAE)') as sortie_cdd_moins_6mois_hors_iae,
-        count(motif_sortie) filter (where motif_sortie = 'Embauche en CDD (sans aide publique à l''emploi) d''une durée de 6 mois et plus') as sortie_cdd_plus_6mois,
-        count(motif_sortie) filter (where motif_sortie = 'Au chômage') as sortie_chomage,
-        count(motif_sortie) filter (where motif_sortie = 'Poursuite au sein de l''EITI sans aide au poste avec un CA supérieur au seuil de pauvreté') as sortie_poursuite_eiti_minimum,
-        count(motif_sortie) filter (where motif_sortie = 'Prise des droits à la retraite') as sortie_retraite,
-        count(motif_sortie) filter (where motif_sortie = 'Embauche pour une durée déterminée dans une autre structure IAE') as sortie_cdd_iae,
-        count(motif_sortie) filter (where motif_sortie = 'Rupture employeur pour faute grave du salarié') as sortie_faute_grave,
-        count(motif_sortie) filter (where motif_sortie = 'Embauche en CDI aidé') as sortie_cdi_aide,
-        count(motif_sortie) filter (where motif_sortie = 'Décision administrative / Décision de justice') as sortie_decision_admin */
     from
         sorties
     where
@@ -150,6 +128,7 @@ sorties_par_structure as (
         annee_sortie
 )
 select
+    conv.id_struct,
     cons.annee_af,
     conv.denomination_structure,
     conv.id_annexe_financiere,
@@ -194,24 +173,6 @@ select
     sps.sorties_positives,
     sps.autres_sorties,
     sps.retrait_des_sorties_constatées
-   /* sps.sortie_automatique,
-    sps.sortie_creation_entreprise_hors_eiti,
-    sps.sortie_sans_nouvelle,
-    sps.sortie_inactif,
-    sps.sortie_positive,
-    sps.sortie_cdi_non_aidé,
-    sps.sortie_transfert_employeur,
-    sps.sortie_formation_qualifiante,
-    sps.sortie_cdd_moins_6mois_hors_iae,
-    sps.sortie_cdd_plus_6mois,
-    sps.sortie_chomage,
-    sps.sortie_poursuite_eiti_median,
-    sps.sortie_poursuite_eiti_minimum,
-    sps.sortie_retraite,
-    sps.sortie_cdd_iae,
-    sps.sortie_faute_grave,
-    sps.sortie_cdi_aide,
-    sps.sortie_decision_admin */
 from
     contrat_par_structure cps
     left join sorties_par_structure sps on cps.id_struct = sps.id_struct and sps.annee_sortie = cps.annee_embauche
