@@ -85,6 +85,11 @@ select
     else
         'Non'
     end as aide_soc,
+    case when salarie.salarie_adr_qpv_type = 'QP' then
+        'Oui'
+    else
+        'Non'
+    end as qpv,  
     eps.*
 from
     "fluxIAE_Salarie" salarie
