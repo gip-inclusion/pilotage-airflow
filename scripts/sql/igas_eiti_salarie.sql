@@ -1,7 +1,9 @@
 --drop table if exists igas_eiti_salarie;
---create table igas_eiti_salarie as
+create table igas_eiti_salarie as
 with formations_par_contrat as (
     select
+        contrat.contrat_id_pph as id_salarie,
+        date_part('year', to_date(contrat.contrat_date_embauche, 'DD/MM/YYYY')) as annee_contrat,
         formations.formation_id_ctr,
         count(formations.*) as nb_formations,
         sum(formations.formation_duree_jours) as nb_jours_formation,
@@ -9,7 +11,12 @@ with formations_par_contrat as (
         sum(formations.formation_duree_minutes) as nb_min_formation
     from
         "fluxIAE_Formations" formations
+        left join "fluxIAE_ContratMission" contrat on formations.formation_id_ctr = contrat_id_ctr
+    where 
+        contrat_mesure_disp_code = 'EITI_DC'
     group by
+        contrat_id_pph,
+        annee_contrat,
         formations.formation_id_ctr
 ),
 etp_par_salarie as (
@@ -42,7 +49,8 @@ group by
     structure.structure_denomination
 )
 select
-    --salarie.salarie_id as id_salarie,
+    contrat.contrat_id_ctr as contrat_id,
+    eps.*,
     salarie.salarie_rci_libelle as civilite,
     date_part('year', current_date) - salarie.salarie_annee_naissance as age,
     salarie.salarie_annee_naissance as annee_de_naissance,
@@ -50,7 +58,6 @@ select
     categoriesort.rcs_libelle as categorie_sortie,
     refmotifsort.rms_libelle,
     contrat.contrat_date_embauche as date_embauche,
-    contrat.contrat_id_ctr as contrat_id,
     formations.nb_formations as nb_formations,
     formations.nb_jours_formation as nb_jours_formation,
     formations.nb_heures_formation as nb_heures_formation,
@@ -89,18 +96,17 @@ select
         'Oui'
     else
         'Non'
-    end as qpv,  
-    eps.*
+    end as qpv
 from
     "fluxIAE_Salarie" salarie
     -- pour récupération du contrat réalisé pour un salarié
     -- une ligne par salarié et par contrat
     -- pour les EITI il y a un nb très négligeable de salariés ayant eu plusieurs contrats (5)
     left join "fluxIAE_ContratMission" contrat on contrat_id_pph = salarie_id
-    left join etp_par_salarie eps on contrat_id_pph = eps.id_salarie
+    left join etp_par_salarie eps on contrat_id_pph = eps.id_salarie 
     -- pour récupération du libellé du motif de sortie
     left join "fluxIAE_RefMotifSort" refmotifsort on rms_id = contrat_motif_sortie_id
     left join "fluxIAE_RefCategorieSort" as categoriesort on categoriesort.rcs_id = refmotifsort.rcs_id
-    left join formations_par_contrat formations on formation_id_ctr = contrat_id_ctr
+    left join formations_par_contrat formations on formation_id_ctr = contrat_id_ctr and formations.annee_contrat = eps.annee_af
 where
     contrat_mesure_disp_code = 'EITI_DC';
