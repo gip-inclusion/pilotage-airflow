@@ -4,6 +4,7 @@ with formations_par_contrat as (
     select
         contrat.contrat_id_pph as id_salarie,
         date_part('year', to_date(contrat.contrat_date_embauche, 'DD/MM/YYYY')) as annee_contrat,
+        rnf.rnf_libelle_niveau_form_empl as niveau_formation,
         formations.formation_id_ctr,
         count(formations.*) as nb_formations,
         sum(formations.formation_duree_jours) as nb_jours_formation,
@@ -12,12 +13,14 @@ with formations_par_contrat as (
     from
         "fluxIAE_Formations" formations
         left join "fluxIAE_ContratMission" contrat on formations.formation_id_ctr = contrat_id_ctr
+        left join "fluxIAE_RefNiveauFormation" rnf on contrat.contrat_niveau_de_formation_code = rnf.rnf_code_niveau_form_empl
     where 
         contrat_mesure_disp_code = 'EITI_DC'
     group by
         contrat_id_pph,
         annee_contrat,
-        formations.formation_id_ctr
+        formations.formation_id_ctr,
+        rnf.rnf_libelle_niveau_form_empl
 ),
 etp_par_salarie as (
     select distinct
@@ -56,8 +59,8 @@ select
     salarie.salarie_annee_naissance as annee_de_naissance,
     refmotifsort.rms_libelle as motif_sortie,
     categoriesort.rcs_libelle as categorie_sortie,
-    refmotifsort.rms_libelle,
     contrat.contrat_date_embauche as date_embauche,
+    formations.niveau_formation as niveau_formation_salarie,
     formations.nb_formations as nb_formations,
     formations.nb_jours_formation as nb_jours_formation,
     formations.nb_heures_formation as nb_heures_formation,
