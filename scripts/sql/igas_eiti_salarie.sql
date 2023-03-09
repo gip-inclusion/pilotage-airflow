@@ -62,6 +62,11 @@ select
     formations.nb_jours_formation as nb_jours_formation,
     formations.nb_heures_formation as nb_heures_formation,
     formations.nb_min_formation as nb_min_formation,
+    case when starts_with(contrat.contrat_salarie_rsa, 'OUI')  then
+        'Oui'
+    else
+        'Non'
+    end as brsa,
     case when contrat.contrat_salarie_rqth then
         'Oui'
     else
