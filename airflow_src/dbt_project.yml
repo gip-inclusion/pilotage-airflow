@@ -1,0 +1,29 @@
+name: 'dbt_pilotage'
+version: '1.0.0'
+config-version: 2
+
+profile: 'dbt_pilotage'
+
+model-paths: ["dbt/models"]
+analysis-paths: ["dbt/analyses"]
+test-paths: ["dbt/tests"]
+seed-paths: ["dbt/seeds"]
+macro-paths: ["dbt/macros"]
+snapshot-paths: ["dbt/snapshots"]
+
+log-path: "dbt/logs"
+packages-install-path: "dbt/packages"
+target-path: "dbt/target"
+clean-targets:
+  - "dbt/logs"
+  - "dbt/packages"
+  - "dbt/target"
+
+models:
+  dbt_pilotage:
+    structures:
+      +schema: dbt_output
+      # FIXME(vperron): materialize as tables because views prevents us from deleting the source
+      # table, which we do when we rotate them. Some tables only dependent on this schema could
+      # be views though, probably.
+      +materialized: table
