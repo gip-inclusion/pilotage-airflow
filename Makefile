@@ -14,7 +14,7 @@ endif
 VIRTUAL_ENV ?= .venv
 export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
-.PHONY: venv clean compile-deps
+.PHONY: venv clean compile-deps dbt_clean fix_sql
 
 $(VIRTUAL_ENV): $(REQUIREMENTS_PATH)
 	$(PYTHON_VERSION) -m venv $@
@@ -30,6 +30,14 @@ PIP_COMPILE_FLAGS := --upgrade --allow-unsafe --generate-hashes
 compile-deps: $(VIRTUAL_ENV)
 	pip-compile $(PIP_COMPILE_FLAGS) -o requirements.txt requirements.in
 
-clean:
+dbt_clean:
+	cd airflow && dbt clean
+
+clean: dbt_clean
 	find . -type d -name "__pycache__" -depth -exec rm -rf '{}' \;
 
+# Attempt to fix & lint the SQL files. If this does not work,
+# try using 'sqlfluff parse' on the target file to see why it
+# could not be analyzed and run again.
+fix: clean
+	sqlfluff fix -f airflow/dbt  --dialect postgres
