@@ -19,6 +19,9 @@ export SQLALCHEMY_SILENCE_UBER_WARNING=1
 export AIRFLOW__CORE__DAGS_FOLDER="${BASE_DIR}/dags"
 export AIRFLOW__CORE__FERNET_KEY="${SECRET_KEY}"
 export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="${AIRFLOW_DATABASE_URL}"
+# cf https://github.com/apache/airflow/issues/17536#issuecomment-900343494
+# without this, any login redirects us to HTTP
+export AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX=True
 
 export DBT_LOG_PATH="/tmp/dbt-logs"
 export DBT_TARGET_PATH="/tmp/dbt-target"
