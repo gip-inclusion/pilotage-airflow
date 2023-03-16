@@ -17,7 +17,7 @@ venv: $(VIRTUAL_ENV)
 
 
 dbt_clean:
-	cd airflow && dbt clean
+	cd airflow_src && dbt clean
 
 clean: dbt_clean
 	find . -type d -name "__pycache__" -depth -exec rm -rf '{}' \;
