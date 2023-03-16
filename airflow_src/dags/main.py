@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 with airflow.DAG(
     dag_id="main",
     start_date=pendulum.datetime(2022, 1, 1, tz="Europe/Paris"),
-    schedule_interval="1 * * * *",
+    schedule_interval="@hourly",
     catchup=False,
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
