@@ -72,14 +72,15 @@ with DAG("nps_fetcher",
     def store_gsheets(ds=None, **kwargs):
         with MetabaseDBCursor() as (_, conn):
             df = pd.read_sql_query('SELECT * FROM "suivi_satisfaction";', conn)
+            df.rename(columns={"Recommendation": "Recommandation"}, inplace=True)
             df["Produit"] = "Pilotage de l'inclusion"
             df = df[["Date", "Recommandation", "Produit"]]
             df.rename(columns={"Date": "Dates"}, inplace=True)
 
         gip_nps_table_name = Variable.get("GIP_NPS_TABLE_NAME")  # "GIP_suivi_NPS"
-        for name, pub_sheet_url in Variable.get("NPS_NAME_PUB_SHEET_URL_MAP", deserialize_json=True).items():
+        for name, pub_sheet_url in Variable.get("NPS_NAME_PUB_SHEET_URL_TUPLES", deserialize_json=True):
             sheet_df = pd.read_csv(pub_sheet_url)
-            sheet_df.rename(columns={"Submitted at": "Dates", df.columns[-1]: "Recommendation"}, inplace=True)
+            sheet_df.rename(columns={"Submitted at": "Dates", df.columns[-1]: "Recommandation"}, inplace=True)
             sheet_df["Produit"] = name
             sheet_df = df[["Date", "Recommandation", "Produit"]]
             df.append(sheet_df)
