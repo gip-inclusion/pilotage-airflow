@@ -35,3 +35,6 @@ quality: clean
 	isort --check airflow_src
 	flake8 --count --show-source --statistics airflow_src
 	sqlfluff lint -f airflow_src/dbt --dialect postgres
+
+start:
+	AIRFLOW_BASE_DIR=$(shell pwd)/airflow_src ./airflow_src/entrypoint.sh

@@ -3,7 +3,7 @@
 set -e
 set -x
 
-BASE_DIR=$(pwd)
+BASE_DIR="${AIRFLOW_BASE_DIR:-$(pwd)}"
 
 export AIRFLOW_HOME="${BASE_DIR}/airflow"
 
