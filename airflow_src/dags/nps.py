@@ -9,8 +9,8 @@ from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
 
-default_args = {
-}
+default_args = {}
+
 
 def to_buffer(df):
     buffer = StringIO()
@@ -49,7 +49,7 @@ def pg_store(table_name, df):
                 f"""
                 DROP TABLE IF EXISTS GIP_suivi_NPS;
                 CREATE TABLE {table_name}(
-                    Dates TIMESTAMP,
+                    Date TIMESTAMP,
                     Recommandation DECIMAL(10,2),
                     Produit VARCHAR(512)
                 );
@@ -61,7 +61,8 @@ def pg_store(table_name, df):
         conn.commit()
 
 
-with DAG("nps_fetcher",
+with DAG(
+    "nps_fetcher",
     start_date=pendulum.datetime(2022, 1, 1, tz="UTC"),
     catchup=False,
 ) as dag:
@@ -75,15 +76,22 @@ with DAG("nps_fetcher",
             df.rename(columns={"Recommendation": "Recommandation"}, inplace=True)
             df["Produit"] = "Pilotage de l'inclusion"
             df = df[["Date", "Recommandation", "Produit"]]
-            df.rename(columns={"Date": "Dates"}, inplace=True)
 
         gip_nps_table_name = Variable.get("GIP_NPS_TABLE_NAME")  # "GIP_suivi_NPS"
         for name, pub_sheet_url in Variable.get("NPS_NAME_PUB_SHEET_URL_TUPLES", deserialize_json=True):
+            print(f"reading {name=} at {pub_sheet_url=}")
             sheet_df = pd.read_csv(pub_sheet_url)
-            sheet_df.rename(columns={"Submitted at": "Dates", df.columns[-1]: "Recommandation"}, inplace=True)
+            sheet_df.rename(
+                columns={
+                    "Submitted at": "Date",
+                    "Dates": "Date",
+                    df.columns[-1]: "Recommandation",
+                },
+                inplace=True,
+            )
             sheet_df["Produit"] = name
             sheet_df = df[["Date", "Recommandation", "Produit"]]
-            df.append(sheet_df)
+            df = pd.concat([df, sheet_df])
 
         pg_store(gip_nps_table_name, df)
 
