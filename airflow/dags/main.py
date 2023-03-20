@@ -1,9 +1,8 @@
 import logging
 
+import airflow
 import pendulum
 from airflow.operators import bash, empty
-
-import airflow
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +34,4 @@ with airflow.DAG(
         cwd="/opt/airflow",
     )
 
-    (
-        start
-        >> dbt_debug
-        >> dbt_run
-        >> dbt_clean
-        >> end
-    )
+    (start >> dbt_debug >> dbt_run >> dbt_clean >> end)

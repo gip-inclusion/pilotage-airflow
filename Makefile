@@ -26,4 +26,12 @@ clean: dbt_clean
 # try using 'sqlfluff parse' on the target file to see why it
 # could not be analyzed and run again.
 fix: clean
-	sqlfluff fix -f airflow/dbt  --dialect postgres
+	black airflow_src
+	isort airflow_src
+	sqlfluff fix -f airflow_src/dbt --dialect postgres
+
+quality: clean
+	black --check airflow_src
+	isort --check airflow_src
+	flake8 --count --show-source --statistics airflow_src
+	sqlfluff lint -f airflow_src/dbt --dialect postgres
