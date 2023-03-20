@@ -17,6 +17,8 @@ export AIRFLOW__CORE__LOAD_EXAMPLES=False
 export SQLALCHEMY_SILENCE_UBER_WARNING=1
 
 export AIRFLOW__CORE__DAGS_FOLDER="${BASE_DIR}/dags"
+
+# python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 export AIRFLOW__CORE__FERNET_KEY="${SECRET_KEY}"
 export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="${AIRFLOW_DATABASE_URL}"
 # cf https://github.com/apache/airflow/issues/17536#issuecomment-900343494
