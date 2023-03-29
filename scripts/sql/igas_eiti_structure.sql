@@ -8,7 +8,6 @@ with etp_conv_par_struct as (
         structure.structure_denomination as denomination_structure,
         structure.nom_region_structure as region_structure,
         structure.nom_departement_structure as departement_structure,
-        af.af_numero_annexe_financiere as id_annexe_financiere,
         date_part('year',
             af.af_date_debut_effet_v2) as annee_af,
         sum((af.af_etp_postes_insertion * ((date_part('year',
@@ -29,7 +28,6 @@ group by
     id_struct,
     structure.structure_siret_actualise,
     structure.structure_denomination,
-    af.af_numero_annexe_financiere,
     annee_af,
     structure.nom_region_structure,
     structure.nom_departement_structure
@@ -141,7 +139,6 @@ select
     conv.denomination_structure,
     conv.region_structure,
     conv.departement_structure,
-    conv.id_annexe_financiere,
     conv.siret,
     -- contrats
     cps.nb_contrats,
