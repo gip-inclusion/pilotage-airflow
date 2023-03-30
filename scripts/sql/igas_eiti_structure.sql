@@ -1,5 +1,5 @@
 --drop table if exists igas_eiti_structure;
---create table igas_eiti_structure as
+create table igas_eiti_structure as
 -- etp conventionnes
 with etp_conv_par_struct as (
     select distinct
@@ -112,7 +112,6 @@ contrat_par_structure as (
         "fluxIAE_ContratMission" contrat_mission
     left join "fluxIAE_Formations" formations on contrat_mission.contrat_id_ctr = formations.formation_id_ctr
     left join "fluxIAE_Structure_v2" structures on contrat_mission.contrat_id_structure = structures.structure_id_siae
-    left join "fluxIAE_AnnexeFinanciere_v2" as af on af.af_id_structure = structures.structure_id_siae
 where
     contrat_mission.contrat_mesure_disp_code = 'EITI_DC'
 group by
