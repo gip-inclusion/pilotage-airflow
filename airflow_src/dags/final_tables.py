@@ -1,37 +1,51 @@
 import logging
+import os
+
+import pendulum
 
 import airflow
-import pendulum
+from airflow.decorators import task
 from airflow.operators import bash, empty
+from airflow.operators.python import get_current_context
+from dags.common import slack
 
 logger = logging.getLogger(__name__)
 
+default_args = {
+    'cwd': os.getenv("AIRFLOW_BASE_DIR"),
+    'on_failure_callback': slack.task_fail_alert,
+}
+
 
 with airflow.DAG(
-    dag_id="main",
+    dag_id="final_tables",
     start_date=pendulum.datetime(2022, 1, 1, tz="Europe/Paris"),
-    schedule_interval="@hourly",
+    schedule_interval="@daily",
     catchup=False,
+    default_args=default_args,
+    max_active_runs=1,
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
-    end = empty.EmptyOperator(task_id="end")
+
+    @task(task_id="end")
+    def end(**kwargs):
+        slack.task_success_alert(get_current_context())
 
     dbt_debug = bash.BashOperator(
         task_id="dbt_debug",
         bash_command=f"dbt debug",
-        cwd="/opt/airflow",
     )
 
     dbt_run = bash.BashOperator(
         task_id="dbt_run",
         bash_command=f"dbt run",
-        cwd="/opt/airflow",
     )
 
     dbt_clean = bash.BashOperator(
         task_id="dbt_clean",
         bash_command=f"dbt clean",
-        cwd="/opt/airflow",
     )
 
-    (start >> dbt_debug >> dbt_run >> dbt_clean >> end)
+    end_task = end()
+
+    (start >> dbt_debug >> dbt_run >> dbt_clean >> end_task)

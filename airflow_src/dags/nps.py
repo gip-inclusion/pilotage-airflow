@@ -1,10 +1,12 @@
 import textwrap
 
 import pendulum
+
 from airflow import DAG
+from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
-from airflow.operators.python import get_current_context, task
+from airflow.operators.python import get_current_context
 from dags.common import db, slack
 
 default_args = {
@@ -47,6 +49,7 @@ with DAG(
     schedule_interval="@daily",
     catchup=False,
     default_args=default_args,
+    max_active_runs=1,
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
 

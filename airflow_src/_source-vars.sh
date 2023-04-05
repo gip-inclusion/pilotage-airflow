@@ -1,6 +1,8 @@
 
 BASE_DIR="${AIRFLOW_BASE_DIR:-$(pwd)}"
 
+export AIRFLOW_BASE_DIR="${BASE_DIR}"
+
 export AIRFLOW_HOME="${BASE_DIR}/airflow"
 export PYTHONPATH="${PYTHONPATH}:${BASE_DIR}"  # be able to resolve "import dags"
 
