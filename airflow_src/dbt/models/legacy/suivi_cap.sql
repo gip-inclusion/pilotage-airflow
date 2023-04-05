@@ -86,4 +86,4 @@ group by
     struct."région",
     struct."nom_département"
 order by
-    struct."nom_département";
+    struct."nom_département"

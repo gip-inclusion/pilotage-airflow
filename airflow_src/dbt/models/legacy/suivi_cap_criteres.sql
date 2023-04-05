@@ -31,4 +31,4 @@ left join "critères_iae" criteres on "cap_criteres"."id_critère_iae" = "criter
 left join "cap_candidatures" candidatures on "cap_criteres"."id_cap_candidature" = "candidatures"."id"
 left join "cap_structures" cap_structs on "candidatures"."id_cap_structure" = "cap_structs"."id"
 left join "structures" structs on "cap_structs"."id_structure" = "structs"."id"
-left join "cap_campagnes" camp on "cap_structs"."id_cap_campagne" = "camp"."id";
+left join "cap_campagnes" camp on "cap_structs"."id_cap_campagne" = "camp"."id"

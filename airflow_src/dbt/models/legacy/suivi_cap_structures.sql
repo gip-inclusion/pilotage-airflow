@@ -25,4 +25,4 @@ select
 from
     "public"."structures"
 left join "public"."cap_structures" on "structures"."id" = "cap_structures"."id_structure"
-left join "cap_campagnes" on "cap_structures"."id_cap_campagne" = "cap_campagnes"."id";
+left join "cap_campagnes" on "cap_structures"."id_cap_campagne" = "cap_campagnes"."id"
