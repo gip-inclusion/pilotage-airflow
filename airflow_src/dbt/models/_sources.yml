@@ -1,0 +1,62 @@
+version: 2
+
+sources:
+  - name: fluxIAE
+    schema: public
+    tables:
+      - name: fluxIAE_AnnexeFinanciere
+      - name: fluxIAE_ContratMission
+      - name: fluxIAE_EtatMensuelIndiv
+      - name: fluxIAE_Missions
+      - name: fluxIAE_MissionsEtatMensuelIndiv
+      - name: fluxIAE_RefCategorieSort
+      - name: fluxIAE_RefMontantIae
+      - name: fluxIAE_RefMotifSort
+      - name: fluxIAE_RefNiveauFormation
+      - name: fluxIAE_Salarie
+      - name: fluxIAE_Structure
+
+  - name: emplois
+    schema: public
+    tables:
+      - name: c1_analytics_v0
+      - name: c1_private_dashboard_visits_v0
+      - name: candidats
+      - name: candidatures
+      - name: cap_campagnes
+      - name: cap_candidatures
+      - name: cap_critères_iae
+      - name: cap_structures
+      - name: codes_insee_vs_codes_postaux
+      - name: codes_rome
+      - name: communes  # Cities
+      - name: critères_iae
+      - name: departements
+      - name: fiches_de_poste
+      - name: fiches_de_poste_par_candidature
+      - name: institutions
+      - name: organisations
+      - name: pass_agréments
+      - name: structures
+
+  - name: oneshot
+    schema: public
+    tables:
+      # Table créée par soumia en one-shot. A mettre à jour ? Les codes ROME et domaines évoluent, une MAJ a été faite
+      # côté C1 en Février 2023.
+      - name: code_rome_domaine_professionnel
+      # TODO(vperron): A remplacer par codes_insee_vs_codes_postaux. Attention cette derniere est juste un mapping.
+      # Il faut donc avoir une seconde table contenant pour chaque code INSEE ou postal, les coordonnees GPS.
+      # Attention, les "villes" ont été mises à jour mais ce n'est pas la meme chose que les communes ASP.
+      - name: commune_gps
+      - name: reseau_iae_adherents  # TODO(vperron): difficile de statuer si utile ou non.
+      - name: sa_zones_infradepartementales  # TODO(lhuber): Un script est attendu pour son versionnement.
+      - name: suivi_visiteurs_tb_prives  # TODO(ypassa): Script de régénration à fournir.
+      - name: suivi_utilisateurs_tb_prives  # TODO(ypassa): Script de régénération à fournir.
+      - name: suivi_complet_etps_conventionnes  # TODO(ypassa): Un autre script airflow à contribuer
+
+  - name: matomo
+    schema: public
+    tables:
+      - name: suivi_visiteurs_tb_prives_v1
+      - name: suivi_visiteurs_tb_publics_v1
