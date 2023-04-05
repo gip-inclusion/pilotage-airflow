@@ -21,9 +21,6 @@ clean-targets:
 
 models:
   dbt_pilotage:
-    structures:
-      +schema: dbt_output
-      # FIXME(vperron): materialize as tables because views prevents us from deleting the source
-      # table, which we do when we rotate them. Some tables only dependent on this schema could
-      # be views though, probably.
-      +materialized: table
+    legacy:
+      +schema: dbt_legacy
+      +materialized: view

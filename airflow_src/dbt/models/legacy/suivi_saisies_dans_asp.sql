@@ -34,11 +34,7 @@ with saisies as (
         structure.nom_region_structure,
         to_char(
             max(
-                make_date(
-                    cast(emi.emi_sme_annee as integer),
-                    cast(emi.emi_sme_mois as integer),
-                    1
-                )
+                make_date(cast(emi.emi_sme_annee as integer), cast(emi.emi_sme_mois as integer), 1)
             ), 'MM/YYYY'
         ) as dernier_mois_saisi_asp
     from
@@ -80,12 +76,8 @@ saisie_actualisee as (
         structure_siret_actualise,
         af_id_annexe_financiere,
         af_numero_annexe_financiere,
-        case
-            /* On considère que la saisie est effectuée si elle a été faite lors du mois en cours ou précédent celui en cours */
-            when
-                to_date(dernier_mois_saisi_asp, 'MM/YYYY')
-                >= current_date - interval '2 months'
-                then 'Oui'
+        case /* On considère que la saisie est effectuée si elle a été faite lors du mois en cours ou précédent celui en cours */
+            when to_date(dernier_mois_saisi_asp, 'MM/YYYY') >= current_date - interval '2 months' then 'Oui'
             else 'Non'
         end as saisie_effectuee
     from
@@ -113,8 +105,6 @@ from
 left join saisie_actualisee
     on
         saisies.structure_id_siae = saisie_actualisee.structure_id_siae
-        and saisies.structure_siret_actualise
-        = saisie_actualisee.structure_siret_actualise
+        and saisies.structure_siret_actualise = saisie_actualisee.structure_siret_actualise
         and saisies.af_id_annexe_financiere = saisies.af_id_annexe_financiere
-        and saisies.af_numero_annexe_financiere
-        = saisie_actualisee.af_numero_annexe_financiere
+        and saisies.af_numero_annexe_financiere = saisie_actualisee.af_numero_annexe_financiere
