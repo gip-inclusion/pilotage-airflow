@@ -27,6 +27,8 @@ etp_par_salarie as (
         emi.emi_pph_id as id_salarie,
         af.af_id_annexe_financiere as id_annexe_financiere,
         structure.structure_denomination as denomination_structure,
+        structure.nom_departement_structure as departement_structure,
+        structure.nom_region_structure as region_structure,
         date_part('year',
             af.af_date_debut_effet_v2) as annee_af,
         sum(emi.emi_nb_heures_travail) as nombre_heures_travaillees,
@@ -48,6 +50,8 @@ where
 group by
     id_salarie,
     annee_af,
+    structure.nom_departement_structure,
+    structure.nom_region_structure,
     af.af_id_annexe_financiere,
     structure.structure_denomination
 )
