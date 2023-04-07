@@ -1,101 +1,92 @@
 import datetime
+import argparse
 import pandas as pd
 import numpy as np
 
-nps = {}
-today = datetime.date.today()
-today = (today.strftime("%Y-%m-%d"))
-week_list = pd.date_range(start="2022-06-06",end=today,freq='W-MON')
-
-df_nps = pd.DataFrame()
-df_nps["date"] = 0
-df_nps["tb"] = 0
-df_nps["nps"] = 0
-
-
 def get_nps(reco_dtf):
-    # recover prom and det list of reco before given date
-    promoteurs = reco_dtf[reco_dtf["Recommendation"]>=9]
-    detracteurs = reco_dtf[reco_dtf["Recommendation"]<=6]
-    nb_promoteurs = len(promoteurs)
-    nb_detracteurs = len(detracteurs)
-    nb_reco = len(reco_dtf)
+    '''
+        calculates nps from dataframe containing recommandations
+    '''
+    prom_cnt = len(reco_dtf[reco_dtf["Recommendation"] >= 9])
+    det_cnt = len(reco_dtf[reco_dtf["Recommendation"] <= 6])
+    reco_cnt = len(reco_dtf)
 
     if len(reco_dtf) > 0:
-        nps_i = (nb_promoteurs/nb_reco - nb_detracteurs/nb_reco)*100
+        nps_i = (prom_cnt / reco_cnt - det_cnt / reco_cnt) * 100
     else:
         nps_i = np.nan
 
     return nps_i
 
+def add_nps_row(nps_data_dic, date, tb, nps, users):
+    '''
+        adds a row to nps_data_dic
+    '''
+    nps_data_dic["date"].append(date)
+    nps_data_dic["nps"].append(nps)
+    nps_data_dic["tb"].append(tb)
+    nps_data_dic["users"].append(users)
+    return nps_data_dic
 
-suivi_satisfaction = "path/to/suivi_satisfaction.csv"
+# recover date of today and all weeks from 06/2022
+today = datetime.date.today()
+today = today.strftime("%Y-%m-%d")
+week_list = pd.date_range(start="2022-06-06", end=today, freq='W-MON')
+
+# init dic of nps data
+nps_data = {"date" : [],
+            "tb"   : [],
+            "nps"  : [],
+            "users": []
+            }
+
+# parse recommandation file
+parser = argparse.ArgumentParser(description = 'Recover hebdo NPS evolution from reco csv file.')
+parser.add_argument('input_filename', type=argparse.FileType('r'))
+parser.add_argument('output_filename', type=argparse.FileType('w'))
+
+args = parser.parse_args()
+suivi_satisfaction = args.input_filename
+
+# read recommandation data as pandas dataframe
 df = pd.read_csv(suivi_satisfaction)
 df = df[["Recommendation", "Nom Du Tb", "Date"]]
 df["Date"] = pd.to_datetime(df["Date"])
 
+# recover list of all tbs
 tbs = list(set(df["Nom Du Tb"]))
 
-# loop over dates
-for i in week_list:
-    # recover data for current date
-    df_cur_week = df[df["Date"]<=i]
+# loop over weeks
+for week in week_list:
+    # recover data before current date
+    df_cur_week = df[df["Date"] <= week]
 
-    # get global nps
+    # get global nps and add to data
     glob_nps = get_nps(df_cur_week)
-    glob_nps_data = {"date": i,
-                     "tb": "tous tb",
-                     "nps": glob_nps,
-                     "users" : len(df_cur_week)}
-    df_nps = df_nps.append(glob_nps_data, ignore_index=True)
+    nps_data = add_nps_row(nps_data, week, "Tous TB", glob_nps, len(df_cur_week))
 
     # get PE nps
     tb_pe = ["tb 169 - Taux de transformation PE",
-         "tb 162 - Fiches de poste en tension PE",
-         "tb 149 - Candidatures orientées PE",
-         "tb 168 - Délai d'entrée en IAE"]
+             "tb 162 - Fiches de poste en tension PE",
+             "tb 149 - Candidatures orientées PE",
+             "tb 168 - Délai d'entrée en IAE"
+            ]
     df_cur_week_pe = df_cur_week[df_cur_week["Nom Du Tb"].isin(tb_pe)]
     pe_nps = get_nps(df_cur_week_pe)
-    glob_nps_data = {"date": i,
-                     "tb": "tb PE",
-                     "nps": pe_nps,
-                     "users" : len(df_cur_week_pe)}
-    df_nps = df_nps.append(glob_nps_data, ignore_index=True)
+    nps_data = add_nps_row(nps_data, week, "tb PE", pe_nps, len(df_cur_week))
 
-    # get specific nps
+    # get specific nps for each tb
     for tb in tbs:
         # recover recommandations for given tb
         df_cur_tb = df_cur_week[df_cur_week["Nom Du Tb"] == tb]
+        df_cur_tb_cur_date = df_cur_tb[df_cur_tb["Date"] <= week]
+        tb_nps = get_nps(df_cur_tb_cur_date)
+        nps_data = add_nps_row(nps_data, week, tb, tb_nps, len(df_cur_tb_cur_date))
 
-        nb_reco = 0
-        nb_promoteurs = 0
-        nb_detracteurs = 0
-
-        df_cur_tb_cur_date = df_cur_tb[df_cur_tb["Date"]<=i]
-
-        # nb reco for cur week is nb_reco already treated + nb reco of current week
-        nb_reco = len(df_cur_tb_cur_date)
-
-        # recover prom and det list of reco before given date
-        promoteurs = df_cur_tb_cur_date[df_cur_tb_cur_date["Recommendation"]>=9]
-        detracteurs = df_cur_tb_cur_date[df_cur_tb_cur_date["Recommendation"]<=6]
-        nb_promoteurs = len(promoteurs)
-        nb_detracteurs = len(detracteurs)
-
-        if len(df_cur_tb_cur_date) > 0:
-            nps_i = (nb_promoteurs/nb_reco - nb_detracteurs/nb_reco)*100
-        else:
-            nps_i = np.nan
-
-        data = {"date": i,
-                "tb": tb,
-                "nps": nps_i,
-                "users" : len(df_cur_tb_cur_date)}
-
-        df_nps = df_nps.append(data, ignore_index=True)
+df_nps = pd.DataFrame.from_dict(nps_data)
 
 df_nps["date"] = pd.to_datetime(df_nps["date"])
 df_nps["nps"] = df_nps["nps"].astype(float)
 df_nps["users"] = df_nps["users"].astype(float)
 
-df_nps.to_csv("nps_hebdo_reco_hebdo_par_tb.csv")
+df_nps.to_csv(args.output_filename)
