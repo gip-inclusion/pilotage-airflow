@@ -1,9 +1,16 @@
-# data-gip-inclusion
+# pilotage-airflow 
 
-Ce dépôt a pour but de regrouper les scripts .sql et .py utilisés de façon très (très) ponctuelle par les data analyst du GIP de la plateforme de l'inclusion.  
-Ces derniers pourront ainsi sauvegarder, versionner et bénéficier d'une relecture de leur scripts.
+Ce dépôt a pour but de regrouper les scripts .sql et .py utilisés par les data analyst du pilotage de l'inclusion pour construire, versionner et documenter les tables de données via dbt et les deployer via airflow.
 
 ## airflow & dbt
+
+### DBT
+
+Configurez les variables d'environnement `PGDATABASE`, `PGHOST` , `PGPASSWORD`, `PGPORT` pour pouvoir utiliser dbt.
+
+Pour vérifier que dbt est bien configuré, se rendre dans le répertoire `airflow_src` et lancer `dbt debug`.
+
+### Airflow
 
 Mettez en place votre environnement virtuel, base de données Postgres pour Airflow et fichier ``.env``.
 
