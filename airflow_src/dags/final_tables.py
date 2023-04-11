@@ -1,9 +1,8 @@
 import logging
 import os
 
-import pendulum
-
 import airflow
+import pendulum
 from airflow.decorators import task
 from airflow.operators import bash, empty
 from airflow.operators.python import get_current_context
@@ -12,8 +11,8 @@ from dags.common import slack
 logger = logging.getLogger(__name__)
 
 default_args = {
-    'cwd': os.getenv("AIRFLOW_BASE_DIR"),
-    'on_failure_callback': slack.task_fail_alert,
+    "cwd": os.getenv("AIRFLOW_BASE_DIR"),
+    "on_failure_callback": slack.task_fail_alert,
 }
 
 
@@ -36,6 +35,11 @@ with airflow.DAG(
         bash_command=f"dbt debug",
     )
 
+    dbt_seed = bash.BashOperator(
+        task_id="dbt_seed",
+        bash_command=f"dbt seed",
+    )
+
     dbt_run = bash.BashOperator(
         task_id="dbt_run",
         bash_command=f"dbt run",
@@ -48,4 +52,4 @@ with airflow.DAG(
 
     end_task = end()
 
-    (start >> dbt_debug >> dbt_run >> dbt_clean >> end_task)
+    (start >> dbt_debug >> dbt_seed >> dbt_run >> dbt_clean >> end_task)

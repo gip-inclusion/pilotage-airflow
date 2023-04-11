@@ -23,3 +23,11 @@ models:
   dbt_pilotage:
     legacy:
       +materialized: table
+
+
+seeds:
+  dbt_pilotage:
+    sa_ept:
+      +column_types:
+        departement: varchar(3)
+        code_comm: varchar(25)
