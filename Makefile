@@ -5,9 +5,12 @@
 .DELETE_ON_ERROR:
 
 VIRTUAL_ENV ?= .venv
+
+DUMP_DIR ?= .latest.dump
+
 export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
-.PHONY: venv clean compile-deps dbt_clean fix_sql
+.PHONY: venv clean compile-deps dbt_clean fix_sql load_dump
 
 $(VIRTUAL_ENV): requirements-dev.txt
 	$(PYTHON_VERSION) -m venv $@
@@ -39,3 +42,11 @@ quality: clean
 
 start:
 	AIRFLOW_BASE_DIR=$(shell pwd)/airflow_src ./airflow_src/entrypoint.sh
+
+load_dump:
+	dropdb ${PGDATABASE} || true
+	createdb ${PGDATABASE}
+	rm -rf $(DUMP_DIR)
+	PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
+		   pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 -f $(DUMP_DIR)
+	pg_restore --format=directory --clean --jobs=4 --verbose --no-owner --no-acl -d ${PGDATABASE} $(DUMP_DIR) || true

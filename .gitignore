@@ -6,3 +6,4 @@ logs/
 
 .env
 airflow/
+.latest.dump
