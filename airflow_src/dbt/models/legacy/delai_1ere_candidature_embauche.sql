@@ -26,8 +26,8 @@ with date_1ere_candidature as (
             coalesce(date_embauche, '2099-01-01')
         )                           as date_1ere_embauche
     from
-        candidatures as c
-    inner join candidats on c.id_candidat = candidats.id
+        {{ source('emplois', 'candidatures') }} as c
+    inner join {{ source('emplois', 'candidats') }} as candidats on c.id_candidat = candidats.id
     where
         c.origine = 'Prescripteur habilité' /* Modification du filtre initialement fait par Soumia, qui n'était pas bon */
         and c."origine_détaillée" = 'Prescripteur habilité PE'
@@ -47,7 +47,7 @@ prescripteurs as (
     select
         id,
         "nom_département" as "nom_département_prescripteur" /* Ajout du département du prescripteur pour les TBs privés */
-    from organisations
+    from {{ source('emplois', 'organisations') }}
 )
 
 select

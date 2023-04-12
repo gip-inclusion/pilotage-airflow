@@ -18,7 +18,7 @@ Un filtre est appliqué pour récupérer un historique de 2 ans en plus de l'ann
 with constantes as (
     select max(date_part('year', date_saisie)) as annee_en_cours
     from
-        saisies_mensuelles_iae
+        {{ ref('saisies_mensuelles_iae') }}
 )
 
 select
@@ -48,7 +48,7 @@ select
 from
     constantes
 cross join
-    saisies_mensuelles_iae
+    {{ ref('saisies_mensuelles_iae') }}
 where
     nombre_heures_travaillees > 0
     and date_part('year', date_saisie) >= annee_en_cours - 2

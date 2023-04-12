@@ -28,17 +28,17 @@ with candidatures_p as (
         injection_ai,
         "état"
     from
-        candidatures
+        {{ source('emplois', 'candidatures') }}
 ),
 
 org_prescripteur as ( /* On récupère l'id et le dept des organismes prescripteurs afin de filtrer selon le département de l'agence PE associée */
     select
-        org.id                  as id_org,
-        org.siret               as siret_org_prescripteur,
-        org."nom_département"   as dept_org,  /*bien mettre nom département et pas département */
-        org."région"            as "région_org"
+        org.id                as id_org,
+        org.siret             as siret_org_prescripteur,
+        org."nom_département" as dept_org,  /*bien mettre nom département et pas département */
+        org."région"          as "région_org"
     from
-        organisations           as org
+        {{ source('emplois', 'organisations') }} as org
 ),
 
 bassin_emploi as ( /* On récupère les infos locales à partir des données infra départementales */
@@ -52,7 +52,7 @@ bassin_emploi as ( /* On récupère les infos locales à partir des données inf
         be.nom_arrondissement,
         be.nom_zone_emploi_2020 as bassin_d_emploi, /* zone d'emploi = bassin d'emploi */
         s.id                    as id_structure /* on récupère que l'id des structures de la table structure */
-    from sa_zones_infradepartementales as be
+    from {{ source('oneshot', 'sa_zones_infradepartementales') }} as be
     left join structures as s
         on s.ville = be.libelle_commune and s."nom_département" = be.nom_departement /* il faut rajouter le département car la France n'est pas originale en terme de noms de ville */
 ),
@@ -63,7 +63,7 @@ adherents_coorace as (
         ria."Réseau IAE" as reseau_coorace,
         s.id             as id_structure,
         (ria."SIRET")    as siret
-    from reseau_iae_adherents as ria
+    from {{ source('oneshot', 'reseau_iae_adherents') }} as ria
     inner join structures as s
         on s.siret = ria."SIRET"
     where ria."Réseau IAE" = 'Coorace'
@@ -74,7 +74,7 @@ adherents_fei as (
         ria."Réseau IAE" as reseau_fei,
         s.id             as id_structure,
         (ria."SIRET")    as siret
-    from reseau_iae_adherents as ria
+    from {{ source('oneshot', 'reseau_iae_adherents') }} as ria
     inner join structures as s
         on s.siret = ria."SIRET"
     where ria."Réseau IAE" = 'FEI'
@@ -85,7 +85,7 @@ adherents_emmaus as (
         ria."Réseau IAE" as reseau_emmaus,
         s.id             as id_structure,
         (ria."SIRET")    as siret
-    from reseau_iae_adherents as ria
+    from {{ source('oneshot', 'reseau_iae_adherents') }} as ria
     inner join structures as s
         on s.siret = ria."SIRET"
     where ria."Réseau IAE" = 'Emmaus'
@@ -96,7 +96,7 @@ adherents_unai as (
         ria."Réseau IAE" as reseau_unai,
         s.id             as id_structure,
         (ria."SIRET")    as siret
-    from reseau_iae_adherents as ria
+    from {{ source('oneshot', 'reseau_iae_adherents') }} as ria
     inner join structures as s
         on s.siret = ria."SIRET"
     where ria."Réseau IAE" = 'Unai'
@@ -107,7 +107,7 @@ adherents_cocagne as (
         ria."Réseau IAE" as reseau_cocagne,
         s.id             as id_structure,
         (ria."SIRET")    as siret
-    from reseau_iae_adherents as ria
+    from {{ source('oneshot', 'reseau_iae_adherents') }} as ria
     inner join structures as s
         on s.siret = ria."SIRET"
     where ria."Réseau IAE" = 'Cocagne'

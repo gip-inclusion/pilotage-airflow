@@ -7,7 +7,7 @@ with premiere_candidature as (
         id_candidat,
         min(date_candidature) as min_date_candidature
     from
-        candidatures
+        {{ source('emplois', 'candidatures') }}
     group by
         id_candidat
 )
@@ -19,7 +19,7 @@ select distinct
     min(date_embauche)                           as min_date_embauche,
     min(date_embauche) - pc.min_date_candidature as delai_recrutement_jours
 from
-    candidatures as c
+    {{ source('emplois', 'candidatures') }} as c
 left join
     premiere_candidature as pc
     on

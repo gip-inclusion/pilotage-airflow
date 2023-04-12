@@ -29,8 +29,8 @@ select
     coalesce(nombre_etp_consommes_reels_mensuels, 0) as nombre_etp_consommes_reels_mensuels
 from
     /*table créée en django */
-    suivi_complet_etps_conventionnes as scec
-left join suivi_etp_realises_par_structure as serps
+    {{ source('oneshot', 'suivi_complet_etps_conventionnes') }} as scec
+left join {{ ref('suivi_etp_realises_par_structure') }} as serps
     on
         serps.id_annexe_financiere = scec.id_annexe_financiere
         and serps.annee = scec."année"

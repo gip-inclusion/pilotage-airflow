@@ -32,7 +32,7 @@ with candidats_p as (
             else 'non'
         end                                   as diagnostic_valide
     from
-        public.candidats as cdd /* cdd pour CanDiDats */
+        {{ source('emplois', 'candidats') }} as cdd /* cdd pour CanDiDats */
     where
         type_auteur_diagnostic = ('Prescripteur')
 ),
@@ -44,7 +44,7 @@ prescripteurs as (
         /* Ajout du département du prescripteur pour les TBs privés */
         "région"          as "nom_région_prescripteur"
     from
-        organisations
+        {{ source('emplois', 'organisations') }}
 )
 
 select

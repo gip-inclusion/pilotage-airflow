@@ -11,7 +11,7 @@ with constantes as (
         (max(emi.emi_sme_annee) - 2) as annee_en_cours_2,
         max(emi.emi_sme_annee)       as annee_en_cours
     from
-        "fluxIAE_EtatMensuelIndiv" as emi
+        {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
 ),
 
 salarie_v0 as (
@@ -31,7 +31,7 @@ salarie_v0 as (
             else trim(substr(trim(salarie.salarie_codeinseecom), 1, char_length(salarie.salarie_codeinseecom) - 3))
         end as code_departement_salarie
     from
-        "fluxIAE_Salarie" as salarie
+        {{ source('fluxIAE', 'fluxIAE_Salarie') }} as salarie
 ),
 
 salarie as (
@@ -55,7 +55,7 @@ salarie as (
     cross join
         salarie_v0 as salarie
     left join
-        departements as departement_com_salarie
+        {{ source('emplois', 'departements') }} as departement_com_salarie
         on
             code_departement_salarie = departement_com_salarie.code_departement
 ),
@@ -67,7 +67,7 @@ coordonnees_gps as (
         longitude
     from
         /* TODO @defajait DROP ASAP - use codes_insee_vs_codes_postaux instead */
-        commune_gps
+        {{ source('oneshot', 'commune_gps') }}
 )
 
 select distinct
@@ -145,15 +145,17 @@ select distinct
 from
     constantes
 cross join
-    "fluxIAE_EtatMensuelIndiv" as emi
-left join "fluxIAE_ContratMission" as ctr_mis
+    {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
+left join
+    {{ source('fluxIAE', 'fluxIAE_ContratMission') }} as ctr_mis
     on
         emi.emi_ctr_id = ctr_mis.contrat_id_ctr and emi.emi_pph_id = ctr_mis.contrat_id_pph
         and emi.emi_sme_annee >= annee_en_cours_2
-left join public.codes_rome as code_rome
+left join
+    {{ source('emplois', 'codes_rome') }} as code_rome
     on code_rome.code_rome = ctr_mis.contrat_code_rome
 left join
-    "fluxIAE_RefNiveauFormation" as niv_formation
+    {{ source('fluxIAE', 'fluxIAE_RefNiveauFormation') }} as niv_formation
     on ctr_mis."contrat_niveau_de_formation_id" = niv_formation.rnf_id
 left join salarie
     on
@@ -161,22 +163,26 @@ left join salarie
         and emi.emi_sme_annee >= annee_en_cours_2
 left join coordonnees_gps as commune_salarie
     on salarie.salarie_codeinseecom = commune_salarie.code_insee
-left join "fluxIAE_RefMotifSort" as sortie
+left join
+    {{ source('fluxIAE', 'fluxIAE_RefMotifSort') }} as sortie
     on emi.emi_motif_sortie_id = sortie.rms_id
-left join "fluxIAE_RefCategorieSort" as categoriesort
+left join
+    {{ source('fluxIAE', 'fluxIAE_RefCategorieSort') }} as categoriesort
     on categoriesort.rcs_id = sortie.rcs_id
-left join "fluxIAE_AnnexeFinanciere_v2" as af
+left join
+    {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
     on
         emi.emi_afi_id = af.af_id_annexe_financiere and af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE', 'CLOTURE')
         and emi.emi_sme_annee >= annee_en_cours_2
         and af_mesure_dispositif_code not like '%FDI%'
-left join "fluxIAE_Structure_v2" as structure
+left join
+    {{ ref('fluxIAE_Structure_v2') }} as structure
     on af.af_id_structure = structure.structure_id_siae
 left join coordonnees_gps as commune_structure
     on structure.structure_adresse_admin_code_insee = commune_structure.code_insee
-left join ref_mesure_dispositif_asp as ref_asp
+left join {{ ref('ref_mesure_dispositif_asp') }} as ref_asp
     on af.af_mesure_dispositif_code = ref_asp.af_mesure_dispositif_code
 /* On récupère le découpage établissement public territorial */
-left join sa_ept as ept on ept.code_comm = structure.structure_adresse_admin_code_insee
-left join sa_zones_infradepartementales as infra on infra.code_commune = structure.structure_adresse_admin_code_insee
+left join {{ ref('sa_ept') }} as ept on ept.code_comm = structure.structure_adresse_admin_code_insee
+left join {{ source('oneshot', 'sa_zones_infradepartementales') }} as infra on infra.code_commune = structure.structure_adresse_admin_code_insee
 where emi.emi_sme_annee >= annee_en_cours_2

@@ -22,8 +22,8 @@ structure_af as (
         s.code_departement,
         max(af.af_date_debut_effet_v2) as date_debut_af_plus_recente
     from
-        "fluxIAE_AnnexeFinanciere_v2" as af
-    left join "fluxIAE_Structure_v2" as s
+        {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
+    left join {{ ref('fluxIAE_Structure_v2') }} as s
         on af.af_id_structure = s.structure_id_siae
     where
         af_mesure_dispositif_code not like '%MP%' and af_mesure_dispositif_code not like '%FDI%'

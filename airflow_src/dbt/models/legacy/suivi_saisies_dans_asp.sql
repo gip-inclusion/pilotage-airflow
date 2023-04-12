@@ -38,8 +38,8 @@ with saisies as (
             ), 'MM/YYYY'
         ) as dernier_mois_saisi_asp
     from
-        "fluxIAE_EtatMensuelIndiv" as emi
-    left join "fluxIAE_AnnexeFinanciere_v2" as af
+        {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
+    left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
         on
             emi.emi_afi_id = af.af_id_annexe_financiere
             /* Ne prendre en compte que les structures qui ont une annexe financière
@@ -52,7 +52,7 @@ with saisies as (
             and af.af_date_fin_effet_v2 >= current_date - interval '36 months'
             /* On prend les déclarations mensuelles de l'année en cours */
             and emi.emi_sme_annee >= (date_part('year', current_date) - 1)
-    left join "fluxIAE_Structure_v2" as structure
+    left join {{ ref('fluxIAE_Structure_v2') }} as structure
         on af.af_id_structure = structure.structure_id_siae
     group by
         af.type_siae,

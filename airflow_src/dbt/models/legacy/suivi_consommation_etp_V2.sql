@@ -6,7 +6,7 @@ with mois_saisis as (
         -- On prend le mois maximal saisi +1 - le mois minimal saisi pour avoir le nombre de mois saisis
         (max(date_part('month', date_saisie)) + 1) - min(date_part('month', date_saisie)) as nombre_mois_saisis
     from
-        suivi_etp_realises_v2
+        {{ ref('suivi_etp_realises_v2') }}
     group by
         id_annexe_financiere,
         af_numero_annexe_financiere
@@ -26,7 +26,7 @@ calcul_etp as (
         /* les deux conditions si dessous sont identiques, sauf que pour l'une on considère les ETPs mensuels et l'autre les annuels */
         "effectif_annuel_conventionné",
         etp.duree_annexe,
-        -- Ici on utilise le nombre de mois saisis éviter d'écrire une formule à rallonge 
+        -- Ici on utilise le nombre de mois saisis éviter d'écrire une formule à rallonge
         etp.type_structure,
         etp.structure_denomination,
         etp.code_departement_af,
@@ -103,16 +103,16 @@ calcul_etp as (
                 ) / nombre_mois_saisis
         end                                      as moyenne_nb_etp_annuels_depuis_debut_annee
     from
-        suivi_etp_conventionnes_v2 as etp
+        {{ ref('suivi_etp_conventionnes_v2') }} as etp
     left join
-        suivi_etp_realises_v2 as etp_c on
+        {{ ref('suivi_etp_realises_v2') }} as etp_c on
         etp.id_annexe_financiere = etp_c.id_annexe_financiere
         and etp.af_numero_convention = etp_c.af_numero_convention
         and etp.af_numero_annexe_financiere = etp_c.af_numero_annexe_financiere
         and date_part('year', etp_c.date_saisie) = annee_af
     /* bien penser à joindre sur l'année pour éviter que l'on se retrouve avec années de conventionnement qui correspondent pas */
     left join
-        suivi_saisies_dans_asp as sasp on
+        {{ ref('suivi_saisies_dans_asp') }} as sasp on
         sasp.af_id_annexe_financiere = etp.id_annexe_financiere
     left join
         mois_saisis as ms on

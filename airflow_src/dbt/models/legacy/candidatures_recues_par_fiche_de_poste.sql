@@ -45,16 +45,12 @@ select
     (current_date - fdp."date_création") as delai_mise_en_ligne,
     (date_embauche - date_candidature)   as delai_embauche
 from
-    candidatures as c
-left join
-    organisations as o
+    {{ source('emplois', 'candidatures') }} as c
+left join {{ source('emplois', 'organisations') }} as o
     on o.id = c.id_org_prescripteur
-inner join
-    fiches_de_poste_par_candidature as fdppc
+inner join {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdppc
     on c.id = fdppc.id_candidature
-inner join
-    fiches_de_poste as fdp
+inner join {{ source('emplois', 'fiches_de_poste') }} as fdp
     on fdp.id = fdppc.id_fiche_de_poste
-inner join
-    code_rome_domaine_professionnel as crdp
+inner join {{ source('oneshot', 'code_rome_domaine_professionnel') }} as crdp
     on fdp.code_rome = crdp.code_rome

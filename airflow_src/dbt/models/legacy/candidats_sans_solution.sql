@@ -14,7 +14,7 @@ with candidature as (
         (id_candidat)                   as identifiant_candidat,
         count(distinct candidatures.id) as nombre_candidature
     from
-        candidatures
+        {{ source('emplois', 'candidatures') }}
     left join
         candidats on id_candidat = public.candidats.id
     where
@@ -35,8 +35,7 @@ candidats_sans_candidatures as (
     select distinct
         identifiant_candidat,
         date_inscription
-    from
-        candidature
+    from candidature
     where
         nombre_candidature = 0
 ),
@@ -51,8 +50,7 @@ candidats_avc_candidature_acceptee as (
                 else 0
             end
         ) as nb_candidature_acceptee
-    from
-        candidature
+    from candidature
     group by
         identifiant_candidat,
         date_inscription
@@ -80,7 +78,8 @@ b as (
     select
         date_inscription,
         count(distinct id) as nombre_candidats
-    from candidats
+    from
+        {{ source('emplois', 'candidats') }}
     where candidats.injection_ai = 0
     group by date_inscription
 )

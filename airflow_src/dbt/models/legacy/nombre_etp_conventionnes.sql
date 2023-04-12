@@ -11,7 +11,7 @@ L'objectif est de suivre par année l'évolution du nombre d'ETP conventionnés 
 with constantes as (
     select max(date_part('year', af_date_debut_effet_v2)) as annee_en_cours
     from
-        "fluxIAE_AnnexeFinanciere_v2"
+        {{ ref('fluxIAE_AnnexeFinanciere_v2') }}
 )
 
 select distinct
@@ -29,9 +29,9 @@ select distinct
 from
     constantes
 cross join
-    "fluxIAE_AnnexeFinanciere_v2" as af
+    {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
 left join
-    "fluxIAE_Structure_v2" as s
+    {{ ref('fluxIAE_Structure_v2') }} as s
     on af.af_id_structure = s.structure_id_siae
 where
     af.af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE')

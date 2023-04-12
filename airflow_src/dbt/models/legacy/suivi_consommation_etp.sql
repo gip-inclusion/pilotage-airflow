@@ -35,17 +35,17 @@ with CALCUL_ETP as (
             when (max(EMI.EMI_SME_ANNEE) = date_part('year', current_date) - 1) then sum(EMI.EMI_NB_HEURES_TRAVAIL)
             else sum(EMI.EMI_NB_HEURES_TRAVAIL) filter (where EMI.EMI_SME_ANNEE = (date_part('year', current_date)))
         end as NB_HEURES_TRAVAILLEES_DEPUIS_DEBUT_ANNEE
-    from SUIVI_SAISIES_DANS_ASP as SAISIE_ASP
-    left join "fluxIAE_EtatMensuelIndiv" as EMI
+    from {{ ref('suivi_saisies_dans_asp') }} as SAISIE_ASP
+    left join {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as EMI
         on SAISIE_ASP.AF_ID_ANNEXE_FINANCIERE = EMI_AFI_ID
-    left join "fluxIAE_AnnexeFinanciere_v2" as AF
+    left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as AF
         on
             SAISIE_ASP.AF_ID_ANNEXE_FINANCIERE = AF.AF_ID_ANNEXE_FINANCIERE
             and AF_ETAT_ANNEXE_FINANCIERE_CODE in ('VALIDE'/*, 'SAISI'*/)
             /*On prend les déclarations mensuelles de l'année en cours + l'année n-1 */
             and EMI.EMI_SME_ANNEE >= (date_part('year', current_date) - 1)
             and date_part('year', to_date(AF.AF_DATE_DEBUT_EFFET, 'dd/mm/yyyy')) >= (date_part('year', current_date) - 1)
-    left join "fluxIAE_Structure_v2" as STRUCTURE
+    left join {{ ref('fluxIAE_Structure_v2') }} as STRUCTURE
         on AF.AF_ID_STRUCTURE = STRUCTURE.STRUCTURE_ID_SIAE
     group by
         DERNIER_MOIS_SAISI_ASP,

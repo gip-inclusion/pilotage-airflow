@@ -1,6 +1,5 @@
 with autopr_candidates as (
     select distinct
-
         cd."état",
         c.age,
         c."total_critères_niveau_1",
@@ -55,8 +54,8 @@ with autopr_candidates as (
             else 'Oui'
         end                                  as reprise_de_stock_ai_candidats
     from
-        candidatures as cd
-    left join candidats as c
+        {{ source('emplois', 'candidatures') }} as cd
+    left join {{ source('emplois', 'candidats') }} as c
         on
             cd.id_candidat = c.id
 ),
@@ -65,8 +64,8 @@ all_candidates as (
     select
         c2.id,
         count(c2.id) as total_candidats
-    from candidats as c2
-    left join candidatures as cd2
+    from {{ source('emplois', 'candidats') }} as c2
+    left join {{ source('emplois', 'candidatures') }} as cd2
         on
             c2.id = cd2.id_candidat
     where cd2."état" = 'Candidature acceptée'

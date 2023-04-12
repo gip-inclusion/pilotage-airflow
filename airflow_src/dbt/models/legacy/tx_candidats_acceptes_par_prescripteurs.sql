@@ -17,7 +17,7 @@ select
     )                           as "nombre_candidatures_acceptées",
     count(distinct id)          as nombre_candidatures
 from
-    candidatures
+    {{ source('emplois', 'candidatures') }}
 where
     lower("origine_détaillée") like 'prescripteur%'
 group by

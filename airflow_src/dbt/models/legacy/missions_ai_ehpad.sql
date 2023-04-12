@@ -37,7 +37,7 @@ with missions as (
                 then 'AIPH'
             else 'AUTRE'
         end as code_operation
-    from "fluxIAE_Missions"
+    from {{ source('fluxIAE', 'fluxIAE_Missions') }}
 ),
 
 commune_structure as (
@@ -47,7 +47,7 @@ commune_structure as (
         longitude
     from
         /* TODO @defajait DROP ASAP - use codes_insee_vs_codes_postaux instead */
-        commune_gps
+        {{ source('oneshot', 'commune_gps') }}
 )
 
 select
@@ -97,18 +97,18 @@ select
 from
     /* TODO use lateral joins instead maybe */
     missions as m
-left outer join "fluxIAE_MissionsEtatMensuelIndiv" as mei
+left outer join {{ source('fluxIAE', 'fluxIAE_MissionsEtatMensuelIndiv') }} as mei
     on m.mission_id_mis = mei.mei_mis_id
-left outer join "fluxIAE_EtatMensuelIndiv" as emi
+left outer join {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
     on mei.mei_dsm_id = emi.emi_dsm_id
-left outer join "fluxIAE_ContratMission" as cm
+left outer join {{ source('fluxIAE', 'fluxIAE_ContratMission') }} as cm
     on m.mission_id_ctr = cm.contrat_id_ctr
-left outer join "fluxIAE_Structure_v2" as s
+left outer join {{ ref('fluxIAE_Structure_v2') }} as s
     on cm.contrat_id_structure = s.structure_id_siae
 left outer join commune_structure
     on
         trim(cast(s.structure_adresse_admin_code_insee as varchar))
         = trim(cast(commune_structure.code_insee as varchar))
-left outer join "codes_rome" as r
+left outer join {{ source('emplois', 'codes_rome') }} as r
     on m.mission_code_rome = r.code_rome
 where m.code_operation in ('AIEHPAD', 'AIPH', 'AIRESTO', 'ETTIRESTO')

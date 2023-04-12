@@ -20,7 +20,7 @@ with z_candidatures as (
         c.nom_org_prescripteur,
         count(c."état") as nombre_de_candidatures
     from
-        public.candidatures as c
+        {{ source('emplois', 'candidatures') }} as c
     where
         type_structure in (
             'AI', 'ACI', 'EI', 'EITI', 'ETTI'

@@ -6,9 +6,9 @@
 */
 
 with mois_tmp as (
-    select distinct make_date (cast (emi . emi_sme_annee as integer), cast (emi . emi_sme_mois as integer), 01) as premier_jour
+    select distinct make_date(cast(emi.emi_sme_annee as integer), cast(emi.emi_sme_mois as integer), 01) as premier_jour
     from
-        "fluxIAE_EtatMensuelIndiv" as emi
+        {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }}
 ),
 
 mois as (
@@ -50,7 +50,7 @@ contrats as (
             else to_date(ctra.contrat_date_fin_contrat, 'dd/mm/yyyy')
         end                                               as date_fin_contrat
     from
-        "fluxIAE_ContratMission" as ctra
+        {{ source('fluxIAE', 'fluxIAE_ContratMission') }} as ctra
 ),
 
 aci_ei_contrats_mois as (
@@ -79,7 +79,7 @@ ai_etti_contrats_mois as (
         identifiant_salarie,
         date_saisie as date_mois
     from
-        saisies_mensuelles_iae
+        {{ ref('saisies_mensuelles_iae') }}
     where nombre_heures_travaillees > 0 and type_siae in ('AI', 'ETTI')
 ),
 

@@ -37,7 +37,7 @@ select
     sum(nombre_heures_travaillees)      as nombre_heures_travaillees,
     date_part('year', date_saisie)      as annee_saisie
 from
-    saisies_mensuelles_iae
+    {{ ref('saisies_mensuelles_iae') }}
 where
     nombre_heures_travaillees > 0
     and date_part('year', date_saisie) >= (date_part('year', current_date) - 2)

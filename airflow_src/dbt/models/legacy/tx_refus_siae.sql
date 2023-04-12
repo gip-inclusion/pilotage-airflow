@@ -5,7 +5,7 @@ with etp_conventionnes as (
         nom_departement_af,
         nom_region_af,
         sum("nombre_etp_conventionnés") as nombre_etp_conventionnes
-    from nombre_etp_conventionnes
+    from {{ ref('nombre_etp_conventionnes') }}
     where annee_af = date_part('year', current_date)
     group by
         type_siae,
@@ -56,14 +56,14 @@ select
     )                                              as nb_candidatures_refusees_non_emises_par_employeur_siae,
     count(distinct id_structure)                   as nombre_siae
 from
-    candidatures_echelle_locale
+    {{ ref('candidatures_echelle_locale') }}
 left join
-    fiches_de_poste_par_candidature as fdpc
+    {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdpc
     on candidatures_echelle_locale.id = fdpc.id_candidature
 left join
-    fiches_de_poste as fdp on fdpc.id_fiche_de_poste = fdp.id
+    {{ source('emplois', 'fiches_de_poste') }} as fdp on fdpc.id_fiche_de_poste = fdp.id
 left join
-    structures on structures.id = candidatures_echelle_locale.id_structure
+    {{ source('emplois', 'structures') }} as structures on structures.id = candidatures_echelle_locale.id_structure
 left join
     etp_conventionnes
     on

@@ -45,8 +45,9 @@ with autopr_all as (
             else 'Oui'
         end                                    as reprise_de_stock_ai_candidatures
     from
-        candidatures as cd
-    left join candidats as c
+        {{ source('emplois', 'candidatures') }} as cd
+    left join
+        {{ source('emplois', 'candidats') }} as c
         on
             cd.id_candidat = c.id
 )
@@ -84,5 +85,6 @@ select
     reprise_de_stock_ai_candidatures
 from
     autopr_all
-left join structures as s
+left join
+    {{ source('emplois', 'structures') }} as s
     on autopr_all.id_structure = s.id

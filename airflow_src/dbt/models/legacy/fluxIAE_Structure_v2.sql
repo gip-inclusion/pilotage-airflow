@@ -16,8 +16,9 @@ with structure_asp as (
             else trim(substr(trim(structure.structure_adresse_admin_code_insee), 1, char_length(structure.structure_adresse_admin_code_insee) - 3))
         end as code_departement
     from
-        "fluxIAE_Structure" as structure
+        {{ source('fluxIAE', 'fluxIAE_Structure') }} as structure
 )
+
 
 select
     structure.*,
@@ -25,5 +26,5 @@ select
     dept_structure.nom_region      as nom_region_structure
 from
     structure_asp as structure
-left join "departements" as dept_structure
+left join {{ source('emplois', 'departements') }} as dept_structure
     on dept_structure.code_departement = structure.code_departement

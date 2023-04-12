@@ -9,7 +9,7 @@ with siae_autopr as (
             distinct id_structure
         )                                  as total_siae_autopr
     from
-        suivi_auto_prescription
+        {{ ref('suivi_auto_prescription') }}
     where
         type_de_candidature = 'Autoprescription' and active = 1
     group by
@@ -31,7 +31,7 @@ siae_all as (
             distinct id_structure
         )                                  as total_siae_all
     from
-        suivi_auto_prescription
+        {{ ref('suivi_auto_prescription') }}
     where
         active = 1
     group by

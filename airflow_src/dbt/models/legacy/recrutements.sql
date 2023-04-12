@@ -26,7 +26,7 @@ select
     min(date_recrutement)               as min_date_recrutement,
     date_part('year', date_recrutement) as annee_recrutement
 from
-    saisies_mensuelles_iae
+    {{ ref('saisies_mensuelles_iae') }}
 where date_part('year', date_recrutement) >= (date_part('year', current_date) - 2)
 group by
     annee_recrutement,

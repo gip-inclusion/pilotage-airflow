@@ -6,7 +6,7 @@ with "visiteurs_utilisateurs_privés" as (
         "nom_département"  as nom_departement,
         count(utilisateur) as nombre_utilisateurs
     from
-        suivi_utilisateurs_tb_prives
+        {{ source('oneshot', 'suivi_utilisateurs_tb_prives') }}
     group by
         utilisateur,
         numero_departement,
@@ -32,7 +32,7 @@ visiteurs_prives as (
             when svtp."Tableau de bord" = 'tb 118 - Données IAE CD' then 'Conseil départemental'
         end                      as utilisateur
     from
-        suivi_visiteurs_tb_prives as svtp /* Ancienne table créée par Victor qui débute en 2022 et s'arrête à la semaine du 12/12/22 */
+        {{ source('oneshot', 'suivi_visiteurs_tb_prives') }} as svtp /* Ancienne table créée par Victor qui débute en 2022 et s'arrête à la semaine du 12/12/22 */
 ),
 
 visiteurs_prives_0 as (
@@ -53,7 +53,7 @@ visiteurs_prives_0 as (
             when svtp0."Tableau de bord" = 'tb 118 - Données IAE CD' then 'Conseil départemental'
         end                                      as utilisateur
     from
-        suivi_visiteurs_tb_prives_v1 as svtp0 /* Nouvelle table créée par Victor qui démarre le 01/01/22 */
+        {{ source('matomo', 'suivi_visiteurs_tb_prives_v1') }} as svtp0 /* Nouvelle table créée par Victor qui démarre le 01/01/22 */
 ),
 
 /* Tables finales utilisées pour l'union all */

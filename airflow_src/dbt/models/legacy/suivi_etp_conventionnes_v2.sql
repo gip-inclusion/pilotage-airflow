@@ -1,7 +1,7 @@
 with constantes as (
     select max(date_part('year', af_date_debut_effet_v2)) as annee_en_cours
     from
-        "fluxIAE_AnnexeFinanciere_v2"
+        {{ ref('fluxIAE_AnnexeFinanciere_v2') }}
 )
 
 select distinct
@@ -48,12 +48,12 @@ select distinct
 from
     constantes
 cross join
-    "fluxIAE_AnnexeFinanciere_v2" as af
+    {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
 left join
-    "fluxIAE_Structure_v2" as structure
+    {{ ref('fluxIAE_Structure_v2') }} as structure
     on
         af.af_id_structure = structure.structure_id_siae
-left join ref_mesure_dispositif_asp as ref_asp
+left join {{ ref('ref_mesure_dispositif_asp') }} as ref_asp
     on
         af.af_mesure_dispositif_code = ref_asp.af_mesure_dispositif_code
 where

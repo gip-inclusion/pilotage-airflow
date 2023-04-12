@@ -21,8 +21,8 @@ select distinct
     end                                        as taux_de_realisation,
     max(date_part('month', etp_c.date_saisie)) as mois_max
 from
-    suivi_etp_conventionnes_v2 as etp
-left join suivi_etp_realises_v2 as etp_c
+    {{ ref('suivi_etp_conventionnes_v2') }} as etp
+left join {{ ref('suivi_etp_realises_v2') }} as etp_c
     on
         etp.id_annexe_financiere = etp_c.id_annexe_financiere
         and

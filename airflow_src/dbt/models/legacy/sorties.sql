@@ -37,7 +37,7 @@ select
     count(distinct identifiant_salarie) as nombre_sorties,
     date_part('year', date_sortie)      as annee_sortie
 from
-    saisies_mensuelles_iae
+    {{ ref('saisies_mensuelles_iae') }}
 where
     date_part('year', date_sortie) >= (date_part('year', current_date) - 2)
     /* Prendre en compte les salariés qui ont travaillé au moins une heure dans la structure */

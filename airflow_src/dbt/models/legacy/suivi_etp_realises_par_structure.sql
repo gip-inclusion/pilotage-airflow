@@ -25,7 +25,7 @@ select
     sum(nombre_etp_consommes_reels_annuels)  as nombre_etp_consommes_reels_annuels,
     sum(nombre_etp_consommes_reels_mensuels) as nombre_etp_consommes_reels_mensuels
 from
-    suivi_etp_realises_v2 as serv
+    {{ ref('suivi_etp_realises_v2') }} as serv
 group by
     serv.id_annexe_financiere,
     serv.identifiant_annexe_fin,

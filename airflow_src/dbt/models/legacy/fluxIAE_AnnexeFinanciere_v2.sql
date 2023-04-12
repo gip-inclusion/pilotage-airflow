@@ -26,7 +26,7 @@ with "AnnexeFinanciere_v1" as (
             af.af_date_fin_effet, 'dd/mm/yyyy'
         )  as af_date_fin_effet_v2
     from
-        "fluxIAE_AnnexeFinanciere" as af
+        {{ source('fluxIAE', 'fluxIAE_AnnexeFinanciere') }} as af
 ),
 
 "AnnexeFinanciere_v2" as (
@@ -96,7 +96,7 @@ select
     dept_af.nom_region               as nom_region_af
 from
     "AnnexeFinanciere_v4" as af
-left join "fluxIAE_Structure_v2" as structure
+left join {{ ref('fluxIAE_Structure_v2') }} as structure
     on af.af_id_structure = structure.structure_id_siae
 left join departements as dept_af
     on dept_af.code_departement = af.num_dep_af

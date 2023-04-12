@@ -29,16 +29,12 @@ with fdp_structures as (
         fdppc.id_candidature,
         fdp.siret_employeur,
         (current_date - fdp."date_création") as delai_mise_en_ligne
-    from
-        fiches_de_poste as fdp
-    left join
-        fiches_de_poste_par_candidature as fdppc
+    from {{ source('emplois', 'fiches_de_poste') }} as fdp
+    left join {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdppc
         on fdp.id = fdppc.id_fiche_de_poste
-    left join
-        code_rome_domaine_professionnel as crdp
+    left join {{ source('oneshot', 'code_rome_domaine_professionnel') }} as crdp
         on fdp.code_rome = crdp.code_rome
-    left join
-        structures as s
+    left join {{ source('emplois', 'structures') }} as s
         on s.id = fdp.id_employeur
 ),
 
@@ -77,8 +73,7 @@ candidatures_recues_par_fiche_de_poste as (
         (date_embauche - date_candidature)  as delai_embauche
     from
         fdp_structures as fdp_s
-    left join
-        candidatures as c
+    left join {{ source('emplois', 'candidatures') }} as c
         on c.id = fdp_s.id_candidature
 ),
 
@@ -107,11 +102,9 @@ fiche_de_poste as (
         concat(code_rome_fpd, '-', nom_rome_fdp)      as rome
     from
         candidatures_recues_par_fiche_de_poste as fdp
-    left join
-        code_rome_domaine_professionnel as crdp
+    left join {{ source('oneshot', 'code_rome_domaine_professionnel') }} as crdp
         on fdp.code_rome_fpd = crdp.code_rome
-    left join
-        structures as s
+    left join {{ source('emplois', 'structures') }} as s
         on fdp.id_structure = s.id
     group by
         recrutement_ouvert_fdp,
@@ -186,8 +179,7 @@ fiches_de_poste_avec_candidature as (
         end as structure_pas_poste_ouvert
     from
         delai_1_ere_candidature
-    cross join
-        fiche_de_poste as tab1
+    cross join fiche_de_poste as tab1
     left join
         id_structures_pas_poste_ouvert as s
         on tab1.id_structure = s.id_structure

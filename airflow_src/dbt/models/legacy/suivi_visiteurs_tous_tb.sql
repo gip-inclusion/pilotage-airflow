@@ -8,7 +8,7 @@ with visiteurs_prives as (
         svtp."Visiteurs uniques" as visiteurs_uniques,
         'TB privé'               as type_de_tb
     from
-        suivi_visiteurs_tb_prives as svtp /* Ancienne table créée par Victor qui débute en 2022 et s'arrête à la semaine du 12/12/22 */
+        {{ source('oneshot', 'suivi_visiteurs_tb_prives') }} as svtp /* Ancienne table créée par Victor qui débute en 2022 et s'arrête à la semaine du 12/12/22 */
 ),
 
 visiteurs_prives_0 as (
@@ -18,7 +18,7 @@ visiteurs_prives_0 as (
         to_date(svtp0."Date", 'YYYY-MM-DD')        as semaine,
         to_number(svtp0."Unique visitors", '9999') as visiteurs_uniques
     from
-        suivi_visiteurs_tb_prives_v1 as svtp0 /* Nouvelle table créée par Victor qui démarre le 01/01/22 */
+        {{ source('matomo', 'suivi_visiteurs_tb_prives_v1') }} as svtp0 /* Nouvelle table créée par Victor qui démarre le 01/01/22 */
 ),
 
 visiteurs_publics as (
@@ -28,7 +28,7 @@ visiteurs_publics as (
         to_date(vp."Date", 'YYYY-MM-DD')        as semaine,
         to_number(vp."Unique visitors", '9999') as visiteurs_uniques
     from
-        suivi_visiteurs_tb_publics_v1 as vp /* Nouvelle table créée par Victor qui reprend toutes les infos des visiteurs des TBs publics */
+        {{ source('matomo', 'suivi_visiteurs_tb_publics_v1') }} as vp /* Nouvelle table créée par Victor qui reprend toutes les infos des visiteurs des TBs publics */
 )
 
 select

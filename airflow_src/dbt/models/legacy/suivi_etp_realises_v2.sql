@@ -4,7 +4,7 @@ with constantes as (
         (max(emi.emi_sme_annee) - 2) as annee_en_cours_2,
         max(emi.emi_sme_annee)       as annee_en_cours
     from
-        "fluxIAE_EtatMensuelIndiv" as emi
+        {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
 )
 
 select distinct
@@ -16,9 +16,9 @@ select distinct
     af.af_numero_convention,
     /*Nous calculons directement les ETPs réalisés pour éviter des problèmes de filtres/colonnes/etc sur metabase*/
     /* ETPs réalisés = Nbr heures travaillées / montant d'heures necessaires pour avoir 1 ETP */
-    -- Ici le calcul nb heures * valeur nous donne de base des ETPs ANNUELS. 
+    -- Ici le calcul nb heures * valeur nous donne de base des ETPs ANNUELS.
     af.af_numero_annexe_financiere,
-    -- multiplication par 12 pour tomber sur le mensuel 
+    -- multiplication par 12 pour tomber sur le mensuel
     af.af_etat_annexe_financiere_code,
     firmi.rmi_libelle,
     firmi.rmi_valeur,
@@ -40,18 +40,18 @@ select distinct
 from
     constantes
 cross join
-    "fluxIAE_EtatMensuelIndiv" as emi
-left join "fluxIAE_AnnexeFinanciere_v2" as af
+    {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
+left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
     on
         emi.emi_afi_id = af.af_id_annexe_financiere
         and emi.emi_sme_annee >= annee_en_cours_2
-left join "fluxIAE_RefMontantIae" as firmi
+left join {{ source('fluxIAE', 'fluxIAE_RefMontantIae') }} as firmi
     on
         af_mesure_dispositif_id = firmi.rme_id
-left join "fluxIAE_Structure_v2" as structure
+left join {{ ref('fluxIAE_Structure_v2') }} as structure
     on
         af.af_id_structure = structure.structure_id_siae
-left join ref_mesure_dispositif_asp as ref_asp
+left join {{ ref('ref_mesure_dispositif_asp') }} as ref_asp
     on
         af.af_mesure_dispositif_code = ref_asp.af_mesure_dispositif_code
 where
