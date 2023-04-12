@@ -26,6 +26,12 @@
             "source.organizeImports": true
         }
     },
-    "isort.args":["--profile", "black"],
-    "explorer.confirmDragAndDrop": false
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "explorer.confirmDragAndDrop": false,
+    "sqlfluff.linter.run": "onSave",
+    "sqlfluff.experimental.format.executeInTerminal": true,
+    "sqlfluff.format.enabled": true
 }

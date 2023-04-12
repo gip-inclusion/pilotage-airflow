@@ -3,9 +3,8 @@ line_length = 119
 
 [tool.sqlfluff.core]
 dialect = "postgres"
-ignore = "templating"
 exclude_rules = "AM01,LT05"  # ambiguous distincts and long lines are ignored.
-templater = "jinja"
+templater = "dbt"
 
 [tool.sqlfluff.layout.type.alias_expression]
 # https://docs.sqlfluff.com/en/stable/layout.html#aligned-elements
@@ -33,3 +32,10 @@ capitalisation_policy = "lower"
 
 [tool.sqlfluff.rules.references.special_chars]
 additional_allowed_characters = "àéè '"
+
+[tool.sqlfluff.templater.dbt]
+project_dir = "airflow_src"
+profiles_dir = "airflow_src"
+
+[tool.sqlfluff.templater.jinja]
+apply_dbt_builtins = true
