@@ -3,7 +3,7 @@ dbt_pilotage:
 
     main:
       schema: public
-      threads: 2
+      threads: 4
       type: postgres
       dbname: "{{ env_var('PGDATABASE') }}"
       host: "{{ env_var('PGHOST') }}"
