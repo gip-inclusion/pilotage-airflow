@@ -6,7 +6,13 @@ Ce dépôt a pour but de regrouper les scripts .sql et .py utilisés par les dat
 
 ### DBT
 
-Configurez les variables d'environnement `PGDATABASE`, `PGHOST` , `PGPASSWORD`, `PGPORT` pour pouvoir utiliser dbt.
+Mettre en place direnv et les variables d'environnement pour le lancement de dbt en local 
+
+1) installer dotenv et direnv
+2) pour la db locale : définir dans .env les variables d'environnement `PGDATABASE`, `PGHOST` , `PGPASSWORD`, `PGPORT` 
+3) pour la prod : définir dans .env les variables d'environnement `PROD_PGDATABASE`, `PROD_PGHOST` , `PROD_PGPASSWORD`, `PROD_PGPORT`
+4) ajouter `dotenv` dans le fichier .envrc pour que direnv utilise dotenv
+5) configurer le hook pour le déclenchement automatique de `direnv` dans le shell (https://direnv.net/docs/hook.html) 
 
 Pour vérifier que dbt est bien configuré, se rendre dans le répertoire `airflow_src` et lancer `dbt debug`.
 
