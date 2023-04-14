@@ -8,7 +8,7 @@
 with mois_tmp as (
     select distinct make_date(cast(emi.emi_sme_annee as integer), cast(emi.emi_sme_mois as integer), 01) as premier_jour
     from
-        {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }}
+        {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
 ),
 
 mois as (
