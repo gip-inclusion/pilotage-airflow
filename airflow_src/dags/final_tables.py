@@ -19,7 +19,7 @@ default_args = {
 with airflow.DAG(
     dag_id="final_tables",
     start_date=pendulum.datetime(2022, 1, 1, tz="Europe/Paris"),
-    schedule_interval="@daily",
+    schedule_interval=None,
     catchup=False,
     default_args=default_args,
     max_active_runs=1,
