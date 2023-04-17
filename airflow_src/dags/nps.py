@@ -21,8 +21,9 @@ def pg_store(table_name, df):
 
     with db.MetabaseDBCursor() as (cursor, conn):
         cursor.execute(
-            sql.SQL(textwrap.dedent(
-                """
+            sql.SQL(
+                textwrap.dedent(
+                    """
                 DROP TABLE IF EXISTS {table_name};
                 CREATE TABLE {table_name}(
                     Date TIMESTAMP,
@@ -30,7 +31,8 @@ def pg_store(table_name, df):
                     Produit VARCHAR(512)
                 );
                 """
-            )).format(table_name=sql.Identifier(table_name))
+                )
+            ).format(table_name=sql.Identifier(table_name))
         )
         conn.commit()
         cursor.copy_from(to_buffer(df), table_name, sep=",")
