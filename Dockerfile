@@ -11,6 +11,7 @@ RUN apt-get update \
     libpq-dev \
     git \
     vim \
+    s3cmd \
     && apt-get autoremove -yqq --purge \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
@@ -23,5 +24,6 @@ RUN pip install --no-cache-dir -r requirements.txt \
     && rm requirements.txt
 
 COPY --chown=airflow:root airflow_src/ .
+COPY --chown=airflow:root .s3cfg /home/airflow
 
 CMD ["bash", "-c", "./entrypoint.sh"]
