@@ -1,3 +1,5 @@
+from airflow.decorators import task
+from airflow.operators.python import get_current_context
 from airflow.providers.slack.hooks.slack_webhook import SlackWebhookHook
 
 SLACK_CONN_ID = 'slack_webhook'
@@ -19,5 +21,11 @@ def task_success_alert(context):
     return hook.send_text("""
     :airflow: :white_check_mark: Airflow DAG Success.  *Dag*: {dag}
     """.format(
-        dag=context.get('task_instance').dag_id,
-    ))
+            dag=context.get("task_instance").dag_id,
+        )
+    )
+
+
+@task
+def success_notifying_task(**kwargs):
+    task_success_alert(get_current_context())

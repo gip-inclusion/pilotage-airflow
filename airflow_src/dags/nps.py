@@ -1,17 +1,11 @@
 import textwrap
 
-import pendulum
-
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
-from airflow.operators.python import get_current_context
-from dags.common import db, slack
+from dags.common import db, default_dag_args, slack
 
-default_args = {
-    'on_failure_callback': slack.task_fail_alert,
-}
 
 def to_buffer(df):
     from io import StringIO
@@ -45,17 +39,12 @@ def pg_store(table_name, df):
 
 with DAG(
     "nps_fetcher",
-    start_date=pendulum.datetime(2023, 3, 21, tz="UTC"),
     schedule_interval="@daily",
-    catchup=False,
-    default_args=default_args,
-    max_active_runs=1,
+    **default_dag_args(),
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
 
-    @task(task_id="end")
-    def end(**kwargs):
-        slack.task_success_alert(get_current_context())
+    end = slack.success_notifying_task()
 
     @task(task_id="store_gsheets")
     def store_gsheets(**kwargs):
@@ -86,6 +75,5 @@ with DAG(
         pg_store(gip_nps_table_name, df)
 
     store_gsheet_task = store_gsheets()
-    end_task = end()
 
-    (start >> store_gsheet_task >> end_task)
+    (start >> store_gsheet_task >> end)
