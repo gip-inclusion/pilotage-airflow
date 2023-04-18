@@ -4,6 +4,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
+
 from dags.common import db, default_dag_args, slack
 
 

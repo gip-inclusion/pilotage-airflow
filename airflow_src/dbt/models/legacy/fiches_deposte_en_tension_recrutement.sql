@@ -77,6 +77,7 @@ candidatures_recues_par_fiche_de_poste as (
         on c.id = fdp_s.id_candidature
 ),
 
+
 fiche_de_poste as (
     select
         recrutement_ouvert_fdp,

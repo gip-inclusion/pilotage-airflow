@@ -18,8 +18,9 @@ cap_struct_counts as (
         cast(sum(
             case
                 when
-                    cap_struct."date_contrôle" is not null then
-                    1
+                    cap_struct."date_contrôle" is not null
+                    then
+                        1
                 else
                     0
             end
@@ -28,8 +29,9 @@ cap_struct_counts as (
         cast(sum(
             case
                 when
-                    cap_struct."état" = 'ACCEPTED' then
-                    1
+                    cap_struct."état" = 'ACCEPTED'
+                    then
+                        1
                 else
                     0
             end
@@ -38,8 +40,9 @@ cap_struct_counts as (
         cast(sum(
             case
                 when
-                    cap_struct."état" = 'REFUSED' then
-                    1
+                    cap_struct."état" = 'REFUSED'
+                    then
+                        1
                 else
                     0
             end
@@ -48,8 +51,9 @@ cap_struct_counts as (
         cast(sum(
             case
                 when
-                    cap_struct."état" = 'NOTIFICATION_PENDING' then
-                    1
+                    cap_struct."état" = 'NOTIFICATION_PENDING'
+                    then
+                        1
                 else
                     0
             end

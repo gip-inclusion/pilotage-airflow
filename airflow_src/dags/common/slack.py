@@ -2,6 +2,7 @@ from airflow.decorators import task
 from airflow.operators.python import get_current_context
 from airflow.providers.slack.hooks.slack_webhook import SlackWebhookHook
 
+
 # FIXME(vperron): this webhook should absolutely be installed through the entrypoint
 # and not declared manually in the interface.
 SLACK_CONN_ID = "slack_webhook"

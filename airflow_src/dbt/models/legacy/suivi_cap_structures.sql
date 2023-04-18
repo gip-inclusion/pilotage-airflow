@@ -10,15 +10,17 @@ select
     cap_structures."état",
     case
         when
-            structures."active" = 1 then
-            'Oui'
+            structures."active" = 1
+            then
+                'Oui'
         else
             'Non'
     end                           as active,
     case
         when
-            cap_structures."date_contrôle" is not null then
-            'Oui'
+            cap_structures."date_contrôle" is not null
+            then
+                'Oui'
         else
             'Non'
     end                           as "controlee"

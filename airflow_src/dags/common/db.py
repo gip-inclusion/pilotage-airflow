@@ -1,4 +1,3 @@
-
 from airflow.models import Variable
 
 
@@ -25,4 +24,3 @@ class MetabaseDBCursor:
             self.cursor.close()
         if self.connection:
             self.connection.close()
-

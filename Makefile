@@ -4,20 +4,30 @@
 # > practice; so for compatibility, you must explicitly request it
 .DELETE_ON_ERROR:
 
+PYTHON_VERSION := python3.10
+
 VIRTUAL_ENV ?= .venv
 
 DUMP_DIR ?= .latest.dump
 
+# FIXME(vperron): So far, consider that only airflow_src path is supposed correct and thus, quality-checked.
+# The scripts/ dir can be let free.
+MONITORED_DIRS := airflow_src
+
+# FIXME(vperron): In the long run we should include "references.consistent,references.from,references.qualification" rules.
+SQLFLUFF_OPTIONS := \
+	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification \
+	--disable-progress-bar --nocolor \
+
 export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
-.PHONY: venv clean compile-deps dbt_clean fix_sql load_dump
+.PHONY: venv clean compile-deps dbt_clean fix quality load_dump
 
 $(VIRTUAL_ENV): requirements-dev.txt
 	$(PYTHON_VERSION) -m venv $@
 	$@/bin/pip install -r $^
 
 venv: $(VIRTUAL_ENV)
-
 
 dbt_clean:
 	cd airflow_src && dbt clean
@@ -26,22 +36,17 @@ clean: dbt_clean
 	find . -type d -name "__pycache__" -depth -exec rm -rf '{}' \;
 	find . -type d -empty -delete
 
-# Attempt to fix & lint the SQL files. If this does not work,
-# try using 'sqlfluff parse' on the target file to see why it
-# could not be analyzed and run again.
+# if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
 fix: clean
-	black airflow_src
-	isort airflow_src
-	sqlfluff fix -f airflow_src/dbt --dialect postgres
+	black $(MONITORED_DIRS)
+	isort $(MONITORED_DIRS)
+	sqlfluff fix --force $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 quality: clean
-	black --check airflow_src
-	isort --check airflow_src
-	flake8 --count --show-source --statistics airflow_src
-	sqlfluff lint -f airflow_src/dbt --dialect postgres
-
-start:
-	AIRFLOW_BASE_DIR=$(shell pwd)/airflow_src ./airflow_src/entrypoint.sh
+	black --check $(MONITORED_DIRS)
+	isort --check $(MONITORED_DIRS)
+	flake8 --count --show-source --statistics $(MONITORED_DIRS)
+	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 load_dump:
 	dropdb ${PGDATABASE} || true

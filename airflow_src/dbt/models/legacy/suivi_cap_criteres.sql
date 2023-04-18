@@ -10,20 +10,25 @@ select
     structs."type"            as "type_structure",
     case
         when
-            cap_criteres."état" = 'ACCEPTED' then
-            'Accepté'
+            cap_criteres."état" = 'ACCEPTED'
+            then
+                'Accepté'
         when
-            cap_criteres."état" = 'REFUSED_2' then
-            'Refusé'
+            cap_criteres."état" = 'REFUSED_2'
+            then
+                'Refusé'
         when
-            cap_criteres."état" = 'REFUSED' then
-            'Refusé'
+            cap_criteres."état" = 'REFUSED'
+            then
+                'Refusé'
         when
-            cap_criteres."état" = 'PENDING' and cap_criteres."date_transmission" is not null then
-            'Non vérifié'
+            cap_criteres."état" = 'PENDING' and cap_criteres."date_transmission" is not null
+            then
+                'Non vérifié'
         when
-            cap_criteres."état" = 'PENDING' and cap_criteres."date_transmission" is null then
-            'Non transmis'
+            cap_criteres."état" = 'PENDING' and cap_criteres."date_transmission" is null
+            then
+                'Non transmis'
     end                       as "état"
 from
     {{ source('emplois', 'cap_critères_iae') }} as cap_criteres

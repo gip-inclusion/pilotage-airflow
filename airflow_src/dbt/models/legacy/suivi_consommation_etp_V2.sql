@@ -105,18 +105,21 @@ calcul_etp as (
     from
         {{ ref('suivi_etp_conventionnes_v2') }} as etp
     left join
-        {{ ref('suivi_etp_realises_v2') }} as etp_c on
-        etp.id_annexe_financiere = etp_c.id_annexe_financiere
-        and etp.af_numero_convention = etp_c.af_numero_convention
-        and etp.af_numero_annexe_financiere = etp_c.af_numero_annexe_financiere
-        and date_part('year', etp_c.date_saisie) = annee_af
+        {{ ref('suivi_etp_realises_v2') }} as etp_c
+        on
+            etp.id_annexe_financiere = etp_c.id_annexe_financiere
+            and etp.af_numero_convention = etp_c.af_numero_convention
+            and etp.af_numero_annexe_financiere = etp_c.af_numero_annexe_financiere
+            and date_part('year', etp_c.date_saisie) = annee_af
     /* bien penser à joindre sur l'année pour éviter que l'on se retrouve avec années de conventionnement qui correspondent pas */
     left join
-        {{ ref('suivi_saisies_dans_asp') }} as sasp on
-        sasp.af_id_annexe_financiere = etp.id_annexe_financiere
+        {{ ref('suivi_saisies_dans_asp') }} as sasp
+        on
+            sasp.af_id_annexe_financiere = etp.id_annexe_financiere
     left join
-        mois_saisis as ms on
-        ms.id_annexe_financiere = etp.id_annexe_financiere
+        mois_saisis as ms
+        on
+            ms.id_annexe_financiere = etp.id_annexe_financiere
     group by
         dernier_mois_saisi_asp,
         duree_annexe,
