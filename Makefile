@@ -6,7 +6,8 @@
 
 PYTHON_VERSION := python3.10
 
-VIRTUAL_ENV ?= .venv
+VIRTUAL_ENV ?= $(shell pwd)/.venv
+export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
 DUMP_DIR ?= .latest.dump
 
@@ -19,15 +20,11 @@ SQLFLUFF_OPTIONS := \
 	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification \
 	--disable-progress-bar --nocolor \
 
-export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
+.PHONY: venv_ci clean compile-deps dbt_clean fix quality load_dump
 
-.PHONY: venv clean compile-deps dbt_clean fix quality load_dump
-
-$(VIRTUAL_ENV): requirements-dev.txt
-	$(PYTHON_VERSION) -m venv $@
-	$@/bin/pip install -r $^
-
-venv: $(VIRTUAL_ENV)
+venv_ci:
+	$(PYTHON_VERSION) -m venv $(VIRTUAL_ENV)
+	$(VIRTUAL_ENV)/bin/pip install --no-color --progress-bar off -r requirements-ci.txt
 
 dbt_clean:
 	cd airflow_src && dbt clean
