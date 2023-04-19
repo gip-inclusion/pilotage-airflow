@@ -31,3 +31,6 @@ seeds:
       +column_types:
         departement: varchar(3)
         code_comm: varchar(25)
+  appartenance_geo_communes:
+      +column_types:
+        code_insee: varchar(5)

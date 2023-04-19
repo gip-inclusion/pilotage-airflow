@@ -1,0 +1,7 @@
+version: 2
+
+seeds:
+  - name: appartenance_geo_communes
+    description: "seed référençant les communes et leur appartenance geographique (source: https://www.insee.fr/fr/information/2028028)"
+    docs:
+      show: true
