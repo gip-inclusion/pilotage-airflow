@@ -1,5 +1,3 @@
-import textwrap
-
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
@@ -8,37 +6,14 @@ from airflow.operators import empty
 from dags.common import db, default_dag_args, slack
 
 
-def to_buffer(df):
-    from io import StringIO
-
-    buffer = StringIO()
-    df.to_csv(buffer, header=False, index=False)
-    buffer.seek(0)
-    return buffer
-
-
-def pg_store(table_name, df):
-    from psycopg2 import sql
-
-    with db.MetabaseDBCursor() as (cursor, conn):
-        cursor.execute(
-            sql.SQL(
-                textwrap.dedent(
-                    """
-                DROP TABLE IF EXISTS {table_name};
-                CREATE TABLE {table_name}(
-                    Date TIMESTAMP,
-                    Recommandation DECIMAL(10,2),
-                    Produit VARCHAR(512)
-                );
-                """
-                )
-            ).format(table_name=sql.Identifier(table_name))
-        )
-        conn.commit()
-        cursor.copy_from(to_buffer(df), table_name, sep=",")
-        conn.commit()
-
+NPS_CREATE_TABLE_SQL = """
+DROP TABLE IF EXISTS {table_name};
+CREATE TABLE {table_name}(
+    "Date" TIMESTAMP,
+    "Recommandation" DECIMAL(10,2),
+    "Produit" VARCHAR(512)
+);
+"""
 
 with DAG(
     "nps_fetcher",
@@ -59,7 +34,6 @@ with DAG(
             df["Produit"] = "Pilotage de l'inclusion"
             df = df[["Date", "Recommandation", "Produit"]]
 
-        gip_nps_table_name = Variable.get("GIP_NPS_TABLE_NAME")  # "GIP_suivi_NPS"
         for name, pub_sheet_url in Variable.get("NPS_NAME_PUB_SHEET_URL_TUPLES", deserialize_json=True):
             print(f"reading {name=} at {pub_sheet_url=}")
             sheet_df = pd.read_csv(pub_sheet_url)
@@ -75,7 +49,7 @@ with DAG(
             sheet_df = sheet_df[["Date", "Recommandation", "Produit"]]
             df = pd.concat([df, sheet_df])
 
-        pg_store(gip_nps_table_name, df)
+        db.pg_store("gip_suivi_nps", df, NPS_CREATE_TABLE_SQL)
 
     store_gsheet_task = store_gsheets()
 

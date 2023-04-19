@@ -1,4 +1,8 @@
+import textwrap
+
 from airflow.models import Variable
+
+from . import dataframes
 
 
 class MetabaseDBCursor:
@@ -24,3 +28,13 @@ class MetabaseDBCursor:
             self.cursor.close()
         if self.connection:
             self.connection.close()
+
+
+def pg_store(table_name, df, create_table_sql):
+    from psycopg2 import sql
+
+    with MetabaseDBCursor() as (cursor, conn):
+        cursor.execute(sql.SQL(textwrap.dedent(create_table_sql)).format(table_name=sql.Identifier(table_name)))
+        conn.commit()
+        cursor.copy_from(dataframes.to_buffer(df), table_name, sep=",")
+        conn.commit()
