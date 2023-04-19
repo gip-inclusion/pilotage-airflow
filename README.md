@@ -1,4 +1,4 @@
-# pilotage-airflow 
+# pilotage-airflow
 
 Ce dépôt a pour but de regrouper les scripts .sql et .py utilisés par les data analyst du pilotage de l'inclusion pour construire, versionner et documenter les tables de données via dbt et les deployer via airflow.
 
@@ -6,33 +6,23 @@ Ce dépôt a pour but de regrouper les scripts .sql et .py utilisés par les dat
 
 ### DBT
 
-Mettre en place direnv et les variables d'environnement pour le lancement de dbt en local 
+Pour lancer DBT en local:
+- Assurez vous d'avoir un serveur de base de données local PostgreSQL et les outils client `psql`, `pg_dump`, `pg_restore`.
+- Mettez en place votre environnement virtuel (https://direnv.net/) (pensez à bien activer le hook pour le déclenchement automatique de `direnv` dans le shell (https://direnv.net/docs/hook.html))
+- Configurez votre fichier `.env`
 
-1) installer dotenv et direnv
-2) pour la db locale : définir dans .env les variables d'environnement `PGDATABASE`, `PGHOST` , `PGPASSWORD`, `PGPORT` 
-3) pour la prod : définir dans .env les variables d'environnement `PROD_PGDATABASE`, `PROD_PGHOST` , `PROD_PGPASSWORD`, `PROD_PGPORT`
-4) ajouter `dotenv` dans le fichier .envrc pour que direnv utilise dotenv
-5) configurer le hook pour le déclenchement automatique de `direnv` dans le shell (https://direnv.net/docs/hook.html) 
+Pour vérifier que DBT est bien configuré, se rendre dans le répertoire `airflow_src` et lancer `dbt debug`.
 
-Pour vérifier que dbt est bien configuré, se rendre dans le répertoire `airflow_src` et lancer `dbt debug`.
-
-### Airflow
-
-Mettez en place votre environnement virtuel, base de données Postgres pour Airflow et fichier ``.env``.
+Installez les requirements et créez la base de données locale:
 
 .. code::
 
     pip install -r requirements-dev.txt
-    
+
     createdb airflow
 
-    vim .env
-    
-    [FILL WITH SOME OF THOSE]
-    AIRFLOW_DATABASE_URL=postgresql://postgres:password@172.17.0.1:5432/airflow
-    SECRET_KEY="local-dev-secret-key"
-    AIRFLOW_SUPERUSER_PASSWORD="password"
 
+### Airflow
 
 Pour lancer airflow localement, ouvrez deux terminaux et:
 
