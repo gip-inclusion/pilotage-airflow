@@ -8,25 +8,24 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
 ## Environnement & Installation
 
-Suivez les étapes suivantes:
-
-- Votre environnement virtuel Python 3.10
+### Votre environnement virtuel Python 3.10
 
     python -m venv venv
     source venv/bin/activate
-    # FIXME(vperron): méthode recommandée pour l'instant
-    pip install -r requirements-ci.txt
+    pip install -r requirements-dev.txt
 
-- Votre serveur de base de données PostgreSQL pour Airflow & DBT
+### Votre serveur de base de données PostgreSQL pour Airflow & DBT
 
     sudo apt install postgresql
     brew install postgresql
     # vérifiez que vous disposez bien de `psql`, `pg_dump` et `pg_restore`
 
 
-- Le logiciel [direnv](https://direnv.net) sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html)
+### Le logiciel [direnv](https://direnv.net)
 
-- votre fichier ``.env``.
+Sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html)
+
+### Votre fichier ``.env``
 
     cp env.example .env
     # modifiez le ficher `.env` pour y faire apparaître les bonnes valeurs
