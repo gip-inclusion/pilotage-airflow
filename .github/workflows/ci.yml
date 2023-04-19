@@ -39,7 +39,7 @@ jobs:
         SQL
         docker kill --signal=SIGHUP ${{ job.services.postgres.id }}
     - uses: actions/checkout@v3.5.0
-    - name: �💂 Install Python
+    - name: 🐍 Install Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.10"
@@ -49,7 +49,11 @@ jobs:
       run: |
         make venv_ci
         echo ".venv/bin" >> $GITHUB_PATH
-    - name: ✨ Black, isort, flake8 & djlint
+    - name: ✨ Linting with black, isort, flake8 & sqlfluff 👌
       run: make quality
+      env:
+        PGDATABASE: pilotage
+    - name: 📓 Generate documentation
+      run: make dbt_docs
       env:
         PGDATABASE: pilotage

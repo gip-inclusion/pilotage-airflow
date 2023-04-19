@@ -20,7 +20,7 @@ SQLFLUFF_OPTIONS := \
 	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification \
 	--disable-progress-bar --nocolor \
 
-.PHONY: venv_ci clean compile-deps dbt_clean fix quality load_dump
+.PHONY: venv_ci clean compile-deps dbt_clean dbt_docs fix quality load_dump
 
 venv_ci:
 	$(PYTHON_VERSION) -m venv $(VIRTUAL_ENV)
@@ -28,6 +28,9 @@ venv_ci:
 
 dbt_clean:
 	cd airflow_src && dbt clean
+
+dbt_docs:
+	cd airflow_src && dbt docs generate
 
 clean: dbt_clean
 	find . -type d -name "__pycache__" -depth -exec rm -rf '{}' \;
