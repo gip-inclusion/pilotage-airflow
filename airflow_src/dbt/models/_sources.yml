@@ -3,6 +3,11 @@ version: 2
 sources:
   - name: fluxIAE
     schema: public
+    # TODO(vperron): One day this should be in a DAG.
+    description: >
+      Tables générées chaque semaine, manuellement, par un script lancé par un développeur des Emplois
+      de l'Inclusion. Ces données sont des exports venant de certains fichiers transmis par l'ASP et
+      sont utiles pour en dériver de nombreuses autres données (calculs ETP par exemple)
     tables:
       - name: fluxIAE_AnnexeFinanciere
       - name: fluxIAE_ContratMission
@@ -18,9 +23,16 @@ sources:
 
   - name: emplois
     schema: public
+    description: >
+      Tables générées chaque nuit par les Emplois de l'Inclusion à partir de leur base de données.
     tables:
       - name: c1_analytics_v0
+        description: >
+          Table agrégeant des compteurs de données analytiques et datées (fiches de poste, etc) pouvant être réutilisées
+          dans différents indicateurs.
       - name: c1_private_dashboard_visits_v0
+        description: >
+          Propose une ligne par visite enregistrée sur un tableau de bord privé du Pilotage de l'Inclusion.
       - name: candidats
       - name: candidatures
       - name: cap_campagnes
@@ -41,22 +53,49 @@ sources:
 
   - name: oneshot
     schema: public
+    description: >
+      Tables gérées soit manuellement, soit mises à jour de manière très peu fréquente (DAG annuel, par exemple)
     tables:
-      # Table créée par soumia en one-shot. A mettre à jour ? Les codes ROME et domaines évoluent, une MAJ a été faite
-      # côté C1 en Février 2023.
-      - name: code_rome_domaine_professionnel
-      # TODO(vperron): A remplacer par codes_insee_vs_codes_postaux. Attention cette derniere est juste un mapping.
+      # TODO(vgrange): A remplacer par codes_insee_vs_codes_postaux. Attention cette derniere est juste un mapping.
       # Il faut donc avoir une seconde table contenant pour chaque code INSEE ou postal, les coordonnees GPS.
       # Attention, les "villes" ont été mises à jour mais ce n'est pas la meme chose que les communes ASP.
       - name: commune_gps
-      - name: reseau_iae_adherents  # TODO(vperron): difficile de statuer si utile ou non.
-      - name: sa_zones_infradepartementales  # TODO(lhuber): Un script est attendu pour son versionnement.
-      - name: suivi_visiteurs_tb_prives  # TODO(ypassa): Script de régénration à fournir.
-      - name: suivi_utilisateurs_tb_prives  # TODO(ypassa): Script de régénération à fournir.
+
+      - name: reseau_iae_adherents
+        description: >
+          Table très utilisée et source de nombreuses autres données. Les réseaux IAE (Coorace, Cocagne, ...)
+          nous fournissent des listes de SIAE adhérentes qui sont regroupées ici.
+
+          Cette source est gérée manuellement via une feuille de calcul partagée nommée "reseau_iae_adherents".
+          Un DAG est lancé tous les mois (ou manuellement) pour régénérer notre table depuis cette feuille de calcul.
+
+          Les fichiers XLSX d'origine sont stockés dans notre bucket Clever Cloud `c2-private-sources`.
+
+          Le script d'origine qui compile les fichiers XLSX dans la table est commité dans `scripts/python/reseaux_iae_adherents.py`.
+
+      # TODO(lhuber): En cours de traitement et remplacement par 'appartenance_geo_communes'
+      - name: sa_zones_infradepartementales
+
+      - name: suivi_visiteurs_tb_prives
+        description: >
+          Contient les statistiques de visite pour des tableaux de bord d'avant Décembre 2022,
+          pour lesquels certaines URLs ont été depuis modifiées.
+          Le script `scripts/notebooks/suivi_visiteurs_privé_C2_victor.ipynb` documente la création de cette table.
+
+      # TODO(ypassa): DAG à implémenter après discussion. Je (victor) ne suis pas du tout au clair sur ce que contient
+      # cette table et à quoi elle sert. On semble agréger à la fois des données de "l'export C2 du C1" (DDETS, DREETS)
+      # mais aussi d'autres venant de l'export CTA (SIAE, Prescripteurs). On a aussi du conseil départemental.
+      # Ca ne sert qu'à la table "tx_penetration_tb_prives" pour l'instant. Je ne vais pas plus loin.
+      - name: suivi_utilisateurs_tb_prives
+
       - name: suivi_complet_etps_conventionnes  # TODO(ypassa): Un autre script airflow à contribuer
 
   - name: matomo
     schema: public
+    # FIXME(vperron): One day this should be in a DAG.
+    description: >
+      Tables générées par une tâche périodique côté Les Emplois de l'Inclusion et qui permet de remonter les
+      visites sur les tableaux de bord (publics et privés) du Pilotage.
     tables:
       - name: suivi_visiteurs_tb_prives_v1
       - name: suivi_visiteurs_tb_publics_v1

@@ -32,7 +32,7 @@ with fdp_structures as (
     from {{ source('emplois', 'fiches_de_poste') }} as fdp
     left join {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdppc
         on fdp.id = fdppc.id_fiche_de_poste
-    left join {{ source('oneshot', 'code_rome_domaine_professionnel') }} as crdp
+    left join {{ ref('code_rome_domaine_professionnel') }} as crdp
         on fdp.code_rome = crdp.code_rome
     left join {{ source('emplois', 'structures') }} as s
         on s.id = fdp.id_employeur
@@ -103,7 +103,7 @@ fiche_de_poste as (
         concat(code_rome_fpd, '-', nom_rome_fdp)      as rome
     from
         candidatures_recues_par_fiche_de_poste as fdp
-    left join {{ source('oneshot', 'code_rome_domaine_professionnel') }} as crdp
+    left join {{ ref('code_rome_domaine_professionnel') }} as crdp
         on fdp.code_rome_fpd = crdp.code_rome
     left join {{ source('emplois', 'structures') }} as s
         on fdp.id_structure = s.id

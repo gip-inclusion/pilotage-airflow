@@ -15,5 +15,5 @@ inner join
     {{ source('emplois', 'fiches_de_poste') }} as fdp
     on
         fdpc.id_fiche_de_poste = fdp.id
-inner join {{ source('oneshot', 'code_rome_domaine_professionnel') }} as crdp on
+inner join {{ ref('code_rome_domaine_professionnel') }} as crdp on
     fdp.code_rome = crdp.code_rome
