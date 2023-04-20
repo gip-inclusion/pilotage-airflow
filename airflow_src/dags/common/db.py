@@ -5,6 +5,16 @@ from airflow.models import Variable
 from . import dataframes
 
 
+def connection_envvars():
+    return {
+        "PGHOST": Variable.get("PGHOST"),
+        "PGPORT": Variable.get("PGPORT"),
+        "PGDATABASE": Variable.get("PGDATABASE"),
+        "PGUSER": Variable.get("PGUSER"),
+        "PGPASSWORD": Variable.get("PGPASSWORD"),
+    }
+
+
 class MetabaseDBCursor:
     def __init__(self):
         self.cursor = None
