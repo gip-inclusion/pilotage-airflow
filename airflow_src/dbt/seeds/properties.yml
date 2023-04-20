@@ -1,7 +1,7 @@
 version: 2
 
 seeds:
-  - name: appartenance_geo_communes
+  - name: communes
     description: >
       liste des communes et leur appartenance geographique
       (source: [insee](https://www.insee.fr/fr/information/2028028))
