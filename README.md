@@ -12,7 +12,14 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
     python -m venv venv
     source venv/bin/activate
-    pip install -r requirements-dev.txt
+    pip install -r requirements-ci.txt
+
+
+> **Note**
+>
+> Pour l'instant nous devons utiliser `requirements-ci.txt` pour des raisons d'incompatibilité
+> entre dépendances, cf. `generate-requirements.sh`
+
 
 ### Votre serveur de base de données PostgreSQL pour Airflow & DBT
 
@@ -65,3 +72,9 @@ L'utilisateur local de base a pour credentials "admin" / "password".
 Les DAGs Airflow nécessitent quelques variables à configurer dans Airflow pour fonctionner;
 voir ``variables.json`` pour ces dernières. Vous pouvez importer le fichier dans Admin/Variables.
 
+
+> **Note**
+>
+> Il faut absolument éviter d'utiliser des variables d'environnement dans vos DAGs, et ser
+> cantonner à l'usage de variables Airflow. En effet ces dernières sont en général utilisées
+> par le métier pour agir rapidement et efficacement sur l'exécution des DAGs.
