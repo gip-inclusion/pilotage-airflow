@@ -18,12 +18,12 @@ with airflow.DAG(
         bash_command="rm -rf /tmp/dbt-docs && DBT_TARGET_PATH=/tmp/dbt-docs dbt docs generate",
     )
 
-    # FIXME(vperron): those environment variables should absolutely be versioned in itou-secrets.
     cellar_sync = bash.BashOperator(
         task_id="cellar_sync",
         bash_command=(
+            # these can stay as env vars since they are considered deployment secrets, not business vars.
             "s3cmd --access_key=${S3_DOCS_ACCESS_KEY} --secret_key=${S3_DOCS_SECRET_KEY} "
-            "sync --acl-public /tmp/dbt-docs s3://${S3_DOCS_BUCKET}"
+            "sync --delete-removed --acl-public /tmp/dbt-docs/ s3://${S3_DOCS_BUCKET}/"
         ),
     )
 
