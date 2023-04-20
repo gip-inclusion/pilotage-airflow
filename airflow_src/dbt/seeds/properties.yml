@@ -2,6 +2,26 @@ version: 2
 
 seeds:
   - name: appartenance_geo_communes
-    description: "seed référençant les communes et leur appartenance geographique (source: https://www.insee.fr/fr/information/2028028)"
-    docs:
-      show: true
+    description: >
+      liste des communes et leur appartenance geographique
+      (source: [insee](https://www.insee.fr/fr/information/2028028))
+  - name: arrondissements
+    description: >
+      liste des arrondissements français
+      (source: [insee](https://www.insee.fr/fr/information/6800675))
+  - name: departements
+    description: >
+      liste des départements français
+      (source: [insee](https://www.insee.fr/fr/information/6800675))
+  - name: epci
+    description: >
+      liste des établissements publics de coopération intercommunale
+      (source: [insee](https://www.insee.fr/fr/information/2510634))
+  - name: regions
+    description: >
+      liste des régions françaises
+      (source: [insee](https://www.insee.fr/fr/information/6800675))
+  - name: zone_emploi
+    description: >
+      liste des zones d'emploi françaises
+      (source: [insee](https://www.insee.fr/fr/information/4652957))
