@@ -53,5 +53,7 @@ load_dump:
 	createdb ${PGDATABASE}
 	rm -rf $(DUMP_DIR)
 	PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
-		   pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 -f $(DUMP_DIR)
+		   pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 \
+		   --exclude-table="lh_*" --exclude-table="yp_*" --exclude-table="z_*" \
+		   ---file=$(DUMP_DIR)
 	pg_restore --format=directory --clean --jobs=4 --verbose --no-owner --no-acl -d ${PGDATABASE} $(DUMP_DIR) || true
