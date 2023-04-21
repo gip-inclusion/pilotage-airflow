@@ -19,9 +19,10 @@ RUN apt-get update \
 
 USER airflow
 
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt \
-    && rm requirements.txt
+# TODO(vperron): Find a better versioning scheme for the requirements
+# than the manually frozen requirements-ci.txt containing dev dependencies.
+COPY requirements-ci.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && rm requirements.txt
 
 COPY --chown=airflow:root airflow_src/ .
 COPY --chown=airflow:root .s3cfg /home/airflow
