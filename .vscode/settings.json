@@ -33,5 +33,8 @@
     "explorer.confirmDragAndDrop": false,
     "sqlfluff.linter.run": "onSave",
     "sqlfluff.experimental.format.executeInTerminal": true,
-    "sqlfluff.format.enabled": true
+    "sqlfluff.format.enabled": true,
+    "files.exclude": {
+        "**/__pycache__": true
+    }
 }
