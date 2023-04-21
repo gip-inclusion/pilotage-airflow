@@ -58,10 +58,11 @@ Si tout va bien, vous pourrez ensuite utiliser DBT pour pour toutes vos opérati
 Créez une base de données pour Airflow si elle n'existe pas.
 
     createdb airflow
+    make airflow_init
 
 Pour lancer airflow localement, ouvrez deux terminaux et:
 
-    cd airflow_src
+    cd airflow_src/
     ./start-webserver.sh
     ./start-scheduler.sh
 

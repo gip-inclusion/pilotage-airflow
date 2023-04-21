@@ -3,7 +3,7 @@ BASE_DIR="${AIRFLOW_BASE_DIR:-$(pwd)}"
 
 export AIRFLOW_BASE_DIR="${BASE_DIR}"
 
-export AIRFLOW_HOME="${BASE_DIR}/airflow"
+export AIRFLOW_HOME="/tmp/airflow"
 export PYTHONPATH="${PYTHONPATH}:${BASE_DIR}"  # be able to resolve "import dags"
 
 AIRFLOW_DATABASE_URL="${AIRFLOW_DATABASE_URL:-$POSTGRESQL_ADDON_URI}"

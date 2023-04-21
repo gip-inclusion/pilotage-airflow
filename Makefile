@@ -20,7 +20,7 @@ SQLFLUFF_OPTIONS := \
 	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification \
 	--disable-progress-bar --nocolor \
 
-.PHONY: venv_ci clean compile-deps dbt_clean dbt_docs fix quality load_dump
+.PHONY: venv_ci clean compile-deps airflow_init dbt_clean dbt_docs fix quality test load_dump
 
 venv_ci:
 	$(PYTHON_VERSION) -m venv $(VIRTUAL_ENV)
@@ -47,6 +47,12 @@ quality: clean
 	isort --check $(MONITORED_DIRS)
 	flake8 --count --show-source --statistics $(MONITORED_DIRS)
 	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
+
+airflow_init:
+	cd airflow_src/ && \
+		source _source-vars.sh && \
+    	airflow db upgrade && \
+    	airflow users create --role Admin --email admin@example.com --username admin --password password -f "" -l ""
 
 load_dump:
 	dropdb ${PGDATABASE} || true
