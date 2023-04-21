@@ -16,6 +16,8 @@ pip install pandas
 pip install black
 pip install flake8
 pip install isort
+pip install pytest
+pip install pytest-subtest
 pip install sqlfluff
 pip install sqlfluff-templater-dbt
 

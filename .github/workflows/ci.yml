@@ -36,6 +36,7 @@ jobs:
           ALTER SYSTEM SET synchronous_commit=off;
           ALTER SYSTEM SET full_page_writes=off;
           CREATE DATABASE pilotage;
+          CREATE DATABASE airflow;
         SQL
         docker kill --signal=SIGHUP ${{ job.services.postgres.id }}
     - uses: actions/checkout@v3.5.0
@@ -49,11 +50,19 @@ jobs:
       run: |
         make venv_ci
         echo ".venv/bin" >> $GITHUB_PATH
-    - name: ✨ Linting with black, isort, flake8 & sqlfluff 👌
+    - name: ⚙ Setup airflow database
+      run: make airflow_init
+      env:
+        AIRFLOW_DATABASE_URL: postgresql://postgres:password@localhost:5432/airflow
+    - name: ✨ Lint with black, isort, flake8 & sqlfluff 👌
       run: make quality
       env:
         PGDATABASE: pilotage
-    - name: 📓 Generate documentation
+    - name: 🧪 Run airflow tests
+      run: make test
+      env:
+        AIRFLOW_DATABASE_URL: postgresql://postgres:password@localhost:5432/airflow
+    - name: 📓 Generate dbt documentation
       run: make dbt_docs
       env:
         PGDATABASE: pilotage

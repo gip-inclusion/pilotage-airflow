@@ -4,6 +4,9 @@
 # > practice; so for compatibility, you must explicitly request it
 .DELETE_ON_ERROR:
 
+# necessary for `source`
+SHELL := /bin/bash
+
 PYTHON_VERSION := python3.10
 
 VIRTUAL_ENV ?= $(shell pwd)/.venv
@@ -53,6 +56,11 @@ airflow_init:
 		source _source-vars.sh && \
     	airflow db upgrade && \
     	airflow users create --role Admin --email admin@example.com --username admin --password password -f "" -l ""
+
+test:
+	cd airflow_src/ && \
+		source _source-vars.sh && \
+		pytest -v -W ignore::DeprecationWarning
 
 load_dump:
 	dropdb ${PGDATABASE} || true
