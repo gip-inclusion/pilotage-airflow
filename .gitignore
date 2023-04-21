@@ -7,3 +7,4 @@ logs/
 .env
 airflow/
 .latest.dump
+**/__pycache__
