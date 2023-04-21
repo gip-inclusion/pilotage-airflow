@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from airflow.decorators import task
 from airflow.operators.python import get_current_context
 from airflow.providers.slack.hooks.slack_webhook import SlackWebhookHook
+from airflow.utils import timezone
 
 
 # FIXME(vperron): this webhook should absolutely be installed through the entrypoint
@@ -10,24 +13,27 @@ SLACK_CONN_ID = "slack_webhook"
 
 def task_fail_alert(context):
     hook = SlackWebhookHook(slack_webhook_conn_id=SLACK_CONN_ID)
+    ti = context.get("task_instance")
     return hook.send_text(
         """
-    :airflow: :red_circle: Airflow Task Failed !  *Task*: {task} *Dag*: {dag} *Logs*: <{log_url}|follow>
+    :airflow: :red_circle: Airflow task failed ! *dag*={dag} *task*={task} <{log_url}|online logs>
     """.format(
-            task=context.get("task_instance").task_id,
-            dag=context.get("task_instance").dag_id,
-            log_url=context.get("task_instance").log_url,
+            dag=ti.dag_id,
+            task=ti.task_id,
+            log_url=ti.log_url,
         )
     )
 
 
 def task_success_alert(context):
     hook = SlackWebhookHook(slack_webhook_conn_id=SLACK_CONN_ID)
+    dr = context.get("dag_run")
     return hook.send_text(
         """
-    :airflow: :white_check_mark: Airflow DAG Success.  *Dag*: {dag}
+    :airflow: :white_check_mark: Airflow DAG success. *dag*={dag} *duration_seconds*={duration}
     """.format(
-            dag=context.get("task_instance").dag_id,
+            dag=dr.dag_id,
+            duration=(timezone.make_aware(datetime.now()) - dr.start_date).total_seconds(),
         )
     )
 
