@@ -50,6 +50,8 @@ Pour vérifier que DBT est bien configuré:
 
     cd airflow_src/
     dbt debug
+    dbt seed
+    dbt run
 
 Si tout va bien, vous pourrez ensuite utiliser DBT pour pour toutes vos opérations.
 
