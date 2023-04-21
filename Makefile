@@ -4,9 +4,6 @@
 # > practice; so for compatibility, you must explicitly request it
 .DELETE_ON_ERROR:
 
-# necessary for `source`
-SHELL := /bin/bash
-
 PYTHON_VERSION := python3.10
 
 VIRTUAL_ENV ?= $(shell pwd)/.venv
@@ -14,14 +11,12 @@ export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
 DUMP_DIR ?= .latest.dump
 
-# FIXME(vperron): So far, consider that only airflow_src path is supposed correct and thus, quality-checked.
-# The scripts/ dir can be let free.
-MONITORED_DIRS := airflow_src
+MONITORED_DIRS := dags tests
 
 # FIXME(vperron): In the long run we should include "references.consistent,references.from,references.qualification" rules.
 SQLFLUFF_OPTIONS := \
 	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification \
-	--disable-progress-bar --nocolor \
+	--disable-progress-bar --nocolor
 
 .PHONY: venv_ci clean compile-deps airflow_init dbt_clean dbt_docs fix quality test load_dump
 
@@ -30,13 +25,14 @@ venv_ci:
 	$(VIRTUAL_ENV)/bin/pip install --no-color --progress-bar off -r requirements-ci.txt
 
 dbt_clean:
-	cd airflow_src && dbt clean
+	rm -rf $(DBT_TARGET_PATH)
+	dbt clean
 
 dbt_docs:
-	cd airflow_src && dbt docs generate
+	dbt docs generate
 
 clean: dbt_clean
-	find . -type d -name "__pycache__" -depth -exec rm -rf '{}' \;
+	find . -depth -type d -name "__pycache__" -exec rm -rf '{}' \;
 	find . -type d -empty -delete
 
 # if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
@@ -51,16 +47,15 @@ quality: clean
 	flake8 --count --show-source --statistics $(MONITORED_DIRS)
 	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
-airflow_init:
-	cd airflow_src/ && \
-		source _source-vars.sh && \
-    	airflow db upgrade && \
-    	airflow users create --role Admin --email admin@example.com --username admin --password password -f "" -l ""
+airflow_initdb:
+	createdb airflow || true
+	airflow db reset -y && \
+		airflow db upgrade && \
+		airflow variables import dag-variables.json && \
+		airflow users create --role Admin --email admin@example.com --username admin --password password -f "" -l ""
 
 test:
-	cd airflow_src/ && \
-		source _source-vars.sh && \
-		pytest -v -W ignore::DeprecationWarning
+	pytest -v -W ignore::DeprecationWarning
 
 load_dump:
 	dropdb ${PGDATABASE} || true

@@ -34,9 +34,5 @@ capitalisation_policy = "lower"
 [tool.sqlfluff.rules.references.special_chars]
 additional_allowed_characters = "àéè '-"
 
-[tool.sqlfluff.templater.dbt]
-project_dir = "airflow_src"
-profiles_dir = "airflow_src"
-
 [tool.sqlfluff.templater.jinja]
 apply_dbt_builtins = true

@@ -1,0 +1,14 @@
+{
+    "NPS_NAME_PUB_SHEET_URL_TUPLES": [
+        [
+            "Les Emplois",
+            "https://published.google.sheets.com?gid=0&single=true&output=csv"
+        ]
+    ],
+    "PGDATABASE": "pilotage",
+    "PGHOST": "localhost",
+    "PGPASSWORD": "password",
+    "PGPORT": 5432,
+    "PGUSER": "postgres",
+    "RESEAU_IAE_ADHERENTS_PUB_SHEET_URL": "https://published.google.sheets.com?gid=0&single=true&output=csv"
+}

@@ -1,0 +1,5 @@
+.env
+tests
+logs
+Dockerfile
+.latest.dump

@@ -34,45 +34,47 @@ Sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html)
 
 ### Votre fichier ``.env``
 
-    cp env.example .env
-    # modifiez le ficher `.env` pour y faire apparaître les bonnes valeurs
+Le fichier `env.example` contient des valeurs par défaut directement utilisables,
+sauf pour le chargement des dumps du Pilotage en production.
 
-## Charger un dump local
+    cp env.example .env
+    # modifiez le ficher `.env` si besoin
+
+
+## DBT et base de données Pilotage
+
+Pour vérifier que DBT est bien configuré:
+
+    dbt debug
+
+Si tout va bien, vous pourrez ensuite utiliser DBT pour pour toutes vos opérations.
+
+    make load_dump
+    dbt seed
+    dbt run --select heures_etp_salaries
+
+### Charger un dump local pilotage
 
 Une commande Makefile est proposée, pourvu que vous ayiez rempli les variables d'environnement nécessaires
 pour accéder à la base de données PostgreSQL de production.
 
     make load_dump
 
-## DBT
-
-Pour vérifier que DBT est bien configuré:
-
-    cd airflow_src/
-    dbt debug
-
-Si tout va bien, vous pourrez ensuite utiliser DBT pour pour toutes vos opérations.
-
 ## Airflow
 
 Créez une base de données pour Airflow si elle n'existe pas.
 
-    createdb airflow
-    make airflow_init
+    # attention, cette commande remttra également à zéro votre base de données Airflow
+    make airflow_initdb
 
 Pour lancer airflow localement, ouvrez deux terminaux et:
 
-    cd airflow_src/
-    ./start-webserver.sh
-    ./start-scheduler.sh
+    airflow webserver
+    airflow scheduler
 
 Vous pouvez ensuite accéder à l'interface Web sur http://127.0.0.1:8080 et lancer les DAGs.
 
 L'utilisateur local de base a pour credentials "admin" / "password".
-
-Les DAGs Airflow nécessitent quelques variables à configurer dans Airflow pour fonctionner;
-voir ``variables.json`` pour ces dernières. Vous pouvez importer le fichier dans Admin/Variables.
-
 
 > **Note**
 >

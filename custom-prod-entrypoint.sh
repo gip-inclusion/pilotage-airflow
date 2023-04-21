@@ -3,7 +3,11 @@
 set -e
 set -x
 
-source _source-vars.sh
+set -o allexport
+source .env-base
+set +o allexport
+
+export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="${POSTGRESQL_ADDON_URI//\"/}"
 
 airflow db upgrade
 
@@ -16,9 +20,8 @@ if [[ "x$CELLAR_ADDON_HOST" != "x" ]]; then
 fi
 
 
-if [[ "x$SENTRY_DSN" != "x" ]]; then
+if [[ "x$AIRFLOW__SENTRY__SENTRY_DSN" != "x" ]]; then
     export AIRFLOW__SENTRY__SENTRY_ON=True
-    export AIRFLOW__SENTRY__SENTRY_DSN="${SENTRY_DSN}"
 fi
 
 
@@ -32,6 +35,5 @@ if [[ "x$AIRFLOW_SUPERUSER_PASSWORD" != "x" ]]; then
         --password "${AIRFLOW_SUPERUSER_PASSWORD}"
 fi
 
-airflow scheduler &
-
-airflow webserver --port 8080
+exec /entrypoint "scheduler" &
+exec /entrypoint "webserver"

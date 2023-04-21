@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from airflow.decorators import task
 from airflow.operators.python import get_current_context
 from airflow.providers.slack.hooks.slack_webhook import SlackWebhookHook
@@ -33,7 +31,7 @@ def task_success_alert(context):
     :airflow: :white_check_mark: Airflow DAG success. *dag*={dag} *duration_seconds*={duration}
     """.format(
             dag=dr.dag_id,
-            duration=(timezone.make_aware(datetime.now()) - dr.start_date).total_seconds(),
+            duration=(timezone.utcnow() - dr.start_date).total_seconds(),
         )
     )
 

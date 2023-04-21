@@ -1,7 +1,7 @@
 # build me as docker build . -t my-airflow
 # run me as docker run -ti -p 8080:8080 --env-file=.env my-airflow
 
-FROM apache/airflow:2.5.2-python3.10
+FROM apache/airflow:2.5.1-python3.10
 
 USER root
 
@@ -24,7 +24,8 @@ USER airflow
 COPY requirements-ci.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt && rm requirements.txt
 
-COPY --chown=airflow:root airflow_src/ .
+COPY --chown=airflow:root . ./
 COPY --chown=airflow:root .s3cfg /home/airflow
 
-CMD ["bash", "-c", "./entrypoint.sh"]
+COPY custom-prod-entrypoint.sh /
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/custom-prod-entrypoint.sh"]

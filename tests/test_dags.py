@@ -1,3 +1,4 @@
+import json
 from unittest import mock
 
 from airflow.models import DagBag
@@ -5,22 +6,16 @@ from airflow.models import DagBag
 
 # keep track of all the necessary variables for any DAGs to run.
 # this is good to avoid losing the grip on what is necessary to
-# our production flows. Any added variable not listed here will
-# make the tests fail.
-ALL_VARIABLES = [
-    "NPS_NAME_PUB_SHEET_URL_TUPLES",
-    "PGDATABASE",
-    "PGHOST",
-    "PGPASSWORD",
-    "PGPORT",
-    "PGUSER",
-    "RESEAU_IAE_ADHERENTS_PUB_SHEET_URL",
-]
+# our production flows. Any added variable not listed in the dev
+# file will make the tests fail.
+def get_dag_variables():
+    with open("dag-variables.json", "r", encoding="utf-8") as json_file:
+        return json.load(json_file)
 
 
 @mock.patch.dict(
     "os.environ",
-    {f"AIRFLOW_VAR_{var}": "dummy" for var in ALL_VARIABLES},
+    {f"AIRFLOW_VAR_{var}": "dummy" for var in get_dag_variables()},
 )
 def test_dags_generic(subtests):
     dagbag = DagBag()

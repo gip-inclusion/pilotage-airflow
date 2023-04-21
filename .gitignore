@@ -3,7 +3,9 @@
 /*.xls
 /*.xlsx
 logs/
+**/__pycache__
 
 .env
 airflow/
 .latest.dump
+.user.yml

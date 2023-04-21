@@ -51,9 +51,10 @@ jobs:
         make venv_ci
         echo ".venv/bin" >> $GITHUB_PATH
     - name: ⚙ Setup airflow database
-      run: make airflow_init
+      run: make airflow_initdb
       env:
-        AIRFLOW_DATABASE_URL: postgresql://postgres:password@localhost:5432/airflow
+        AIRFLOW__CORE__FERNET_KEY: U7sOUkZeQ6JGmwQoG6anMTdnl_nzy4f74IFkNmMeW50=
+        AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@localhost:5432/airflow
     - name: ✨ Lint with black, isort, flake8 & sqlfluff 👌
       run: make quality
       env:
@@ -61,7 +62,9 @@ jobs:
     - name: 🧪 Run airflow tests
       run: make test
       env:
-        AIRFLOW_DATABASE_URL: postgresql://postgres:password@localhost:5432/airflow
+        PGDATABASE: pilotage
+        AIRFLOW__CORE__FERNET_KEY: U7sOUkZeQ6JGmwQoG6anMTdnl_nzy4f74IFkNmMeW50=
+        AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@localhost:5432/airflow
     - name: 📓 Generate dbt documentation
       run: make dbt_docs
       env:
