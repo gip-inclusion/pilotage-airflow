@@ -1,7 +1,7 @@
 import airflow
 from airflow.operators import bash, empty
 
-from dags.common import dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args, slack
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -13,9 +13,13 @@ with airflow.DAG(
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
 
+    env_vars = db.connection_envvars()
+
     dbt_generate_docs = bash.BashOperator(
         task_id="dbt_generate_docs",
         bash_command="rm -rf /tmp/dbt-docs && DBT_TARGET_PATH=/tmp/dbt-docs dbt docs generate",
+        env=env_vars,
+        append_env=True,
     )
 
     cellar_sync = bash.BashOperator(
