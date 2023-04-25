@@ -17,6 +17,9 @@ models:
   dbt_pilotage:
     legacy:
       +materialized: table
+      appartenance_geo_communes:
+        +column_types:
+          code_insee: varchar(5)
 
 
 seeds:
