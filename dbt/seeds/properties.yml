@@ -1,27 +1,27 @@
 version: 2
 
 seeds:
-  - name: communes
+  - name: insee_communes
     description: >
-      liste des communes et leur appartenance geographique
+      liste des communes françaises et leur appartenance géographique
       (source: [insee](https://www.insee.fr/fr/information/2028028))
-  - name: arrondissements
+  - name: insee_arrondissements
     description: >
       liste des arrondissements français
       (source: [insee](https://www.insee.fr/fr/information/6800675))
-  - name: departements
+  - name: insee_departements
     description: >
       liste des départements français
       (source: [insee](https://www.insee.fr/fr/information/6800675))
-  - name: epci
+  - name: insee_epcis
     description: >
-      liste des établissements publics de coopération intercommunale
+      liste des établissements publics de coopération intercommunale français
       (source: [insee](https://www.insee.fr/fr/information/2510634))
-  - name: regions
+  - name: insee_regions
     description: >
       liste des régions françaises
       (source: [insee](https://www.insee.fr/fr/information/6800675))
-  - name: zone_emploi
+  - name: insee_zones_emploi
     description: >
       liste des zones d'emploi françaises
       (source: [insee](https://www.insee.fr/fr/information/4652957))
