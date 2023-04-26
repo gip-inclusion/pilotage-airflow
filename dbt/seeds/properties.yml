@@ -5,37 +5,48 @@ seeds:
     description: >
       communes françaises et leur appartenance géographique
       (source: [insee](https://www.insee.fr/fr/information/2028028))
+      permet de calculer le modèle d'appartenance géographique (models.staging.stg_insee_appartenance_geo_communes)
   - name: insee_arrondissements
     description: >
       arrondissements français
       (source: [insee](https://www.insee.fr/fr/information/6800675))
+      permet de récupérer les libellés des arrondissements français à partir de leur identifiant insee
   - name: insee_departements
     description: >
       départements français
       (source: [insee](https://www.insee.fr/fr/information/6800675))
+      permet de récupérer les libellés des départements français à partir de leur identifiant insee
   - name: insee_epcis
     description: >
-      établissements publics de coopération intercommunale français
+      établissements publics de coopération intercommunale (epci) français
       (source: [insee](https://www.insee.fr/fr/information/2510634))
+      permet de récupérer les libellés des epcis français à partir de leur identifiant insee
   - name: insee_regions
     description: >
       régions françaises
       (source: [insee](https://www.insee.fr/fr/information/6800675))
+      permet de récupérer les libellés des régions françaises à partir de leur identifiant insee
   - name: insee_zones_emploi
     description: >
       zones d'emploi françaises
       (source: [insee](https://www.insee.fr/fr/information/4652957))
+      permet de récupérer les libellés des zones d'emploi françaises à partir de leur identifiant insee
   - name: code_rome_domaine_professionnel
     # (laurine) todo: renommer et automatiser la récupération
     # pas sûre que cette version soit à jour
     description: >
-      domaines professionnels et des codes romes associés
+      domaines professionnels et codes romes associés
+      (source (à vérifier): [Pôle emploi](https://www.pole-emploi.fr/employeur/vos-recrutements/le-rome-et-les-fiches-metiers.html))
+      initialement introduite pour permettre d'identifier le domaine ou le métier associé à une fiche de poste,
+      permet d'identifier le domaine professionnel de n'importe quelle donnée disposant d'un code_rome (exemple: candidatures et prochainement structures)
   - name: sa_ept
     # (laurine) liste des ept, version de soumia
     # todo : réaliser une nouvelle table sourcée et supprimer celle-ci
     description: >
       établissements publics territoriaux
+      (source (à vérifier avec Yannick): ?insee?)
   - name: ref_mesure_dispositif_asp
     # (laurine) à documenter ou supprimer
     description: >
       dispositifs de l'IAE, identifiants et libellés
+      (source (à vérifier avec Yannick): ?asp?)
