@@ -12,6 +12,7 @@ with premiere_candidature as (
         id_candidat
 )
 
+
 select distinct
     pc.min_date_candidature,
     injection_ai,

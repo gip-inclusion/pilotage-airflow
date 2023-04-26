@@ -15,6 +15,17 @@ packages-install-path: "dbt/packages"
 
 models:
   dbt_pilotage:
+    # FIXME(vperron): this is an attempt to avoid having the DB owner name leaking into
+    # the documentation. Unfortunately it just adds *another* owner and the credentials are still there :/
+    # There are three possible solutions to this:
+    # - add a GH action upon merge in master to regenerate the docs, using the dummy GH database.
+    #   Problem: no tables are there yet, so no introspection will be possible. We could add some but it's a lot of work.
+    # - edit the "catalog.json" immediately avec the "dbt docs generate" : at least this is very certain.
+    # - wait for a patch in DBT 1.5 or 1.6
+    #
+    # We will settle for option 2 which is the easiest and quickest by far.
+    meta:
+      owner: "Equipe Pilotage"
     legacy:
       +materialized: table
     staging:

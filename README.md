@@ -23,22 +23,31 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
 ### Votre serveur de base de données PostgreSQL pour Airflow & DBT
 
-    sudo apt install postgresql
-    brew install postgresql
+    sudo apt install postgresql  # sous Linux
+    brew install postgresql  # sous MacOS
     # vérifiez que vous disposez bien de `psql`, `pg_dump` et `pg_restore`
 
 
 ### Le logiciel [direnv](https://direnv.net)
 
-Sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html)
+Sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html) ni de
+lancer `direnv allow` ensuite dans ce répertoire.
 
 ### Votre fichier ``.env``
 
 Le fichier `env.example` contient des valeurs par défaut directement utilisables,
 sauf pour le chargement des dumps du Pilotage en production.
 
+Il sert de modèle pour la création de votre propre fichier `.env`; n'hésitez pas
+à le modifier si votre configuration locale (adresse, nom, port de votre base de
+données...) est différente.
+
     cp env.example .env
     # modifiez le ficher `.env` si besoin
+
+Notez que le fichier commité `.env-base` contient des variables d'environnement
+bonnes quel que soit votre environnement de développement et n'est pas censé
+être "personnalisé".
 
 
 ## DBT et base de données Pilotage
@@ -49,7 +58,6 @@ Pour vérifier que DBT est bien configuré:
 
 Si tout va bien, vous pourrez ensuite utiliser DBT pour pour toutes vos opérations.
 
-    make load_dump
     dbt seed
     dbt run --select heures_etp_salaries
 
@@ -64,8 +72,15 @@ pour accéder à la base de données PostgreSQL de production.
 
 Créez une base de données pour Airflow si elle n'existe pas.
 
-    # attention, cette commande remttra également à zéro votre base de données Airflow
+    # attention, cette commande remettra également à zéro votre base de données Airflow
     make airflow_initdb
+
+En particulier cette étape:
+
+- crée la base de données `airflow`
+- lui applique des migrations
+- importe les variables "par défaut" `dag-variables.json`
+- ajoute un utilsateur `admin/password`
 
 Pour lancer airflow localement, ouvrez deux terminaux et:
 
