@@ -3,6 +3,10 @@ version: 2
 models:
   - name: stg_insee_appartenance_geo_communes
     description: >
-      Ce modèle liste les communes françaises recensées par l'insee.
-      Elle donne pour chaque commune sont appartenance géographique
+      Ce modèle liste les communes françaises recensées par l'insee
+      et donne pour chaque commune son appartenance géographique
       en terme de : département, région, zone d'emploi, epci et arrondissement.
+      Elle a comme base la [table d'appartenance géographique des communes](https://www.insee.fr/fr/information/2028028) de l'insee (seeds.insee_geo.insee_communes)
+      enrichie des libellés par un croisement avec les tables insee nécessaires (seeds.insee_geo.insee_departements, insee_regions, insee_epcis, insee_arrondissements)
+      Cette table permet d'enrichir n'importe quelle donnée géographique identifiée par un code commune en passant par cette unique table au lieu de recalculer les jointures à chaque fois.
+      Elle a été introduite pour agréger les données de candidatures en fonction de leur appartenance géographique.
