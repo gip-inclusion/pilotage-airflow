@@ -15,9 +15,9 @@ packages-install-path: "dbt/packages"
 
 models:
   dbt_pilotage:
-    - legacy:
+    legacy:
       +materialized: table
-    - staging:
+    staging:
       +materialized: view
 
 seeds:
