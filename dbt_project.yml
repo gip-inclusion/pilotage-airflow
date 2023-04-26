@@ -17,11 +17,8 @@ models:
   dbt_pilotage:
     - legacy:
       +materialized: table
-    - name: staging
+    - staging:
       +materialized: view
-      tables:
-        - name: stg_insee_appartenance_geo_communes
-
 
 seeds:
   dbt_pilotage:
