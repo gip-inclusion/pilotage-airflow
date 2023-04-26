@@ -7,7 +7,7 @@ dbt_pilotage:
       type: postgres
       dbname: "{{ env_var('PGDATABASE') }}"
       host: "{{ env_var('PGHOST') }}"
-      password: "{{ env_var('PGPASSWORD') }}"
+      password: "{{ env_var('PGPASSWORD', '') }}"
       port: "{{ env_var('PGPORT') | int }}"
       user: "{{ env_var('PGUSER') }}"
 
