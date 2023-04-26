@@ -50,3 +50,13 @@ seeds:
     description: >
       dispositifs de l'IAE, identifiants et libellés
       (source (à vérifier avec Yannick): ?asp?)
+  - name: organisation_libelles
+    # (laurine) je suis pas sûre d'être très claire sur la description que je fais ci dessous,
+    # à clarifier après discussion bonne practoche car j'ai qqs questions, mais je tente un truc
+    description: >
+      correspondance entre codes organisation des emplois et labels affichés dans les tb pilotage
+      source de la correspondance : [emplois : organizations model](https://github.com/betagouv/itou/blob/2edc1adb394174d08752887c0c2512c37b16e19b/itou/prescribers/enums.py#L4-L44)
+      à ce stade la correspondance semble redondante mais
+      cette seed pourra être enrichie en fonction du label que l'on souhaite afficher sur metabase
+      notamment le label actuel de la colonne libelle est trop long et pourra être simplifié pour le rendu sur metabase.
+

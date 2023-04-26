@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: suivi_candidatures_prescripteurs_habilites
+    description: >
+      Table introduite pour réaliser le tableau de bord prescripteurs.
+      Elle a comme base la table [candidatures_echelle_locale](#!/source/source.dbt_pilotage.emplois.candidatures_echelle_locale) et ajoute une colonne `libelle_complet`
+      à partir de la seed [organisation_libelles](#!/seeds/organisation_libelles) pour pouvoir afficher le libelle sur metabase tel
+      qu'affiché sur les emplois.
+  - name: suivi_prescripteurs_habilites
+    description: >
+      Table introduite pour réaliser le tableau de bord prescripteurs.
+      Elle a comme base la table [organisations](#!/source/source.dbt_pilotage.emplois.organisations) + d'autres informations :
+        - le nombre de siae partenaires de ces organisations
