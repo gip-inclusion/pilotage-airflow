@@ -11,7 +11,7 @@ export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
 DUMP_DIR ?= .latest.dump
 
-MONITORED_DIRS := dags tests
+MONITORED_DIRS := dags dbt tests
 
 # FIXME(vperron): In the long run we should include "references.consistent,references.from,references.qualification" rules.
 SQLFLUFF_OPTIONS := \
