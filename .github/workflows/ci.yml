@@ -46,7 +46,7 @@ jobs:
         python-version: "3.10"
         cache: pip
         cache-dependency-path: requirements-ci.txt
-    - name: 📥 Install dependencies
+    - name: 📥 Install Python dependencies
       run: |
         make venv_ci
         echo ".venv/bin" >> $GITHUB_PATH
@@ -55,6 +55,8 @@ jobs:
       env:
         AIRFLOW__CORE__FERNET_KEY: U7sOUkZeQ6JGmwQoG6anMTdnl_nzy4f74IFkNmMeW50=
         AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@localhost:5432/airflow
+    - name: Install dbt packages
+      run: dbt deps
     - name: ✨ Lint with black, isort, flake8 & sqlfluff 👌
       run: make quality
       env:

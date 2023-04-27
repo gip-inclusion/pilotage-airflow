@@ -36,3 +36,7 @@ additional_allowed_characters = "àéè '-"
 
 [tool.sqlfluff.templater.jinja]
 apply_dbt_builtins = true
+
+[tool.pytest.ini_options]
+addopts = "--ignore=dbt/packages"
+

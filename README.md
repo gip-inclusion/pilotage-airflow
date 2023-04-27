@@ -56,9 +56,14 @@ Pour vérifier que DBT est bien configuré:
 
     dbt debug
 
+Pour avoir une configuration "prête à l'emploi", il vous faut lancer les commandes suivantes:
+
+    make load_dump
+    dbt deps
+    dbt seed
+
 Si tout va bien, vous pourrez ensuite utiliser DBT pour pour toutes vos opérations.
 
-    dbt seed
     dbt run --select heures_etp_salaries
 
 ### Charger un dump local pilotage

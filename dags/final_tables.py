@@ -24,6 +24,13 @@ with airflow.DAG(
         append_env=True,
     )
 
+    dbt_deps = bash.BashOperator(
+        task_id="dbt_deps",
+        bash_command="dbt deps",
+        env=env_vars,
+        append_env=True,
+    )
+
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
         bash_command="dbt seed",
@@ -45,4 +52,4 @@ with airflow.DAG(
         append_env=True,
     )
 
-    (start >> dbt_debug >> dbt_seed >> dbt_run >> dbt_clean >> end)
+    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_clean >> end)
