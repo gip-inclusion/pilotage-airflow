@@ -10,6 +10,7 @@ VIRTUAL_ENV ?= $(shell pwd)/.venv
 export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
 DUMP_DIR ?= .latest.dump
+RESTORE_DIR ?= .latest.restore
 
 MONITORED_DIRS := dags dbt tests
 
@@ -57,12 +58,30 @@ airflow_initdb:
 test:
 	pytest -v -W ignore::DeprecationWarning
 
-load_dump:
-	dropdb ${PGDATABASE} || true
-	createdb ${PGDATABASE}
+
+pg_dump:
+	@PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
+			psql -c ";" || { \
+				echo "\n\n### Your connexion to the production database failed. Is the port blocked by a firewall ? ###\n" ; \
+				false ; \
+			}
 	rm -rf $(DUMP_DIR)
+	@echo "\n\n### Dumping the production database on your machine, check your disk size and connection speeds ! ###\n"
 	PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
-		   pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 \
+		   time pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 \
 		   --exclude-table="lh_*" --exclude-table="yp_*" --exclude-table="z_*" \
 		   --file=$(DUMP_DIR)
-	pg_restore --format=directory --clean --jobs=4 --verbose --no-owner --no-acl -d ${PGDATABASE} $(DUMP_DIR) || true
+	@echo "\n\n### Database dumped successfully. ###\n"
+	mv $(DUMP_DIR) $(RESTORE_DIR)
+
+pg_restore:
+ifneq (,$(findstring clever-cloud,$(PGHOST)))
+	@echo "\n\n### Your environment seems to connect directly to the production database, aborting. ###\n"
+else
+	dropdb ${PGDATABASE} || true
+	createdb ${PGDATABASE}
+	time pg_restore --format=directory --clean --jobs=4 --verbose --no-owner --no-acl -d ${PGDATABASE} $(RESTORE_DIR) || true
+	@echo "\n\n### Database restored successfully ! ###\n"
+endif
+
+load_dump: pg_dump pg_restore

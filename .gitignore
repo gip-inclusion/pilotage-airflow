@@ -9,4 +9,5 @@ logs/
 dbt/packages/
 airflow/
 .latest.dump
+.latest.restore
 .user.yml

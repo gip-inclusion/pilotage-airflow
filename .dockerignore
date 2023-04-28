@@ -3,6 +3,7 @@ tests
 logs
 Dockerfile
 .latest.dump
+.latest.restore
 dbt/packages/
 tests/
 scripts/
