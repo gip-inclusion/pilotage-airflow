@@ -36,6 +36,7 @@ additional_allowed_characters = "àéè '-"
 
 [tool.sqlfluff.templater.jinja]
 apply_dbt_builtins = true
+load_macros_from_path = "dbt/packages"
 
 [tool.pytest.ini_options]
 addopts = "--ignore=dbt/packages"
