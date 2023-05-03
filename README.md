@@ -25,13 +25,14 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
     sudo apt install postgresql  # sous Linux
     brew install postgresql  # sous MacOS
-    # vérifiez que vous disposez bien de `psql`, `pg_dump` et `pg_restore`
+    
 
 
 ### Le logiciel [direnv](https://direnv.net)
 
 Sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html) ni de
 lancer `direnv allow` ensuite dans ce répertoire.
+[Tuto](https://stackoverflow.com/questions/49083789/how-to-add-new-line-in-bashrc-file-in-ubuntu) pour ajouter une nouvelle ligne sur le fichier bashsrc
 
 ### Votre fichier ``.env``
 
@@ -44,6 +45,12 @@ données...) est différente.
 
     cp env.example .env
     # modifiez le ficher `.env` si besoin
+    # Une fois les variables d'environnement chargées vérifiez que vous disposez bien de `psql`, `pg_dump` et `pg_restore`
+
+Sur Ubuntu (et peut être d'autres distribution de linux) pour définir ```PGPASSWORD=password``` vous pouvez utiliser la commande suivante 
+
+    sudo -u postgres psql
+    > ALTER USER postgres PASSWORD 'password';
 
 Notez que le fichier commité `.env-base` contient des variables d'environnement
 bonnes quel que soit votre environnement de développement et n'est pas censé
@@ -78,7 +85,9 @@ pour accéder à la base de données PostgreSQL de production.
 Créez une base de données pour Airflow si elle n'existe pas.
 
     # attention, cette commande remettra également à zéro votre base de données Airflow
+    # lors du premier lancement de cette commande, le message d'erreur 'Variable PGHOST does not exist' s'affichera : c'est normal et il est à ignorer.
     make airflow_initdb
+    
 
 En particulier cette étape:
 
@@ -87,7 +96,7 @@ En particulier cette étape:
 - importe les variables "par défaut" `dag-variables.json`
 - ajoute un utilsateur `admin/password`
 
-Pour lancer airflow localement, ouvrez deux terminaux et:
+Pour lancer airflow localement, ouvrez **DEUX** terminaux et:
 
     airflow webserver
     airflow scheduler
