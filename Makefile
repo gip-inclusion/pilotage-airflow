@@ -37,12 +37,12 @@ clean: dbt_clean
 	find . -type d -empty -delete
 
 # if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
-fix: clean
+fix:
 	black $(MONITORED_DIRS)
 	isort $(MONITORED_DIRS)
 	sqlfluff fix --force $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
-quality: clean
+quality:
 	black --check $(MONITORED_DIRS)
 	isort --check $(MONITORED_DIRS)
 	flake8 --count --show-source --statistics $(MONITORED_DIRS)
