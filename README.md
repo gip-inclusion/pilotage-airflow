@@ -32,7 +32,7 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
 Sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html) ni de
 lancer `direnv allow` ensuite dans ce répertoire.
-[Tuto](https://stackoverflow.com/questions/49083789/how-to-add-new-line-in-bashrc-file-in-ubuntu) pour ajouter une nouvelle ligne sur le fichier bashsrc
+[Tuto](https://stackoverflow.com/questions/49083789/how-to-add-new-line-in-bashrc-file-in-ubuntu) pour ajouter une nouvelle ligne sur le fichier bashrc (linux) ou .bash_profile (mac OS)
 
 ### Votre fichier ``.env``
 
@@ -47,7 +47,7 @@ données...) est différente.
     # modifiez le ficher `.env` si besoin
     # Une fois les variables d'environnement chargées vérifiez que vous disposez bien de `psql`, `pg_dump` et `pg_restore`
 
-Sur Ubuntu (et peut être d'autres distribution de linux) pour définir ```PGPASSWORD=password``` vous pouvez utiliser la commande suivante 
+Pour définir ```PGPASSWORD=password``` vous pouvez utiliser la commande suivante 
 
     sudo -u postgres psql
     > ALTER USER postgres PASSWORD 'password';
