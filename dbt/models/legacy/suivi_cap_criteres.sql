@@ -4,6 +4,8 @@ select
     criteres."niveau"         as "niveau_critère",
     -- REFUSED et REFUSED_2 correspondent au même état (?) - à confirmer par Zo
     camp."nom"                as "nom_campagne",
+    structs."nom"             as "nom_structure",
+    structs."nom_complet"     as "nom_structure_complet",
     structs."département"     as "département",
     structs."nom_département" as "nom_département",
     structs."région"          as "nom_région",
