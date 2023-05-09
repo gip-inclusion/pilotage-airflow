@@ -11,3 +11,5 @@ airflow/
 .latest.dump
 .latest.restore
 .user.yml
+venv/
+.DS_Store
