@@ -12,3 +12,11 @@ models:
       Table introduite pour réaliser le tableau de bord prescripteurs.
       Elle a comme base la table [organisations](#!/source/source.dbt_pilotage.emplois.organisations) + d'autres informations :
         - le nombre de siae partenaires de ces organisations
+  - name: organisations_dihal
+    description: >
+      Table introduite pour réaliser le tableau de bord DIHAL.
+      Nécessaire pour restreindre le choix des filtres uniquement aux prescripteurs de la DIHAL.
+  - name: candidatures_dihal
+    description: >
+      Table introduite pour réaliser le tableau de bord DIHAL.
+      Nécessaire pour restreindre le choix des filtres uniquement aux prescripteurs de la DIHAL.
