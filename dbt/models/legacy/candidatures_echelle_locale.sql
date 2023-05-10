@@ -36,7 +36,8 @@ org_prescripteur as ( /* On récupère l'id et le dept des organismes prescripte
         org.id                as id_org,
         org.siret             as siret_org_prescripteur,
         org."nom_département" as dept_org,  /*bien mettre nom département et pas département */
-        org."région"          as "région_org"
+        org."région"          as "région_org",
+        org."type"            as type_org_prescripteur
     from
         {{ source('emplois', 'organisations') }} as org
 ),
@@ -140,6 +141,7 @@ select
     "nom_prénom_conseiller",
     org_prescripteur.dept_org,
     org_prescripteur."région_org",
+    org_prescripteur.type_org_prescripteur,
     candidatures_p.injection_ai,
     bassin_emploi.ville,
     bassin_emploi.nom_epci,
