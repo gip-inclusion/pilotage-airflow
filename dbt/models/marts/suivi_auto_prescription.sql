@@ -1,5 +1,9 @@
 select
-    {{ dbt_utils.star(ref('stg_autoprescription')) }},
+    {% if env_var('CI', ',') %}
+        *,
+    {% else %}
+        {{ dbt_utils.star(ref('stg_autoprescription')) }},
+    {% endif %}
     s.siret                 as siret,
     s.active                as active,
     s.ville                 as ville,
