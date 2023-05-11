@@ -23,5 +23,5 @@ models:
   - name: suivi_auto_prescription
     description: >
       Table introduite pour le suivi de l'auto precription.
-      Nécessaire pour obtenir une définition exacte de l'auto prescription. Nous parolons d'auto prescription lorsque
+      Nécessaire pour obtenir une définition exacte de l'auto prescription. Nous parlons d'auto prescription lorsque
       l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.

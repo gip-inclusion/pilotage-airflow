@@ -13,7 +13,7 @@ models:
   - name: stg_autoprescription
     description: >
       Ce modèle permet de déterminer les candidats et candidatures provenant d'une auto prescription.
-      Nous parolons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
+      Nous parlons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
   - name: stg_structures
     description: >
-      Ce modèle permet de selectionner certaines informations de la table structures et de lever des ambiguités dans les noms de colonne, en particulier avec les départements.
+      Ce modèle permet de selectionner certaines informations (id, active, siret, ville et nom complet de la structure) de la table structures et de lever des ambiguités dans les noms de colonne, en particulier avec les départements.
