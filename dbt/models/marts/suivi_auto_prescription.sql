@@ -1,6 +1,6 @@
 select
     {% if env_var('CI', ',') %}
-        *,
+        autopr_all.*,
     {% else %}
         {{ dbt_utils.star(ref('stg_autoprescription')) }},
     {% endif %}
