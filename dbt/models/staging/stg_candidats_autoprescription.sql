@@ -4,7 +4,6 @@ select distinct
     {% else %}
         {{ dbt_utils.star(source('emplois', 'candidats')) }},
     {% endif %}
-    cd."état",
     cd.nom_structure,
     cd.type_structure,
     cd."département_structure",
