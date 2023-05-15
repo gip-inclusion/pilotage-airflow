@@ -137,23 +137,23 @@ select
     candidatures_p.safir_org_prescripteur,
     candidatures_p.id_org_prescripteur,
     candidatures_p.nom_org_prescripteur,
+    candidatures_p."nom_prénom_conseiller",
+    candidatures_p.injection_ai,
     org_prescripteur.siret_org_prescripteur,
-    "nom_prénom_conseiller",
     org_prescripteur.dept_org,
     org_prescripteur."région_org",
     org_prescripteur.type_org_prescripteur,
-    candidatures_p.injection_ai,
     bassin_emploi.ville,
     bassin_emploi.nom_epci,
     bassin_emploi.code_commune,
     bassin_emploi.nom_arrondissement,
     bassin_emploi.bassin_d_emploi,
-    extract(day from "délai_de_réponse")      as temps_de_reponse,
-    extract(day from "délai_prise_en_compte") as temps_de_prise_en_compte,
+    extract(day from candidatures_p."délai_de_réponse")      as temps_de_reponse,
+    extract(day from candidatures_p."délai_prise_en_compte") as temps_de_prise_en_compte,
     case
         when candidatures_p.origine = 'Candidat' then 'Candidature en ligne'
         else candidatures_p.origine
-    end                                       as origine,
+    end                                                      as origine,
     case /* Ajout colonne avec des noms de prescripteurs correspondant à ceux de la table taux_transformation_prescripteurs */
         when candidatures_p."origine_détaillée" = 'Prescripteur habilité AFPA' then 'AFPA - Agence nationale pour la formation professionnelle des adultes'
         when candidatures_p."origine_détaillée" = 'Prescripteur habilité ASE' then 'ASE - Aide sociale à l''enfance'
@@ -186,27 +186,27 @@ select
         when candidatures_p."origine_détaillée" = 'Prescripteur habilité PREVENTION' then 'Service ou club de prévention'
         when candidatures_p."origine_détaillée" = 'Prescripteur habilité RS_FJT' then 'Résidence sociale / FJT - Foyer de Jeunes Travailleurs'
         when candidatures_p."origine_détaillée" = 'Prescripteur habilité SPIP' then 'SPIP - Service pénitentiaire d''insertion et de probation'
-    end                                       as type_auteur_diagnostic_detaille,
+    end                                                      as type_auteur_diagnostic_detaille,
     case
         when adherents_emmaus.reseau_emmaus = 'Emmaus' then 'Oui'
         else 'Non'
-    end                                       as reseau_emmaus,
+    end                                                      as reseau_emmaus,
     case
         when adherents_coorace.reseau_coorace = 'Coorace' then 'Oui'
         else 'Non'
-    end                                       as reseau_coorace,
+    end                                                      as reseau_coorace,
     case
         when adherents_fei.reseau_fei = 'FEI' then 'Oui'
         else 'Non'
-    end                                       as reseau_fei,
+    end                                                      as reseau_fei,
     case
         when adherents_unai.reseau_unai = 'Unai' then 'Oui'
         else 'Non'
-    end                                       as reseau_unai,
+    end                                                      as reseau_unai,
     case
         when adherents_cocagne.reseau_cocagne = 'Cocagne' then 'Oui'
         else 'Non'
-    end                                       as reseau_cocagne
+    end                                                      as reseau_cocagne
 from
     candidatures_p
 left join bassin_emploi
