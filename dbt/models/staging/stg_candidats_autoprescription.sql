@@ -1,9 +1,13 @@
 select distinct
-    {{ dbt_utils.star(source('emplois', 'candidats'), except=["id","id_anonymisé","injection_ai","date_mise_à_jour_metabase"]) }},
-    c.id,
-    c."id_anonymisé",
-    c.injection_ai,
-    c."date_mise_à_jour_metabase",
+    {% if env_var('CI', ',') %}
+        c.*,
+    {% else %}
+        {{ dbt_utils.star(source('emplois', 'candidats'), except=["id","id_anonymisé","injection_ai","date_mise_à_jour_metabase"]) }},
+        c.id,
+        c."id_anonymisé",
+        c.injection_ai,
+        c."date_mise_à_jour_metabase",
+    {% endif %}
     cd."état",
     cd.nom_structure,
     cd.type_structure,
