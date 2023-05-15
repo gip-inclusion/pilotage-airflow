@@ -94,15 +94,11 @@ select
     bassin_emploi.code_commune,
     bassin_emploi.nom_arrondissement,
     bassin_emploi.bassin_d_emploi,
-    {% if env_var('CI', ',') %}
+    {% if env_var('CI', '') %}
         candidatures.*,
     {% else %}
-        {{ dbt_utils.star(ref('stg_candidatures'), except=["origine_détaillée", "cdd_id_org_prescripteur", "cdd_id_structure"]) }},
+        {{ dbt_utils.star(ref('stg_candidatures'), except=["origine_détaillée"], relation_alias='candidatures') }},
     {% endif %}
-    -- laurine : needed to rename to solve dbt issue, needs to rename again to be sure to not broke metabase tables
-    -- next step : discuss good practice and rename columns that have same name in different tables to avoid dbt grumbling
-    candidatures.cdd_id_org_prescripteur as id_org_prescripteur,
-    candidatures.cdd_id_structure        as id_structure,
     case /* Ajout colonne avec des noms de prescripteurs correspondant à ceux de la table taux_transformation_prescripteurs */
         when candidatures."origine_détaillée" = 'Prescripteur habilité AFPA' then 'AFPA - Agence nationale pour la formation professionnelle des adultes'
         when candidatures."origine_détaillée" = 'Prescripteur habilité ASE' then 'ASE - Aide sociale à l''enfance'
@@ -135,40 +131,40 @@ select
         when candidatures."origine_détaillée" = 'Prescripteur habilité PREVENTION' then 'Service ou club de prévention'
         when candidatures."origine_détaillée" = 'Prescripteur habilité RS_FJT' then 'Résidence sociale / FJT - Foyer de Jeunes Travailleurs'
         when candidatures."origine_détaillée" = 'Prescripteur habilité SPIP' then 'SPIP - Service pénitentiaire d''insertion et de probation'
-    end                                  as type_auteur_diagnostic_detaille,
+    end                              as type_auteur_diagnostic_detaille,
     case
         when adherents_emmaus.reseau_emmaus = 'Emmaus' then 'Oui'
         else 'Non'
-    end                                  as reseau_emmaus,
+    end                              as reseau_emmaus,
     case
         when adherents_coorace.reseau_coorace = 'Coorace' then 'Oui'
         else 'Non'
-    end                                  as reseau_coorace,
+    end                              as reseau_coorace,
     case
         when adherents_fei.reseau_fei = 'FEI' then 'Oui'
         else 'Non'
-    end                                  as reseau_fei,
+    end                              as reseau_fei,
     case
         when adherents_unai.reseau_unai = 'Unai' then 'Oui'
         else 'Non'
-    end                                  as reseau_unai,
+    end                              as reseau_unai,
     case
         when adherents_cocagne.reseau_cocagne = 'Cocagne' then 'Oui'
         else 'Non'
-    end                                  as reseau_cocagne
+    end                              as reseau_cocagne
 from
     {{ ref('stg_candidatures') }} as candidatures
 left join bassin_emploi
-    on bassin_emploi.id_structure = candidatures.cdd_id_structure
+    on bassin_emploi.id_structure = candidatures.id_structure
 left join adherents_emmaus
-    on adherents_emmaus.id_structure = candidatures.cdd_id_structure
+    on adherents_emmaus.id_structure = candidatures.id_structure
 left join adherents_coorace
-    on adherents_coorace.id_structure = candidatures.cdd_id_structure
+    on adherents_coorace.id_structure = candidatures.id_structure
 left join adherents_fei
-    on adherents_fei.id_structure = candidatures.cdd_id_structure
+    on adherents_fei.id_structure = candidatures.id_structure
 left join adherents_unai
-    on adherents_unai.id_structure = candidatures.cdd_id_structure
+    on adherents_unai.id_structure = candidatures.id_structure
 left join adherents_cocagne
-    on adherents_cocagne.id_structure = candidatures.cdd_id_structure
+    on adherents_cocagne.id_structure = candidatures.id_structure
 left join org_prescripteur
-    on org_prescripteur.id_org = candidatures.cdd_id_org_prescripteur
+    on org_prescripteur.id_org = candidatures.id_org_prescripteur
