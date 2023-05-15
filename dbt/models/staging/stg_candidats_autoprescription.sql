@@ -1,8 +1,13 @@
 select distinct
-    {% if env_var('CI', ',') %}
+    {% if env_var('CI', '') %}
         c.*,
     {% else %}
-        {{ dbt_utils.star(source('emplois', 'candidats')) }},
+        /* Here, the addition of except = column_name then c.column_name was necessary because otherwise these column names were considered as ambiguous*/
+        {{ dbt_utils.star(source('emplois', 'candidats'),except=["id","id_anonymisé","injection_ai","date_mise_à_jour_metabase"]) }},
+        c.id,
+        c."id_anonymisé",
+        c.injection_ai,
+        c."date_mise_à_jour_metabase",
     {% endif %}
     cd."état",
     cd.nom_structure,
