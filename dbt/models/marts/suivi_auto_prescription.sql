@@ -1,5 +1,5 @@
 select
-    {% if env_var('CI', ',') %}
+    {% if env_var('CI', '') %}
         autopr_all.*,
     {% else %}
         {{ dbt_utils.star(ref('stg_candidatures_autoprescription')) }},

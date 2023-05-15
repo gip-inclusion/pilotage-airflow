@@ -7,7 +7,7 @@ with candidatures_ph as (
         we have to workaround it. I would have like to monkeypatch it in CI (some override of
         the macro somewhere) but could not find a way to do it. Essentialy, we would want the
         following code being applied automatically. */
-        {% if env_var('CI', ',') %}
+        {% if env_var('CI', '') %}
             *,
         {% else %}
             {{ dbt_utils.star(ref('candidatures_echelle_locale')) }},
