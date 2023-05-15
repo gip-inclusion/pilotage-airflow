@@ -27,3 +27,4 @@ models:
   - name: stg_candidatures
     description: >
       Ce modèle récupère les données de la table candidatures et y applique quelques modifications de renommage ou d'extraction de données.
+
