@@ -1,5 +1,5 @@
 select
-    {% if env_var('CI', ',') %}
+    {% if env_var('CI', '') %}
         *
     {% else %}
         {{ dbt_utils.star(source('emplois', 'candidatures'), except=["état", "origine", "délai_de_réponse", "délai_prise_en_compte", "cdd_id_org_prescripteur", "cdd_id_structure"]) }},
