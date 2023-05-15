@@ -15,6 +15,13 @@ with airflow.DAG(
 
     env_vars = db.connection_envvars()
 
+    dbt_deps = bash.BashOperator(
+        task_id="dbt_deps",
+        bash_command="dbt deps",
+        env=env_vars,
+        append_env=True,
+    )
+
     dbt_generate_docs = bash.BashOperator(
         task_id="dbt_generate_docs",
         bash_command="rm -rf /tmp/dbt-docs && DBT_TARGET_PATH=/tmp/dbt-docs dbt docs generate",
