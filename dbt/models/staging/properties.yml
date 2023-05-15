@@ -10,17 +10,17 @@ models:
       enrichie des libellés par un croisement avec les tables insee nécessaires (seeds.insee_geo.insee_departements, insee_regions, insee_epcis, insee_arrondissements)
       Cette table permet d'enrichir n'importe quelle donnée géographique identifiée par un code commune en passant par cette unique table au lieu de recalculer les jointures à chaque fois.
       Elle a été introduite pour agréger les données de candidatures en fonction de leur appartenance géographique.
-  - name: stg_autoprescription
+  - name: stg_candidatures_autoprescription
     description: >
       Ce modèle permet de déterminer les candidatures provenant d'une auto prescription.
       Nous parlons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
   - name: stg_structures
     description: >
       Ce modèle permet de selectionner certaines informations (id, active, siret, ville et nom complet de la structure) de la table structures et de lever des ambiguités dans les noms de colonne, en particulier avec les départements.
-  - name: stg_candidates_count
+  - name: stg_candidats_count
     description: >
       Ce modèle permet de compter le nombre de candidats lorsqu'une jointure est faite avec la table candidatures.
-  - name: stg_candidates_autoprescription
+  - name: stg_candidats_autoprescription
     description: >
       Ce modèle permet de déterminer les candidats provenant d'une auto prescription.
       Nous parlons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
