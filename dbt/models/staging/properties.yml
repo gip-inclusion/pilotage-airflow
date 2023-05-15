@@ -12,7 +12,7 @@ models:
       Elle a été introduite pour agréger les données de candidatures en fonction de leur appartenance géographique.
   - name: stg_candidatures_autoprescription
     description: >
-      Ce modèle permet de déterminer les candidatures provenant d'une auto prescription.
+      Ce modèle permet de sélectionner les candidatures provenant d'une auto prescription.
       Nous parlons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
   - name: stg_structures
     description: >
@@ -22,5 +22,5 @@ models:
       Ce modèle permet de compter le nombre de candidats lorsqu'une jointure est faite avec la table candidatures.
   - name: stg_candidats_autoprescription
     description: >
-      Ce modèle permet de déterminer les candidats provenant d'une auto prescription.
+      Ce modèle permet de sélectionner les candidats provenant d'une auto prescription.
       Nous parlons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
