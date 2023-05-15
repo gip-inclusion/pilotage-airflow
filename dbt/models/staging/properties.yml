@@ -24,3 +24,6 @@ models:
     description: >
       Ce modèle permet de sélectionner les candidats provenant d'une auto prescription.
       Nous parlons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
+  - name: stg_candidatures
+    description: >
+      Ce modèle récupère les données de la table candidatures et y applique quelques modifications de renommage ou d'extraction de données.
