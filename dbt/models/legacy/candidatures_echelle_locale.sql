@@ -94,7 +94,11 @@ select
     bassin_emploi.code_commune,
     bassin_emploi.nom_arrondissement,
     bassin_emploi.bassin_d_emploi,
-    {{ dbt_utils.star(ref('stg_candidatures'), except=["origine_détaillée", "cdd_id_org_prescripteur", "cdd_id_structure"]) }},
+    {% if env_var('CI', ',') %}
+        candidatures.*,
+    {% else %}
+        {{ dbt_utils.star(ref('stg_candidatures'), except=["origine_détaillée", "cdd_id_org_prescripteur", "cdd_id_structure"]) }},
+    {% endif %}
     -- laurine : needed to rename to solve dbt issue, needs to rename again to be sure to not broke metabase tables
     -- next step : discuss good practice and rename columns that have same name in different tables to avoid dbt grumbling
     candidatures.cdd_id_org_prescripteur as id_org_prescripteur,
