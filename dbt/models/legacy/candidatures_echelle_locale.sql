@@ -131,27 +131,27 @@ select
         when candidatures."origine_détaillée" = 'Prescripteur habilité PREVENTION' then 'Service ou club de prévention'
         when candidatures."origine_détaillée" = 'Prescripteur habilité RS_FJT' then 'Résidence sociale / FJT - Foyer de Jeunes Travailleurs'
         when candidatures."origine_détaillée" = 'Prescripteur habilité SPIP' then 'SPIP - Service pénitentiaire d''insertion et de probation'
-    end                              as type_auteur_diagnostic_detaille,
+    end as type_auteur_diagnostic_detaille,
     case
         when adherents_emmaus.reseau_emmaus = 'Emmaus' then 'Oui'
         else 'Non'
-    end                              as reseau_emmaus,
+    end as reseau_emmaus,
     case
         when adherents_coorace.reseau_coorace = 'Coorace' then 'Oui'
         else 'Non'
-    end                              as reseau_coorace,
+    end as reseau_coorace,
     case
         when adherents_fei.reseau_fei = 'FEI' then 'Oui'
         else 'Non'
-    end                              as reseau_fei,
+    end as reseau_fei,
     case
         when adherents_unai.reseau_unai = 'Unai' then 'Oui'
         else 'Non'
-    end                              as reseau_unai,
+    end as reseau_unai,
     case
         when adherents_cocagne.reseau_cocagne = 'Cocagne' then 'Oui'
         else 'Non'
-    end                              as reseau_cocagne
+    end as reseau_cocagne
 from
     {{ ref('stg_candidatures') }} as candidatures
 left join bassin_emploi
