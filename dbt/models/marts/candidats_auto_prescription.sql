@@ -2,14 +2,14 @@ select
     {% if env_var('CI', ',') %}
         autopr_c.*,
     {% else %}
-        {{ dbt_utils.star(ref('stg_candidates_autoprescription')) }},
+        {{ dbt_utils.star(ref('stg_candidats_autoprescription')) }},
     {% endif %}
     ac.total_candidats,
     s.nom_structure_complet as "nom_structure_complet"
 from
-    {{ ref('stg_candidates_autoprescription') }} as autopr_c
+    {{ ref('stg_candidats_autoprescription') }} as autopr_c
 left join
-    {{ ref('stg_candidates_count') }} as ac
+    {{ ref('stg_candidats_count') }} as ac
     on autopr_c.id = ac.id
 left join
     {{ ref('stg_structures') }} as s
