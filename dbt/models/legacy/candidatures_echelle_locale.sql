@@ -95,7 +95,7 @@ select
     bassin_emploi.nom_arrondissement,
     bassin_emploi.bassin_d_emploi,
     {% if env_var('CI', '') %}
-        candidatures.*,
+        candidatures.id,
     {% else %}
         {{ dbt_utils.star(ref('stg_candidatures'), except=["origine_détaillée"], relation_alias='candidatures') }},
     {% endif %}
