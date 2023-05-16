@@ -17,7 +17,7 @@ select
     -- nombre de siae partenaires de l'organisation =
     -- nombre de siae qui ont reçu une candidature de ce prescripteur
     nb_siae_partenaires.nb_siae
-from {{ source('emplois', 'organisations') }} as organisations
+from {{ ref('stg_organisations') }} as organisations
 left join {{ ref('stg_insee_appartenance_geo_communes') }} as appartenance_geo_communes
     on ltrim(organisations.code_commune, '0') = appartenance_geo_communes.code_insee
 left join nb_siae_partenaires on organisations.id = nb_siae_partenaires.id

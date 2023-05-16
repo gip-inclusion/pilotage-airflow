@@ -26,5 +26,9 @@ models:
       Nous parlons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
   - name: stg_candidatures
     description: >
-      Ce modèle récupère les données de la table candidatures et y applique quelques modifications de renommage ou d'extraction de données.
-
+      Ce modèle récupère les données de la table c1 candidatures et y applique quelques modifications de renommage ou d'extraction de données.
+  - name: stg_organisations
+    description: >
+      Ce modèle récupère les données de la table c1 organisations et y ajoute des colonnes pour faciliter le déploiement de tableaux metabase liés aux prescripteurs.
+      Une colonne type_complet_avec_habilitation permet notamment de rendre cohérent le nom des prescripteurs avec celui de la table candidature.
+      Elle pourra également être enrichie d'autres données sur les organisations comme le nombre de structures partenaires, le nombre de prescriptions réalisées, etc.
