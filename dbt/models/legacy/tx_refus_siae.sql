@@ -15,74 +15,74 @@ with etp_conventionnes as (
 
 select
     /* Nombre de candidatures acceptées initiées par l'employeur de type SIAE */
-    nombre_etp_conventionnes,
+    etp_conventionnes.nombre_etp_conventionnes,
     /* Nombre de candidatures initiées par l'employeur de type SIAE */
-    type_structure,
-    "nom_département_structure",
-    "région_structure",
-    candidatures_echelle_locale.ville,
-    nom_epci,
-    candidatures_echelle_locale.code_commune,
-    nom_arrondissement,
-    bassin_d_emploi,
-    count(distinct candidatures_echelle_locale.id)
+    cel.type_structure,
+    cel."nom_département_structure",
+    cel."région_structure",
+    cel.ville,
+    cel.nom_epci,
+    cel.code_commune,
+    cel.nom_arrondissement,
+    cel.bassin_d_emploi,
+    count(distinct cel.id)
     filter (
         where
-        (origine = 'Employeur')
-        and ("état" = 'Candidature acceptée')
-        and type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
-    )                                              as nombre_candidatures_acceptees_employeurs,
-    count(distinct candidatures_echelle_locale.id)
+        (cel.origine = 'Employeur')
+        and (cel."état" = 'Candidature acceptée')
+        and cel.type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
+    )                                      as nombre_candidatures_acceptees_employeurs,
+    count(distinct cel.id)
     filter (
         where
-        (origine = 'Employeur')
-        and type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
-    )                                              as nombre_candidatures_employeurs,
-    count(distinct candidatures_echelle_locale.id)
+        (cel.origine = 'Employeur')
+        and cel.type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
+    )                                      as nombre_candidatures_employeurs,
+    count(distinct cel.id)
     filter (
         where
-        ("état" = 'Candidature acceptée')
-        and type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
-    )                                              as nombre_candidatures_acceptees,
-    count(distinct id_fiche_de_poste)              as nombre_fiches_poste_ouvertes,
-    count(distinct candidatures_echelle_locale.id) as nombre_candidatures,
-    count(distinct candidatures_echelle_locale.id)
+        (cel."état" = 'Candidature acceptée')
+        and cel.type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
+    )                                      as nombre_candidatures_acceptees,
+    count(distinct fdpc.id_fiche_de_poste) as nombre_fiches_poste_ouvertes,
+    count(distinct cel.id)                 as nombre_candidatures,
+    count(distinct cel.id)
     filter (
-        where ("état" = 'Candidature déclinée')
-    )                                              as nombre_candidatures_refusees,
-    count(distinct candidatures_echelle_locale.id)
+        where (cel."état" = 'Candidature refusée')
+    )                                      as nombre_candidatures_refusees,
+    count(distinct cel.id)
     filter (
-        where ("état" = 'Candidature déclinée') and origine != 'Employeur'
-    )                                              as nb_candidatures_refusees_non_emises_par_employeur_siae,
-    count(distinct id_structure)                   as nombre_siae
+        where (cel."état" = 'Candidature refusée') and cel.origine != 'Employeur'
+    )                                      as nb_candidatures_refusees_non_emises_par_employeur_siae,
+    count(distinct cel.id_structure)       as nombre_siae
 from
-    {{ ref('candidatures_echelle_locale') }}
+    {{ ref('candidatures_echelle_locale') }} as cel
 left join
     {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdpc
-    on candidatures_echelle_locale.id = fdpc.id_candidature
+    on cel.id = fdpc.id_candidature
 left join
     {{ source('emplois', 'fiches_de_poste') }} as fdp on fdpc.id_fiche_de_poste = fdp.id
 left join
-    {{ source('emplois', 'structures') }} as structures on structures.id = candidatures_echelle_locale.id_structure
+    {{ source('emplois', 'structures') }} as structures on structures.id = cel.id_structure
 left join
     etp_conventionnes
     on
-        etp_conventionnes.type_siae = candidatures_echelle_locale.type_structure
-        and etp_conventionnes.nom_departement_af = candidatures_echelle_locale."nom_département_structure"
-        and etp_conventionnes.nom_region_af = candidatures_echelle_locale."région_structure"
+        etp_conventionnes.type_siae = cel.type_structure
+        and etp_conventionnes.nom_departement_af = cel."nom_département_structure"
+        and etp_conventionnes.nom_region_af = cel."région_structure"
 where
-    candidatures_echelle_locale.injection_ai = 0
-    and recrutement_ouvert = 1
+    cel.injection_ai = 0
+    and fdp.recrutement_ouvert = 1
     /*se restreindre aux 12 derniers mois*/
-    and date_candidature >= date_trunc('month', cast((cast(now() as timestamp) + (interval '-12 month')) as timestamp))
-    and type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
+    and cel.date_candidature >= date_trunc('month', cast((cast(now() as timestamp) + (interval '-12 month')) as timestamp))
+    and cel.type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
 group by
-    type_structure,
-    "nom_département_structure",
-    "région_structure",
-    nombre_etp_conventionnes,
-    candidatures_echelle_locale.ville,
-    nom_epci,
-    candidatures_echelle_locale.code_commune,
-    nom_arrondissement,
-    bassin_d_emploi
+    cel.type_structure,
+    cel."nom_département_structure",
+    cel."région_structure",
+    etp_conventionnes.nombre_etp_conventionnes,
+    cel.ville,
+    cel.nom_epci,
+    cel.code_commune,
+    cel.nom_arrondissement,
+    cel.bassin_d_emploi
