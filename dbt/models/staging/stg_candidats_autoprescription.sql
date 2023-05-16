@@ -1,9 +1,8 @@
 select distinct
     {% if env_var('CI', '') %}
-        c.*,
+        id,
     {% else %}
-        /* Here, the addition of except = column_name then c.column_name was necessary because otherwise these column names were considered as ambiguous*/
-        {{ dbt_utils.star(source('emplois', 'candidats'),relation_alias="c") }},
+        {{ dbt_utils.star(source('emplois', 'candidats'), relation_alias="c") }},
     {% endif %}
     cd."état",
     cd.nom_structure,

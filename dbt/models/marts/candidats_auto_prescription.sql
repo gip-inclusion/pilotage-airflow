@@ -1,8 +1,7 @@
 select
     {% if env_var('CI', '') %}
-        autopr_c.*,
+        id,
     {% else %}
-        /* Here, the addition of except = id then autopr_c.id was necessary because otherwise id was considered as ambiguous*/
         {{ dbt_utils.star(ref('stg_candidats_autoprescription'), relation_alias="autopr_c") }},
     {% endif %}
     ac.total_candidats,
