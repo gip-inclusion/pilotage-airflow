@@ -97,7 +97,7 @@ select
     {% if env_var('CI', '') %}
         candidatures.id,
     {% else %}
-        {{ dbt_utils.star(ref('stg_candidatures'), except=["origine_détaillée"], relation_alias='candidatures') }},
+        {{ dbt_utils.star(ref('stg_candidatures'), relation_alias='candidatures') }},
     {% endif %}
     case /* Ajout colonne avec des noms de prescripteurs correspondant à ceux de la table taux_transformation_prescripteurs */
         when candidatures."origine_détaillée" = 'Prescripteur habilité AFPA' then 'AFPA - Agence nationale pour la formation professionnelle des adultes'
