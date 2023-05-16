@@ -1,6 +1,6 @@
 select distinct
     {% if env_var('CI', '') %}
-        c.*,
+        id,
     {% else %}
         {{ dbt_utils.star(source('emplois', 'candidats'), relation_alias="c") }},
     {% endif %}

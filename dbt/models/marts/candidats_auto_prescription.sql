@@ -1,6 +1,6 @@
 select
     {% if env_var('CI', '') %}
-        autopr_c.*,
+        id,
     {% else %}
         {{ dbt_utils.star(ref('stg_candidats_autoprescription'), relation_alias="autopr_c") }},
     {% endif %}
