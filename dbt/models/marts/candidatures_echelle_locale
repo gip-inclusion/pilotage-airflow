@@ -24,7 +24,7 @@ left join {{ ref('stg_cocagne') }} as adherents_cocagne
     on adherents_cocagne.id_structure = candidatures.id_structure
 left join {{ ref('stg_org_prescripteur') }} as org_prescripteur
     on org_prescripteur.id_org = candidatures.id_org_prescripteur
-left join {{ ref('stg_reseaux') }} as rsx
-    on rsx.id_structure = candidatures.id_structure
 left join {{ ref('nom_prescripteur') }} as nom_org
     on nom_org.origine_detaille = candidatures."origine_détaillée"
+left join {{ ref('stg_reseaux') }} as rsx
+    on candidatures.id_structure = rsx.id_structure
