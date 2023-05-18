@@ -4,8 +4,9 @@ select
     {% else %}
         {{ dbt_utils.star(ref('stg_candidatures'), relation_alias='candidatures') }},
         {{ dbt_utils.star(ref('stg_org_prescripteur'), except=["id_org"], relation_alias='org_prescripteur') }},
-        {{ dbt_utils.star(ref('stg_bassin_emploi'), except=["nom_departement","nom_region","type_epci","id_structure"] ,relation_alias='bassin_emploi') }},
-        {{ dbt_utils.star(ref('stg_reseaux'), except=["SIRET","id_structure"] ,relation_alias='rsx') }},
+        {{ dbt_utils.star(ref('stg_bassin_emploi'),
+        except=["nom_departement", "nom_region", "type_epci", "id_structure"], relation_alias='bassin_emploi') }},
+        {{ dbt_utils.star(ref('stg_reseaux'), except=["SIRET","id_structure"], relation_alias='rsx') }},
     {% endif %}
     nom_org.type_auteur_diagnostic_detaille
 from
