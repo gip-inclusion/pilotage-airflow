@@ -30,4 +30,8 @@ models:
       Table introduite pour le suivi des candidats ayant bénéficié de l'auto precription.
       Nécessaire pour obtenir sélectionner les candidats concernés par l'auto prescription. Nous parlons d'auto prescription lorsque
       l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
+  - name: candidatures_echelle_locale
+    description: >
+      Table introduite pour le suivi des candidatures tout en ayant une information sur les bassins d'emploi d'où elles proviennent.
+      Elle nous informe aussi sur l'appartenance (ou non) des structures à des réseaux IAE.
 
