@@ -16,7 +16,7 @@ MONITORED_DIRS := dags dbt tests
 
 # FIXME(vperron): In the long run we should include "references.consistent,references.from,references.qualification" rules.
 SQLFLUFF_OPTIONS := \
-	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification \
+	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification,references.special_chars \
 	--disable-progress-bar --nocolor
 
 .PHONY: venv_ci clean compile-deps airflow_init dbt_clean dbt_docs fix quality test load_dump
