@@ -8,6 +8,10 @@ select
         except=["nom_departement", "nom_region", "type_epci", "id_structure"], relation_alias='bassin_emploi') }},
         {{ dbt_utils.star(ref('stg_reseaux'), except=["SIRET","id_structure"], relation_alias='rsx') }},
     {% endif %}
+    case
+        when candidatures.injection_ai = 0 then 'Non'
+        else 'Oui'
+    end as reprise_de_stock_ai,
     nom_org.type_auteur_diagnostic_detaille
 from
     {{ ref('stg_candidatures') }} as candidatures
