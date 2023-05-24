@@ -34,4 +34,6 @@ models:
     description: >
       Table introduite pour le suivi des candidatures tout en ayant une information sur les bassins d'emploi d'où elles proviennent.
       Elle nous informe aussi sur l'appartenance (ou non) des structures à des réseaux IAE.
-
+  - name: reseaux
+    description: >
+      Table introduite pour obtenir la liste des réseaux et les structures attachés à ces derniers.

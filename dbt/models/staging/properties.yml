@@ -40,4 +40,4 @@ models:
       Ce modèle récupère les données des bassins d'emploi pour chaque structure.
   - name: stg_org_prescripteur
     description: >
-      Ce modèle récupère des informations de locations (département, région) de tous les prescripteurs.
+      Ce modèle récupère des informations de localisation (département, région) de tous les prescripteurs.
