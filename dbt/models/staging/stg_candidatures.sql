@@ -2,12 +2,17 @@ select
     {% if env_var('CI', '') %}
         id,
     {% else %}
-        {{ dbt_utils.star(source('emplois', 'candidatures'), except=["état", "origine", "délai_de_réponse", "délai_prise_en_compte"]) }},
+        {{ dbt_utils.star(source('emplois', 'candidatures'),
+            except=["état", "motif_de_refus", "origine", "délai_de_réponse", "délai_prise_en_compte"]) }},
     {% endif %}
     case
         when "état" = 'Candidature déclinée' then 'Candidature refusée'
         else "état"
     end                                       as "état",
+    case
+        when motif_de_refus = 'Autre (détails dans le message ci-dessous)' then 'Autre'
+        else motif_de_refus
+    end                                       as motif_de_refus,
     case
         when origine = 'Candidat' then 'Candidature en ligne'
         else origine
