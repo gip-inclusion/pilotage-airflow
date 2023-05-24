@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: nps_pilotage
+    description: >
+      Ce DAG permet de récupérer, de façon hebdomadaire, les notes de recommendation des différents TB du pilotage de l'inclusion, il est ajouté à une table déjà existante.
+      A noter, la table originale récupérait des colonnes que l'on utilise plus. Afin de permettre l'ajout hebdomadaire des données il est nécessaire de créer ces colonnes et de les remplir de NaN à chaque run du DAG.
