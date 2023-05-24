@@ -1,6 +1,6 @@
 select
     {% if env_var('CI', '') %}
-        id,
+        id
     {% else %}
         {{ dbt_utils.star(ref('stg_reseaux')) }}
     {% endif %}
