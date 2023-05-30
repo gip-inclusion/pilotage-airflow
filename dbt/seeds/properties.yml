@@ -59,4 +59,8 @@ seeds:
       à ce stade la correspondance semble redondante mais
       cette seed pourra être enrichie en fonction du label que l'on souhaite afficher sur metabase
       notamment le label actuel de la colonne libelle est trop long et pourra être simplifié pour le rendu sur metabase.
+  - name: metabase_tb_ids
+    description: >
+      correspondance entre le code metabase et le nom complet du tableau de bord sur metabase
+      cette table sert à enrichir les données de suivi utilisateurs extraites de matomo
 
