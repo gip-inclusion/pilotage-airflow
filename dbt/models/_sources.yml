@@ -99,4 +99,3 @@ sources:
     tables:
       - name: suivi_visiteurs_tb_prives_v1
       - name: suivi_visiteurs_tb_publics_v1
-      - name: c1_private_dashboard_visits_v0
