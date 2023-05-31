@@ -1,9 +1,5 @@
 select distinct
-    {% if env_var('CI', '') %}
-        id,
-    {% else %}
-        {{ dbt_utils.star(source('emplois', 'candidats'), relation_alias="c") }},
-    {% endif %}
+    {{ pilo_star(source('emplois', 'candidats'), relation_alias="c") }},
     cd."état",
     cd.nom_structure,
     cd.type_structure,

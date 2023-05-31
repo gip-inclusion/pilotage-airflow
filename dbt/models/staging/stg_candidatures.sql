@@ -1,10 +1,5 @@
 select
-    {% if env_var('CI', '') %}
-        id,
-    {% else %}
-        {{ dbt_utils.star(source('emplois', 'candidatures'),
-            except=["état", "motif_de_refus", "origine", "délai_de_réponse", "délai_prise_en_compte"]) }},
-    {% endif %}
+    {{ pilo_star(source('emplois', 'candidatures'), except=["état", "motif_de_refus", "origine", "délai_de_réponse", "délai_prise_en_compte"]) }},
     case
         when "état" = 'Candidature déclinée' then 'Candidature refusée'
         else "état"

@@ -1,9 +1,5 @@
 select
-    {% if env_var('CI', '') %}
-        id,
-    {% else %}
-        {{ dbt_utils.star(ref('stg_candidats_autoprescription'), relation_alias="autopr_c") }},
-    {% endif %}
+    {{ pilo_star(ref('stg_candidats_autoprescription'), relation_alias="autopr_c") }},
     ac.total_candidats,
     s.nom_structure_complet as "nom_structure_complet"
 from
