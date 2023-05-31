@@ -1,13 +1,8 @@
 select
-    {% if env_var('CI', '') %}
-        id,
-    {% else %}
-        {{ dbt_utils.star(ref('stg_candidatures'), relation_alias='candidatures') }},
-        {{ dbt_utils.star(ref('stg_org_prescripteur'), except=["id_org"], relation_alias='org_prescripteur') }},
-        {{ dbt_utils.star(ref('stg_bassin_emploi'),
-        except=["nom_departement", "nom_region", "type_epci", "id_structure"], relation_alias='bassin_emploi') }},
-        {{ dbt_utils.star(ref('stg_reseaux'), except=["SIRET","id_structure"], relation_alias='rsx') }},
-    {% endif %}
+    {{ pilo_star(ref('stg_candidatures'), relation_alias='candidatures') }},
+    {{ pilo_star(ref('stg_org_prescripteur'), except=["id_org"], relation_alias='org_prescripteur') }},
+    {{ pilo_star(ref('stg_bassin_emploi'), except=["nom_departement", "nom_region", "type_epci", "id_structure"], relation_alias='bassin_emploi') }},
+    {{ pilo_star(ref('stg_reseaux'), except=["SIRET","id_structure"], relation_alias='rsx') }},
     case
         when candidatures.injection_ai = 0 then 'Non'
         else 'Oui'

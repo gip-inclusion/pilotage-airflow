@@ -1,8 +1,4 @@
 select
-    {% if env_var('CI', '') %}
-        id
-    {% else %}
-        {{ dbt_utils.star(ref('stg_reseaux')) }}
-    {% endif %}
+    {{ pilo_star(ref('stg_reseaux')) }}
 from
     {{ ref('stg_reseaux') }}

@@ -1,9 +1,5 @@
 select
-    {% if env_var('CI', '') %}
-        siret,
-    {% else %}
-        {{ dbt_utils.star(source('oneshot', 'reseau_iae_adherents')) }},
-    {% endif %}
+    {{ pilo_star(source('oneshot', 'reseau_iae_adherents')) }},
     s.id as id_structure,
     rid.id_institution
 from {{ source('oneshot', 'reseau_iae_adherents') }} as ria

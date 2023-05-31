@@ -1,9 +1,5 @@
 select
-    {% if env_var('CI', '') %}
-        autopr_all.*,
-    {% else %}
-        {{ dbt_utils.star(ref('stg_candidatures_autoprescription')) }},
-    {% endif %}
+    {{ pilo_star(ref('stg_candidatures_autoprescription')) }},
     s.siret                 as siret,
     s.active                as active,
     s.ville                 as ville,
