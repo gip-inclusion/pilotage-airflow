@@ -9,5 +9,5 @@ select
     candidatures_ph.*,
     org_libelles.libelle as libelle_complet
 from candidatures_ph
-left join {{ ref('organisation_libelles') }} as org_libelles
+left join {{ ref('organisations_libelles') }} as org_libelles
     on org_libelles.type = candidatures_ph.origine_simplifiee
