@@ -50,6 +50,7 @@ sources:
       - name: organisations
       - name: pass_agréments
       - name: structures
+      - name: utilisateurs
 
   - name: oneshot
     schema: public
