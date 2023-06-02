@@ -1,5 +1,6 @@
 select
     visits.user_id                                                                                          as id_utilisateur,
+    c1_users.email                                                                                          as email_utilisateur,
     metabase_ids.nom_tb                                                                                     as nom_tb,
     visits.department                                                                                       as departement,
     visits.region                                                                                           as region,
@@ -24,8 +25,11 @@ left join {{ source('emplois', 'structures') }} as structures
     on structures.id = cast(visits.current_siae_id as INTEGER) and visits.user_kind = 'siae_staff'
 left join {{ source('emplois', 'institutions') }} as institutions
     on institutions.id = cast(visits.current_institution_id as INTEGER) and visits.user_kind = 'labor_inspector'
+left join {{ source('emplois', 'utilisateurs') }} as c1_users
+    on c1_users.id = cast(visits.user_id as INTEGER)
 group by
     id_utilisateur,
+    email_utilisateur,
     nom_tb,
     departement,
     region,
