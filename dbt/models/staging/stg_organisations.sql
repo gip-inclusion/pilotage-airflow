@@ -1,10 +1,11 @@
 select
     {{ pilo_star(source('emplois', 'organisations'),
-                 except = ['type_complet', 'ville', 'code_commune'],
+                 except = ['type_complet', 'ville', 'code_commune', 'région', 'nom_département'],
                  relation_alias = "organisations") }},
     initcap(organisations.ville)                                               as ville,
     coalesce(organisations.code_commune, appartenance_geo_communes.code_insee) as code_commune,
-    -- appartenance_geo_communes.code_insee,
+    appartenance_geo_communes.nom_departement                                  as "nom_département",
+    appartenance_geo_communes.nom_region                                       as "région",
     appartenance_geo_communes.nom_zone_emploi                                  as zone_emploi,
     appartenance_geo_communes.nom_epci                                         as epci,
     organisations_libelles.libelle                                             as type_complet,
@@ -29,4 +30,4 @@ left join {{ ref('organisations_libelles') }} as organisations_libelles
 -- This is done like this as long as the organisations.ville entries are yet not cleaned
 -- but it will be removed when c1 work on adressses will be finished.
 left join {{ ref('stg_insee_appartenance_geo_communes') }} as appartenance_geo_communes
-    on levenshtein(regexp_replace(initcap(organisations.ville), '( Cedex)? \d*Cedex', ''), appartenance_geo_communes.libelle_commune) < 4 and ltrim(organisations."département", '0') = appartenance_geo_communes.code_dept
+    on levenshtein(unaccent(regexp_replace(regexp_replace(initcap(ville), ' \d+', '', 'g'), ' Cedex ?', '')), unaccent(appartenance_geo_communes.libelle_commune)) < 1 and ltrim(organisations."département", '0') = appartenance_geo_communes.code_dept
