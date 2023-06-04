@@ -4,8 +4,9 @@ select
                  relation_alias = "organisations") }},
     initcap(organisations.ville)                                               as ville,
     coalesce(organisations.code_commune, appartenance_geo_communes.code_insee) as code_commune,
-    appartenance_geo_communes.code_insee,
-    appartenance_geo_communes.nom_zone_emploi,
+    -- appartenance_geo_communes.code_insee,
+    appartenance_geo_communes.nom_zone_emploi                                  as zone_emploi,
+    appartenance_geo_communes.nom_epci                                         as epci,
     organisations_libelles.libelle                                             as type_complet,
     case
         when organisations."habilitée" = 1 then 'Prescripteur habilité'
