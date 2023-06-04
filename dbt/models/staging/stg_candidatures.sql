@@ -1,6 +1,6 @@
 select
     {{ pilo_star(source('emplois', 'candidatures'),
-        except=["état", "motif_de_refus", "origine", "délai_de_réponse", "délai_prise_en_compte"]) }},
+        except=["état", "motif_de_refus", "origine", "délai_de_réponse", "délai_prise_en_compte", "origine_détaillée"]) }},
     case
         when "état" = 'Candidature déclinée' then 'Candidature refusée'
         else "état"
@@ -13,6 +13,10 @@ select
         when origine = 'Candidat' then 'Candidature en ligne'
         else origine
     end                                       as origine,
+    case
+        when "origine_détaillée" = 'Prescripteur habilité Autre' then 'Prescripteur habilité par habilitation préfectorale'
+        else "origine_détaillée"
+    end                                       as "origine_détaillée",
     extract(day from "délai_de_réponse")      as temps_de_reponse,
     extract(day from "délai_prise_en_compte") as temps_de_prise_en_compte
 from
