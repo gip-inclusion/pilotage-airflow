@@ -1,15 +1,18 @@
 with candidatures_ph as (
     select
-        {{ pilo_star(ref('candidatures_echelle_locale'),
-                     except = ["nom_epci"]) }},
+        {{ pilo_star(ref('candidatures_echelle_locale')) }},
         replace("origine_détaillée", 'Prescripteur habilité ', '') as origine_simplifiee
     from {{ ref('candidatures_echelle_locale') }}
     where starts_with("origine_détaillée", 'Prescripteur habilité')
 )
 select
     candidatures_ph.*,
-    organisations.epci   as nom_epci,
-    org_libelles.libelle as libelle_complet
+    organisations."département"     as "département_prescripteur",
+    organisations."nom_département" as "nom_département_prescripteur",
+    organisations."région"          as "région_prescripteur",
+    organisations.epci              as epci_prescripteur,
+    organisations.zone_emploi       as zone_emploi_prescripteur,
+    org_libelles.libelle            as libelle_complet
 from candidatures_ph
 left join {{ ref('organisations_libelles') }} as org_libelles
     on org_libelles.type = candidatures_ph.origine_simplifiee
