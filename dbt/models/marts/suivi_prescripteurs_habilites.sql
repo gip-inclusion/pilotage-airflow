@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(source('emplois', 'organisations'),
+    {{ pilo_star(ref('stg_organisations'),
                  relation_alias = 'organisations') }},
     -- nombre de siae partenaires de l'organisation =
     -- nombre de siae qui ont reçu une candidature de ce prescripteur
