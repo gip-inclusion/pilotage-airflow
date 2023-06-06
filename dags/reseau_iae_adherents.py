@@ -7,6 +7,7 @@ from dags.common import db, default_dag_args, slack
 
 
 RESEAU_IAE_TABLE_CREATE_SQL = """
+DROP VIEW IF EXISTS stg_reseaux;
 DROP TABLE IF EXISTS {table_name};
 CREATE TABLE {table_name}(
     "SIRET" VARCHAR(16),
