@@ -3,6 +3,7 @@ select
     {{ pilo_star(ref('stg_org_prescripteur'), except=["id_org"], relation_alias='org_prescripteur') }},
     {{ pilo_star(ref('stg_bassin_emploi'), except=["nom_departement", "nom_region", "type_epci", "id_structure"],
     relation_alias='bassin_emploi') }},
+    {{ pilo_star(ref('stg_reseaux'), except=["SIRET","id_structure"], relation_alias='rsx') }},
     case
         when candidatures.injection_ai = 0 then 'Non'
         else 'Oui'
@@ -16,3 +17,5 @@ left join {{ ref('stg_org_prescripteur') }} as org_prescripteur
     on org_prescripteur.id_org = candidatures.id_org_prescripteur
 left join {{ ref('nom_prescripteur') }} as nom_org
     on nom_org.origine_detaille = candidatures."origine_détaillée"
+left join {{ ref('stg_reseaux') }} as rsx
+    on candidatures.id_structure = rsx.id_structure
