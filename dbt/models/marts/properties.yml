@@ -37,3 +37,6 @@ models:
   - name: reseaux
     description: >
       Table introduite pour obtenir la liste des réseaux et les structures attachés à ces derniers.
+  - name: suivi_visiteurs_tous_tb
+    description: >
+      Table introduite pour suivre les visiteurs uniques des TBs privés et publics.
