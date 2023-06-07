@@ -1,0 +1,36 @@
+id_tb,nom_tb,public,type
+32,tb 32 - Acceptés en auto-prescription,tous,public
+43,tb 43 - Statistiques des emplois (C1),C1,privé
+52,tb 52 - Typologie de prescripteurs,tous,public
+54,tb 54 - Typologie des employeurs,tous,public
+90,tb 90 - Analyse des métiers,tous,public
+116,tb 116 - Recrutement,tous,public
+117,tb 117 - Données IAE ETP (DREETS/DDETS),DREETS/DDETS,privé
+118,tb 118 - Données IAE (CD),CD,privé
+119,tb 119 - Indicateurs (C1),C1,privé
+128,tb 128 - Données IAE (SIAE),SIAE,privé
+129,tb 129 - Analyse des publics,tous,public
+136,tb 136 - Taux de transformation des prescripteurs,tous,public
+140,tb 140 - ETP conventionnés,tous,public
+144,tb 144 - Contrôle a posteriori,,privé
+149,tb 149 - Candidatures orientées (PE),PE,privé
+150,tb 150 - Fiches de poste en tension,tous,public
+160,tb 160 - Facilitation de l'embauche (DREETS/DDETS),DREETS/DDETS,privé
+162,tb 162 - Fiches de poste en tension (PE),PE,privé
+165,tb 165 - Recrutement (SIAE),SIAE,privé
+168,tb 168 - Délai d'entrée en IAE (PE),PE,privé
+169,tb 169 - Taux de transformation (PE),PE,privé
+180,tb 180 - Données brutes détail des candidatures,PE,privé
+182,tb 182 - Données brutes taux transformation (PE),PE,privé
+183,tb 183 - Données brutes état des candidatures orientées(PE),PE,privé
+185,tb 185 - Données de candidatures (SIAE),SIAE,privé
+216,tb 216 - Les femmes dans l'IAE,tous,public
+217,tb 217 - Suivi pass IAE,tous,public
+218,tb 218 - Cartographie de l'IAE,tous,public
+235,tb 235 - Suivi des prescriptions (DIHAL),DIHAL,privé
+265,tb 265 - Suivi du contrôle a posteriori (DREETS/DDETS),DREETS/DDETS,privé
+267,tb 267 - Focus auto-prescription (DREETS/DDETS),DREETS/DDETS,privé
+295,tb 295 - Suivi de l'auto-prescription (SIAE),SIAE,privé
+298,tb 298 - Suivi du contrôle a posteriori (SIAE),SIAE,privé
+300,tb 300 - Suivi du contrôle a posteriori,tous,public
+301,tb 301 - Données de candidatures (Réseaux IAE),Réseaux,privé
