@@ -72,6 +72,7 @@ pg_dump:
 		   --exclude-table="lh_*" --exclude-table="yp_*" --exclude-table="z_*" \
 		   --file=$(DUMP_DIR)
 	@echo "\n\n### Database dumped successfully. ###\n"
+	rm -rf $(RESTORE_DIR)
 	mv $(DUMP_DIR) $(RESTORE_DIR)
 
 pg_restore:
