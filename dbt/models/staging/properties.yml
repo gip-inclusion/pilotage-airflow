@@ -48,10 +48,12 @@ models:
       mais pourra évoluer à terme et intégrer davantage d'infos sur les partenariats.
   - name: stg_suivi_visiteurs_publics
     description: >
-      Permet de suivre les metrics matomo associées aux TB publics
+      Permet de suivre les metrics matomo associees aux TB publics
   - name: stg_suivi_visiteurs_prives
     description: >
-      Permet de suivre les metrics matomo associées aux TB prives. Cette table suit les metrics des TBs privés avant l'automatisation des requêtes API Matomo introduite par Victor.
-   - name: stg_suivi_visiteurs_prives_v1
+      Permet de suivre les metrics matomo associees aux TB prives.
+      Cette table suit les metrics des TBs prives avant l'automatisation des requêtes API Matomo introduite par Victor.
+  - name: stg_suivi_visiteurs_prives_v1
     description: >
-      Permet de suivre les metrics matomo associées aux TB prives. Cette table suit les metrics des TBs privés après l'automatisation des requêtes API Matomo introduite par Victor.
+      Permet de suivre les metrics matomo associees aux TB prives.
+      Cette table suit les metrics des TBs prives après l'automatisation des requêtes API Matomo introduite par Victor.
