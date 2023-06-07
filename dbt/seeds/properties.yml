@@ -63,4 +63,7 @@ seeds:
     description: >
       correspondance entre le code metabase et le nom complet du tableau de bord sur metabase
       cette table sert à enrichir les données de suivi utilisateurs extraites de matomo
-
+  - name: pilotage_c1_users
+    description: >
+      liste des emails des utilisateurs internes à pilotage sur le c1.
+      permet de filtrer pour ne considérer que les vrais utilisateurs dans le cadre du suivi des visites.
