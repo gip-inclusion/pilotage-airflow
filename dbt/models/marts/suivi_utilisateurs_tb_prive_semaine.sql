@@ -27,7 +27,8 @@ left join {{ source('emplois', 'institutions') }} as institutions
     on institutions.id = cast(visits.current_institution_id as INTEGER) and visits.user_kind = 'labor_inspector'
 left join {{ source('emplois', 'utilisateurs') }} as c1_users
     on c1_users.id = cast(visits.user_id as INTEGER)
-where c1_users.email not in (select email from pilotage_c1_users)
+-- ignore intern staff and 119 dashboard (c1 intern stats)
+where c1_users.email not in (select email from pilotage_c1_users) and visits.dashboard_id != '119'
 group by
     id_utilisateur,
     email_utilisateur,
