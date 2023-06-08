@@ -3,7 +3,7 @@ from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
 
-from dags.common import dates, db, default_dag_args, slack
+from dags.common import dates, default_dag_args, slack
 
 
 with DAG(
@@ -13,19 +13,21 @@ with DAG(
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
 
-    end = empty.EmptyOperator(task_id="end")
-    # slack.success_notifying_task()
+    end = slack.success_notifying_task()
 
     @task(task_id="create_nps")
     def create_nps(**kwargs):
-        import re
-        from datetime import datetime, timedelta
-
         import numpy as np
         import pandas as pd
         from sqlalchemy import create_engine
 
-        df_test = []
+        df_int = []
+
+        database = Variable.get("PGDATABASE")
+        host = Variable.get("PGHOST")
+        password = Variable.get("PGPASSWORD")
+        port = Variable.get("PGPORT")
+        user = Variable.get("PGUSER")
 
         for name, pub_sheet_url in Variable.get("NPS_DASHBOARD_PILOTAGE", deserialize_json=True):
             print(f"reading {name=} at {pub_sheet_url=}")
@@ -40,13 +42,12 @@ with DAG(
             )
             sheet_df["Nom Du Tb"] = name
             sheet_df = sheet_df[["Date", "Recommendation", "Nom Du Tb"]]
-            df_test.append(sheet_df)
-        df = pd.concat(df_test)
+            df_int.append(sheet_df)
+        df = pd.concat(df_int)
 
         colonnes = ["Utilité Indicateurs", "Prise De Decision Grace Au Tb", "Satisfaction Globale"]
         for col in colonnes:
             df[col] = np.nan
-        print(df.columns)
         df = df[
             [
                 "Utilité Indicateurs",
@@ -57,9 +58,9 @@ with DAG(
                 "Date",
             ]
         ]
-
         df = df[(df["Date"] >= dates.start_of_previous_week) & (df["Date"] <= dates.end_of_previous_week)]
-        url = "postgresql://postgres:password@localhost:5432/pilotage"
+
+        url = "postgresql://" + user + ":" + password + "@" + host + ":" + port + "/" + database
         engine = create_engine(url)
         df.to_sql("suivi_satisfaction", con=engine, if_exists="append", index=False)
 
