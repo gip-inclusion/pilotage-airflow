@@ -3,7 +3,7 @@ from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
 
-from dags.common import dates, default_dag_args, slack
+from dags.common import dates, db, default_dag_args, slack
 
 
 with DAG(
@@ -23,12 +23,6 @@ with DAG(
 
         df_int = []
 
-        database = Variable.get("PGDATABASE")
-        host = Variable.get("PGHOST")
-        password = Variable.get("PGPASSWORD")
-        port = Variable.get("PGPORT")
-        user = Variable.get("PGUSER")
-
         for name, pub_sheet_url in Variable.get("NPS_DASHBOARD_PILOTAGE", deserialize_json=True):
             print(f"reading {name=} at {pub_sheet_url=}")
             sheet_df = pd.read_csv(pub_sheet_url)
@@ -36,31 +30,25 @@ with DAG(
             sheet_df.rename(
                 columns={
                     "Submitted at": "Date",
-                    "Quelle est la probabilité que vous recommandiez ce tableau de bord à un collègue, partenaire ou homologue ?": "Recommendation",
+                    "Quelle est la probabilité que vous recommandiez ce tableau de bord à un collègue, "
+                    "partenaire ou homologue ?": "Recommendation",
                 },
                 inplace=True,
             )
             sheet_df["Nom Du Tb"] = name
-            sheet_df = sheet_df[["Date", "Recommendation", "Nom Du Tb"]]
+            sheet_df = sheet_df[["Recommendation", "Nom Du Tb", "Date"]]
             df_int.append(sheet_df)
         df = pd.concat(df_int)
 
-        colonnes = ["Utilité Indicateurs", "Prise De Decision Grace Au Tb", "Satisfaction Globale"]
-        for col in colonnes:
+        # I need to create these columns and fill them with NaN
+        # since I'm appending this df to a table where we used to compute these 3 information
+        columns = ["Utilité Indicateurs", "Prise De Decision Grace Au Tb", "Satisfaction Globale"]
+        for col in columns:
             df[col] = np.nan
-        df = df[
-            [
-                "Utilité Indicateurs",
-                "Prise De Decision Grace Au Tb",
-                "Satisfaction Globale",
-                "Recommendation",
-                "Nom Du Tb",
-                "Date",
-            ]
-        ]
-        df = df[(df["Date"] >= dates.start_of_previous_week) & (df["Date"] <= dates.end_of_previous_week)]
+        start_of_previous_week, end_of_previous_week = dates.get_current_day()
+        df = df[(df["Date"] >= start_of_previous_week) & (df["Date"] <= end_of_previous_week)]
 
-        url = "postgresql://" + user + ":" + password + "@" + host + ":" + port + "/" + database
+        url = db.connection_engine()
         engine = create_engine(url)
         df.to_sql("suivi_satisfaction", con=engine, if_exists="append", index=False)
 

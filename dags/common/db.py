@@ -15,6 +15,15 @@ def connection_envvars():
     }
 
 
+def connection_engine():
+    database = Variable.get("PGDATABASE")
+    host = Variable.get("PGHOST")
+    password = Variable.get("PGPASSWORD")
+    port = Variable.get("PGPORT")
+    user = Variable.get("PGUSER")
+    return "postgresql://" + user + ":" + password + "@" + host + ":" + port + "/" + database
+
+
 class MetabaseDBCursor:
     def __init__(self):
         self.cursor = None
