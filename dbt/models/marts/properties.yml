@@ -45,5 +45,8 @@ models:
       Table introduite pour suivre les visiteurs uniques des TBs prives et publics.
   - name: atigip_2022
     description: >
-      Table crée à la demande de l'ATIGIP pour suivre les prescriptions des SPIPs.
+      Table créée à la demande de l'ATIGIP pour suivre les prescriptions des SPIPs.
       Focus sur 2022 donc table fixe, mais rangée dans le dossier marts car mis à dispo sur Metabase pour le partage avec ATIGIP.
+  - name: suivi_consommation_etp_V2
+    description: >
+      Table créée pour suivre la consommation réelle d'ETPs par structure ainsi que leur conventionnement.

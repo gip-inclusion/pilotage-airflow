@@ -57,3 +57,9 @@ models:
     description: >
       Permet de suivre les metrics matomo associees aux TB prives.
       Cette table suit les metrics des TBs prives après l'automatisation des requêtes API Matomo introduite par Victor.
+  - name: stg_duree_annexe
+    description: >
+      Vue créée pour extraire des informations sur la durée des annexes financières à partir du fluxIAE de l'ASP.
+  - name: stg_consommation_etp
+    description: >
+      Vue créée pour calculer les ETPs réalisés à partir du fluxIAE de l'ASP.
