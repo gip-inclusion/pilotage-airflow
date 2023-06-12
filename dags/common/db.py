@@ -21,7 +21,7 @@ def connection_engine():
     password = Variable.get("PGPASSWORD")
     port = Variable.get("PGPORT")
     user = Variable.get("PGUSER")
-    return "postgresql://" + user + ":" + password + "@" + host + ":" + port + "/" + database
+    return f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
 
 class MetabaseDBCursor:

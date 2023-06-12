@@ -40,12 +40,11 @@ with DAG(
             df_int.append(sheet_df)
         df = pd.concat(df_int)
 
-        # I need to create these columns and fill them with NaN
-        # since I'm appending this df to a table where we used to compute these 3 information
+        # Since this df is appended to a table where these columns exist they need to be created and added to the df
         columns = ["Utilité Indicateurs", "Prise De Decision Grace Au Tb", "Satisfaction Globale"]
         for col in columns:
             df[col] = np.nan
-        start_of_previous_week, end_of_previous_week = dates.get_current_day()
+        start_of_previous_week, end_of_previous_week = dates.get_previous_week_range()
         df = df[(df["Date"] >= start_of_previous_week) & (df["Date"] <= end_of_previous_week)]
 
         url = db.connection_engine()

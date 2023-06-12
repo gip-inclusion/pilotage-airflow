@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 
-def get_current_day():
+def get_previous_week_range():
     today = datetime.today()
     start_of_week = today - timedelta(days=today.weekday())
     start_of_previous_week = start_of_week - timedelta(weeks=1)
