@@ -43,8 +43,7 @@ with DAG(
         columns = ["Utilité Indicateurs", "Prise De Decision Grace Au Tb", "Satisfaction Globale"]
         for col in columns:
             df[col] = np.nan
-        start_of_previous_week, end_of_previous_week = dates.get_previous_week_range()
-        df = df[(df["Date"] >= start_of_previous_week) & (df["Date"] <= end_of_previous_week)]
+        df = df[(df["Date"] >= dates.start_of_previous_week()) & (df["Date"] <= dates.end_of_previous_week())]
 
         df.to_sql("suivi_satisfaction", con=db.connection_engine(), if_exists="append", index=False)
 
