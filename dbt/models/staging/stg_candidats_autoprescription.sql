@@ -8,12 +8,12 @@ select distinct
     cd."région_structure",
     cd.id_structure,
     date_part('year', c.date_diagnostic) as "année_diagnostic",
-    /* on considère que l'on a de l'auto prescription lorsque l'employeur est l'auteur du diagnostic et effectue l'embauche */
+    /* on considère que l'on a de l'auto prescription lorsque
+    l'employeur est l'auteur du diagnostic et effectue l'embauche */
     /* En créant une colonne on peut comparer les candidatures classiques à l'auto prescription */
     case
         when
             c.type_auteur_diagnostic = 'Employeur'
-            and cd.origine = 'Employeur'
             and c.id_auteur_diagnostic_employeur = cd.id_structure then 'Autoprescription'
         else 'parcours classique'
     end                                  as type_de_candidature,
