@@ -51,7 +51,6 @@ models:
       Permet de suivre les metrics matomo associees aux TB publics
   - name: stg_suivi_visiteurs_prives
     description: >
-      Permet de suivre les metrics matomo associees aux TB prives.
       Cette table suit les metrics des TBs prives avant l'automatisation des requêtes API Matomo introduite par Victor.
   - name: stg_suivi_visiteurs_prives_v1
     description: >
