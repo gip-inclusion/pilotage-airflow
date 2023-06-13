@@ -19,3 +19,4 @@ left join {{ ref('nom_prescripteur') }} as nom_org
     on nom_org.origine_detaille = candidatures."origine_détaillée"
 left join {{ ref('stg_reseaux') }} as rsx
     on candidatures.id_structure = rsx.id_structure
+where candidatures.type_structure in ('AI', 'ACI', 'EITI', 'ETTI', 'EI')

@@ -5,5 +5,5 @@ select
 from {{ source('oneshot', 'reseau_iae_adherents') }} as ria
 left join {{ ref('reseau_iae_ids') }} as rid
     on ria."Réseau IAE" = rid.nom
-inner join {{ source('emplois', 'structures') }} as s
+left join {{ source('emplois', 'structures') }} as s
     on s.siret = ria."SIRET"
