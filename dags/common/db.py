@@ -1,6 +1,7 @@
 import textwrap
 
 from airflow.models import Variable
+from sqlalchemy import create_engine
 
 from . import dataframes
 
@@ -21,7 +22,8 @@ def connection_engine():
     password = Variable.get("PGPASSWORD")
     port = Variable.get("PGPORT")
     user = Variable.get("PGUSER")
-    return f"postgresql://{user}:{password}@{host}:{port}/{database}"
+    url = f"postgresql://{user}:{password}@{host}:{port}/{database}"
+    return create_engine(url)
 
 
 class MetabaseDBCursor:

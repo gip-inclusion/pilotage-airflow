@@ -19,7 +19,6 @@ with DAG(
     def create_nps(**kwargs):
         import numpy as np
         import pandas as pd
-        from sqlalchemy import create_engine
 
         df_int = []
 
@@ -47,9 +46,7 @@ with DAG(
         start_of_previous_week, end_of_previous_week = dates.get_previous_week_range()
         df = df[(df["Date"] >= start_of_previous_week) & (df["Date"] <= end_of_previous_week)]
 
-        url = db.connection_engine()
-        engine = create_engine(url)
-        df.to_sql("suivi_satisfaction", con=engine, if_exists="append", index=False)
+        df.to_sql("suivi_satisfaction", con=db.connection_engine(), if_exists="append", index=False)
 
     create_nps_task = create_nps()
 
