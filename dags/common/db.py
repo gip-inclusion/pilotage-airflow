@@ -59,3 +59,10 @@ def pg_store(table_name, df, create_table_sql):
         conn.commit()
         cursor.copy_from(dataframes.to_buffer(df), table_name, sep=",")
         conn.commit()
+
+
+def create_df_from_db(sql_query):
+    import pandas as pd
+
+    with MetabaseDBCursor() as (cursor, conn):
+        return pd.read_sql_query(sql_query, conn)

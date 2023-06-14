@@ -12,3 +12,11 @@ def start_of_previous_week():
 
 def end_of_previous_week():
     return start_of_week() - timedelta(days=1)
+
+
+def week_list():
+    import pandas as pd
+
+    today = datetime.today()
+    today = today.strftime("%Y-%m-%d")
+    return pd.date_range(start="2022-06-06", end=today, freq="W-MON")
