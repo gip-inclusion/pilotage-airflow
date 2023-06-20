@@ -4,6 +4,6 @@ black
 flake8
 isort
 pytest
-pytest-subtest
+pytest-subtests
 sqlfluff
 sqlfluff-templater-dbt
