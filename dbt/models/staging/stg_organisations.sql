@@ -5,6 +5,7 @@ select
     initcap(organisations.ville)                                               as ville,
     coalesce(organisations.code_commune, appartenance_geo_communes.code_insee) as code_commune,
     organisations."nom_département"                                            as "nom_département",
+    appartenance_geo_communes.nom_departement                                  as "nom_département_insee",
     appartenance_geo_communes.nom_region                                       as "région",
     appartenance_geo_communes.nom_zone_emploi                                  as zone_emploi,
     appartenance_geo_communes.nom_epci                                         as epci,
