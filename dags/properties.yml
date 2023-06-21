@@ -5,7 +5,10 @@ models:
     description: >
       Ce DAG permet de récupérer, de façon hebdomadaire, les notes de recommendation des différents TB du pilotage de l'inclusion, il est ajouté à une table déjà existante.
       A noter, la table originale récupérait des colonnes que l'on utilise plus. Afin de permettre l'ajout hebdomadaire des données il est nécessaire de créer ces colonnes et de les remplir de NaN à chaque run du DAG.
-   name: weekly_nps_pilotage
+  - name: weekly_nps_pilotage
     description: >
       Ce DAG permet de récupérer, de façon hebdomadaire, les notes de recommendation des différents groupes de TB du pilotage de l'inclusion à partir de la table nps_pilotage.
       Ainsi, il est possible de suivre l'évolution hebdomadaire du NPS de tous les TBs, les TBs PE, SIAE et DDETS.
+  - name: suivi_utilisateurs
+    description: >
+      Modifie la table suivi_tb_prive_semaine afin d'y ajouter le nombre et la liste des anciens et nouveaux visiteurs pour chaque semaine.
