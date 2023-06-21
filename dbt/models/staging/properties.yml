@@ -61,3 +61,6 @@ models:
   - name: stg_consommation_etp
     description: >
       Vue créée pour calculer les ETPs réalisés à partir du fluxIAE de l'ASP.
+  - name: stg_candidats_candidatures
+    description: >
+      Vue créée pour joindre les dates d'embauche de chaque candidat. Cette vue est utilisée dans candidats_derniere_embauche.sql pour extraire la dernière date d'embauche d'un candidat.

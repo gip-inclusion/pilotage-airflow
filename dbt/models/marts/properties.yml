@@ -56,3 +56,7 @@ models:
       Afin d'informer si le pass est valide ou pas une colonne validite_pass remplie, avec les strings 'pass valide/pass non valide', a été créée.
       L'information contenue dans cette colonne n'est pas sous forme 1/0 afin d'anticiper une potentielle demande métier où cette colonne servirait de filtre.
       Cette colonne aurait pu être rajoutée dans {{source, pass_agréments}} mais un marts a été préféré à un ajout de colonne pour des raisons d'autonomie du côté des data analyst.
+  - name: candidats_derniere_embauche
+    description: >
+      Table créée pour récupérer la dernière embauche (si elle existe) d'un candidat.
+      Cette information est utilisée dans la table stats du C1 afin des filtrer les données des candidats par dernière date d'embauche.
