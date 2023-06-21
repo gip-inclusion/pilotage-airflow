@@ -50,6 +50,9 @@ models:
   - name: suivi_consommation_etp_V2
     description: >
       Table créée pour suivre la consommation réelle d'ETPs par structure ainsi que leur conventionnement.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('suivi_etp_conventionnes_v2')
   - name: pass_agrements_valides
     description: >
       A la demande du C1, cette table a été créée pour suivre le nombre de pass IAE valides. Ici un pass est considéré valide quand sa date de fin n'a pas expiré.
