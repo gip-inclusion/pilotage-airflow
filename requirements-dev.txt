@@ -2,6 +2,7 @@
 
 black
 flake8
+freezegun
 isort
 pytest
 pytest-subtests
