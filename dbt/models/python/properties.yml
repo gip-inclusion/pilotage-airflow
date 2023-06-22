@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: suivi_tb_prive_semaine
+    description: >
+      Ce modèle python permet de calculer les visiteurs anciens et nouveaux chaque semaine à partir de la table suivi_visites_tb_prive_semaine.
+      Il permet de calculer la rétention des utilisateurs sur les tableaux de bords privés.

@@ -32,6 +32,8 @@ models:
       +materialized: view
     marts:
       +materialized: table
+    python:
+      +materialized: table
 seeds:
   dbt_pilotage:
     sa_ept:
