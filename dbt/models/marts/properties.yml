@@ -60,3 +60,10 @@ models:
     description: >
       Table créée pour récupérer la dernière embauche (si elle existe) d'un candidat.
       Cette information est utilisée dans la table stats du C1 afin des filtrer les données des candidats par dernière date d'embauche.
+  - name: suivi_utilisateurs_tb_prive_semaine
+    description: >
+      Table créée pour permettre le suivi des visites des utilisateurs de nos tableaux de bord.
+      Permet de récupérer le nombre de visites distincte par tableau de bord et par semaine pour chaque utilisateur, et ajoute des informations sur les utilisateurs (email, type).
+  - name: suivi_visites_tb_prive_semaine
+    description: >
+      Table permettant de suivre pour chaque tb et chaque semaine la liste des utilisateurs qui se sont connecté.
