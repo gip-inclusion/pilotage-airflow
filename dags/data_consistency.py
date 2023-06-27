@@ -3,7 +3,6 @@ from airflow.operators import bash, empty
 
 from dags.common import db, dbt, default_dag_args, slack
 
-
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
@@ -29,6 +28,6 @@ with airflow.DAG(
         append_env=True,
     )
 
-    end = slack.success_notifying_task()
+    end = empty.EmptyOperator(task_id="end")
 
     (start >> dbt_deps >> dbt_test >> end)
