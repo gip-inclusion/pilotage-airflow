@@ -15,6 +15,13 @@ with airflow.DAG(
 
     env_vars = db.connection_envvars()
 
+    dbt_deps = bash.BashOperator(
+        task_id="dbt_deps",
+        bash_command="dbt deps",
+        env=env_vars,
+        append_env=True,
+    )
+
     dbt_test = bash.BashOperator(
         task_id="dbt_test",
         bash_command="dbt test",
@@ -24,4 +31,4 @@ with airflow.DAG(
 
     end = slack.success_notifying_task()
 
-    (start >> dbt_test >> end)
+    (start >> dbt_deps >> dbt_test >> end)
