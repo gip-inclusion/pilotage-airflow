@@ -8,11 +8,11 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
 ## Environnement & Installation
 
-### Votre environnement virtuel Python 3.10
+### Votre environnement virtuel Python
 
     python -m venv venv
     source venv/bin/activate
-    pip install -r requirements-ci.txt
+    make update
 
 
 > **Note**
