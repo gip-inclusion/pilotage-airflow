@@ -19,11 +19,14 @@ SQLFLUFF_OPTIONS := \
 	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification,references.special_chars \
 	--disable-progress-bar --nocolor
 
-.PHONY: venv_ci clean compile-deps airflow_init dbt_clean dbt_docs fix quality test load_dump
+.PHONY: venv_ci update clean compile-deps airflow_init dbt_clean dbt_docs fix quality test load_dump
 
 venv_ci:
 	$(PYTHON_VERSION) -m venv $(VIRTUAL_ENV)
-	$(VIRTUAL_ENV)/bin/pip install --no-color --progress-bar off -r requirements-ci.txt
+
+update:
+	$(VIRTUAL_ENV)/bin/pip install --force-reinstall --no-color --progress-bar off -r requirements-ci.txt
+	$(VIRTUAL_ENV)/bin/pip install --force-reinstall --no-color --progress-bar off dbt-fal==1.5.4 dbt-core==1.5.1
 
 dbt_clean:
 	rm -rf $(DBT_TARGET_PATH)

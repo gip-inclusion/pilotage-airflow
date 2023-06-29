@@ -1,5 +1,8 @@
 dbt_pilotage:
   outputs:
+    main_fal:
+      type: fal
+      db_profile: main
 
     main:
       schema: public
@@ -11,4 +14,4 @@ dbt_pilotage:
       port: "{{ env_var('PGPORT') | int }}"
       user: "{{ env_var('PGUSER') }}"
 
-  target: main
+  target: main_fal

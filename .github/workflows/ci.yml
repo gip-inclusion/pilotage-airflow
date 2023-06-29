@@ -50,6 +50,7 @@ jobs:
     - name: 📥 Install Python dependencies
       run: |
         make venv_ci
+        make update
         echo ".venv/bin" >> $GITHUB_PATH
     - name: ⚙ Setup airflow database
       run: make airflow_initdb
