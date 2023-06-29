@@ -14,8 +14,6 @@ pip install apache-airflow[amazon,sentry,slack]
 pip install dbt-postgres==1.4.5
 pip install pandas
 pip install black
-pip install flake8
-pip install isort
 pip install pytest
 pip install pytest-subtest
 pip install sqlfluff

@@ -39,13 +39,12 @@ clean: dbt_clean
 # if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
 fix:
 	black $(MONITORED_DIRS)
-	isort $(MONITORED_DIRS)
+	ruff check --fix $(MONITORED_DIRS)
 	sqlfluff fix --force $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 quality:
 	black --check $(MONITORED_DIRS)
-	isort --check $(MONITORED_DIRS)
-	flake8 --count --show-source --statistics $(MONITORED_DIRS)
+	ruff check $(MONITORED_DIRS)
 	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 airflow_initdb:

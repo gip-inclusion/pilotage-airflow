@@ -1,7 +1,7 @@
 import airflow
 from airflow.operators import bash, empty
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
