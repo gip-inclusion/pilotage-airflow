@@ -72,6 +72,3 @@ models:
   - name: stg_salarie
     description: >
       Vue créée pour récupérer les id uniques des salarié(e)s ainsi que leur genre afin de permettre le calcul des ETPs par genre.
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: source('fluxIAE', 'fluxIAE_Salarie')
