@@ -63,3 +63,9 @@ models:
     description: >
       Table créée pour récupérer la dernière embauche (si elle existe) d'un candidat.
       Cette information est utilisée dans la table stats du C1 afin des filtrer les données des candidats par dernière date d'embauche.
+  - name: etp_par_genre
+    description: >
+      Table créée pour suivre le nombre d'etp réalisés par genre
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('suivi_etp_realises_v2')
