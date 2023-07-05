@@ -5,7 +5,6 @@ from airflow.operators import empty
 
 from dags.common import db, default_dag_args, matomo, slack
 
-
 with DAG(
     "suivi_visites_campagnes_c0",
     schedule_interval="@weekly",
