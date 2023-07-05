@@ -8,7 +8,6 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="data_consistency",
-    schedule_interval="@hourly",
     **dag_args,
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
