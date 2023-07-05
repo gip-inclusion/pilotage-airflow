@@ -9,3 +9,7 @@ models:
     description: >
       Ce DAG permet de récupérer, de façon hebdomadaire, les notes de recommendation des différents groupes de TB du pilotage de l'inclusion à partir de la table nps_pilotage.
       Ainsi, il est possible de suivre l'évolution hebdomadaire du NPS de tous les TBs, les TBs PE, SIAE et DDETS.
+- name: suivi_visites_campagnes_c0
+    description: >
+      Ce DAG permet de récupérer (de manière hebdomadaire) pour chaque campagne matomo du c0 et chaque produit du gip les visiteurs et leurs actions.
+      Mise à disposition de cette table sur metabase pour les statistiques internes du c0.
