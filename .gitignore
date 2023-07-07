@@ -13,3 +13,4 @@ airflow/
 .user.yml
 venv/
 .DS_Store
+target/

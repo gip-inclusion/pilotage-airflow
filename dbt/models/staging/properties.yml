@@ -72,3 +72,9 @@ models:
   - name: stg_salarie
     description: >
       Vue créée pour récupérer les id uniques des salarié(e)s ainsi que leur genre afin de permettre le calcul des ETPs par genre.
+  - name: stg_dates_etp_realises
+    description: >
+      Vue créée pour récupérer les dates permettant de filtrer les etps réalisés sur les 2 dernières années
+  - name: stg_dates_etp_conventionnes
+    description: >
+      Vue créée pour récupérer l'année sur laquelle court l'annexe financière
