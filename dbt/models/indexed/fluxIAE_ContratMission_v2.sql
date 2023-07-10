@@ -6,6 +6,6 @@
  ) }}
 
 select
-    {{ pilo_star(source('fluxIAE', 'fluxIAE_ContratMission'), relation_alias='ctr') }}
+    {{ pilo_star(source('fluxIAE', 'fluxIAE_ContratMission')) }}
 from
     {{ source('fluxIAE', 'fluxIAE_ContratMission') }}
