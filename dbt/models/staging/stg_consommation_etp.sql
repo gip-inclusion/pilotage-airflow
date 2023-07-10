@@ -1,8 +1,6 @@
 select
     etp.af_numero_annexe_financiere,
     /* Utilisation de l'ID de l'annexe financière -> ID unique contrairement à la convention */
-    etp.af_numero_convention,
-    etp.af_etat_annexe_financiere_code,
     etp.annee_af,
     da.nombre_mois_saisis,
     etp."effectif_mensuel_conventionné",
@@ -107,9 +105,7 @@ group by
     etp.duree_annexe,
     da.nombre_mois_saisis,
     etp.id_annexe_financiere,
-    etp.af_numero_convention,
     etp.af_numero_annexe_financiere,
-    etp.af_etat_annexe_financiere_code,
     etp."effectif_mensuel_conventionné",
     etp."effectif_annuel_conventionné",
     etp.annee_af,

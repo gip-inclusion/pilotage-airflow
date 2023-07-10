@@ -6,12 +6,9 @@ select distinct
     emi.emi_afi_id                                                                      as identifiant_annexe_fin,
     emi.emi_sme_mois,
     emi.emi_sme_annee,
-    af.af_numero_convention,
-    /*Nous calculons directement les ETPs réalisés pour éviter des problèmes de filtres/colonnes/etc sur metabase*/
-    /* ETPs réalisés = Nbr heures travaillées / montant d'heures necessaires pour avoir 1 ETP */
-    -- Ici le calcul nb heures * valeur nous donne de base des ETPs ANNUELS.
+    brsa.salarie_brsa,
     af.af_numero_annexe_financiere,
-    -- multiplication par 12 pour tomber sur le mensuel
+    af.af_numero_convention,
     af.af_etat_annexe_financiere_code,
     af.af_montant_unitaire_annuel_valeur,
     firmi.rmi_libelle,
@@ -30,8 +27,12 @@ select distinct
     af.nom_region_af,
     make_date(cast(emi.emi_sme_annee as integer), cast(emi.emi_sme_mois as integer), 1) as date_saisie,
     to_date(emi.emi_date_validation, 'dd/mm/yyyy')                                      as date_validation_declaration,
+    /*Nous calculons directement les ETPs réalisés pour éviter des problèmes de filtres/colonnes/etc sur metabase*/
+    /* ETPs réalisés = Nbr heures travaillées / montant d'heures necessaires pour avoir 1 ETP */
+    -- Ici le calcul nb heures * valeur nous donne de base des ETPs ANNUELS.
     (emi.emi_nb_heures_travail / firmi.rmi_valeur)
     as nombre_etp_consommes_reels_annuels,
+    -- multiplication par 12 pour tomber sur le mensuel
     (emi.emi_nb_heures_travail / firmi.rmi_valeur) * 12
     as nombre_etp_consommes_reels_mensuels
 from
@@ -51,6 +52,12 @@ left join {{ ref('fluxIAE_Structure_v2') }} as structure
 left join {{ ref('ref_mesure_dispositif_asp') }} as ref_asp
     on
         af.af_mesure_dispositif_code = ref_asp.af_mesure_dispositif_code
+left join {{ ref('stg_etat_mensuel_individuel_avec_brsa') }} as brsa
+    on
+        emi.emi_afi_id = brsa.emi_afi_id
+        and emi.emi_pph_id = brsa.emi_pph_id
+        and emi.emi_sme_annee = brsa.emi_sme_annee
+        and emi.emi_sme_mois = brsa.emi_sme_mois
 where
     emi.emi_sme_annee >= constantes.annee_en_cours_2
     and firmi.rmi_libelle = 'Nombre d''heures annuelles théoriques pour un salarié à taux plein'

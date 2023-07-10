@@ -71,7 +71,7 @@ models:
       Table créée pour suivre le nombre d'etp réalisés. Cette table, permet, à travers le calcul du nombre d'heures x la valeur d'un etp de retrouver le nombre d'etp réalisés par mois et par personne physique.
   - name: suivi_etp_conventionnes_v2
     description: >
-      Table créée pour suivre le nombre d'etp conventionnés. Cette table permet d'obtenir le bon nombre d'etp conventionné en considérant la bonne durée des annexes financières
+      Table créée pour suivre le nombre d'etp conventionnés ainsi que la part de ces ETPs financée par le CD et l'état. Cette table permet d'obtenir le bon nombre d'etp conventionné en considérant la bonne durée des annexes financières
   - name: etp_par_salarie
     description: >
       Table créée pour suivre le nombre d'etp réalisés par genre
@@ -94,3 +94,10 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'candidats')
+  - name: suivi_etp_realises_par_structure
+    description: >
+      Table de suivi des etps réalisés par structure. Cette table permet aussi de savoir combien de salariés sont bRSA ou pas au sein de la structure et quelle a été leur consommation d'ETP.
+      Afin d'être en accord avec les règles de la DGEFP et ASP, seuls les salariés ayant travaillé au moins une heure sont pris en compte dans cette table.
+  - name: suivi_consommation_mensuelle_etp_V2
+    description: >
+      Table de suivi des etps réalisés et conventionnés par structure mois par mois.

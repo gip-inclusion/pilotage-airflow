@@ -16,6 +16,8 @@ select distinct
     af.af_numero_avenant_modification,
     af.af_etp_postes_insertion                   as "effectif_mensuel_conventionné",
     af.af_montant_total_annuel,
+    af.af_montant_unitaire_annuel_valeur,
+    af.af_mt_cofinance,
     ref_asp.type_structure,
     structure.structure_denomination,
     structure.structure_adresse_admin_commune    as commune_structure,

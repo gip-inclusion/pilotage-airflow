@@ -78,3 +78,9 @@ models:
   - name: stg_candidats
     description: >
       Vue permettant de calculer des informations concernant les candidats. Elle sert à ce jour à récupérer l'âge du candidat à partir du nir.
+  - name: stg_etat_mensuel_individuel_avec_brsa
+    description: >
+      Vue permettant de déterminer si une personne physique est bénéficiaire du RSA ou pas. Elle sert à ce jour à identifier le nombre de bRSA par structure.
+  - name: stg_etp_conventionnes
+    description: >
+      Vue permettant de calculer les ETPs conventionnés. Elle sert à la création du suivi des ETPs conventionnés.
