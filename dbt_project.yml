@@ -28,6 +28,8 @@ models:
       owner: "Equipe Pilotage"
     legacy:
       +materialized: table
+    ephemeral:
+      +materialized: ephemeral
     staging:
       +materialized: view
     marts:

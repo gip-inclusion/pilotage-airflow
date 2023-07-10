@@ -32,7 +32,7 @@ select distinct
     (emi.emi_nb_heures_travail / firmi.rmi_valeur) * 12
     as nombre_etp_consommes_reels_mensuels
 from
-    {{ ref('stg_dates_etat_mensuel_individualisé') }} as constantes
+    {{ ref('stg_dates_etat_mensuel_individualise') }} as constantes
 cross join
     {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
