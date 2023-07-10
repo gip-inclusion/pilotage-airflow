@@ -4,6 +4,8 @@ select distinct
     emi.emi_part_etp                                                                    as nombre_etp_consommes_asp,
     emi.emi_nb_heures_travail                                                           as nombre_heures_travaillees,
     emi.emi_afi_id                                                                      as identifiant_annexe_fin,
+    emi.emi_sme_mois,
+    emi.emi_sme_annee,
     af.af_numero_convention,
     /*Nous calculons directement les ETPs réalisés pour éviter des problèmes de filtres/colonnes/etc sur metabase*/
     /* ETPs réalisés = Nbr heures travaillées / montant d'heures necessaires pour avoir 1 ETP */
