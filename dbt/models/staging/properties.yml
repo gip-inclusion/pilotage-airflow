@@ -75,3 +75,6 @@ models:
   - name: stg_sorties_finales
     description: >
       Vue créée afin de servir de base pour créer des tables prenant en compte les spécifité de sortie de chaque type de SIAE.
+  - name: stg_candidats
+    description: >
+      Vue permettant de calculer des informations concernant les candidats. Elle sert à ce jour à récupérer l'âge du candidat à partir du nir.
