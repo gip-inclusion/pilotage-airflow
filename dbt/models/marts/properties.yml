@@ -33,6 +33,9 @@ models:
   - name: candidatures_echelle_locale
     description: >
       Table introduite pour le suivi des candidatures tout en ayant une information sur les bassins d'emploi d'où elles proviennent.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'candidatures')
   - name: candidatures_reseaux
     description: >
       Table introduite pour le suivi des candidatures des réseaux. Nous sommes obligés de créer une table séparée pour le suivi des candidatures des réseaux car une même structure peut appartenir à plusieurs réseaux.
@@ -79,3 +82,6 @@ models:
     description: >
       Equivalent à la table candidat avec des informations complémentaires.
       Sera amenée à remplacer la table candidats des emplois mais comme cela risque de casser de nombreux indicateurs on préfère faire une table différente pour le moment.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'candidats')
