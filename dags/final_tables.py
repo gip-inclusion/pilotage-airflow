@@ -33,7 +33,7 @@ with airflow.DAG(
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
-        bash_command="dbt seed",
+        bash_command="dbt seed --full-refresh",
         env=env_vars,
         append_env=True,
     )
