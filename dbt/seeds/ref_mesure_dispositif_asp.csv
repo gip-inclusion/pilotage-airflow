@@ -1,11 +1,11 @@
-af_mesure_dispositif_code,type_structure
-ETTI_DC,ETTI Droit commun
-ACIPA_DC,ACIPA Droit commun
-FDI_DC,FDI Droit commun
-EI_MP,EI Milieu pénitentiaire
-EI_DC,EI Droit commun
-ACI_MP,ACI Milieu pénitentiaire
-EIPA_DC,EIPA Droit commun
-ACI_DC,ACI Droit commun
-EITI_DC,EITI Droit commun
-AI_DC,AI Droit commun
+af_mesure_dispositif_code,type_structure,type_structure_emplois
+ETTI_DC,ETTI Droit commun,ETTI
+ACIPA_DC,ACIPA Droit commun,ACIPA
+FDI_DC,FDI Droit commun,FDI
+EI_MP,EI Milieu pénitentiaire,EI
+EI_DC,EI Droit commun,EI
+ACI_MP,ACI Milieu pénitentiaire,ACI
+EIPA_DC,EIPA Droit commun,EIPA
+ACI_DC,ACI Droit commun,ACI
+EITI_DC,EITI Droit commun,EITI
+AI_DC,AI Droit commun,AI

@@ -15,3 +15,4 @@ left join {{ ref('stg_salarie') }} as salarie
     on etp_r.identifiant_salarie = salarie.salarie_id
 left join {{ ref('suivi_etp_conventionnes_v2') }} as etp_c
     on etp_c.id_annexe_financiere = etp_r.id_annexe_financiere
+where etp_r.type_structure not in ('ACIPA_DC', 'EIPA_DC', 'FDI')
