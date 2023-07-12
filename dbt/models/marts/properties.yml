@@ -85,3 +85,12 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'candidats')
+  - name: candidatures_par_candidat
+    description: >
+      Permet de suvire les différentes candidatures réalisées par un candidat.
+      Pour chaque candidat, on récupère le nb de candidatures réalisées ainsi que les infos sur ces candidatures sous forme de liste.
+      La position de la donnée dans la liste permet la correspondance entre les différentes informations.
+      Par exemple, si deux candidatures sont réalisées, les informations sur la première candidature sont données à l'indice 0 de la liste et celles de la deuxième à l'indice 1.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'candidats')
