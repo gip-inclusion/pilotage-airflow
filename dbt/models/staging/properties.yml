@@ -84,3 +84,6 @@ models:
   - name: stg_etp_conventionnes
     description: >
       Vue permettant de calculer les ETPs conventionnés. Elle sert à la création du suivi des ETPs conventionnés.
+  - name: stg_prescripteurs_odc
+    description: >
+      Vue contenant les prescripteurs habilité de type ODC, DEPT et ceux habilités BRSA.
