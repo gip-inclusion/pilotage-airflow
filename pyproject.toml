@@ -41,3 +41,20 @@ load_macros_from_path = "dbt/packages"
 [tool.pytest.ini_options]
 addopts = "--ignore=dbt/packages"
 
+
+[tool.ruff]
+ignore = []
+line-length = 119
+# see prefixes in https://beta.ruff.rs/docs/rules/
+select = [
+    "F",  # pyflakes
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "I",  # isort
+]
+
+[tool.ruff.isort]
+combine-as-imports = true
+known-first-party = ["itou"]
+lines-after-imports = 2
+

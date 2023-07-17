@@ -5,9 +5,10 @@
 		"ms-vsliveshare.vsliveshare",
 		"ms-python.vscode-pylance",
 		"ms-python.python",
-		"ms-python.isort",
 		"ms-python.black-formatter",
-		"editorconfig.editorconfig"
+		"editorconfig.editorconfig",
+                "charliermarsh.ruff"
+
 	],
 	"unwantedRecommendations": []
 }

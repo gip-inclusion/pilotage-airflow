@@ -32,6 +32,11 @@ models:
       Ce modèle récupère les données de la table c1 organisations et y ajoute des colonnes pour faciliter le déploiement de tableaux metabase liés aux prescripteurs.
       Une colonne type_complet_avec_habilitation permet notamment de rendre cohérent le nom des prescripteurs avec celui de la table candidature.
       Elle pourra également être enrichie d'autres données sur les organisations comme le nombre de structures partenaires, le nombre de prescriptions réalisées, etc.
+    tests:
+      - dbt_utils.expression_is_true:
+          # we check that those columns match as much as possible, knowing that the first one is prefixed by the department code: "01 - Ain".
+          expression: >
+            split_part("nom_département", ' - ', 2) = "nom_département_insee"
   - name: stg_reseaux
     description: >
       Ce modèle récupère les données des tables reseau_iae_adherents et reseau_iae_ids afin d'associer l'id reseau correspondant à chaque structure.
@@ -64,3 +69,21 @@ models:
   - name: stg_candidats_candidatures
     description: >
       Vue créée pour joindre les dates d'embauche de chaque candidat. Cette vue est utilisée dans candidats_derniere_embauche.sql pour extraire la dernière date d'embauche d'un candidat.
+  - name: stg_salarie
+    description: >
+      Vue créée pour récupérer les id uniques des salarié(e)s ainsi que leur genre afin de permettre le calcul des ETPs par genre.
+  - name: stg_sorties_finales
+    description: >
+      Vue créée afin de servir de base pour créer des tables prenant en compte les spécifité de sortie de chaque type de SIAE.
+  - name: stg_candidats
+    description: >
+      Vue permettant de calculer des informations concernant les candidats. Elle sert à ce jour à récupérer l'âge du candidat à partir du nir.
+  - name: stg_etat_mensuel_individuel_avec_brsa
+    description: >
+      Vue permettant de déterminer si une personne physique est bénéficiaire du RSA ou pas. Elle sert à ce jour à identifier le nombre de bRSA par structure.
+  - name: stg_etp_conventionnes
+    description: >
+      Vue permettant de calculer les ETPs conventionnés. Elle sert à la création du suivi des ETPs conventionnés.
+  - name: stg_prescripteurs_odc
+    description: >
+      Vue contenant les prescripteurs habilité de type ODC, DEPT et ceux habilités BRSA.

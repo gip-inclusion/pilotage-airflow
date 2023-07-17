@@ -8,11 +8,11 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
 ## Environnement & Installation
 
-### Votre environnement virtuel Python 3.10
+### Votre environnement virtuel Python
 
     python -m venv venv
     source venv/bin/activate
-    pip install -r requirements-ci.txt
+    make update
 
 
 > **Note**
@@ -25,7 +25,7 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
     sudo apt install postgresql  # sous Linux
     brew install postgresql  # sous MacOS
-    
+
 
 
 ### Le logiciel [direnv](https://direnv.net)
@@ -47,7 +47,7 @@ données...) est différente.
     # modifiez le ficher `.env` si besoin
     # Une fois les variables d'environnement chargées vérifiez que vous disposez bien de `psql`, `pg_dump` et `pg_restore`
 
-Pour définir ```PGPASSWORD=password``` vous pouvez utiliser la commande suivante 
+Pour définir ```PGPASSWORD=password``` vous pouvez utiliser la commande suivante
 
     sudo -u postgres psql
     > ALTER USER postgres PASSWORD 'password';
@@ -79,6 +79,15 @@ Une commande Makefile est proposée, pourvu que vous ayiez rempli les variables 
 pour accéder à la base de données PostgreSQL de production.
 
     make load_dump
+### Ajout de nouvelles colonnes dans les seeds
+
+L'ajout de nouvelle colonnes dans les seeds ne fonctionnera pas avec la colonne
+
+    dbt seed
+
+Afin d'ajouter les nouvelles colonnes utiliser la fonction
+
+    dbt seed --full-refresh
 
 ## Airflow
 
@@ -87,7 +96,7 @@ Créez une base de données pour Airflow si elle n'existe pas.
     # attention, cette commande remettra également à zéro votre base de données Airflow
     # lors du premier lancement de cette commande, le message d'erreur 'Variable PGHOST does not exist' s'affichera : c'est normal et il est à ignorer.
     make airflow_initdb
-    
+
 
 En particulier cette étape:
 
@@ -104,6 +113,13 @@ Pour lancer airflow localement, ouvrez **DEUX** terminaux et:
 Vous pouvez ensuite accéder à l'interface Web sur http://127.0.0.1:8080 et lancer les DAGs.
 
 L'utilisateur local de base a pour credentials "admin" / "password".
+
+## Linter & en forme de vos scripts
+
+Si les scripts ne respectent pas la mise en forme des différents linter ils ne passeront pas les tests de la CI.
+Afin d'effectuer une mise en forme automatique la commande ci dessous peut être lancée. Elle analysera tous les fichiers et les mettra en forme automatiquement.
+
+    make fix
 
 > **Note**
 >

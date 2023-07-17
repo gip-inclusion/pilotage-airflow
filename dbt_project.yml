@@ -28,11 +28,13 @@ models:
       owner: "Equipe Pilotage"
     legacy:
       +materialized: table
+    ephemeral:
+      +materialized: ephemeral
     staging:
       +materialized: view
     marts:
       +materialized: table
-    python:
+    indexed:
       +materialized: table
 seeds:
   dbt_pilotage:

@@ -19,11 +19,14 @@ SQLFLUFF_OPTIONS := \
 	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification,references.special_chars \
 	--disable-progress-bar --nocolor
 
-.PHONY: venv_ci clean compile-deps airflow_init dbt_clean dbt_docs fix quality test load_dump
+.PHONY: venv_ci update clean compile-deps airflow_init dbt_clean dbt_docs fix quality test load_dump
 
 venv_ci:
 	$(PYTHON_VERSION) -m venv $(VIRTUAL_ENV)
-	$(VIRTUAL_ENV)/bin/pip install --no-color --progress-bar off -r requirements-ci.txt
+
+update:
+	$(VIRTUAL_ENV)/bin/pip install --force-reinstall --no-color --progress-bar off -r requirements-ci.txt
+	$(VIRTUAL_ENV)/bin/pip install --force-reinstall --no-color --progress-bar off dbt-fal==1.5.4 dbt-core==1.5.1
 
 dbt_clean:
 	rm -rf $(DBT_TARGET_PATH)
@@ -31,6 +34,7 @@ dbt_clean:
 
 dbt_docs:
 	dbt docs generate
+	cd $(DBT_TARGET_PATH) && python3 -m http.server
 
 clean: dbt_clean
 	find . -depth -type d -name "__pycache__" -exec rm -rf '{}' \;
@@ -39,13 +43,12 @@ clean: dbt_clean
 # if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
 fix:
 	black $(MONITORED_DIRS)
-	isort $(MONITORED_DIRS)
+	ruff check --fix $(MONITORED_DIRS)
 	sqlfluff fix --force $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 quality:
 	black --check $(MONITORED_DIRS)
-	isort --check $(MONITORED_DIRS)
-	flake8 --count --show-source --statistics $(MONITORED_DIRS)
+	ruff check $(MONITORED_DIRS)
 	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 airflow_initdb:

@@ -1,9 +1,9 @@
 -r requirements.txt
 
 black
-flake8
-isort
+freezegun
 pytest
 pytest-subtests
+ruff
 sqlfluff
 sqlfluff-templater-dbt
