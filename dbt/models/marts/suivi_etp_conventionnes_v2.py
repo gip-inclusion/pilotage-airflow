@@ -11,6 +11,10 @@ def computing_etp_part(df):
     df["etp_conventionnes_etat"] = (df["effectif_mensuel_conventionné"] * (1 - df["part_conventionnement_cd"])) * (
         df["duree_annexe"] / 12
     )
+    # Nombre de brsa pouvant être subventionnés avec le montant cofinancé (par mois)
+    df["nb_brsa_cible_mensuel"] = (df["af_mt_cofinance"] / df["duree_annexe"]) / (0.88 * df["montant_rsa"])
+    # idem par an
+    df["nb_brsa_cible_annuel"] = df["af_mt_cofinance"] / (0.88 * df["montant_rsa"])
     return df
 
 
