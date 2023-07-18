@@ -18,6 +18,7 @@ select distinct
     af.af_montant_total_annuel,
     af.af_montant_unitaire_annuel_valeur,
     af.af_mt_cofinance,
+    evo_rsa.montant                              as montant_rsa,
     ref_asp.type_structure,
     structure.structure_denomination,
     structure.structure_adresse_admin_commune    as commune_structure,
@@ -57,6 +58,10 @@ left join
 left join {{ ref('ref_mesure_dispositif_asp') }} as ref_asp
     on
         af.af_mesure_dispositif_code = ref_asp.af_mesure_dispositif_code
+left join
+    {{ ref('evolution_rsa') }} as evo_rsa
+    -- to get the rsa amount at the year of the af
+    on date_part('year', af.af_date_debut_effet_v2) = evo_rsa.annee
 where
     date_part('year', af.af_date_debut_effet_v2) >= constantes.annee_en_cours - 2
     and af.af_etat_annexe_financiere_code in (
