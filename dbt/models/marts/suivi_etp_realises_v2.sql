@@ -11,7 +11,6 @@ select distinct
     af.af_numero_convention,
     af.af_etat_annexe_financiere_code,
     af.af_montant_unitaire_annuel_valeur,
-    ((af.af_montant_total_annuel / 12) / 607.75) * 0.88                                 as nb_brsa_cible_structure,
     firmi.rmi_libelle,
     firmi.rmi_valeur,
     af.af_mesure_dispositif_code,
