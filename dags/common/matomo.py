@@ -1,5 +1,5 @@
-import pandas as pd
 import requests
+
 
 produits = {
     "carnet de bord": 209,
@@ -13,45 +13,47 @@ produits = {
 }
 
 
-def get_visit_info(produit, json_visit):
-    """
-    from a json visit extracted from matomo via api, returns a dict of relevant informations
-    """
-    infos = {
-        "produit": produit,
-        "poste": json_visit["referrerKeyword"],
-        "date": json_visit["serverDate"],
-        "visiteur": json_visit["visitorId"],
-        "nb_actions": len(json_visit["actionDetails"]),
-        "duree": json_visit["visitDurationPretty"],
-    }
-    return infos
-
-
-def get_visits_per_campaign(tok):
+def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
     """
     creates a dataframe composed of all visits for all c0 campaigns and all gip products
     """
+    import pandas as pd
+
     headers = {"Accept": "application/json"}
 
     dtf = pd.DataFrame()
 
     for produit, idsite in produits.items():
         url = (
-            "https://matomo.inclusion.beta.gouv.fr/index.php"
+            f"{matomo_base_url}"
             "?module=API"
             "&method=Live.getLastVisitsDetails"
             "&apiModule=Referrers"
+            # we recover all campaigns that are launched by c0
             "&segment=referrerType==campaign;referrerName==c0"
-            "&idSite={}"
+            f"&idSite={idsite}"
             "&expanded=1"
             "&period=month"
-            "&date=2023-05-01"
             "&format=json"
-            "&token_auth={}".format(idsite, tok)
+            f"&token_auth={tok}"
         )
 
         rep = requests.get(url, headers=headers)
+
+        def get_visit_info(produit, json_visit):
+            """
+            from a json visit extracted from matomo via api, returns a dict of relevant informations
+            """
+            infos = {
+                "produit": produit,
+                "poste": json_visit["referrerKeyword"],
+                "date": json_visit["serverDate"],
+                "visiteur": json_visit["visitorId"],
+                "nb_actions": len(json_visit["actionDetails"]),
+                "duree": json_visit["visitDurationPretty"],
+            }
+            return infos
+
         for json in rep.json():
             infos = get_visit_info(produit, json)
             dtf = dtf._append(infos, ignore_index=True)
