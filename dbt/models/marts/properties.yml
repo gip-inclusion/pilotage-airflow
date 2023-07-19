@@ -33,6 +33,9 @@ models:
   - name: candidatures_echelle_locale
     description: >
       Table introduite pour le suivi des candidatures tout en ayant une information sur les bassins d'emploi d'où elles proviennent.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'candidatures')
   - name: candidatures_reseaux
     description: >
       Table introduite pour le suivi des candidatures des réseaux. Nous sommes obligés de créer une table séparée pour le suivi des candidatures des réseaux car une même structure peut appartenir à plusieurs réseaux.
@@ -69,3 +72,45 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('suivi_etp_realises_v2')
+  - name: suivi_etp_realises_v2
+    description: >
+      Table créée pour suivre le nombre d'etp réalisés. Cette table, permet, à travers le calcul du nombre d'heures x la valeur d'un etp de retrouver le nombre d'etp réalisés par mois et par personne physique.
+  - name: suivi_etp_conventionnes_v2
+    description: >
+      Table créée pour suivre le nombre d'etp conventionnés ainsi que la part de ces ETPs financée par le CD et l'état. Cette table permet d'obtenir le bon nombre d'etp conventionné en considérant la bonne durée des annexes financières
+  - name: etp_par_salarie
+  - name: candidats_enriched
+    description: >
+      Equivalent à la table candidat avec des informations complémentaires.
+      Sera amenée à remplacer la table candidats des emplois mais comme cela risque de casser de nombreux indicateurs on préfère faire une table différente pour le moment.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'candidats')
+  - name: candidatures_par_candidat
+    description: >
+      Permet de suvire les différentes candidatures réalisées par un candidat.
+      Pour chaque candidat, on récupère le nb de candidatures réalisées ainsi que les infos sur ces candidatures sous forme de liste.
+      La position de la donnée dans la liste permet la correspondance entre les différentes informations.
+      Par exemple, si deux candidatures sont réalisées, les informations sur la première candidature sont données à l'indice 0 de la liste et celles de la deuxième à l'indice 1.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'candidats')
+  - name: suivi_etp_realises_par_structure
+    description: >
+      Table de suivi des etps réalisés par structure.
+  - name: suivi_etp_realises_par_structure_brsa
+    description: >
+      Table de suivi des etps réalisés par structure. Cette table permet aussi de savoir combien de salariés sont bRSA ou pas au sein de la structure et quelle a été leur consommation d'ETP.
+      Afin d'être en accord avec les règles de la DGEFP et ASP, seuls les salariés ayant travaillé au moins une heure sont pris en compte dans cette table.
+  - name: suivi_consommation_mensuelle_etp_V2
+    description: >
+      Table de suivi des etps réalisés et conventionnés par structure mois par mois.
+  - name: prescripteurs_habilite_odc
+    description: >
+      Sous ensemble des prescripteurs_habilite de type ODC, DEPT et organisations habilitées BRSA.
+  - name: candidatures_odc
+    description: >
+      Sous ensemble des candidatures_echelle_locale, uniquement celles orientées par les ODC, les DEPT, et les organisations habilitées BRSA.
+  - name: candidats_odc
+    description: >
+      Sous ensemble des candidats, uniquement ceux qui ont une candidature orientée par les ODC, les DEPT, et les organisations habilitées BRSA.

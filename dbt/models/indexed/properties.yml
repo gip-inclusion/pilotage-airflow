@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: fluxIAE_ContratMission_v2
+    description: >
+      Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
+  - name: fluxIAE_EtatMensuelIndiv_v2
+    description: >
+      Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
+  - name: fluxIAE_RefMotifSort_v2
+    description: >
+      Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
+  - name: fluxIAE_RefCategorieSort_v2
+    description: >
+      Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.

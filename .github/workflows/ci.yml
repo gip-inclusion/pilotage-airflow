@@ -70,6 +70,6 @@ jobs:
         AIRFLOW__CORE__FERNET_KEY: U7sOUkZeQ6JGmwQoG6anMTdnl_nzy4f74IFkNmMeW50=
         AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@localhost:5432/airflow
     - name: 📓 Generate dbt documentation
-      run: make dbt_docs
+      run: dbt docs generate
       env:
         PGDATABASE: pilotage

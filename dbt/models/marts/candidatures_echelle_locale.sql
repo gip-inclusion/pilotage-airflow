@@ -7,7 +7,9 @@ select
         when candidatures.injection_ai = 0 then 'Non'
         else 'Oui'
     end as reprise_de_stock_ai,
-    nom_org.type_auteur_diagnostic_detaille
+    nom_org.type_auteur_diagnostic_detaille,
+    candidats.eligibilite_dispositif,
+    candidats.tranche_age
 from
     {{ ref('stg_candidatures') }} as candidatures
 left join {{ ref('stg_bassin_emploi') }} as bassin_emploi
@@ -16,3 +18,5 @@ left join {{ ref('stg_org_prescripteur') }} as org_prescripteur
     on org_prescripteur.id_org = candidatures.id_org_prescripteur
 left join {{ ref('nom_prescripteur') }} as nom_org
     on nom_org.origine_detaille = candidatures."origine_détaillée"
+left join {{ ref('candidats_enriched') }} as candidats
+    on candidats.id = candidatures.id_candidat

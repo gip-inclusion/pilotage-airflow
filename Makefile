@@ -34,6 +34,7 @@ dbt_clean:
 
 dbt_docs:
 	dbt docs generate
+	cd $(DBT_TARGET_PATH) && python3 -m http.server
 
 clean: dbt_clean
 	find . -depth -type d -name "__pycache__" -exec rm -rf '{}' \;
