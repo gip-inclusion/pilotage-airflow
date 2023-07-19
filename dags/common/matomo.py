@@ -1,6 +1,5 @@
 import requests
 
-
 produits = {
     "carnet de bord": 209,
     "emplois": 117,  # ITOU
@@ -14,9 +13,6 @@ produits = {
 
 
 def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
-    """
-    creates a dataframe composed of all visits for all c0 campaigns and all gip products
-    """
     import pandas as pd
 
     headers = {"Accept": "application/json"}
@@ -41,9 +37,6 @@ def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
         rep = requests.get(url, headers=headers)
 
         def get_visit_info(produit, json_visit):
-            """
-            from a json visit extracted from matomo via api, returns a dict of relevant informations
-            """
             infos = {
                 "produit": produit,
                 "poste": json_visit["referrerKeyword"],
