@@ -19,8 +19,9 @@ select
     serv.code_departement_af,
     serv.nom_departement_af,
     serv.nom_region_af,
-    date_part('month', serv.date_saisie)          as mois,
-    date_part('year', serv.date_saisie)           as annee,
+    etp_c.annee_af,
+    m.mois,
+    max(etp_c.nb_brsa_cible_mensuel)              as nb_brsa_cible_mensuel,
     sum(serv.nombre_etp_consommes_asp)            as nombre_etp_consommes_asp,
     sum(serv.nombre_heures_travaillees)           as nombre_heures_travaillees,
     sum(serv.nombre_etp_consommes_reels_annuels)  as nombre_etp_consommes_reels_annuels,
@@ -28,6 +29,12 @@ select
     count(serv.salarie_brsa)                      as nombre_de_salaries
 from
     {{ ref('suivi_etp_realises_v2') }} as serv
+left join {{ ref('suivi_etp_conventionnes_v2') }} as etp_c
+    on
+        serv.id_annexe_financiere = etp_c.id_annexe_financiere
+left join {{ ref('months') }} as m
+    on
+        date_part('month', serv.date_saisie) = m.numero_mois
 where nombre_heures_travaillees >= 1
 group by
     serv.id_annexe_financiere,
@@ -36,8 +43,8 @@ group by
     serv.emi_sme_annee,
     serv.date_validation_declaration,
     serv.salarie_brsa,
-    mois,
-    annee,
+    etp_c.annee_af,
+    m.mois,
     serv.af_numero_annexe_financiere,
     serv.rmi_libelle,
     serv.rmi_valeur,
