@@ -40,7 +40,7 @@ with airflow.DAG(
 
     dbt_run = bash.BashOperator(
         task_id="dbt_run",
-        bash_command="dbt run",
+        bash_command="dbt run --exclude excluded.*+ --exclude marts.oneshot+",
         env=env_vars,
         append_env=True,
     )
