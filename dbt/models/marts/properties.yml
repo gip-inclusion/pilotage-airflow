@@ -117,3 +117,12 @@ models:
     description: >
       Ce modèle python permet de calculer les visiteurs anciens et nouveaux chaque semaine à partir de la table suivi_visites_tb_prive_semaine.
       Il permet de calculer la rétention des utilisateurs sur les tableaux de bords privés.
+  - name: suivi_complet_etps_conventionnes
+    description: >
+      Cette table nous permet d'obtenir une vue mensuelle du conventionnement en etp des différentes structures de l'IAE.
+      En effet la table suivi_etp_conventionnes_v2 offre uniquement une vue agrégée par structure.
+      Grâce à cette table nous pouvons suivre les conventionnements mois par mois de toutes les structures quelque soit leur durée de conventionnement.
+  - name: suivi_realisation_convention_mensuelle
+    description: >
+      Cette table nous permet d'obtenir une vue mensuelle du conventionnement ET de la consommation en etp des différentes structures de l'IAE.
+      Grâce à cette table nous pouvons réaliser des indicateurs suivant sur le même plot les conventionnements et consommation mois par mois de toutes les structures quelque soit leur durée de conventionnement.
