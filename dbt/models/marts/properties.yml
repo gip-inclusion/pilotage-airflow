@@ -126,3 +126,12 @@ models:
   - name: sorties_finales
     description: >
       Table contenant les motifs de sorties pour tous les salariés ayant travaillé dans une SIAE entre l'année N et l'année N-2.
+      - name: suivi_complet_etps_conventionnes
+    description: >
+      Cette table nous permet d'obtenir une vue mensuelle du conventionnement en etp des différentes structures de l'IAE.
+      En effet la table suivi_etp_conventionnes_v2 offre uniquement une vue agrégée par structure.
+      Grâce à cette table nous pouvons suivre les conventionnements mois par mois de toutes les structures quelque soit leur durée de conventionnement.
+  - name: suivi_realisation_convention_mensuelle
+    description: >
+      Cette table nous permet d'obtenir une vue mensuelle du conventionnement ET de la consommation en etp des différentes structures de l'IAE.
+      Grâce à cette table nous pouvons réaliser des indicateurs suivant sur le même plot les conventionnements et consommation mois par mois de toutes les structures quelque soit leur durée de conventionnement.
