@@ -1,57 +1,50 @@
+import datetime
+
 import pandas as pd
 
 
-def current_year():
-    import datetime
-
-    today = datetime.date.today()
-    year = today.year
-    return year
-
-
-def reindex_fill_zeros(x, year):
-    return x.reindex(
-        pd.period_range(str(year) + "-01-01", str(year) + "-12-31", freq="M", name="af_date_fin_effet_v2"),
-        fill_value=0,
-    )
-
-
-def exploding_data(df):
+def replicate_rows(df):
     # In order to transform one row per structure into one row per month
     # we explode the df using new colum "dates_annexe"
-    df_c = df
-    df_c["af_date_debut_effet_v2"] = pd.to_datetime(df_c["af_date_debut_effet_v2"])
-    df_c["af_date_fin_effet_v2"] = pd.to_datetime(df_c["af_date_fin_effet_v2"])
-    df_c["dates_annexe"] = df_c.apply(
+    df_replicate = df
+    df_replicate["af_date_debut_effet_v2"] = pd.to_datetime(df_replicate["af_date_debut_effet_v2"])
+    df_replicate["af_date_fin_effet_v2"] = pd.to_datetime(df_replicate["af_date_fin_effet_v2"])
+    df_replicate["dates_annexe"] = df_replicate.apply(
         lambda x: pd.date_range(x["af_date_debut_effet_v2"], x["af_date_fin_effet_v2"], freq="M"), axis=1
     )
 
-    df_c = df_c.explode("dates_annexe")
-    df_c.reset_index(inplace=True)
-    df_c.drop(columns=["index"], inplace=True)
-    df_c["af_date_fin_effet_v2"] = df_c["dates_annexe"]
-    df_c = df_c[df.columns[:-1]]
-    return df_c
+    df_replicate = df_replicate.explode("dates_annexe")
+    df_replicate.reset_index(inplace=True)
+    df_replicate.drop(columns=["index"], inplace=True)
+    df_replicate["af_date_fin_effet_v2"] = df_replicate["dates_annexe"]
+    df_replicate = df_replicate[df.columns[:-1]]
+    return df_replicate
 
 
-def getting_zero_etp(df):
-    year = current_year()
-    years = (year - 2, year - 1, year)
-    df_y = []
+def get_zero_etp(df):
+    def fn_inline(x, year):
+        return x.reindex(
+            pd.period_range(str(year) + "-01-01", str(year) + "-12-31", freq="M", name="af_date_fin_effet_v2"),
+            fill_value=0,
+        )
+
+    current_year = datetime.date.today().year
+    three_last_years = [current_year - 2, current_year - 1, current_year]
+    df_etp_null = []
 
     # Not all structures have a funding for the whole year therefore we create
     # a second table with the non contracted months
-    # we set all months = 0 in order to compare with df_c
-    # and remove the duplicates where df_c[etp] != 0
-    for year in years:
-        df_y2 = df[df["annee_af"] == year]
-        df_y2["af_date_debut_effet_v2"] = pd.to_datetime(df_y2["af_date_debut_effet_v2"])
-        df_y2["af_date_fin_effet_v2"] = pd.to_datetime(df_y2["af_date_fin_effet_v2"])
+    # we set all months = 0 in order to compare with df_replicate
+    # and remove the duplicates where df_replicate[etp] != 0
+    for year in three_last_years:
+        df_temp = df[df["annee_af"] == year]
+        df_temp["af_date_debut_effet_v2"] = pd.to_datetime(df_temp["af_date_debut_effet_v2"])
+        df_temp["af_date_fin_effet_v2"] = pd.to_datetime(df_temp["af_date_fin_effet_v2"])
 
-        for i in df_y2.index:
-            if df_y2["effectif_mensuel_conventionné"].loc[i] != 0:
-                df_y2 = (
-                    df_y2.set_index("af_date_fin_effet_v2")
+        for i in df_temp.index:
+            if df_temp["effectif_mensuel_conventionné"].loc[i] != 0:
+                df_temp = (
+                    df_temp.set_index("af_date_fin_effet_v2")
                     .groupby(
                         [
                             "af_date_debut_effet_v2",
@@ -92,18 +85,19 @@ def getting_zero_etp(df):
                             "nb_brsa_cible_annuel",
                         ]
                     ]
-                    .apply(lambda x: reindex_fill_zeros(x, year))
+                    .apply(lambda x: fn_inline(x, year))
                     .reset_index()
                 )
 
-        df_y2["af_date_fin_effet_v2"] = df_y2["af_date_fin_effet_v2"].dt.to_timestamp(how="end").dt.normalize()
-        df_y2 = df_y2[df.columns[:-1]]
-        df_y.append(df_y2)
+        df_temp["af_date_fin_effet_v2"] = df_temp["af_date_fin_effet_v2"].dt.to_timestamp(how="end").dt.normalize()
+        df_temp = df_temp[df.columns[:-1]]
+        df_etp_null.append(df_temp)
 
-    return df_y
+    return df_etp_null
 
 
-def cleaning_data(df):
+def join_data(df_replicate, df_etp_null):
+    df = pd.concat([df_replicate, df_etp_null])
     df = (df.drop_duplicates(subset=["id_annexe_financiere", "af_date_fin_effet_v2"])).sort_values(
         by=["id_annexe_financiere", "af_date_fin_effet_v2"]
     )
@@ -114,9 +108,8 @@ def cleaning_data(df):
 
 def model(dbt, session):
     df = dbt.ref("suivi_etp_conventionnes_v2")
-    df_c = exploding_data(df)
-    df_y = getting_zero_etp(df)
-    df_y = pd.concat(df_y)
-    df = pd.concat([df_c, df_y])
-    df = cleaning_data(df)
+    df_replicate = replicate_rows(df)
+    df_etp_null = get_zero_etp(df)
+    df_etp_null = pd.concat(df_etp_null)
+    df = join_data(df_replicate, df_etp_null)
     return df
