@@ -8,3 +8,4 @@ select
 from
     /* Nouvelle table créée par Victor qui démarre le 01/01/22 */
     {{ source('matomo', 'suivi_visiteurs_tb_prives_v1') }} as svtp0
+where to_date(svtp0."Date", 'YYYY-MM-DD') < '2023-03-13'
