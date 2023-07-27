@@ -90,3 +90,16 @@ models:
   - name: stg_c1_private_dashboards_visits_v1
     description: >
       Vue contenant les visiteurs des TBs privés provenant des emplois de l'inclusion.
+  - name: stg_sorties_eiti
+    description: >
+      Vue contenant les sorties pour chaque salarié(e) des EITI. Les EITI n'ont pas de règle particulière définissant lorsqu'une sortie doit être prise en compte.
+  - name: stg_sorties_ai_etti
+    description: >
+      Vue contenant les sorties pour chaque salarié(e) des AI et ETTI.
+      Pour ces deux type de SIAE, une sortie est prise en compte lorsque la personne a travaillé plus de 150h en cumulé dans la SIAE.
+  - name: stg_sorties_aci_ei
+    description: >
+      Vue contenant les sorties pour chaque salarié(e) des ACI et EI.
+      Pour ces deux type de SIAE, une sortie est prise en compte lorsque :
+        - la personne a travaillé plus de 3 mois au total dans une ACI/EI
+        - la personne a travaillé au moins une heure dans l'année de sortie de la SIAE.

@@ -1,3 +1,11 @@
+{{ config(
+    materialized = 'table',
+    indexes=[
+      {'columns': ['emi_pph_id'], 'unique' : False},
+      {'columns': ['af_numero_annexe_financiere'], 'unique' : False},
+    ]
+ ) }}
+
 select distinct
     /* Here we need to exclude "af_motif_rejet_id" and "af_motif_rejet_code" because these
     two colums, for the same af, can contain two different informations.
@@ -6,8 +14,6 @@ select distinct
     af.af_mesure_dispositif_code,
     af.af_numero_annexe_financiere,
     af.af_id_annexe_financiere,
-    af.af_date_debut_effet_v2,
-    af.af_date_fin_effet_v2,
     af.denomination_structure,
     af.numero_departement_af,
     af.nom_departement_af,
@@ -28,19 +34,13 @@ select distinct
     emi.emi_date_fin_reelle,
     rcs.rcs_libelle,
     rms.rms_libelle,
-    case
-        when emi.emi_sme_annee = extract(year from (ctr.contrat_date_embauche::DATE))
-            then
-                (extract(month from age(
-                    ctr.contrat_date_sortie_definitive::DATE, ctr.contrat_date_embauche::DATE
-                )) + 1)
-        else
-            (extract(month from age(
-                ctr.contrat_date_sortie_definitive::DATE, date_trunc('year', date(emi.emi_sme_annee || '-01-01'))
-            )) + 1)
-    end                                                     as duree_contrat_regles_asp,
-    extract(year from (ctr.contrat_date_embauche::DATE))    as annee,
-    date_trunc('year', date(emi.emi_sme_annee || '-01-01')) as debut_annee
+    extract(year from (ctr.contrat_date_embauche::DATE))          as annee_debut_contrat,
+    extract(year from (ctr.contrat_date_sortie_definitive::DATE)) as annee_sortie_definitive,
+    extract(year from (ctr.contrat_date_fin_contrat::DATE))       as annee_fin_contrat,
+    date_trunc('year', date(extract(
+        year from
+        (ctr.contrat_date_sortie_definitive::DATE)
+    ) || '-01-01'))                                               as debut_annee_fin_contrat
 from
     {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af

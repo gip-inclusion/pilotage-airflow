@@ -13,3 +13,13 @@ models:
   - name: fluxIAE_RefCategorieSort_v2
     description: >
       Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
+  - name: sorties_v2
+    description: >
+      Table introduite afin d'extraire toutes les informations du fluxIAE, nécessaires au calcul des sorties.
+  - name: nombre_mois_travailles
+    description: >
+      Table introduite afin de calculer le nombre de mois travailles par un salarie lorsqu'il a travaillé plus de 0 heure.
+  - name: nombre_heures_travaillees_af
+    description: >
+      Table introduite afin de calculer le nombre d'heures travaillées quand l'année de sortie est égale à l'année de l'af.
+      Ce cas particulier est nécessaire au calcul des sorties.
