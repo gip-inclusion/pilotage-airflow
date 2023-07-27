@@ -20,6 +20,7 @@ select distinct
     af.af_mt_cofinance,
     evo_rsa.montant                              as montant_rsa,
     ref_asp.type_structure,
+    ref_asp.type_structure_emplois,
     structure.structure_denomination,
     structure.structure_adresse_admin_commune    as commune_structure,
     structure.structure_adresse_admin_code_insee as code_insee_structure,
