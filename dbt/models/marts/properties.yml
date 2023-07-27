@@ -112,7 +112,7 @@ models:
       Sous ensemble des candidatures_echelle_locale, uniquement celles orientées par les ODC, les DEPT, et les organisations habilitées BRSA.
   - name: candidats_odc
     description: >
-      Sous ensemble des candidats, uniquement ceux qui ont une candidature orientée par les ODC, les DEPT, et les organisations habilitées BRSA.
+      Sous ensemble des candidats, uniquement ceux qui ont une candidature orientée par les ODC, les DEPT, et les organisations habilitées BRSA
   - name: suivi_tb_prive_semaine
     description: >
       Ce modèle python permet de calculer les visiteurs anciens et nouveaux chaque semaine à partir de la table suivi_visites_tb_prive_semaine.
