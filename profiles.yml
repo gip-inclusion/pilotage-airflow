@@ -13,5 +13,6 @@ dbt_pilotage:
       password: "{{ env_var('PGPASSWORD', '') }}"
       port: "{{ env_var('PGPORT') | int }}"
       user: "{{ env_var('PGUSER') }}"
+      keepalives_idle: 60
 
   target: main_fal
