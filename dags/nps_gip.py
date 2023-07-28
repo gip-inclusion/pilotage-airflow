@@ -16,7 +16,7 @@ CREATE TABLE {table_name}(
 """
 
 with DAG(
-    "nps_fetcher",
+    "nps_gip",
     schedule_interval="@daily",
     **default_dag_args(),
 ) as dag:
