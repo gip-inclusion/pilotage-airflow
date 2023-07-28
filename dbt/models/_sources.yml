@@ -92,12 +92,17 @@ sources:
 
       - name: suivi_complet_etps_conventionnes  # TODO(ypassa): Un autre script airflow à contribuer
 
+      - name: suivi_visiteurs_tb_prives_v1
+        description: >
+          Table historiquement générée depuis les Emplois en interrogeant Matomo. Depuis l'introduction de la table
+          emplois.c1_private_dashboard_visits, cette table n'est plus nécessaire.
+
+
   - name: matomo
     schema: public
-    # FIXME(vperron): One day this should be in a DAG.
-    description: >
-      Tables générées par une tâche périodique côté Les Emplois de l'Inclusion et qui permet de remonter les
-      visites sur les tableaux de bord (publics et privés) du Pilotage.
     tables:
-      - name: suivi_visiteurs_tb_prives_v1
       - name: suivi_visiteurs_tb_publics_v1
+        # FIXME(vperron): One day this should be in a DAG.
+        description: >
+          Table générée par une tâche périodique côté Les Emplois de l'Inclusion et qui permet de remonter les
+          visites sur les tableaux de bord publics du Pilotage.

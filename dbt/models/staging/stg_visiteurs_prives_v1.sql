@@ -7,5 +7,5 @@ select
     to_number(svtp0."Unique visitors", '9999') as visiteurs_uniques
 from
     /* Nouvelle table créée par Victor qui démarre le 01/01/22 */
-    {{ source('matomo', 'suivi_visiteurs_tb_prives_v1') }} as svtp0
+    {{ source('oneshot', 'suivi_visiteurs_tb_prives_v1') }} as svtp0
 where to_date(svtp0."Date", 'YYYY-MM-DD') < '2023-03-13'
