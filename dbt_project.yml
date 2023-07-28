@@ -26,16 +26,16 @@ models:
     # We will settle for option 2 which is the easiest and quickest by far.
     meta:
       owner: "Equipe Pilotage"
-    legacy:
-      +materialized: table
     ephemeral:
       +materialized: ephemeral
-    staging:
-      +materialized: view
-    marts:
-      +materialized: table
     indexed:
       +materialized: table
+    legacy:
+      +materialized: table
+    marts:
+      +materialized: table
+    staging:
+      +materialized: view
 seeds:
   dbt_pilotage:
     sa_ept:
