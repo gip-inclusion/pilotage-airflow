@@ -51,13 +51,13 @@ models:
       Permet de suivre le nb de siae partenaires d'une organisation.
       A ce jour table très simple permettant uniquement de compter les SIAE partenaires pour le suivi des prescriptions des prescripteurs habilités,
       mais pourra évoluer à terme et intégrer davantage d'infos sur les partenariats.
-  - name: stg_suivi_visiteurs_publics
+  - name: stg_visiteurs_publics
     description: >
       Permet de suivre les metrics matomo associees aux TB publics
-  - name: stg_suivi_visiteurs_prives
+  - name: stg_visiteurs_prives
     description: >
       Cette table suit les metrics des TBs prives avant l'automatisation des requêtes API Matomo introduite par Victor.
-  - name: stg_suivi_visiteurs_prives_v1
+  - name: stg_visiteurs_prives_v1
     description: >
       Cette table suit les metrics des TBs prives après l'automatisation des requêtes API Matomo introduite par Victor.
   - name: stg_duree_annexe
