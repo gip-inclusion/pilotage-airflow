@@ -24,8 +24,8 @@ models:
     # - wait for a patch in DBT 1.5 or 1.6
     #
     # We will settle for option 2 which is the easiest and quickest by far.
-    meta:
-      owner: "Equipe Pilotage"
+    +meta:
+      owner: Equipe Pilotage
     ephemeral:
       +materialized: ephemeral
     indexed:
