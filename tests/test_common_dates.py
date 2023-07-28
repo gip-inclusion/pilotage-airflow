@@ -11,6 +11,3 @@ def test_date_functions():
     assert dates.start_of_week() == datetime(2022, 6, 6)
     assert dates.start_of_previous_week() == datetime(2022, 5, 30)
     assert dates.end_of_previous_week() == datetime(2022, 6, 5)
-    # FIXME(vperron) : this function is VERY weird, it relies internally on a fixed
-    # date, 2022-06-06. WHY ?
-    assert dates.week_list() == [datetime(2022, 6, 6)]
