@@ -38,7 +38,7 @@ select distinct
 from
     {{ ref('stg_dates_etat_mensuel_individualise') }} as constantes
 cross join
-    {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
+    {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
     on
         emi.emi_afi_id = af.af_id_annexe_financiere
