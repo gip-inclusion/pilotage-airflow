@@ -53,7 +53,7 @@ visiteurs_prives_0 as (
             when svtp0."Tableau de bord" = 'tb 118 - Données IAE CD' then 'Conseil départemental'
         end                                      as utilisateur
     from
-        {{ source('matomo', 'suivi_visiteurs_tb_prives_v1') }} as svtp0 /* Nouvelle table créée par Victor qui démarre le 01/01/22 */
+        {{ source('oneshot', 'suivi_visiteurs_tb_prives_v1') }} as svtp0 /* Nouvelle table créée par Victor qui démarre le 01/01/22 */
 ),
 
 /* Tables finales utilisées pour l'union all */
