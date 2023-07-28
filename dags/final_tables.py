@@ -1,5 +1,6 @@
 import airflow
-from airflow.operators import bash, empty, trigger_dagrun
+from airflow.models.param import Param
+from airflow.operators import bash, empty, python, trigger_dagrun
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -9,6 +10,9 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 with airflow.DAG(
     dag_id="final_tables",
     schedule_interval=None,
+    params={
+        "full_refresh": Param(False, type="boolean"),
+    },
     **dag_args,
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
@@ -31,16 +35,27 @@ with airflow.DAG(
         append_env=True,
     )
 
+    def params_check(params=None, **kwargs):
+        is_full_refresh = params.get("full_refresh")
+        if is_full_refresh:
+            kwargs["ti"].xcom_push("dbt_run_args", "")
+            kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
+        else:
+            kwargs["ti"].xcom_push("dbt_run_args", "--exclude legacy.oneshot marts.oneshot")
+            kwargs["ti"].xcom_push("dbt_seed_args", "")
+
+    params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
+
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
-        bash_command="dbt seed --full-refresh",
+        bash_command="dbt seed {{ ti.xcom_pull(task_ids='params_check', key='dbt_seed_args') }}",
         env=env_vars,
         append_env=True,
     )
 
     dbt_run = bash.BashOperator(
         task_id="dbt_run",
-        bash_command="dbt run",
+        bash_command="dbt run {{ ti.xcom_pull(task_ids='params_check', key='dbt_run_args') }}",
         env=env_vars,
         append_env=True,
     )
