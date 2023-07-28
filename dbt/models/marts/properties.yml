@@ -104,7 +104,7 @@ models:
   - name: suivi_consommation_mensuelle_etp_V2
     description: >
       Table de suivi des etps réalisés et conventionnés par structure mois par mois.
-  - name: prescripteurs_habilite_odc
+  - name: prescripteurs_habilites_odc
     description: >
       Sous ensemble des prescripteurs_habilite de type ODC, DEPT et organisations habilitées BRSA.
   - name: candidatures_odc
