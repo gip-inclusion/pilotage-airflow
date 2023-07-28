@@ -91,6 +91,7 @@ sources:
       - name: suivi_utilisateurs_tb_prives
 
       - name: suivi_complet_etps_conventionnes  # TODO(ypassa): Un autre script airflow à contribuer
+      - name: suivi_satisfaction  # TODO(ypasse): Documenter cette source. Eventuellement réécrire son script sous forme de DAG.
 
       - name: suivi_visiteurs_tb_prives_v1
         description: >
