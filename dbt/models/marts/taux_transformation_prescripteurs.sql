@@ -26,6 +26,7 @@ with candidats_p as (
         cdd.type_inscription,
         cdd.injection_ai,
         cdd.pe_inscrit,
+        cdd."type_structure_dernière_embauche",
         case
             /* On soustrait 6 mois à la date de diagnostic pour déterminer s'il est toujours en cours ou pas */
             when date_diagnostic >= date_trunc('month', current_date) - interval '5 months' then 'Oui'
@@ -70,6 +71,7 @@ select
     type_inscription,
     pe_inscrit,
     injection_ai,
+    "type_structure_dernière_embauche",
     case
         /* ajout d'une colonne permettant de calculer le taux de candidats acceptées tout en faisant une jointure avec la table candidatures */
         when total_embauches > 0 then concat(cast(id_candidat as varchar), '_accepté')
