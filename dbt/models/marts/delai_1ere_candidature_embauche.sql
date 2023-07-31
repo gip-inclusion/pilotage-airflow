@@ -20,6 +20,7 @@ with date_1ere_candidature as (
         date_embauche,
         origine,
         "origine_détaillée",
+        candidats."type_structure_dernière_embauche",
         id_org_prescripteur,
         min(date_candidature)       as date_1ere_candidature,
         min(
@@ -40,6 +41,7 @@ with date_1ere_candidature as (
         date_embauche,
         origine,
         "origine_détaillée",
+        candidats."type_structure_dernière_embauche",
         id_org_prescripteur
 ),
 
@@ -61,6 +63,7 @@ select
     "origine_détaillée",
     id_org_prescripteur,
     "nom_département_prescripteur",
+    "type_structure_dernière_embauche",
     case
         /* Division /30 pour passer du nombre de jour au mois */
         when ((date_1ere_embauche - date_1ere_candidature) / 30) < 1 then 'a- Moins d un mois'
