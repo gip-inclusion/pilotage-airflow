@@ -135,3 +135,6 @@ models:
     description: >
       Cette table nous permet d'obtenir une vue mensuelle du conventionnement ET de la consommation en etp des différentes structures de l'IAE.
       Grâce à cette table nous pouvons réaliser des indicateurs suivant sur le même plot les conventionnements et consommation mois par mois de toutes les structures quelle que soit leur durée de conventionnement.
+  - name: suivi_demandes_prolongations
+    description: >
+      Cette table permet de suivre les demandes de prolongation. Sa création est nécessaire afin d'identifier le type de prescipteur traitant la prolongation ainsi que les demandes gérées par ces derniers.

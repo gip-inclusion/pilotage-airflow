@@ -51,6 +51,7 @@ sources:
       - name: pass_agréments
       - name: structures
       - name: utilisateurs
+      - name: demandes_de_prolongation
 
   - name: oneshot
     schema: public
