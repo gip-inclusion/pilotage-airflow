@@ -3,26 +3,34 @@ import datetime
 import pandas as pd
 
 
-def replicate_rows(df):
+def prepare_the_df(df):
+    df["af_date_debut_effet_v2"] = pd.to_datetime(df["af_date_debut_effet_v2"])
+    df["af_date_fin_effet_v2"] = pd.to_datetime(df["af_date_fin_effet_v2"])
+    return df
+
+
+def explode_by_month(df):
     # In order to transform one row per structure into one row per month
     # we explode the df using new colum "dates_annexe"
-    df_replicate = df
-    df_replicate["af_date_debut_effet_v2"] = pd.to_datetime(df_replicate["af_date_debut_effet_v2"])
-    df_replicate["af_date_fin_effet_v2"] = pd.to_datetime(df_replicate["af_date_fin_effet_v2"])
-    df_replicate["dates_annexe"] = df_replicate.apply(
+    # before the explosion we had one row = one structure
+    # with all the informations regarding this structure
+    # After the explosion we obtain one row per month where the af is valid
+    # each row contain the information linked to the associated month
+
+    df["dates_annexe"] = df.apply(
         lambda x: pd.date_range(x["af_date_debut_effet_v2"], x["af_date_fin_effet_v2"], freq="M"), axis=1
     )
 
-    df_replicate = df_replicate.explode("dates_annexe")
-    df_replicate.reset_index(inplace=True)
-    df_replicate.drop(columns=["index"], inplace=True)
-    df_replicate["af_date_fin_effet_v2"] = df_replicate["dates_annexe"]
-    df_replicate = df_replicate[df.columns[:-1]]
-    return df_replicate
+    df = df.explode("dates_annexe")
+    df.reset_index(inplace=True)
+    df.drop(columns=["index"], inplace=True)
+    df["af_date_fin_effet_v2"] = df["dates_annexe"]
+    df = df.drop(columns="dates_annexe")
+    return df
 
 
 def get_zero_etp(df):
-    def fn_inline(x, year):
+    def fill_with_zeroes(x, year):
         return x.reindex(
             pd.period_range(str(year) + "-01-01", str(year) + "-12-31", freq="M", name="af_date_fin_effet_v2"),
             fill_value=0,
@@ -65,6 +73,7 @@ def get_zero_etp(df):
                             "nom_region_af",
                             "nom_region_structure",
                             "siret_structure",
+                            "structure_id_siae",
                             "structure_denomination",
                             "type_structure",
                             "year_diff",
@@ -85,7 +94,7 @@ def get_zero_etp(df):
                             "nb_brsa_cible_annuel",
                         ]
                     ]
-                    .apply(lambda x: fn_inline(x, year))
+                    .apply(lambda x: fill_with_zeroes(x, year))
                     .reset_index()
                 )
 
@@ -96,7 +105,7 @@ def get_zero_etp(df):
     return df_etp_null
 
 
-def join_data(df_replicate, df_etp_null):
+def join_etp_null_and_realized(df_replicate, df_etp_null):
     df = pd.concat([df_replicate, df_etp_null])
     df = (df.drop_duplicates(subset=["id_annexe_financiere", "af_date_fin_effet_v2"])).sort_values(
         by=["id_annexe_financiere", "af_date_fin_effet_v2"]
@@ -108,8 +117,9 @@ def join_data(df_replicate, df_etp_null):
 
 def model(dbt, session):
     df = dbt.ref("suivi_etp_conventionnes_v2")
-    df_replicate = replicate_rows(df)
+    df = prepare_the_df(df)
+    df_replicate = explode_by_month(df)
     df_etp_null = get_zero_etp(df)
     df_etp_null = pd.concat(df_etp_null)
-    df = join_data(df_replicate, df_etp_null)
+    df = join_etp_null_and_realized(df_replicate, df_etp_null)
     return df

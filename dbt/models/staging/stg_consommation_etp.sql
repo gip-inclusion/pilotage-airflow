@@ -9,6 +9,7 @@ select
     etp."effectif_annuel_conventionné",
     etp.duree_annexe,
     -- Ici on utilise le nombre de mois saisis éviter d'écrire une formule à rallonge
+    etp.structure_id_siae,
     etp.type_structure,
     etp.structure_denomination,
     etp.code_departement_af,
@@ -110,6 +111,7 @@ group by
     etp."effectif_annuel_conventionné",
     etp.annee_af,
     etp.type_structure,
+    etp.structure_id_siae,
     etp.structure_denomination,
     etp.code_departement_af,
     etp.nom_departement_af,
