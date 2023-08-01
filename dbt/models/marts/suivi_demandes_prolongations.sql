@@ -1,6 +1,5 @@
 select
-    /* TODO(ypassa): change pilo_star to dbt_utils.star once Victor's PR will be merged */
-    {{ pilo_star(source('emplois','demandes_de_prolongation'), relation_alias='ddp') }},
+    {{ dbt_utils.star(source('emplois','demandes_de_prolongation'), relation_alias='ddp') }},
     o.nom               as nom_prescripteur,
     o.type_complet      as type_prescripteur,
     o."nom_département" as "département_prescripteur",
