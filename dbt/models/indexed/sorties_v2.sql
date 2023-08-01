@@ -34,13 +34,13 @@ select distinct
     emi.emi_date_fin_reelle,
     rcs.rcs_libelle,
     rms.rms_libelle,
-    extract(year from (ctr.contrat_date_embauche::DATE))          as annee_debut_contrat,
-    extract(year from (ctr.contrat_date_sortie_definitive::DATE)) as annee_sortie_definitive,
-    extract(year from (ctr.contrat_date_fin_contrat::DATE))       as annee_fin_contrat,
+    extract(year from to_date(ctr.contrat_date_embauche, 'DD/MM/YYYY'))          as annee_debut_contrat,
+    extract(year from to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')) as annee_sortie_definitive,
+    extract(year from to_date(ctr.contrat_date_fin_contrat, 'DD/MM/YYYY'))       as annee_fin_contrat,
     date_trunc('year', date(extract(
         year from
-        (ctr.contrat_date_sortie_definitive::DATE)
-    ) || '-01-01'))                                               as debut_annee_fin_contrat
+        to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')
+    ) || '-01-01'))                                                              as debut_annee_fin_contrat
 from
     {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
