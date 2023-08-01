@@ -3,12 +3,6 @@ import datetime
 import pandas as pd
 
 
-def prepare_the_df(df):
-    df["af_date_debut_effet_v2"] = pd.to_datetime(df["af_date_debut_effet_v2"])
-    df["af_date_fin_effet_v2"] = pd.to_datetime(df["af_date_fin_effet_v2"])
-    return df
-
-
 def explode_by_month(df):
     # In order to transform one row per structure into one row per month
     # we explode the df using new colum "dates_annexe"
@@ -73,6 +67,7 @@ def get_zero_etp(df):
                             "nom_region_af",
                             "nom_region_structure",
                             "siret_structure",
+                            "type_structure_emplois",
                             "structure_id_siae",
                             "structure_denomination",
                             "type_structure",
@@ -117,7 +112,8 @@ def join_etp_null_and_realized(df_replicate, df_etp_null):
 
 def model(dbt, session):
     df = dbt.ref("suivi_etp_conventionnes_v2")
-    df = prepare_the_df(df)
+    df["af_date_debut_effet_v2"] = pd.to_datetime(df["af_date_debut_effet_v2"])
+    df["af_date_fin_effet_v2"] = pd.to_datetime(df["af_date_fin_effet_v2"])
     df_replicate = explode_by_month(df)
     df_etp_null = get_zero_etp(df)
     df_etp_null = pd.concat(df_etp_null)
