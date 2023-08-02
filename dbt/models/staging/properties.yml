@@ -103,3 +103,11 @@ models:
       Pour ces deux type de SIAE, une sortie est prise en compte lorsque :
         - la personne a travaillé plus de 3 mois au total dans une ACI/EI
         - la personne a travaillé au moins une heure dans l'année de sortie de la SIAE.
+  - name: stg_suivi_cap_reponses_controle
+    description: >
+        Pour toutes les structures à contrôler dans le cadre du contrôle a posteriori, permet de distinguer celles qui ont répondu au contrôle.
+        Une structure a répondu au contrôle si elle a transmis un justificatif.
+        Elle sert de base pour ajouter cette information sur la table suivi_cap_structure et permet ainsi le calcul du taux de réponse au contrôle.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'cap_structures')
