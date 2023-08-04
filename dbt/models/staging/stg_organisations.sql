@@ -11,6 +11,11 @@ select
     appartenance_geo_communes.nom_epci                                         as epci,
     organisations_libelles.libelle                                             as type_complet,
     case
+        when organisations.type in ('ML', 'PE', 'CAP_EMPLOI') then 'SPE'
+        when organisations.type = 'Autre' then 'Autre'
+        else 'Nouveaux prescripteurs'
+    end                                                                        as type_prescripteur,
+    case
         when organisations."habilitée" = 1 then 'Prescripteur habilité'
         when organisations."habilitée" = 0 then 'Orienteur'
     end                                                                        as habilitation,
