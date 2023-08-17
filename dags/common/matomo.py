@@ -44,13 +44,24 @@ def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
             """
             from a json visit extracted from matomo via api, returns a dict of relevant informations
             """
+
+            def convert_seconds(seconds):
+                seconds = int(seconds)
+                hours = str(seconds // 3600)
+                hours = hours if len(hours) == 2 else "0" + hours
+                minutes = str((seconds % 3600) // 60)
+                minutes = minutes if len(minutes) == 2 else "0" + minutes
+                remaining_seconds = str(seconds % 60)
+                remaining_seconds = remaining_seconds if len(remaining_seconds) == 2 else "0" + remaining_seconds
+                return hours + ":" + minutes + ":" + remaining_seconds
+
             infos = {
                 "produit": produit,
                 "poste": json_visit["referrerKeyword"],
                 "date": json_visit["serverDate"],
                 "visiteur": json_visit["visitorId"],
                 "nb_actions": len(json_visit["actionDetails"]),
-                "duree": json_visit["visitDurationPretty"],
+                "duree": convert_seconds(json_visit["visitDuration"]),
             }
             return infos
 

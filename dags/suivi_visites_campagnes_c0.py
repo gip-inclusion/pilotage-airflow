@@ -2,6 +2,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
+from sqlalchemy.types import Interval
 
 from dags.common import db, default_dag_args, matomo, slack
 
@@ -20,7 +21,13 @@ with DAG(
         matomo_base_url = Variable.get("MATOMO_BASE_URL")
         tok = Variable.get("GIP_MATOMO_TOKEN")
         out_dtf = matomo.get_visits_per_campaign_from_matomo(matomo_base_url, tok)
-        out_dtf.to_sql("visits_per_campaign_c0", con=db.connection_engine(), if_exists="replace", index=False)
+        out_dtf.to_sql(
+            "visits_per_campaign_c0",
+            con=db.connection_engine(),
+            if_exists="replace",
+            index=False,
+            dtype={"duree": Interval},
+        )
 
     visits_per_campaign = get_visits_per_campaign()
 
