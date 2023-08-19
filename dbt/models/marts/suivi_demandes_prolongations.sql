@@ -9,6 +9,10 @@ select
     s.type                                              as type_structure,
     s."nom_département"                                 as "département_structure",
     s."région"                                          as "région_structure",
+    case
+        when pass.injection_ai = 0 then 'Non'
+        else 'Oui'
+    end                                                 as reprise_de_stock_ai,
     /* delai_traitement is in days*/
     (prolong.date_traitement - prolong.date_de_demande) as delai_traitement
 from {{ source('emplois', 'demandes_de_prolongation') }} as prolong
@@ -16,3 +20,9 @@ left join {{ source('emplois', 'organisations') }} as o
     on prolong.id_organisation_prescripteur = o.id
 left join {{ source('emplois', 'structures') }} as s
     on prolong."id_structure_déclarante" = s.id
+left join {{ source('emplois', 'pass_agréments') }} as pass
+    on prolong."id_pass_agrément" = pass.id
+/* Sometimes you find duplicates, in the pass_agréments table, either on the id
+or hash_pass_iae. The "bad" duplicate always never has an id_candidat.
+Therefore we can remove these duplicate by filtering them */
+where pass.id_candidat is not null
