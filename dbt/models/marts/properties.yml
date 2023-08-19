@@ -138,3 +138,6 @@ models:
   - name: suivi_demandes_prolongations
     description: >
       Cette table permet de suivre les demandes de prolongation. Sa création est nécessaire afin d'identifier le type de prescipteur traitant la prolongation ainsi que les demandes gérées par ces derniers.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'demandes_de_prolongation')
