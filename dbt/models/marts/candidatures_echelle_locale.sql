@@ -10,14 +10,8 @@ select
     nom_org.type_auteur_diagnostic_detaille,
     candidats.eligibilite_dispositif,
     candidats.tranche_age,
-    case
-        when candidats.age_selon_nir > 16 and candidats.age_selon_nir <= 25 then 'OUI'
-        else 'NON'
-    end as eligible_cej,
-    case
-        when candidats.age_selon_nir >= 57 then 'OUI'
-        else 'NON'
-    end as eligible_cdi_inclusion
+    candidats.eligible_cej,
+    candidats.eligible_cdi_inclusion
 from
     {{ ref('stg_candidatures') }} as candidatures
 left join {{ ref('stg_bassin_emploi') }} as bassin_emploi
