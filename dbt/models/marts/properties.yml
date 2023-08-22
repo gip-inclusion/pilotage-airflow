@@ -138,6 +138,9 @@ models:
   - name: suivi_demandes_prolongations
     description: >
       Cette table permet de suivre les demandes de prolongation. Sa création est nécessaire afin d'identifier le type de prescipteur traitant la prolongation ainsi que les demandes gérées par ces derniers.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'demandes_de_prolongation')
   - name: candidats_prescripteurs_habilites
     description: >
       Table permettant de suivre les candidats qui ont été diagnostiqués par des prescripteurs habilités et d'avoir des infos sur leur diagnostic.

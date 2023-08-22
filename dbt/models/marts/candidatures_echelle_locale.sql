@@ -9,7 +9,9 @@ select
     end as reprise_de_stock_ai,
     nom_org.type_auteur_diagnostic_detaille,
     candidats.eligibilite_dispositif,
-    candidats.tranche_age
+    candidats.tranche_age,
+    candidats.eligible_cej,
+    candidats.eligible_cdi_inclusion
 from
     {{ ref('stg_candidatures') }} as candidatures
 left join {{ ref('stg_bassin_emploi') }} as bassin_emploi

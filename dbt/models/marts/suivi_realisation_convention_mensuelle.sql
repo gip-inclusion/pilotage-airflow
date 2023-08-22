@@ -10,6 +10,7 @@ select
     etp_c.duree_annexe,
     etp_c."effectif_mensuel_conventionné",
     etp_c."effectif_annuel_conventionné",
+    etp_c.structure_id_siae,
     etp_c.type_structure,
     etp_c.structure_denomination,
     etp_c.commune_structure,
