@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
-from sqlalchemy.types import Interval
+from sqlalchemy.types import DateTime, Integer
 
 from dags.common import db, default_dag_args, matomo, slack
 
@@ -26,7 +26,7 @@ with DAG(
             con=db.connection_engine(),
             if_exists="replace",
             index=False,
-            dtype={"duree": Interval},
+            dtype={"date": DateTime, "duree": Integer},
         )
 
     visits_per_campaign = get_visits_per_campaign()
