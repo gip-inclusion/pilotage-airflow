@@ -1,10 +1,13 @@
 select
     {{ pilo_star(source('emplois', 'organisations'),
-                 except = ['type_complet', 'ville', 'code_commune', 'région', 'nom_département'],
+                 except = ['siret', 'nom_département', 'type_complet', 'ville', 'code_commune', 'région', 'nom_département'],
                  relation_alias = "organisations") }},
     initcap(organisations.ville)                                               as ville,
     coalesce(organisations.code_commune, appartenance_geo_communes.code_insee) as code_commune,
     organisations."nom_département"                                            as "nom_département",
+    organisations.siret                                                        as siret_org_prescripteur,
+    organisations."nom_département"                                            as dept_org,  /*bien mettre nom département et pas département */
+    organisations."région"                                                     as "région_org",
     appartenance_geo_communes.nom_departement                                  as "nom_département_insee",
     appartenance_geo_communes.nom_region                                       as "région",
     appartenance_geo_communes.nom_zone_emploi                                  as zone_emploi,
