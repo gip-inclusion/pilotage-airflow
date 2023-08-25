@@ -1,12 +1,13 @@
 select
     {{ pilo_star(ref('stg_candidatures'), relation_alias='candidatures') }},
-    {{ pilo_star(ref('stg_organisations'), except=["id", "date_mise_à_jour_metabase", "ville", "code_commune"], relation_alias='org_prescripteur') }},
+    {{ pilo_star(ref('stg_organisations'), except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type"], relation_alias='org_prescripteur') }},
     {{ pilo_star(ref('stg_bassin_emploi'), except=["nom_departement", "nom_region", "type_epci", "id_structure"],
     relation_alias='bassin_emploi') }},
+    org_prescripteur.type as type_org_prescripteur,
     case
         when candidatures.injection_ai = 0 then 'Non'
         else 'Oui'
-    end as reprise_de_stock_ai,
+    end                   as reprise_de_stock_ai,
     nom_org.type_auteur_diagnostic_detaille,
     candidats.eligibilite_dispositif,
     candidats.tranche_age,
