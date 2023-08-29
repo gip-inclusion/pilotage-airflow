@@ -1,7 +1,6 @@
 {{
     config(
-        materialized='incremental',
-        unique_key='emi_date_modification'
+        materialized='incremental'
     )
 }}
 
