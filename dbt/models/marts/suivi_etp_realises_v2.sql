@@ -1,4 +1,11 @@
-select distinct
+{{
+    config(
+        materialized='incremental',
+        unique_key='emi_date_modification'
+    )
+}}
+
+select
     emi.emi_pph_id                                                                      as identifiant_salarie,
     emi.emi_afi_id                                                                      as id_annexe_financiere,
     emi.emi_part_etp                                                                    as nombre_etp_consommes_asp,
@@ -6,6 +13,7 @@ select distinct
     emi.emi_afi_id                                                                      as identifiant_annexe_fin,
     emi.emi_sme_mois,
     emi.emi_sme_annee,
+    emi.emi_date_modification,
     brsa.salarie_brsa,
     af.af_numero_annexe_financiere,
     af.af_numero_convention,
@@ -63,3 +71,43 @@ where
     and firmi.rmi_libelle = 'Nombre d''heures annuelles théoriques pour un salarié à taux plein'
     and af.af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE', 'CLOTURE')
     and af.af_mesure_dispositif_code not like '%FDI%'
+group by
+    identifiant_salarie,
+    id_annexe_financiere,
+    nombre_etp_consommes_asp,
+    emi.emi_nb_heures_travail,
+    identifiant_annexe_fin,
+    emi.emi_sme_mois,
+    emi.emi_sme_annee,
+    emi.emi_date_modification,
+    brsa.salarie_brsa,
+    af.af_numero_annexe_financiere,
+    af.af_numero_convention,
+    af.af_etat_annexe_financiere_code,
+    af.af_montant_unitaire_annuel_valeur,
+    firmi.rmi_libelle,
+    firmi.rmi_valeur,
+    af.af_mesure_dispositif_code,
+    ref_asp.type_structure,
+    ref_asp.type_structure_emplois,
+    structure.structure_denomination,
+    commune_structure,
+    code_insee_structure,
+    siret_structure,
+    structure.nom_departement_structure,
+    structure.nom_region_structure,
+    code_departement_af,
+    af.nom_departement_af,
+    af.nom_region_af,
+    date_saisie,
+    date_validation_declaration,
+    nombre_etp_consommes_reels_annuels,
+    nombre_etp_consommes_reels_mensuels
+having
+    {% if is_incremental() %}
+        to_date(emi.emi_date_modification, 'DD/MM/YYYY') > (
+            select max(to_date(emi.emi_date_modification, 'DD/MM/YYYY'))
+            from {{ this }}
+            group by emi.emi_date_modification
+        )
+    {% endif %}
