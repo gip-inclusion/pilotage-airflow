@@ -5,7 +5,7 @@
     ]
  ) }}
 
-select
-    {{ pilo_star(source('fluxIAE', 'fluxIAE_Salarie')) }}
+select distinct
+    {{ pilo_star(source('fluxIAE', 'fluxIAE_Salarie'), except=["hash_numéro_pass_iae"]) }}
 from
     {{ source('fluxIAE', 'fluxIAE_Salarie') }}
