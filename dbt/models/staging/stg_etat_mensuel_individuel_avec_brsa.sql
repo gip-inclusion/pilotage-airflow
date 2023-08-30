@@ -4,10 +4,15 @@ select
     emi.emi_sme_mois,
     emi.emi_sme_annee,
     emi.emi_sme_version,
-    ctr.contrat_salarie_rsa,
     case
-        when contrat_salarie_rsa = 'OUI-M' then 'OUI'
-        when contrat_salarie_rsa = 'OUI-NM' then 'OUI'
+        when ctr.contrat_salarie_rsa = 'OUI-M' then 'RSA majoré'
+        when ctr.contrat_salarie_rsa = 'OUI-NM' then 'RSA non majoré'
+        else 'Non bénéficiaire du RSA'
+    end
+    as majoration_brsa,
+    case
+        when ctr.contrat_salarie_rsa = 'OUI-M' then 'OUI'
+        when ctr.contrat_salarie_rsa = 'OUI-NM' then 'OUI'
         else 'NON'
     end
     as salarie_brsa,

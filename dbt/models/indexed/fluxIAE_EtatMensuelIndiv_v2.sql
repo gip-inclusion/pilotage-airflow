@@ -1,6 +1,7 @@
 {{ config(
     materialized = 'table',
     indexes=[
+      {'columns': ['emi_pph_id'], 'unique' : False},
       {'columns': ['emi_afi_id'], 'unique' : False},
       {'columns': ['emi_ctr_id'], 'unique' : False},
       {'columns': ['emi_motif_sortie_id'], 'unique' : False},

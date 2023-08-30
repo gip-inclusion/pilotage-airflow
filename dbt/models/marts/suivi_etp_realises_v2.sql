@@ -6,6 +6,7 @@ select distinct
     emi.emi_afi_id                                                                      as identifiant_annexe_fin,
     emi.emi_sme_mois,
     emi.emi_sme_annee,
+    brsa.majoration_brsa,
     brsa.salarie_brsa,
     af.af_numero_annexe_financiere,
     af.af_numero_convention,

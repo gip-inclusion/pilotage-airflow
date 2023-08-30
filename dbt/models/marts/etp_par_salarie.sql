@@ -8,11 +8,10 @@ select
         when salarie.salarie_rci_libelle = 'MME' then 'Femme'
         when salarie.salarie_rci_libelle = 'M.' then 'Homme'
         else 'Non renseigné'
-    end                                                                                  as genre_salarie,
-    (string_to_array(etp_r.af_mesure_dispositif_code, '_'))[1]                           as type_structure_emploi
+    end                                                                                  as genre_salarie
 from
     {{ ref('suivi_etp_realises_v2') }} as etp_r
-left join {{ ref('stg_salarie') }} as salarie
+left join {{ ref('fluxIAE_Salarie_v2') }} as salarie
     on etp_r.identifiant_salarie = salarie.salarie_id
 left join {{ ref('suivi_etp_conventionnes_v2') }} as etp_c
     on etp_c.id_annexe_financiere = etp_r.id_annexe_financiere

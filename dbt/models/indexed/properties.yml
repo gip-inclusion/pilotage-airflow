@@ -23,3 +23,6 @@ models:
     description: >
       Table introduite afin de calculer le nombre d'heures travaillées quand l'année de sortie est égale à l'année de l'af.
       Ce cas particulier est nécessaire au calcul des sorties.
+  - name: fluxIAE_Salarie_v2
+    description: >
+      Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
