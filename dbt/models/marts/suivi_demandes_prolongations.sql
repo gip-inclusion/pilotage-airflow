@@ -16,7 +16,7 @@ select
     /* delai_traitement is in days*/
     (prolong.date_traitement - prolong.date_de_demande) as delai_traitement
 from {{ source('emplois', 'demandes_de_prolongation') }} as prolong
-left join {{ source('emplois', 'organisations') }} as o
+left join {{ ref('stg_organisations') }} as o
     on prolong.id_organisation_prescripteur = o.id
 left join {{ source('emplois', 'structures') }} as s
     on prolong."id_structure_déclarante" = s.id

@@ -5,4 +5,4 @@ select
     org."région"          as "région_org",
     org."type"            as type_org_prescripteur
 from
-    {{ source('emplois', 'organisations') }} as org
+    {{ source('emplois', 'organisations_v0') }} as org
