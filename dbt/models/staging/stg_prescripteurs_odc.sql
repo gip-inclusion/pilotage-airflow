@@ -1,3 +1,3 @@
-select {{ pilo_star(source('emplois', 'organisations')) }}
-from {{ source('emplois', 'organisations') }}
+select {{ pilo_star(ref('stg_organisations')) }}
+from {{ ref('stg_organisations') }}
 where brsa = 1 or type = 'ODC' or type = 'DEPT'

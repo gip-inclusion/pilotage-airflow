@@ -49,7 +49,7 @@ prescripteurs as (
     select
         id,
         "nom_département" as "nom_département_prescripteur" /* Ajout du département du prescripteur pour les TBs privés */
-    from {{ source('emplois', 'organisations') }}
+    from {{ ref('stg_organisations') }}
 )
 
 select

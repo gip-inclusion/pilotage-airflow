@@ -12,6 +12,12 @@ models:
       Table introduite pour réaliser le tableau de bord prescripteurs.
       Elle a comme base la table [organisations](#!/source/source.dbt_pilotage.emplois.organisations) + d'autres informations :
         - le nombre de siae partenaires de ces organisations
+  - name: organisations
+    description: >
+      Copie de la table organisations_v0 du c1 enrichie de données pour faire marcher certains filtres sur metabase.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'organisations_v0')
   - name: organisations_dihal
     description: >
       Table introduite pour réaliser le tableau de bord DIHAL.

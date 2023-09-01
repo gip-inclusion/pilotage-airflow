@@ -19,7 +19,7 @@ select
 from {{ source('emplois', 'c1_private_dashboard_visits_v0') }} as visits
 left join {{ ref('metabase_dashboards') }} as metabase_ids
     on metabase_ids.id_tb = cast(visits.dashboard_id as INTEGER)
-left join {{ source('emplois', 'organisations') }} as organisations
+left join {{ ref('stg_organisations') }} as organisations
     on organisations.id = cast(visits.current_prescriber_organization_id as INTEGER) and visits.user_kind = 'prescriber'
 left join {{ source('emplois', 'structures') }} as structures
     on structures.id = cast(visits.current_siae_id as INTEGER) and visits.user_kind = 'siae_staff'

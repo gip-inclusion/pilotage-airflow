@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(source('emplois', 'organisations'),
+    {{ pilo_star(source('emplois', 'organisations_v0'),
                  except = ['siret', 'nom_département', 'type_complet', 'ville', 'code_commune', 'région', 'nom_département'],
                  relation_alias = "organisations") }},
     initcap(organisations.ville)                                               as ville,
@@ -30,7 +30,7 @@ select
         when organisations."habilitée" = 1 then concat('Prescripteur habilité ', organisations.type_complet)
         when organisations."habilitée" = 0 then concat('Orienteur ', organisations.type_complet)
     end                                                                        as type_complet_avec_habilitation
-from {{ source('emplois', 'organisations') }} as organisations
+from {{ source('emplois', 'organisations_v0') }} as organisations
 left join {{ ref('organisations_libelles') }} as organisations_libelles
     on organisations.type = organisations_libelles.type
 -- (laurine) temporary : this join is made on a cleaned version of organisations.ville

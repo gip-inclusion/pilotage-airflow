@@ -47,7 +47,7 @@ sources:
       - name: fiches_de_poste
       - name: fiches_de_poste_par_candidature
       - name: institutions
-      - name: organisations
+      - name: organisations_v0
       - name: pass_agréments
       - name: structures
       - name: utilisateurs
