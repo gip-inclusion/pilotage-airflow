@@ -34,6 +34,21 @@ select distinct
     emi.emi_date_fin_reelle,
     rcs.rcs_libelle,
     rms.rms_libelle,
+    case
+        when ctr.contrat_salarie_rsa = 'OUI-M' then 'RSA majoré'
+        when ctr.contrat_salarie_rsa = 'OUI-NM' then 'RSA non majoré'
+        else 'Non bénéficiaire du RSA'
+    end                                                                          as majoration_brsa,
+    case
+        when ctr.contrat_salarie_rsa = 'OUI-M' then 'OUI'
+        when ctr.contrat_salarie_rsa = 'OUI-NM' then 'OUI'
+        else 'NON'
+    end                                                                          as salarie_brsa,
+    case
+        when salarie.salarie_rci_libelle = 'MME' then 'Femme'
+        when salarie.salarie_rci_libelle = 'M.' then 'Homme'
+        else 'Non renseigné'
+    end                                                                          as genre_salarie,
     extract(year from to_date(ctr.contrat_date_embauche, 'DD/MM/YYYY'))          as annee_debut_contrat,
     extract(year from to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')) as annee_sortie_definitive,
     extract(year from to_date(ctr.contrat_date_fin_contrat, 'DD/MM/YYYY'))       as annee_fin_contrat,
@@ -51,6 +66,8 @@ left join {{ ref('fluxIAE_RefMotifSort_v2') }} as rms
     on emi.emi_motif_sortie_id = rms.rms_id
 left join {{ ref('fluxIAE_RefCategorieSort_v2') }} as rcs
     on rms.rcs_id = rcs.rcs_id
+left join {{ ref('fluxIAE_Salarie_v2') }} as salarie
+    on salarie.salarie_id = emi.emi_pph_id
 where
     af.af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE', 'CLOTURE')
     and
