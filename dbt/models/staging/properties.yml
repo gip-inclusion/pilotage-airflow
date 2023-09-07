@@ -111,3 +111,6 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'cap_structures')
+  - name: stg_test_suivi_etp_realises_par_structure
+    description: >
+      Vue permettant de tester le nombre de lignes de la table suivi_etp_realises_par_structure.

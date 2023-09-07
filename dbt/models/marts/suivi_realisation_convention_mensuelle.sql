@@ -5,6 +5,7 @@ select
     etp_c.af_etat_annexe_financiere_code,
     etp_r.date_saisie,
     etp_r.date_validation_declaration,
+    etp_r.emi_esm_etat_code,
     etp_c.af_date_fin_effet_v2,
     etp_c.annee_af,
     etp_c.duree_annexe,

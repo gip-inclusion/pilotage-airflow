@@ -4,12 +4,21 @@ select
         /* On calcule la moyenne des etp consommés depuis le début de l'année et on la compare avec le nombre d'etp
                 conventionnés */
         when
-            etp.moyenne_nb_etp_mensuels_depuis_debut_annee
-            < etp."effectif_mensuel_conventionné" then 'sous-consommation'
+            trunc(cast(etp.moyenne_nb_etp_mensuels_depuis_debut_annee as numeric), 2)
+            < trunc(cast(etp."effectif_mensuel_conventionné" as numeric), 2) then 'sous-consommation'
         when
-            etp.moyenne_nb_etp_mensuels_depuis_debut_annee
-            > etp."effectif_mensuel_conventionné" then 'sur-consommation'
+            trunc(cast(etp.moyenne_nb_etp_mensuels_depuis_debut_annee as numeric), 2)
+            > trunc(cast(etp."effectif_mensuel_conventionné" as numeric), 2) then 'sur-consommation'
         else 'conforme'
-    end as consommation_etp
+    end as consommation_etp,
+    case
+        when
+            trunc(cast(etp.total_etp_annuels_realises as numeric), 2)
+            < trunc(cast(etp."effectif_annuel_conventionné" as numeric), 2) then 'sous-consommation'
+        when
+            trunc(cast(etp.total_etp_annuels_realises as numeric), 2)
+            > trunc(cast(etp."effectif_annuel_conventionné" as numeric), 2) then 'sur-consommation'
+        else 'conforme'
+    end as consommation_etp_annuels
 from
     {{ ref('stg_consommation_etp') }} as etp

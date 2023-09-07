@@ -96,7 +96,13 @@ models:
           compare_model: source('emplois', 'candidats')
   - name: suivi_etp_realises_par_structure
     description: >
-      Table de suivi des etps réalisés par structure.
+      Table de suivi des etps réalisés par structure. Cette table permet aussi de suivre si l'état mensuel a été validé.
+      L'état mensuel est rempli PAR salarié or cette table est agrégée par structure, le test ci dessous permet de vérifier que l'état mensuel est bien modifié pour tous les salariés en même temps.
+      Si pour deux salariés de la même structure on a un état "VALIDE" pour l'un et "BROUILLON" pour l'autre le test renverra une erreur.
+      Normalement l'approche métier veut que tous les salariés soient traités en même temps et que l'on ait un statut unique par structure, ce test est là pour éviter une éventuelle erreur côté métier.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_test_suivi_etp_realises_par_structure')
   - name: suivi_etp_realises_par_structure_brsa
     description: >
       Table de suivi des etps réalisés par structure. Cette table permet aussi de savoir combien de salariés sont bRSA ou pas au sein de la structure et quelle a été leur consommation d'ETP.
