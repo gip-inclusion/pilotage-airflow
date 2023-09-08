@@ -1,5 +1,5 @@
 select distinct
-    {{ pilo_star(source('emplois', 'candidats'), relation_alias="c") }},
+    {{ pilo_star(ref('candidats'), relation_alias="c") }},
     cd."état",
     cd.nom_structure,
     cd.type_structure,
@@ -23,5 +23,5 @@ select distinct
     end                                  as reprise_de_stock_ai_candidats
 from
     {{ source('emplois', 'candidatures') }} as cd
-left join {{ source('emplois', 'candidats') }} as c
+left join {{ ref('candidats') }} as c
     on cd.id_candidat = c.id

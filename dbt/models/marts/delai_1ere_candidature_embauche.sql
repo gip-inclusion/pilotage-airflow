@@ -32,7 +32,7 @@ with date_1ere_candidature as (
         )                           as date_1ere_embauche
     from
         {{ source('emplois', 'candidatures') }} as c
-    inner join {{ source('emplois', 'candidats') }} as candidats on c.id_candidat = candidats.id
+    inner join {{ ref('candidats') }} as candidats on c.id_candidat = candidats.id
     where
         c.origine = 'Prescripteur habilité'
         and c."origine_détaillée" = 'Prescripteur habilité PE'
