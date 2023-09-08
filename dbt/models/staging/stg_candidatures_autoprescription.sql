@@ -46,5 +46,5 @@ select
 from
     {{ source('emplois', 'candidatures') }} as cd
 left join
-    {{ source('emplois', 'candidats') }} as c
+    {{ ref('stg_candidats') }} as c
     on cd.id_candidat = c.id

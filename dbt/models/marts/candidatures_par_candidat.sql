@@ -7,7 +7,7 @@ select
     array_agg(candidatures.nom_structure)    as nom_structure,
     array_agg(candidatures."état")
     as etat_candidature
-from {{ source('emplois', 'candidats') }} as candidats
+from {{ ref('stg_candidats') }} as candidats
 left join {{ ref('candidatures_echelle_locale') }} as candidatures
     on candidats.id = candidatures.id_candidat
 group by candidats.id

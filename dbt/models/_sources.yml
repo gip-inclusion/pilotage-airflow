@@ -33,7 +33,7 @@ sources:
       - name: c1_private_dashboard_visits_v0
         description: >
           Propose une ligne par visite enregistrée sur un tableau de bord privé du Pilotage de l'Inclusion.
-      - name: candidats
+      - name: candidats_v0
       - name: candidatures
       - name: cap_campagnes
       - name: cap_candidatures
