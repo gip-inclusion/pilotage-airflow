@@ -154,3 +154,7 @@ models:
   - name: nps_hebdo_reco_hebdo_par_tb
     description: >
       Table permettant le suivi du nps de tous les tbs du pilotage à partir de la table suivi_satisfaction.
+  - name: suivi_realisation_convention_par_structure
+    description: >
+      Table permettant de suivre par id d'annexe financiere (i.e. par structure et par an) les etps conventionnés, réalisés et la différence entre ces derniers.
+      Le delta calculé ici permet de calculer un % de réalisation sur les états mensuels validés très utile au pilotage de l'activité des structures effectuée par les réseaux.
