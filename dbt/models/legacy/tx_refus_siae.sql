@@ -59,7 +59,7 @@ from
     {{ ref('candidatures_echelle_locale') }} as cel
 left join
     {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdpc
-    on cel.id = cast(fdpc.id_candidature as varchar)
+    on cel.id = fdpc.id_candidature
 left join
     {{ source('emplois', 'fiches_de_poste') }} as fdp on fdpc.id_fiche_de_poste = fdp.id
 left join
