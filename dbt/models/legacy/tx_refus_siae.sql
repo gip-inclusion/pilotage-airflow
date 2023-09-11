@@ -59,7 +59,7 @@ from
     {{ ref('candidatures_echelle_locale') }} as cel
 left join
     {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdpc
-    on cel.id = fdpc.id_candidature
+    on cel.id = cast(fdpc.id_candidature as varchar)
 left join
     {{ source('emplois', 'fiches_de_poste') }} as fdp on fdpc.id_fiche_de_poste = fdp.id
 left join
@@ -74,7 +74,9 @@ where
     cel.injection_ai = 0
     and fdp.recrutement_ouvert = 1
     /*se restreindre aux 12 derniers mois*/
-    and cel.date_candidature >= date_trunc('month', cast((cast(now() as timestamp) + (interval '-12 month')) as timestamp))
+    and cel.date_candidature >= date_trunc('month', cast((
+        cast(now() as timestamp) + (interval '-12 month')
+    ) as timestamp))
     and cel.type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
 group by
     cel.type_structure,

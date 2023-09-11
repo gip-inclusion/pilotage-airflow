@@ -17,7 +17,9 @@ with fdp_structures as (
         fdp.id_employeur                     as id_structure,
         fdp."nom_département_employeur"      as "nom_département_structure",
         s.nom                                as nom_structure,
-        fdp.type_employeur                   as type_structure, /* On récupère les infos via la table structure pour éviter des lignes vides lors de la recupération des infos candidatures */
+        /* On récupère les infos via la table structure pour éviter des lignes vides
+        lors de la recupération des infos candidatures */
+        fdp.type_employeur                   as type_structure,
         fdp.recrutement_ouvert               as recrutement_ouvert_fdp,
         crdp.grand_domaine,
         crdp.domaine_professionnel,
@@ -48,18 +50,18 @@ candidatures_recues_par_fiche_de_poste as (
         c."délai_prise_en_compte",
         fdp_s."département_structure", /* nous donne un délai en jours */
         fdp_s."région_structure",
-        c.id                                as id_candidature,
+        c.id                                   as id_candidature,
         c.id_candidat,
         fdp_s.id_structure,
         c.motif_de_refus,
         fdp_s."nom_département_structure",
         c.nom_org_prescripteur,
         fdp_s.nom_structure,
-        c.origine                           as origine_candidature,
-        c."origine_détaillée"               as "origine_détaillée_candidature",
+        c.origine                              as origine_candidature,
+        c."origine_détaillée"                  as "origine_détaillée_candidature",
         c.safir_org_prescripteur,
         fdp_s.type_structure,
-        c."état"                            as "état_candidature",
+        c."état"                               as "état_candidature",
         fdp_s.recrutement_ouvert_fdp,
         fdp_s.grand_domaine,
         fdp_s.domaine_professionnel,
@@ -69,38 +71,38 @@ candidatures_recues_par_fiche_de_poste as (
         fdp_s.id_fdp,
         fdp_s.nom_rome_fdp,
         fdp_s.siret_employeur,
-        (current_date - c.date_candidature) as anciennete_candidature,
-        (date_embauche - date_candidature)  as delai_embauche
+        (current_date - c.date_candidature)    as anciennete_candidature,
+        (c.date_embauche - c.date_candidature) as delai_embauche
     from
         fdp_structures as fdp_s
     left join {{ source('emplois', 'candidatures') }} as c
-        on c.id = fdp_s.id_candidature
+        on cast(c.id as varchar) = fdp_s.id_candidature
 ),
 
 
 fiche_de_poste as (
     select
-        recrutement_ouvert_fdp,
-        id_fdp,
-        nom_rome_fdp,
-        siret_employeur,
-        id_structure,
-        type_structure,
-        "nom_département_structure",
-        "département_structure",
-        "région_structure",
-        nom_structure,
-        delai_mise_en_ligne,
-        "date_création_fdp",
+        fdp.recrutement_ouvert_fdp,
+        fdp.id_fdp,
+        fdp.nom_rome_fdp,
+        fdp.siret_employeur,
+        fdp.id_structure,
+        fdp.type_structure,
+        fdp."nom_département_structure",
+        fdp."département_structure",
+        fdp."région_structure",
+        fdp.nom_structure,
+        fdp.delai_mise_en_ligne,
+        fdp."date_création_fdp",
         crdp.domaine_professionnel,
         crdp.grand_domaine,
         s.ville,
         /* Délai entre la date de création des fiches de poste et la 1ère candidature */
-        min(date_candidature)                         as date_1ere_candidature,
-        max(date_candidature)                         as date_derniere_candidature_recue,
-        max(date_embauche)                            as date_derniere_embauche,
-        (min(date_candidature) - "date_création_fdp") as delai_crea_1ere_candidature,
-        concat(code_rome_fpd, '-', nom_rome_fdp)      as rome
+        min(fdp.date_candidature)                             as date_1ere_candidature,
+        max(fdp.date_candidature)                             as date_derniere_candidature_recue,
+        max(fdp.date_embauche)                                as date_derniere_embauche,
+        (min(fdp.date_candidature) - fdp."date_création_fdp") as delai_crea_1ere_candidature,
+        concat(fdp.code_rome_fpd, '-', fdp.nom_rome_fdp)      as rome
     from
         candidatures_recues_par_fiche_de_poste as fdp
     left join {{ ref('code_rome_domaine_professionnel') }} as crdp
@@ -108,21 +110,21 @@ fiche_de_poste as (
     left join {{ source('emplois', 'structures') }} as s
         on fdp.id_structure = s.id
     group by
-        recrutement_ouvert_fdp,
-        id_fdp,
-        id_structure,
-        nom_rome_fdp,
-        siret_employeur,
-        type_structure,
-        "nom_département_structure",
-        "département_structure",
-        "région_structure",
-        nom_structure,
-        delai_mise_en_ligne,
-        "date_création_fdp",
+        fdp.recrutement_ouvert_fdp,
+        fdp.id_fdp,
+        fdp.id_structure,
+        fdp.nom_rome_fdp,
+        fdp.siret_employeur,
+        fdp.type_structure,
+        fdp."nom_département_structure",
+        fdp."département_structure",
+        fdp."région_structure",
+        fdp.nom_structure,
+        fdp.delai_mise_en_ligne,
+        fdp."date_création_fdp",
         crdp.domaine_professionnel,
         crdp.grand_domaine,
-        concat(code_rome_fpd, '-', nom_rome_fdp),
+        concat(fdp.code_rome_fpd, '-', fdp.nom_rome_fdp),
         s.ville
 ),
 
@@ -151,24 +153,24 @@ delai_1_ere_candidature as (
 fiches_de_poste_avec_candidature as (
     select
         tab1.*,
-        delai_moyen_crea_1ere_candidature,
+        del.delai_moyen_crea_1ere_candidature,
         case
             when
-                date_derniere_candidature_recue
+                tab1.date_derniere_candidature_recue
                 >= date_trunc('month', current_date) - interval '1 month'
                 then 1
             else 0
         end as recu_candidatures_dernieres_30_jours,
         case
             when
-                date_derniere_candidature_recue
+                tab1.date_derniere_candidature_recue
                 is null
                 then 1
             else 0
         end as jamais_candidatures_recues,
         case
             when
-                date_derniere_embauche
+                tab1.date_derniere_embauche
                 >= date_trunc('month', current_date) - interval '1 month'
                 then 1
             else 0
@@ -179,7 +181,7 @@ fiches_de_poste_avec_candidature as (
             else 0
         end as structure_pas_poste_ouvert
     from
-        delai_1_ere_candidature
+        delai_1_ere_candidature as del
     cross join fiche_de_poste as tab1
     left join
         id_structures_pas_poste_ouvert as s

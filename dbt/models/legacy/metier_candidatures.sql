@@ -10,7 +10,7 @@ left join {{ source('emplois', 'candidats') }} as cand on cand.id = cel.id_candi
 inner join
     {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdpc
     on
-        fdpc.id_candidature = cel.id
+        cast(fdpc.id_candidature as varchar) = cel.id
 inner join
     {{ source('emplois', 'fiches_de_poste') }} as fdp
     on
