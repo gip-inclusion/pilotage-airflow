@@ -1,5 +1,5 @@
 select
-    {{ dbt_utils.star(source('emplois','demandes_de_prolongation'), relation_alias='prolong') }},
+    {{ pilo_star(source('emplois','demandes_de_prolongation'), relation_alias='prolong') }},
     o.nom                                               as nom_prescripteur,
     o.type_complet                                      as type_prescripteur,
     o."nom_département"                                 as "département_prescripteur",
