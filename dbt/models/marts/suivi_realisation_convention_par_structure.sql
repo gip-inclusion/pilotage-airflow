@@ -10,7 +10,7 @@ select
     etp.code_departement_af,
     etp.nom_departement_af,
     etp.nom_region_af,
-    sum(etp."effectif_mensuel_conventionné" - etp.nombre_etp_consommes_reels_mensuels)
+    sum(etp.nombre_etp_consommes_reels_mensuels - etp."effectif_mensuel_conventionné")
     as delta_etp_conventionnes_realises,
     sum(etp.nombre_etp_consommes_reels_mensuels)
     as somme_etp_realises
