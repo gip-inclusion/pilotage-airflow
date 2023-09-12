@@ -14,7 +14,8 @@ select
         else 'Oui'
     end                                                 as reprise_de_stock_ai,
     /* delai_traitement is in days*/
-    (prolong.date_traitement - prolong.date_de_demande) as delai_traitement
+    (prolong.date_traitement - prolong.date_de_demande) as delai_traitement,
+    (current_date - prolong.date_de_demande)            as duree_depuis_demande
 from {{ source('emplois', 'demandes_de_prolongation') }} as prolong
 left join {{ ref('stg_organisations') }} as o
     on prolong.id_organisation_prescripteur = o.id

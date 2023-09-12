@@ -157,6 +157,7 @@ models:
     description: >
       Table permettant de suivre les candidats qui ont été diagnostiqués par des prescripteurs habilités et d'avoir des infos sur leur diagnostic.
       Réalisée pour permettre au c0 d'avoir des statistiques sur la manière dont les diagnostics des ph sont réalisés.
+
   - name: nps_hebdo_reco_hebdo_par_tb
     description: >
       Table permettant le suivi du nps de tous les tbs du pilotage à partir de la table suivi_satisfaction.
@@ -164,3 +165,7 @@ models:
     description: >
       Table permettant de suivre par id d'annexe financiere (i.e. par structure et par an) les etps conventionnés, réalisés et la différence entre ces derniers.
       Le delta calculé ici permet de calculer un % de réalisation sur les états mensuels validés très utile au pilotage de l'activité des structures effectuée par les réseaux.
+  - name: fiches_de_poste_en_tension_recrutement
+    description: >
+      ToDo: à renommer en fiches_deposte_en_tension_recrutement pour remplacer ancienne table.
+      Fiches de postes par structure et leur état. Pour la réalisation du TB postes en tension.
