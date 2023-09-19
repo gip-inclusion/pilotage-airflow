@@ -164,3 +164,6 @@ models:
     description: >
       Table permettant de suivre par id d'annexe financiere (i.e. par structure et par an) les etps conventionnés, réalisés et la différence entre ces derniers.
       Le delta calculé ici permet de calculer un % de réalisation sur les états mensuels validés très utile au pilotage de l'activité des structures effectuée par les réseaux.
+  - name: nb_utilisateurs_potentiels
+    description: >
+      Table pour le suivi des statistiques de pilotage en interne : pour chaque cible, donne le nb d'utilisateurs potentiels des TBs.
