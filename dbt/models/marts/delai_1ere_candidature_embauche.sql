@@ -1,11 +1,17 @@
 /*
 L'objectif est de calculer le délai entre la 1ère candidature et l'embauche des candidats orientés par PE:
-- le nombre de candidats orientés par des prescripteurs habilités qui ont trouvé un emploi en IAE moins d 1 mois après leur première candidature
-- le nombre de candidats orientés par des prescripteurs habilités qui ont trouvé un emploi en IAE entre 1 mois et 2 mois après leur première candidature
-- le nombre de candidats orientés par des prescripteurs habilités qui ont trouvé un emploi en IAE entre 2 mois et 3 mois après leur première candidature
-- le nombre de candidats orientés par des prescripteurs habilités qui ont trouvé un emploi en IAE entre 3 mois et 4 mois après leur première candidature
-- le nombre de candidats orientés par des prescripteurs habilités qui ont trouvé un emploi en IAE entre 4 mois et 5 mois après leur première candidature
-- le nombre de candidats orientés par des prescripteurs habilités qui ont trouvé un emploi en IAE entre 5 mois et 6 mois après leur première candidature
+- le nombre de candidats orientés par des prescripteurs habilités
+    qui ont trouvé un emploi en IAE moins d 1 mois après leur première candidature
+- le nombre de candidats orientés par des prescripteurs habilités
+    qui ont trouvé un emploi en IAE entre 1 mois et 2 mois après leur première candidature
+- le nombre de candidats orientés par des prescripteurs habilités
+    qui ont trouvé un emploi en IAE entre 2 mois et 3 mois après leur première candidature
+- le nombre de candidats orientés par des prescripteurs habilités
+    qui ont trouvé un emploi en IAE entre 3 mois et 4 mois après leur première candidature
+- le nombre de candidats orientés par des prescripteurs habilités
+    qui ont trouvé un emploi en IAE entre 4 mois et 5 mois après leur première candidature
+- le nombre de candidats orientés par des prescripteurs habilités
+    qui ont trouvé un emploi en IAE entre 5 mois et 6 mois après leur première candidature
 */
 
 /* Trouver la date de la première candidature + date de la première embauche */
@@ -13,70 +19,86 @@ L'objectif est de calculer le délai entre la 1ère candidature et l'embauche de
 with date_1ere_candidature as (
     select
         c.id_candidat,
-        /* TODO dejafait drop as soon as analistos have migrated to the new deanonymized column */
-        c."id_candidat_anonymisé",
         candidats."nom_département" as "nom_département_candidat",
-        date_candidature,
-        date_embauche,
-        origine,
-        "origine_détaillée",
+        c.date_candidature,
+        c.date_embauche,
+        c.origine,
+        c."origine_détaillée",
         candidats."type_structure_dernière_embauche",
-        id_org_prescripteur,
-        min(date_candidature)       as date_1ere_candidature,
+        c.id_org_prescripteur,
+        min(c.date_candidature)     as date_1ere_candidature,
         min(
-            coalesce(date_embauche, '2099-01-01')
+            coalesce(c.date_embauche, '2099-01-01')
         )                           as date_1ere_embauche
     from
         {{ source('emplois', 'candidatures') }} as c
     inner join {{ source('emplois', 'candidats') }} as candidats on c.id_candidat = candidats.id
     where
-        c.origine = 'Prescripteur habilité' /* Modification du filtre initialement fait par Soumia, qui n'était pas bon */
+        c.origine = 'Prescripteur habilité'
         and c."origine_détaillée" = 'Prescripteur habilité PE'
     group by
         c.id_candidat,
-        /* TODO dejafait drop as soon as analistos have migrated to the new deanonymized column */
-        c."id_candidat_anonymisé",
         candidats."nom_département",
-        date_candidature,
-        date_embauche,
-        origine,
-        "origine_détaillée",
+        c.date_candidature,
+        c.date_embauche,
+        c.origine,
+        c."origine_détaillée",
         candidats."type_structure_dernière_embauche",
-        id_org_prescripteur
+        c.id_org_prescripteur
 ),
 
 prescripteurs as (
     select
         id,
-        "nom_département" as "nom_département_prescripteur" /* Ajout du département du prescripteur pour les TBs privés */
+        /* Ajout du département du prescripteur pour les TBs privés */
+        "nom_département" as "nom_département_prescripteur"
     from {{ ref('stg_organisations') }}
 )
 
 select
-    id_candidat,
-    /* TODO dejafait drop as soon as analistos have migrated to the new deanonymized column */
-    "id_candidat_anonymisé",
-    "nom_département_candidat",
-    date_candidature,
-    date_embauche,
-    origine,
-    "origine_détaillée",
-    id_org_prescripteur,
-    "nom_département_prescripteur",
-    "type_structure_dernière_embauche",
+    date_cddr.id_candidat,
+    date_cddr."nom_département_candidat",
+    date_cddr.date_candidature,
+    date_cddr.date_embauche,
+    date_cddr.origine,
+    date_cddr."origine_détaillée",
+    date_cddr.id_org_prescripteur,
+    p."nom_département_prescripteur",
+    date_cddr."type_structure_dernière_embauche",
     case
         /* Division /30 pour passer du nombre de jour au mois */
-        when ((date_1ere_embauche - date_1ere_candidature) / 30) < 1 then 'a- Moins d un mois'
-        when ((date_1ere_embauche - date_1ere_candidature) / 30) >= 1 and ((date_1ere_embauche - date_1ere_candidature) / 30) < 2 then 'b- Entre 1 et 2 mois'
-        when ((date_1ere_embauche - date_1ere_candidature) / 30) >= 2 and ((date_1ere_embauche - date_1ere_candidature) / 30) < 3 then 'c- Entre 2 et 3 mois'
-        when ((date_1ere_embauche - date_1ere_candidature) / 30) >= 3 and ((date_1ere_embauche - date_1ere_candidature) / 30) < 4 then 'd- Entre 3 et 4 mois'
-        when ((date_1ere_embauche - date_1ere_candidature) / 30) >= 4 and ((date_1ere_embauche - date_1ere_candidature) / 30) < 5 then 'e- Entre 4 et 5 mois'
-        when ((date_1ere_embauche - date_1ere_candidature) / 30) >= 5 and ((date_1ere_embauche - date_1ere_candidature) / 30) < 6 then 'f- Entre 5 et 6 mois'
-        when ((date_1ere_embauche - date_1ere_candidature) / 30) >= 6 then 'g- 6 mois et plus'
+        when (
+            (date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature)
+            / 30
+        ) < 1 then 'a- Moins d un mois'
+        when (
+            (date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature)
+            / 30
+        ) >= 1
+        and ((date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30) < 2 then 'b- Entre 1 et 2 mois'
+        when (
+            (date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30
+        ) >= 2
+        and ((date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30) < 3 then 'c- Entre 2 et 3 mois'
+        when (
+            (date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30
+        ) >= 3
+        and ((date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30) < 4 then 'd- Entre 3 et 4 mois'
+        when (
+            (date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30
+        ) >= 4
+        and ((date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30) < 5 then 'e- Entre 4 et 5 mois'
+        when (
+            (date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30
+        ) >= 5
+        and ((date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30) < 6 then 'f- Entre 5 et 6 mois'
+        when (
+            (date_cddr.date_1ere_embauche - date_cddr.date_1ere_candidature) / 30
+        ) >= 6 then 'g- 6 mois et plus'
     end as "délai_embauche"
 from
-    date_1ere_candidature
+    date_1ere_candidature as date_cddr
 left join prescripteurs as p
-    on p.id = date_1ere_candidature.id_org_prescripteur
+    on p.id = date_cddr.id_org_prescripteur
 /* Ecarter les candidats qui ne sont pas recrutés à aujourd'hui */
-where date_1ere_embauche != '2099-01-01'
+where date_cddr.date_1ere_embauche != '2099-01-01'
