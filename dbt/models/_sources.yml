@@ -52,6 +52,7 @@ sources:
       - name: structures
       - name: utilisateurs
       - name: demandes_de_prolongation
+      - name: prolongations
 
   - name: oneshot
     schema: public
