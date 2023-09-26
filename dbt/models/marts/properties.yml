@@ -149,10 +149,10 @@ models:
       Grâce à cette table nous pouvons réaliser des indicateurs suivant sur le même plot les conventionnements et consommation mois par mois de toutes les structures quelle que soit leur durée de conventionnement.
   - name: suivi_demandes_prolongations
     description: >
-      Cette table permet de suivre les demandes de prolongation. Sa création est nécessaire afin d'identifier le type de prescipteur traitant la prolongation ainsi que les demandes gérées par ces derniers.
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'prolongations')
+      Cette table permet de suivre toutes les demandes de prolongation (passant ou pas par les prescipteurs habilités).
+      Sa création est nécessaire afin d'identifier les SIAE ainsi que les types de prescipteur traitant la prolongation ainsi que les demandes gérées par ces derniers.
+      Cette table est une union entre une vue regroupant les demandes/prolongations acceptées et une vue regroupant les demandes non acceptées.
+      Cette union est nécessaire car l'architecture des tables prolongations et demandes_de_prolongation ne permettent pas une jointure simple.
   - name: candidats_prescripteurs_habilites
     description: >
       Table permettant de suivre les candidats qui ont été diagnostiqués par des prescripteurs habilités et d'avoir des infos sur leur diagnostic.

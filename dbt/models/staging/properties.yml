@@ -114,3 +114,12 @@ models:
   - name: stg_test_suivi_etp_realises_par_structure
     description: >
       Vue permettant de tester le nombre de lignes de la table suivi_etp_realises_par_structure.
+  - name: stg_suivi_demandes_prolongations_acceptees
+    description: >
+      Vue permettant de récupérer les demandes de prolongation & prolongations acceptées
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'prolongations')
+  - name: stg_suivi_demandes_prolongations_non_acceptees
+    description: >
+      Vue permettant de récupérer les demandes de prolongation non acceptées
