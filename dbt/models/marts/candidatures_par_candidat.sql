@@ -7,7 +7,11 @@ select
     array_agg(candidatures.nom_structure)    as nom_structure,
     array_agg(candidatures."état")
     as etat_candidature
-from {{ source('emplois', 'candidats') }} as candidats
+<<<<<<< HEAD
+from {{ ref('candidats') }} as candidats
+=======
+from {{ ref('stg_candidats') }} as candidats
+>>>>>>> 9ca8e93 (clarify col names + rename candidats_enriched to candidats)
 left join {{ ref('candidatures_echelle_locale') }} as candidatures
     on candidats.id = candidatures.id_candidat
 group by candidats.id

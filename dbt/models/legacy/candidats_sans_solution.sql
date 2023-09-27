@@ -79,7 +79,7 @@ b as (
         date_inscription,
         count(distinct id) as nombre_candidats
     from
-        {{ source('emplois', 'candidats') }}
+        {{ ref('candidats') }}
     where candidats.injection_ai = 0
     group by date_inscription
 )

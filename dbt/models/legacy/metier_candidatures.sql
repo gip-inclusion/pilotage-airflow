@@ -6,7 +6,7 @@ select
     crdp."code_rome"     as code_rome
 from
     {{ ref('candidatures_echelle_locale') }} as cel
-left join {{ source('emplois', 'candidats') }} as cand on cand.id = cel.id_candidat
+left join {{ ref('candidats') }} as cand on cand.id = cel.id_candidat
 inner join
     {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdpc
     on

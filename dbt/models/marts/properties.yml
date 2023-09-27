@@ -84,13 +84,12 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('suivi_etp_realises_v2')
-  - name: candidats_enriched
+  - name: candidats
     description: >
-      Equivalent à la table candidat avec des informations complémentaires.
-      Sera amenée à remplacer la table candidats des emplois mais comme cela risque de casser de nombreux indicateurs on préfère faire une table différente pour le moment.
+      Equivalent à la table candidat_v0 avec des informations complémentaires.
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'candidats')
+          compare_model: source('emplois', 'candidats_v0')
   - name: candidatures_par_candidat
     description: >
       Permet de suvire les différentes candidatures réalisées par un candidat.
