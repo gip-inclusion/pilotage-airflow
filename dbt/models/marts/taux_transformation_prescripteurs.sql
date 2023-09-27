@@ -32,7 +32,7 @@ with candidats_p as (
             else 'non'
         end                                   as diagnostic_valide
     from
-        {{ ref('stg_candidats') }} as cdd /* cdd pour CanDiDats */
+        {{ ref('candidats') }} as cdd /* cdd pour CanDiDats */
     where
         type_auteur_diagnostic = ('Prescripteur')
 )
