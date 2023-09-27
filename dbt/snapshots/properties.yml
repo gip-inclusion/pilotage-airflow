@@ -1,0 +1,6 @@
+version: 2
+
+snapshots:
+  - name: etp_conventionne_snapshot
+    description: >
+      Ce snapshot permet de suivre les modifications au sein des annexes financières pour l'année en cours.
