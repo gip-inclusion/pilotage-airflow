@@ -167,3 +167,9 @@ models:
   - name: nb_utilisateurs_potentiels
     description: >
       Table pour le suivi des statistiques de pilotage en interne : pour chaque cible, donne le nb d'utilisateurs potentiels des TBs.
+  - name: utilisateurs_jamais_venus
+    description: >
+      Table permettant de récupérer les mails des utilisateurs ne s'étant jamais connectés sur les tb prives. A ce jour impossible de savoir à quelle orga cette utilisateur est rattaché mais cela arrive dans une v2.
+    tests:
+    - dbt_utils.equal_rowcount:
+        compare_model: source('emplois', 'utilisateurs')
