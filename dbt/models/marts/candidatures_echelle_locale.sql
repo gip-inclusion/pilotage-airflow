@@ -11,6 +11,7 @@ select
     candidats.eligibilite_dispositif,
     candidats.tranche_age,
     candidats.eligible_cej,
+    candidats.sexe_selon_nir          as genre_candidat,
     candidats.eligible_cdi_inclusion,
     candidats.date_inscription        as date_inscription_candidat,
     org_prescripteur.date_inscription as date_inscription_orga
