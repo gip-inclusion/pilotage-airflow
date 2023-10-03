@@ -1,6 +1,5 @@
 select
     cel.*,
-    cand.sexe_selon_nir,
     crdp."grand_domaine" as metier,
     fdp."nom_rome"       as nom_rome,
     crdp."code_rome"     as code_rome
