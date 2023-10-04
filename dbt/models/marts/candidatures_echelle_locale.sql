@@ -8,8 +8,8 @@ select
         else 'Oui'
     end                                   as reprise_de_stock_ai,
     nom_org.type_auteur_diagnostic_detaille,
-    candidats.sous_type_auteur_diagnostic as auteur_diag_candidat,
-    candidats.type_auteur_diagnostic      as auteur_diag_candidat_detaille,
+    candidats.sous_type_auteur_diagnostic as auteur_diag_candidat_detaille,
+    candidats.type_auteur_diagnostic      as auteur_diag_candidat,
     candidats.eligibilite_dispositif,
     candidats.tranche_age,
     candidats.eligible_cej,
