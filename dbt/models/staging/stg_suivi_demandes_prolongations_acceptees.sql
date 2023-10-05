@@ -2,7 +2,6 @@ select
     prolong."id_pass_agrément",
     prolong."date_début",
     prolong.date_fin,
-    prolong."date_de_création",
     prolong.motif,
     'Acceptée'                                                            as "état",
     demandes_prolong.date_de_demande,
@@ -18,6 +17,7 @@ select
     s.type                                                                as type_structure,
     s."nom_département"                                                   as "département_structure",
     s."région"                                                            as "région_structure",
+    prolong."date_de_création",
     case
         when pass.injection_ai = 0 then 'Non'
         else 'Oui'
