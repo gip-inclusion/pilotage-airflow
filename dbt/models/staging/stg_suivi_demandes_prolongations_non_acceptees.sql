@@ -16,7 +16,7 @@ select
     s.type                                                                     as type_structure,
     s."nom_département"                                                        as "département_structure",
     s."région"                                                                 as "région_structure",
-    demandes_prolong.date_de_demande                                           as "date_de_creation",
+    demandes_prolong.date_de_demande                                           as "date_de_création",
     (demandes_prolong.date_traitement - demandes_prolong.date_de_demande)::int as delai_traitement,
     case
         when demandes_prolong.motif_de_refus = 'IAE'
