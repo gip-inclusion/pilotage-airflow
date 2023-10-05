@@ -7,7 +7,6 @@ select
     demandes_prolong.date_de_demande,
     demandes_prolong.date_traitement,
     demandes_prolong.date_envoi_rappel,
-    demandes_prolong.motif_de_refus,
     o.nom                                                                 as nom_prescripteur,
     o.type_complet                                                        as type_prescripteur,
     o."nom_département"                                                   as "département_prescripteur",
@@ -17,7 +16,14 @@ select
     s.type                                                                as type_structure,
     s."nom_département"                                                   as "département_structure",
     s."région"                                                            as "région_structure",
-    to_date('2999-08-06', 'YYYY-MM-DD')                                   as "date_de_création",
+    demandes_prolong.date_de_demande                                      as "date_de_création",
+    case
+        when demandes_prolong.motif_de_refus = 'IAE'
+            then 'L IAE ne correspond plus aux besoins / à la situation de la personne'
+        when demandes_prolong.motif_de_refus = 'SIAE'
+            then 'La typologie de SIAE ne correspond plus aux besoins / à la situation de la personne'
+        else 'Pas de motif indiqué'
+    end                                                                   as motif_de_refus,
     case
         when pass.injection_ai = 0 then 'Non'
         else 'Oui'

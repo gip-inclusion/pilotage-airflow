@@ -7,7 +7,6 @@ select
     demandes_prolong.date_de_demande,
     demandes_prolong.date_traitement,
     demandes_prolong.date_envoi_rappel,
-    demandes_prolong.motif_de_refus,
     o.nom                                                                 as nom_prescripteur,
     o.type_complet                                                        as type_prescripteur,
     o."nom_département"                                                   as "département_prescripteur",
@@ -18,6 +17,7 @@ select
     s."nom_département"                                                   as "département_structure",
     s."région"                                                            as "région_structure",
     prolong."date_de_création",
+    demandes_prolong.motif_de_refus,
     case
         when pass.injection_ai = 0 then 'Non'
         else 'Oui'
