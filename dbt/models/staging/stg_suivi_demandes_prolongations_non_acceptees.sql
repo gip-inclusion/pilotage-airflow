@@ -16,7 +16,8 @@ select
     s.type                                            as type_structure,
     s."nom_département"                               as "département_structure",
     s."région"                                        as "région_structure",
-    demandes_prolong.date_de_demande                  as "date_de_création",
+    demandes_prolong.date_de_demande                  as "date_de_creation",
+    (demandes_prolong.date_traitement - demandes_prolong.date_de_demande)::int as delai_traitement,
     case
         when demandes_prolong.motif_de_refus = 'IAE'
             then 'L IAE ne correspond plus aux besoins / à la situation de la personne'
@@ -30,11 +31,6 @@ select
     end                                               as reprise_de_stock_ai,
     /* delai_traitement is in days*/
     /* we fill the null values with a -100 value in order to avoid some metabase problems */
-    case
-        when demandes_prolong.date_traitement is null
-            then -100
-        else (demandes_prolong.date_traitement - demandes_prolong.date_de_demande)
-    end                                               as delai_traitement,
     (current_date - demandes_prolong.date_de_demande) as duree_depuis_demande
 from {{ source('emplois', 'demandes_de_prolongation') }} as demandes_prolong
 left join {{ ref('stg_organisations') }} as o
