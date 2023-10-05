@@ -7,6 +7,8 @@ select
     demandes_prolong.date_de_demande,
     demandes_prolong.date_traitement,
     demandes_prolong.date_envoi_rappel,
+    demandes_prolong.motif_de_refus,
+    null                                                                  as "date_de_création",
     o.nom                                                                 as nom_prescripteur,
     o.type_complet                                                        as type_prescripteur,
     o."nom_département"                                                   as "département_prescripteur",
