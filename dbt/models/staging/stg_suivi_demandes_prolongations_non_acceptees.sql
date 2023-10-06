@@ -17,7 +17,7 @@ select
     s."nom_département"                                                        as "département_structure",
     s."région"                                                                 as "région_structure",
     demandes_prolong.date_de_demande                                           as "date_de_création",
-    (demandes_prolong.date_traitement - demandes_prolong.date_de_demande)::int as delai_traitement,
+    cast((demandes_prolong.date_traitement - demandes_prolong.date_de_demande) as int) as delai_traitement,
     case
         when demandes_prolong.motif_de_refus = 'IAE'
             then 'L IAE ne correspond plus aux besoins / à la situation de la personne'

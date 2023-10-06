@@ -17,8 +17,8 @@ select
     s."nom_département"                                                        as "département_structure",
     s."région"                                                                 as "région_structure",
     prolong."date_de_création",
+    cast((demandes_prolong.date_traitement - demandes_prolong.date_de_demande) as int) as delai_traitement,
     demandes_prolong.motif_de_refus,
-    (demandes_prolong.date_traitement - demandes_prolong.date_de_demande)::int as delai_traitement,
     case
         when pass.injection_ai = 0 then 'Non'
         else 'Oui'
