@@ -22,7 +22,7 @@ select
             then 'L IAE ne correspond plus aux besoins / à la situation de la personne'
         when demandes_prolong.motif_de_refus = 'SIAE'
             then 'La typologie de SIAE ne correspond plus aux besoins / à la situation de la personne'
-        else 'Pas de motif indiqué'
+        else 'Pas de donnée disponible'
     end                                                                                     as motif_de_refus,
     case
         when pass.injection_ai = 0 then 'Non'
@@ -30,7 +30,10 @@ select
     end                                                                                     as reprise_de_stock_ai,
     /* delai_traitement is in days*/
     extract(day from (demandes_prolong.date_traitement - demandes_prolong.date_de_demande)) as delai_traitement,
-    (current_date - demandes_prolong.date_de_demande)                                       as duree_depuis_demande
+    /* we use the udpate day as reference in order to have an unity
+    across all plots in our dashboards. Using the current day would lead to differences
+    between some plots*/
+    (demandes_prolong."date_mise_à_jour_metabase" - demandes_prolong.date_de_demande)       as duree_depuis_demande
 from {{ source('emplois', 'demandes_de_prolongation') }} as demandes_prolong
 left join {{ ref('stg_organisations') }} as o
     on demandes_prolong.id_organisation_prescripteur = o.id

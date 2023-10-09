@@ -23,7 +23,7 @@ select
         else 'Oui'
     end                                                                                     as reprise_de_stock_ai,
     extract(day from (demandes_prolong.date_traitement - demandes_prolong.date_de_demande)) as delai_traitement,
-    (current_date - demandes_prolong.date_de_demande)                                       as duree_depuis_demande
+    (demandes_prolong."date_mise_à_jour_metabase" - demandes_prolong.date_de_demande)       as duree_depuis_demande
 from {{ source('emplois', 'prolongations') }} as prolong
 left join {{ source('emplois', 'demandes_de_prolongation') }} as demandes_prolong
     on prolong.id = demandes_prolong.id_prolongation
