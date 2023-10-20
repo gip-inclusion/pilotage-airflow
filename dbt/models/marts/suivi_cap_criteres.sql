@@ -10,6 +10,7 @@ select
     structs."département"     as "département",
     structs."nom_département" as "nom_département",
     structs."région"          as "nom_région",
+    structs.bassin_d_emploi   as bassin_d_emploi,
     structs."type"            as "type_structure",
     case
         when
@@ -38,5 +39,5 @@ from
 left join {{ source('emplois', 'critères_iae') }} as criteres on cap_criteres."id_critère_iae" = criteres."id"
 left join {{ source('emplois', 'cap_candidatures') }} as candidatures on cap_criteres."id_cap_candidature" = candidatures."id"
 left join {{ source('emplois', 'cap_structures') }} as cap_structs on candidatures."id_cap_structure" = cap_structs."id"
-left join {{ source('emplois', 'structures') }} as structs on cap_structs."id_structure" = structs."id"
+left join {{ ref('stg_structures') }} as structs on cap_structs."id_structure" = structs."id"
 left join {{ source('emplois', 'cap_campagnes') }} as camp on cap_structs."id_cap_campagne" = camp."id"
