@@ -98,7 +98,7 @@ models:
       Par exemple, si deux candidatures sont réalisées, les informations sur la première candidature sont données à l'indice 0 de la liste et celles de la deuxième à l'indice 1.
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'candidats')
+          compare_model: source('emplois', 'candidats_v0')
   - name: suivi_etp_realises_par_structure
     description: >
       Table de suivi des etps réalisés par structure. Cette table permet aussi de suivre si l'état mensuel a été validé.
@@ -176,3 +176,12 @@ models:
     description: >
       Table permettant de suivre les PASS IAE n'ayant jamais été associés à une demande de prolongation et ceux associés à une (ou plusieurs) demande de prolongation.
       A noter, le même pass IAE peut avoir deux entrées dans cette table car une demande peut etre refusée, ce qui amène souvent à une nouvelle demande, qui elle peut être acceptée.
+  - name: suivi_cap_structures
+    description: >
+      Suivi des structures ayant fait l'objet du contrôle a posteriori. Table réalisée pour la réalisation du tb suivi du contrôle a posteriori.
+  - name: suivi_cap_critères
+    description: >
+      Suivi des critères vérifiés dans le cadre du contrôle a posteriori. Table réalisée pour la réalisation du tb suivi du contrôle a posteriori.
+  - name: suivi_cap
+    description: >
+      Contient les statistiques de contrôle des structures pour toutes les campagnes de contrôle. Table réalisée pour la réalisation du tb suivi du contrôle a posteriori.

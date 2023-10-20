@@ -7,6 +7,7 @@ select
     structures."département"      as "département",
     structures."nom_département"  as "nom_département",
     structures."région"           as "région",
+    structures.bassin_d_emploi    as bassin_d_emploi,
     cap_structures."état"         as "état",
     cap_rep."réponse_au_contrôle" as "réponse_au_contrôle",
     case
@@ -26,7 +27,7 @@ select
             'Non'
     end                           as "controlee"
 from
-    {{ source('emplois', 'structures') }} as structures
+    {{ ref('stg_structures') }} as structures
 left join {{ source('emplois', 'cap_structures') }} as cap_structures
     on structures.id = cap_structures.id_structure
 left join {{ source('emplois', 'cap_campagnes') }} as cap_campagnes

@@ -43,6 +43,7 @@ select
     c.*,
     organisations_libelles.libelle  as type_auteur_diagnostic_detaille,
     prescripteurs.type_prescripteur as type_prescripteur,
+    prescripteurs.zone_emploi       as bassin_emploi_prescripteur,
     prescripteurs."nom_département" as "nom_département_prescripteur",
     prescripteurs."région"          as "nom_région_prescripteur",
     case

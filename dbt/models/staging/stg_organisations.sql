@@ -33,10 +33,5 @@ select
 from {{ source('emplois', 'organisations_v0') }} as organisations
 left join {{ ref('organisations_libelles') }} as organisations_libelles
     on organisations.type = organisations_libelles.type
--- (laurine) temporary : this join is made on a cleaned version of organisations.ville
--- and based on a levenshtein distance with the clean libelle_commune of the insee table
--- (cedex and integers are remove and the levenshtein distance helps to ignore typo errors or misleading accents)
--- This is done like this as long as the organisations.ville entries are yet not cleaned
--- but it will be removed when c1 work on adressses will be finished.
 left join {{ ref('stg_insee_appartenance_geo_communes') }} as appartenance_geo_communes
-    on levenshtein(unaccent(regexp_replace(regexp_replace(initcap(ville), ' \d+', '', 'g'), ' Cedex ?', '')), unaccent(appartenance_geo_communes.libelle_commune)) < 1 and ltrim(organisations."département", '0') = appartenance_geo_communes.code_dept
+    on organisations.code_commune = ltrim(appartenance_geo_communes.code_insee, '0')

@@ -24,6 +24,8 @@ select
     cd."département_structure"             as "département_structure",
     cd."nom_département_structure"         as "nom_département_structure",
     cd."région_structure"                  as "région_structure",
+    cd.bassin_emploi_prescripteur          as bassin_emploi_prescripteur,
+    cd.bassin_emploi_structure             as bassin_emploi_structure,
     date_part('year', c.date_diagnostic)   as "année_diagnostic",
     date_part('year', cd.date_candidature) as "année_candidature",
     /* on considère que l'on a de l'auto prescription lorsque
@@ -44,7 +46,7 @@ select
         else 'Oui'
     end                                    as reprise_de_stock_ai_candidatures
 from
-    {{ source('emplois', 'candidatures') }} as cd
+    {{ ref('candidatures_echelle_locale') }} as cd
 left join
     {{ ref('candidats') }} as c
     on cd.id_candidat = c.id
