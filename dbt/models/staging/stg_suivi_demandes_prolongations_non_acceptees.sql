@@ -1,7 +1,7 @@
 select
     demandes_prolong."id_pass_agrément",
-    demandes_prolong."date_début",
-    demandes_prolong.date_fin,
+    pass."date_début",
+    pass.date_fin,
     demandes_prolong.motif,
     demandes_prolong."état",
     demandes_prolong.date_de_demande,
