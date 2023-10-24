@@ -3,7 +3,7 @@ select
     cap_campagnes.nom             as nom_campagne,
     cap_structures.id_structure   as id_cap_structure,
     structures.id                 as id_structure,
-    structures.type               as "type",
+    structures.type_struct        as "type",
     structures."département"      as "département",
     structures."nom_département"  as "nom_département",
     structures."région"           as "région",

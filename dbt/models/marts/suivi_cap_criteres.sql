@@ -1,17 +1,16 @@
 select
-    criteres."nom"            as "nom_critère",
-    criteres."id"             as "id_critère",
-    criteres."niveau"         as "niveau_critère",
-    -- REFUSED et REFUSED_2 correspondent au même état (?) - à confirmer par Zo
-    camp."nom"                as "nom_campagne",
-    structs."id"              as "id_structure",
-    structs."nom"             as "nom_structure",
-    structs."nom_complet"     as "nom_structure_complet",
-    structs."département"     as "département",
-    structs."nom_département" as "nom_département",
-    structs."région"          as "nom_région",
-    structs.bassin_d_emploi   as bassin_d_emploi,
-    structs."type"            as "type_structure",
+    criteres."nom"                  as "nom_critère",
+    criteres."id"                   as "id_critère",
+    criteres."niveau"               as "niveau_critère",
+    camp."nom"                      as "nom_campagne",
+    structs."id"                    as "id_structure",
+    structs."nom"                   as "nom_structure",
+    structs."nom_structure_complet" as "nom_structure_complet",
+    structs."département"           as "département",
+    structs."nom_département"       as "nom_département",
+    structs."région"                as "nom_région",
+    structs.bassin_d_emploi         as bassin_d_emploi,
+    structs."type_struct"           as "type_structure",
     case
         when
             cap_criteres."état" = 'ACCEPTED'
@@ -33,7 +32,7 @@ select
             cap_criteres."état" = 'PENDING' and cap_criteres."date_transmission" is null
             then
                 'Non transmis'
-    end                       as "état"
+    end                             as "état"
 from
     {{ source('emplois', 'cap_critères_iae') }} as cap_criteres
 left join {{ source('emplois', 'critères_iae') }} as criteres on cap_criteres."id_critère_iae" = criteres."id"
