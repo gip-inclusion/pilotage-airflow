@@ -123,3 +123,6 @@ models:
   - name: stg_suivi_demandes_prolongations_non_acceptees
     description: >
       Vue permettant de récupérer les demandes de prolongation non acceptées
+  - name: stg_premiere_visite
+    description: >
+      Vue permettant de récupérer la première visite d'un utilisateur sur l'un de nos tableaux de bord privés
