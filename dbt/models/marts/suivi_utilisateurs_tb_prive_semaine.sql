@@ -15,7 +15,11 @@ select
     -- recover date of the monday of the current week
     date_trunc('day', visits.measured_at) - INTERVAL '1 day' * (extract('dow' from visits.measured_at) - 1) as semaine,
     date_part('week', visits.measured_at)                                                                   as num_semaine,
-    count(distinct visits.measured_at)                                                                      as nb_visites
+    count(distinct visits.measured_at)                                                                      as nb_visites,
+    case
+        when visits.measured_at = first_visit.premiere_visite then 'Oui'
+        else 'Non'
+    end                                                                                                     as premiere_visite
 from {{ source('emplois', 'c1_private_dashboard_visits_v0') }} as visits
 left join {{ ref('metabase_dashboards') }} as metabase_ids
     on metabase_ids.id_tb = cast(visits.dashboard_id as INTEGER)
@@ -27,6 +31,8 @@ left join {{ source('emplois', 'institutions') }} as institutions
     on institutions.id = cast(visits.current_institution_id as INTEGER) and visits.user_kind = 'labor_inspector'
 left join {{ source('emplois', 'utilisateurs') }} as c1_users
     on c1_users.id = cast(visits.user_id as INTEGER)
+left join {{ ref('stg_premiere_visite') }} as first_visit
+    on visits.user_id = first_visit.user_id
 -- ignore intern staff and 119 dashboard (c1 intern stats)
 where c1_users.email not in (select email from {{ ref('pilotage_c1_users') }}) and visits.dashboard_id != '119'
 group by
@@ -39,4 +45,6 @@ group by
     type_organisation,
     nom_organisation,
     semaine,
-    num_semaine
+    num_semaine,
+    visits.measured_at,
+    premiere_visite
