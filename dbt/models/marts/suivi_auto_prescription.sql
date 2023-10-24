@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(ref('stg_candidatures_autoprescription')) }},
+    {{ pilo_star(ref('stg_candidatures_autoprescription'), relation_alias='autopr_all') }},
     s.siret                 as siret,
     s.active                as active,
     s.ville                 as ville,
