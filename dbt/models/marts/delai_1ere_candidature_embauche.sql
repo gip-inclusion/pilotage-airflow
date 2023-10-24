@@ -40,9 +40,6 @@ with date_1ere_candidature as (
     from
         {{ source('emplois', 'candidatures') }} as c
     inner join {{ ref('candidats') }} as candidats on c.id_candidat = candidats.id
-    where
-        c.origine = 'Prescripteur habilité'
-        and c."origine_détaillée" = 'Prescripteur habilité PE'
     group by
         c.id_candidat,
         candidats."nom_département",
