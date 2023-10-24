@@ -20,11 +20,8 @@ select
     cel.type_structure,
     cel."nom_département_structure",
     cel."région_structure",
-    cel.ville,
-    cel.nom_epci,
-    cel.code_commune,
-    cel.nom_arrondissement,
-    cel.bassin_d_emploi,
+    cel.epci,
+    cel.bassin_emploi_structure,
     count(distinct cel.id)
     filter (
         where
@@ -81,8 +78,5 @@ group by
     cel."nom_département_structure",
     cel."région_structure",
     etp_conventionnes.nombre_etp_conventionnes,
-    cel.ville,
-    cel.nom_epci,
-    cel.code_commune,
-    cel.nom_arrondissement,
-    cel.bassin_d_emploi
+    cel.epci,
+    cel.bassin_emploi_structure
