@@ -66,7 +66,10 @@ models:
       Vue créée pour joindre les dates d'embauche de chaque candidat. Cette vue est utilisée dans candidats_derniere_embauche.sql pour extraire la dernière date d'embauche d'un candidat.
   - name: stg_salarie
     description: >
-      Vue créée pour récupérer les id uniques des salarié(e)s ainsi que leur genre afin de permettre le calcul des ETPs par genre.
+      Vue créée pour récupérer les id uniques des salarié(e)s ainsi que leur caractéristiques (p.exp genre), car le modele fluxIAE_Salarie contient des `salarie_id` en doublon (car un salarie peut avoir plusieurs `hash_numero_pass_IAE`).
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('fluxIAE', 'fluxIAE_Salarie_v2')
   - name: stg_sorties_finales
     description: >
       Vue créée afin de servir de base pour créer des tables prenant en compte les spécifité de sortie de chaque type de SIAE.
