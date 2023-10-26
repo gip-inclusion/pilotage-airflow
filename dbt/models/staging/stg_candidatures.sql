@@ -1,19 +1,22 @@
 select
     {{ pilo_star(source('emplois', 'candidatures'),
         except=["id", "date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "délai_de_réponse", "délai_prise_en_compte", "origine_détaillée"]) }},
-    {{ pilo_star(ref('stg_organisations'), except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_derniere_candidature"], relation_alias='org_prescripteur') }},
+    {{ pilo_star(ref('stg_organisations'),
+        except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_derniere_candidature"], relation_alias='org_prescripteur') }},
     candidatures.id                                        as id,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
     org_prescripteur.type                                  as type_org_prescripteur,
     org_prescripteur.date_inscription                      as date_inscription_orga,
+    grp_strct.groupe                                       as categorie_structure,
     nom_org.type_auteur_diagnostic_detaille,
     case
         when candidatures."état" = 'Candidature déclinée' then 'Candidature refusée'
         else candidatures."état"
     end                                                    as "état",
     case
-        when candidatures.motif_de_refus = 'Autre (détails dans le message ci-dessous)' then 'Motif "Autre" saisi sur les emplois'
+        when candidatures.motif_de_refus = 'Autre (détails dans le message ci-dessous)'
+            then 'Motif "Autre" saisi sur les emplois'
         else candidatures.motif_de_refus
     end                                                    as motif_de_refus,
     case
@@ -21,7 +24,8 @@ select
         else candidatures.origine
     end                                                    as origine,
     case
-        when candidatures."origine_détaillée" = 'Prescripteur habilité Autre' then 'Prescripteur habilité par habilitation préfectorale'
+        when candidatures."origine_détaillée" = 'Prescripteur habilité Autre'
+            then 'Prescripteur habilité par habilitation préfectorale'
         else candidatures."origine_détaillée"
     end                                                    as "origine_détaillée",
     extract(day from candidatures."délai_de_réponse")      as temps_de_reponse,
@@ -34,3 +38,6 @@ left join {{ ref('stg_organisations') }} as org_prescripteur
     on org_prescripteur.id = candidatures.id_org_prescripteur
 left join {{ ref('nom_prescripteur') }} as nom_org
     on nom_org.origine_detaille = candidatures."origine_détaillée"
+left join
+    {{ ref('groupes_structures') }} as grp_strct
+    on grp_strct.structure = candidatures.type_structure

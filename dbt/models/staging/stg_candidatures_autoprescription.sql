@@ -20,6 +20,7 @@ select
     cd.origine                             as origine,
     cd."origine_détaillée"                 as "origine_détaillée",
     cd.type_structure                      as type_structure,
+    cd.categorie_structure,
     cd.nom_structure                       as nom_structure,
     cd."département_structure"             as "département_structure",
     cd."nom_département_structure"         as "nom_département_structure",
