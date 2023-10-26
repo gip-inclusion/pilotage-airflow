@@ -106,9 +106,6 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'cap_structures')
-  - name: stg_test_suivi_etp_realises_par_structure
-    description: >
-      Vue permettant de tester le nombre de lignes de la table suivi_etp_realises_par_structure.
   - name: stg_suivi_demandes_prolongations_acceptees
     description: >
       Vue permettant de récupérer les demandes de prolongation & prolongations acceptées
@@ -121,3 +118,29 @@ models:
   - name: stg_premiere_visite
     description: >
       Vue permettant de récupérer la première visite d'un utilisateur sur l'un de nos tableaux de bord privés
+  - name: stg_test_suivi_etp_realises_par_structure
+    description: >
+      Vue permettant de tester le nombre de lignes de la table suivi_etp_realises_par_structure.
+  - name: stg_fdp_candidatures
+    description: >
+      Contient la liste des candidatures pour toutes les fiches de postes.
+      Permet de calculer l'état d'une fiche de poste et pour pouvoir reconnaître les fiches de poste en difficulté de recrutement.
+  - name: stg_fdp
+    description: >
+      Contient la liste des fiches de poste et leur état (active, sans recrutement, difficulte de recrutement...) pour toutes les structures.
+      Les états sont calculés à partir de la vue stg_candidatures
+  - name: stg_fdp_actives
+    description: >
+      Contient la liste des fiches de poste actives, ie celles qui ont le statut "recrutement ouvert".
+  - name: stg_fdp_actives_sans_rec_30jrs
+    description: >
+      Fiches de poste sans candidatures sur les 30 derniers jours ou avec des candidatures mais sans recrutement.
+  - name: stg_fdp_actives_sans_rec_30jrs_sans_motif_pasdeposteouvert
+    description: >
+      Fiches de postes sans candidatures sur les 30 derniers jours ou avec des candidatures mais sans recrutement et dont l’employeur n'a pas refusé des candidatures dans les 30 derniers jours pour le motif "Pas de poste ouvert".
+  - name: stg_fdp_difficulte_recrutement
+    description: >
+      Fiches de poste sans candidatures sur les 30 derniers jours ou avec des candidatures mais sans recrutement et dont l’employeur n'a pas refusé des candidatures dans les 30 derniers jours pour le motif "Pas de poste ouvert" et dont la fiche de poste est en ligne depuis plus de 30 jours.
+  - name: stg_fdp_difficulte_recrutement_sans_candidatures
+    description: >
+      Fiches de poste en difficulté de recrutement et n'ayant jamais reçu de candidatures.
