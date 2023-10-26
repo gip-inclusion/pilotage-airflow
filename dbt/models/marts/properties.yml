@@ -185,3 +185,6 @@ models:
   - name: suivi_cap
     description: >
       Contient les statistiques de contrôle des structures pour toutes les campagnes de contrôle. Table réalisée pour la réalisation du tb suivi du contrôle a posteriori.
+  - name: fiches_deposte_en_tension_recrutement
+    description: >
+      Fiches de postes par structure et leur état. Pour la réalisation du TB fiches postes en tension.
