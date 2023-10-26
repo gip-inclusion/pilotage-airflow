@@ -36,6 +36,10 @@ dbt_docs:
 	dbt docs generate
 	cd $(DBT_TARGET_PATH) && python3 -m http.server
 
+dbt_run:
+	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+
+	dbt test
+
 clean: dbt_clean
 	find . -depth -type d -name "__pycache__" -exec rm -rf '{}' \;
 	find . -type d -empty -delete
