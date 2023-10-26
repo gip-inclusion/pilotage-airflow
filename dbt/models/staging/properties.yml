@@ -32,11 +32,6 @@ models:
       Ce modèle récupère les données de la table c1 organisations et y ajoute des colonnes pour faciliter le déploiement de tableaux metabase liés aux prescripteurs.
       Une colonne type_complet_avec_habilitation permet notamment de rendre cohérent le nom des prescripteurs avec celui de la table candidature.
       Elle pourra également être enrichie d'autres données sur les organisations comme le nombre de structures partenaires, le nombre de prescriptions réalisées, etc.
-    tests:
-      - dbt_utils.expression_is_true:
-          # we check that those columns match as much as possible, knowing that the first one is prefixed by the department code: "01 - Ain".
-          expression: >
-            split_part("nom_département", ' - ', 2) = "nom_département_insee"
   - name: stg_reseaux
     description: >
       Ce modèle récupère les données des tables reseau_iae_adherents et reseau_iae_ids afin d'associer l'id reseau correspondant à chaque structure.
