@@ -14,8 +14,8 @@ select
     s.nom                                                                                   as nom_structure,
     s.nom_complet                                                                           as nom_complet_structure,
     s.type                                                                                  as type_structure,
-    s."nom_département"                                                                     as "département_structure",
-    s."région"                                                                              as "région_structure",
+    s."nom_département_c1"                                                                  as "département_structure",
+    s."région_c1"                                                                           as "région_structure",
     demandes_prolong.date_de_demande                                                        as "date_de_création",
     case
         when demandes_prolong.motif_de_refus = 'IAE'
