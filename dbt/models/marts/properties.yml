@@ -111,7 +111,7 @@ models:
   - name: suivi_etp_realises_par_structure_brsa
     description: >
       Table de suivi des etps réalisés par structure. Cette table permet aussi de savoir combien de salariés sont bRSA ou pas au sein de la structure et quelle a été leur consommation d'ETP.
-      Afin d'être en accord avec les règles de la DGEFP et ASP, seuls les salariés ayant travaillé au moins une heure sont pris en compte dans cette table.
+      Afin d'être en accord avec les règles de la DGEFP et ASP, seuls les salariés ayant travaillé au moins une heure sont pris en compte dans cette table
   - name: suivi_consommation_mensuelle_etp_V2
     description: >
       Table de suivi des etps réalisés et conventionnés par structure mois par mois.
