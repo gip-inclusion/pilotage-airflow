@@ -179,7 +179,7 @@ models:
   - name: suivi_cap_structures
     description: >
       Suivi des structures ayant fait l'objet du contrôle a posteriori. Table réalisée pour la réalisation du tb suivi du contrôle a posteriori.
-  - name: suivi_cap_critères
+  - name: suivi_cap_criteres
     description: >
       Suivi des critères vérifiés dans le cadre du contrôle a posteriori. Table réalisée pour la réalisation du tb suivi du contrôle a posteriori.
   - name: suivi_cap
@@ -188,3 +188,6 @@ models:
   - name: fiches_deposte_en_tension_recrutement
     description: >
       Fiches de postes par structure et leur état. Pour la réalisation du TB fiches postes en tension.
+  - name: recrutements
+    description: >
+      Table permettant de suivre les recrutements réalisés et déclarés à l'ASP.
