@@ -1,14 +1,15 @@
 select
-    communes.code_insee       as code_insee,
-    communes.libelle_commune  as libelle_commune,
-    communes.code_region      as code_region,
-    regions."LIBELLE"         as nom_region,
-    communes.code_dept        as code_dept,
-    departements."LIBELLE"    as nom_departement,
-    epci."LIBEPCI"            as nom_epci,
-    epci_libelle."libelle"    as type_epci,
-    arrondissements."LIBELLE" as nom_arrondissement,
-    zone_emploi."LIBZE2020"   as nom_zone_emploi
+    communes.code_insee                                                     as code_insee,
+    communes.libelle_commune                                                as libelle_commune,
+    communes.code_region                                                    as code_region,
+    regions."LIBELLE"                                                       as nom_region,
+    communes.code_dept                                                      as code_dept,
+    departements."LIBELLE"                                                  as nom_departement,
+    epci."LIBEPCI"                                                          as nom_epci,
+    epci_libelle."libelle"                                                  as type_epci,
+    arrondissements."LIBELLE"                                               as nom_arrondissement,
+    zone_emploi."LIBZE2020"                                                 as nom_zone_emploi,
+    concat(lpad(communes.code_dept, 2, '0'), ' - ', departements."LIBELLE") as nom_departement_complet
 from {{ ref('insee_communes') }} as communes
 left join {{ ref('insee_regions') }} as regions
     on regions."REG" = communes.code_region

@@ -147,3 +147,6 @@ models:
   - name: stg_fdp_difficulte_recrutement_sans_candidatures
     description: >
       Fiches de poste en difficulté de recrutement et n'ayant jamais reçu de candidatures.
+  - name: fluxIAE_Structure_v2
+    description: >
+      Vue permettant de compléter les données de structures du fluxIAE avec les informations geographiques de l'insee.

@@ -19,7 +19,7 @@ structure_af as (
         s.structure_siret_actualise    as structure_siret,
         s.nom_departement_structure,
         s.nom_region_structure,
-        s.code_departement,
+        s.code_dept_structure          as code_departement,
         max(af.af_date_debut_effet_v2) as date_debut_af_plus_recente
     from
         {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
@@ -37,7 +37,7 @@ structure_af as (
         structure_siret,
         s.nom_departement_structure,
         s.nom_region_structure,
-        s.code_departement
+        s.code_dept_structure
 )
 
 select distinct
