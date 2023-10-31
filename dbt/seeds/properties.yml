@@ -3,7 +3,7 @@ version: 2
 seeds:
   - name: insee_communes
     description: >
-      communes françaises et leur appartenance géographique
+      communes françaises et leur appartenance géographique. contient les communes et les arrondissements.
       (source: [insee](https://www.insee.fr/fr/information/2028028))
       permet de calculer le modèle d'appartenance géographique (models.staging.stg_insee_appartenance_geo_communes)
   - name: insee_arrondissements

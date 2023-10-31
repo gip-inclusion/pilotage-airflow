@@ -65,7 +65,7 @@ select
     s.structure_denomination                           as nom_structure,
     s.structure_adresse_admin_cp                       as code_postal_structure,
     s.structure_adresse_admin_commune                  as ville_structure,
-    s.code_departement                                 as departement_code_structure,
+    s.code_dept_structure                              as departement_code_structure,
     s.nom_departement_structure                        as departement_structure,
     s.nom_region_structure                             as region_structure,
     s.structure_code_naf                               as code_naf_structure,

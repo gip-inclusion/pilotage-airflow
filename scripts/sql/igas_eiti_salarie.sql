@@ -14,7 +14,7 @@ with formations_par_contrat as (
         "fluxIAE_Formations" formations
         left join "fluxIAE_ContratMission" contrat on formations.formation_id_ctr = contrat_id_ctr
         left join "fluxIAE_RefNiveauFormation" rnf on contrat.contrat_niveau_de_formation_code = rnf.rnf_code_niveau_form_empl
-    where 
+    where
         contrat_mesure_disp_code = 'EITI_DC'
     group by
         contrat_id_pph,
@@ -115,7 +115,7 @@ from
     -- une ligne par salarié et par contrat
     -- pour les EITI il y a un nb très négligeable de salariés ayant eu plusieurs contrats (5)
     left join "fluxIAE_ContratMission" contrat on contrat_id_pph = salarie_id
-    left join etp_par_salarie eps on contrat_id_pph = eps.id_salarie 
+    left join etp_par_salarie eps on contrat_id_pph = eps.id_salarie
     -- pour récupération du libellé du motif de sortie
     left join "fluxIAE_RefMotifSort" refmotifsort on rms_id = contrat_motif_sortie_id
     left join "fluxIAE_RefCategorieSort" as categoriesort on categoriesort.rcs_id = refmotifsort.rcs_id
