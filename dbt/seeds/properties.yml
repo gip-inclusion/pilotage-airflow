@@ -67,6 +67,6 @@ seeds:
     description: >
       liste des emails des utilisateurs internes à pilotage sur le c1.
       permet de filtrer pour ne considérer que les vrais utilisateurs dans le cadre du suivi des visites.
-  - name: groupe_structures
+  - name: groupes_structures
     description: >
       Seed permettant de regrouper les structures de l'IAE et hors IAE dans deux catégories distinctes.

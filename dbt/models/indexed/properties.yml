@@ -26,3 +26,6 @@ models:
   - name: fluxIAE_Salarie_v2
     description: >
       Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
+  - name: fluxIAE_Structure_v2
+    description: >
+      Table introduite afin d'ajouter des données geographiques à la table structures du fluxIAE + à l'indexer.
