@@ -20,8 +20,8 @@ select
     count(ctr.contrat_salarie_rsa) as nombre_salaries
 from
     {{ ref('stg_dates_etat_mensuel_individualise') }} as constantes
-cross join "fluxIAE_EtatMensuelIndiv_v2" as emi
-left join "fluxIAE_ContratMission_v2" as ctr
+cross join {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
+left join {{ ref('fluxIAE_ContratMission_v2') }} as ctr
     on ctr.contrat_id_ctr = emi.emi_ctr_id
 where
     emi.emi_sme_annee >= constantes.annee_en_cours_2
