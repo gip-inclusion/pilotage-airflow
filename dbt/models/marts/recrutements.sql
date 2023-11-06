@@ -1,5 +1,5 @@
 select
-    ctr.contrat_id_ctr                                                    as identifiant_salarie,
+    ctr.contrat_id_ctr                                                                   as identifiant_salarie,
     ctr.contrat_id_structure,
     ctr.contrat_id_pph,
     ctr.contrat_date_embauche,
@@ -9,9 +9,9 @@ select
     af.af_numero_annexe_financiere,
     salarie.genre_salarie,
     salarie.tranche_age,
-    salarie.qpv                                                           as qpv,
-    salarie.zrr                                                           as zrr,
-    rnf.rnf_libelle_niveau_form_empl                                      as niveau_formation_salarie,
+    salarie.qpv                                                                          as qpv,
+    salarie.zrr                                                                          as zrr,
+    rnf.rnf_libelle_niveau_form_empl                                                     as niveau_formation_salarie,
     struct.structure_denomination,
     struct.structure_adresse_admin_commune,
     struct.structure_adresse_admin_code_insee,
@@ -20,18 +20,18 @@ select
     struct.nom_epci_structure,
     af.nom_departement_af,
     af.nom_region_af,
-    ref_disp.type_structure_emplois                                       as type_siae,
+    ref_disp.type_structure_emplois                                                      as type_siae,
+    cast(date_part('year', to_date(ctr.contrat_date_embauche, 'DD/MM/YYYY')) as integer) as annee_recrutement,
     case
         when ctr.contrat_salarie_rqth then 'OUI'
         else 'NON'
-    end                                                                   as rqth,
+    end                                                                                  as rqth,
     case
         when ctr.contrat_salarie_rsa = 'OUI-M' then 'OUI'
         when ctr.contrat_salarie_rsa = 'OUI-NM' then 'OUI'
         else 'NON'
-    end                                                                   as brsa,
-    date_trunc('month', to_date(ctr.contrat_date_embauche, 'DD/MM/YYYY')) as mois_recrutement,
-    date_trunc('year', to_date(ctr.contrat_date_embauche, 'DD/MM/YYYY'))  as annee_recrutement
+    end                                                                                  as brsa,
+    date_trunc('month', to_date(ctr.contrat_date_embauche, 'DD/MM/YYYY'))                as mois_recrutement
 from {{ ref('fluxIAE_ContratMission_v2') }} as ctr
 left join {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
     on ctr.contrat_id_pph = emi.emi_pph_id and ctr.contrat_id_ctr = emi.emi_ctr_id
