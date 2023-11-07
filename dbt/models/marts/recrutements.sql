@@ -1,7 +1,7 @@
 select
-    ctr.contrat_id_ctr                                                                   as identifiant_salarie,
+    ctr.contrat_id_ctr                                                                   as identifiant_contrat,
     ctr.contrat_id_structure,
-    ctr.contrat_id_pph,
+    ctr.contrat_id_pph                                                                   as identifiant_salarie,
     ctr.contrat_date_embauche,
     emi.emi_afi_id,
     emi.emi_sme_annee,
