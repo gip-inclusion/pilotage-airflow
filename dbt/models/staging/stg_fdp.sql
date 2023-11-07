@@ -6,6 +6,7 @@ select
     fdpc.nom_rome_fdp,
     fdpc.siret_employeur,
     fdpc.type_structure,
+    fdpc.categorie_structure,
     fdpc."nom_département_structure",
     fdpc."département_structure",
     fdpc."région_structure",
@@ -20,13 +21,15 @@ select
     max(fdpc.date_candidature)                              as date_derniere_candidature_recue,
     max(fdpc.date_embauche)                                 as date_derniere_embauche,
     (current_date - fdpc."date_création_fdp")               as delai_mise_en_ligne,
-    -- une candidature a été recue dans les 30 derniers jours s'il existe une date candidature pas null et comprise entre aujd et le mois dernier
+    /* une candidature a été recue dans les 30 derniers jours s'il
+    existe une date candidature pas null et comprise entre aujd et le mois dernier */
     coalesce(
         max(fdpc.date_candidature) >= current_date - interval '30 days',
         not max(fdpc.date_candidature) is null,
         true
     )                                                       as candidature_30_derniers_jours,
-    -- une embauche a été realisée dans les 30 derniers jours s'il existe une date embauche pas null et comprise entre aujd et le mois dernier
+    /* une embauche a été realisée dans les 30 derniers jours
+    s'il existe une date embauche pas null et comprise entre aujd et le mois dernier */
     coalesce(
         max(fdpc.date_embauche) >= current_date - interval '30 days',
         not max(fdpc.date_embauche) is null,
@@ -60,6 +63,7 @@ group by
     fdpc.nom_rome_fdp,
     fdpc.siret_employeur,
     fdpc.type_structure,
+    fdpc.categorie_structure,
     fdpc."nom_département_structure",
     fdpc."département_structure",
     fdpc."région_structure",

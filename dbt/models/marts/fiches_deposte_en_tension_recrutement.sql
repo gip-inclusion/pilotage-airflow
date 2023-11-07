@@ -46,6 +46,7 @@ select
     epci_structure,
     bassin_emploi_structure,
     type_structure,
+    categorie_structure,
     id_structure,
     nom_structure,
     etape,
@@ -61,6 +62,7 @@ group by
     epci_structure,
     bassin_emploi_structure,
     type_structure,
+    categorie_structure,
     id_structure,
     nom_structure,
     etape

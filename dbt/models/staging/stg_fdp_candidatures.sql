@@ -4,7 +4,10 @@ select
     fdp.id_employeur                as id_structure,
     fdp."nom_département_employeur" as "nom_département_structure",
     s.nom                           as nom_structure,
-    fdp.type_employeur              as type_structure, /* On récupère les infos via la table structure pour éviter des lignes vides lors de la recupération des infos candidatures */
+    /* On récupère les infos via la table structure pour éviter
+    des lignes vides lors de la recupération des infos candidatures */
+    fdp.type_employeur              as type_structure,
+    grp_strct.groupe                as categorie_structure,
     crdp.grand_domaine,
     crdp.domaine_professionnel,
     fdp.code_rome                   as code_rome_fpd,
@@ -40,3 +43,5 @@ left join {{ ref('code_rome_domaine_professionnel') }} as crdp
     on fdp.code_rome = crdp.code_rome
 left join {{ source('emplois', 'structures') }} as s
     on s.id = fdp.id_employeur
+left join {{ ref('groupes_structures') }} as grp_strct
+    on grp_strct.structure = fdp.type_employeur
