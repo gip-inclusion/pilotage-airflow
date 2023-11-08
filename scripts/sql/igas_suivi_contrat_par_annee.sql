@@ -1,5 +1,5 @@
 --drop table igas_suivi_contrat_par_annee;
-create table igas_suivi_contrat_par_annee as 
+create table igas_suivi_contrat_par_annee as
 select
     contrat_id,
     annee_af,

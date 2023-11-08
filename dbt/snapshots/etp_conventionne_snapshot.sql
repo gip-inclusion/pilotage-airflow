@@ -10,6 +10,6 @@
         )
     }}
 
-select * from {{ ref('stg_etp_conventionnes') }}
-where annee_af = date_part('year', current_date)
+    select * from {{ ref('stg_etp_conventionnes') }}
+    where annee_af = date_part('year', current_date)
 {% endsnapshot %}

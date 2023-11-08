@@ -1,4 +1,4 @@
-create table igas_suivi_salarie_par_annee as 
+create table igas_suivi_salarie_par_annee as
 select
     id_salarie,
     annee_af,

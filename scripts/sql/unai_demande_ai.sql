@@ -15,7 +15,7 @@ create table prep as (
     from
         candidats as c
     left join candidatures as cd
-    on 
+    on
         c.id = cd.id_candidat
     where
         cd.injection_ai = 1
@@ -24,7 +24,7 @@ create table prep as (
 );
 drop table if exists prep_asp;
 create table prep_asp as (
-    select 
+    select
         prep.id,
         date_candidature,
         date_début_contrat,
@@ -88,7 +88,7 @@ create table prep_rqth_sortie as (
 );
 drop table if exists prep_sortie;
 create table prep_sortie as (
-    select 
+    select
         emi.emi_pph_id,
         contrat_id_pph,
         emi.emi_ctr_id,
@@ -98,7 +98,7 @@ create table prep_sortie as (
         contrat_date_embauche,
         contrat_date_fin_contrat,
         contrat_duree_contrat,
-        case 
+        case
             when ctr_mis.contrat_salarie_rqth = 'true' then 'Oui'
             when ctr_mis.contrat_salarie_rqth = 'false' then 'Non'
             else 'information non disponible'
@@ -107,11 +107,11 @@ create table prep_sortie as (
         categoriesort.rcs_libelle as categorie_sortie
     from
         "fluxIAE_EtatMensuelIndiv" as emi
-    left join "fluxIAE_ContratMission" as ctr_mis 
+    left join "fluxIAE_ContratMission" as ctr_mis
         on
             emi.emi_ctr_id = ctr_mis.contrat_id_ctr
         and emi.emi_pph_id = ctr_mis.contrat_id_pph
-    left join "fluxIAE_RefMotifSort" as sortie 
+    left join "fluxIAE_RefMotifSort" as sortie
         on
             emi.Emi_motif_sortie_id = sortie.rms_id
     left join "fluxIAE_RefCategorieSort" as categoriesort
