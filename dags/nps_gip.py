@@ -37,37 +37,27 @@ with DAG(
         for name, pub_sheet_url in Variable.get("NPS_NAME_PUB_SHEET_URL_TUPLES", deserialize_json=True):
             print(f"reading {name=} at {pub_sheet_url=}")
             sheet_df = pd.read_csv(pub_sheet_url)
-            column_commu = "Quelle est la probabilité que vous recommandiez"
-            column_commu += " La communauté de l'inclusion à un collègue, partenaire ou homologue ?"
+            nps_column = None
 
             # Identify the last column that contains an integer
-            last_integer_column = None
-            for column in sheet_df.columns:
+            for column in sheet_df.columns[::-1]:  # Iterate in a inverse order
                 if sheet_df[column].dtype == "int64":
-                    last_integer_column = column
+                    nps_column = column
+                    break
+            else:  # explanation https://docs.python.org/3/tutorial/controlflow.html#break-and-continue-statements-and-else-clauses-on-loops
+                nps_column = "Quelle est la probabilité que vous recommandiez La"
+                nps_column += "communauté de l'inclusion à un collègue, partenaire ou homologue ?"
+            if nps_column not in sheet_df.columns:
+                raise Exception("Our colleagues messed up the columns :(")
 
-            if last_integer_column is not None:
-                # Rename the last integer column
-                sheet_df.rename(
-                    columns={
-                        "Submitted at": "Date",
-                        "Dates": "Date",
-                        last_integer_column: "Recommandation",
-                    },
-                    inplace=True,
-                )
-            else:
-                if column_commu in sheet_df.columns:
-                    sheet_df.rename(
-                        columns={
-                            "Submitted at": "Date",
-                            "Dates": "Date",
-                            column_commu: "Recommandation",
-                        },
-                        inplace=True,
-                    )
-                else:
-                    raise Exception("Our colleagues messed up the columns :(")
+            sheet_df.rename(
+                columns={
+                    "Submitted at": "Date",
+                    "Dates": "Date",
+                    nps_column: "Recommandation",
+                },
+                inplace=True,
+            )
             sheet_df["Produit"] = name
             sheet_df = sheet_df[["Date", "Recommandation", "Produit"]]
             df = pd.concat([df, sheet_df])
