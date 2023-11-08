@@ -4,7 +4,7 @@ with nb_structures_par_dept as (
         "nom_département",
         cast(count(*) as float) as nb_struct
     from
-        {{ source('emplois', 'structures') }}
+        {{ ref('structures') }}
     group by
         "département",
         "nom_département"
@@ -81,7 +81,7 @@ select
     sum(cap_struct_cnt."nb_contrôlées") / max(nb_tot_dep.nb_struct) as "part_structures_contrôlées"
 from
     cap_struct_counts as cap_struct_cnt
-left join {{ source('emplois', 'structures') }} as struct on cap_struct_cnt.id_structure = struct.id
+left join {{ ref('structures') }} as struct on cap_struct_cnt.id_structure = struct.id
 left join {{ source('emplois', 'cap_campagnes') }} as cap_camp on cap_camp.id = cap_struct_cnt.id_cap_campagne
 left join nb_structures_par_dept as nb_tot_dep on nb_tot_dep."nom_département" = struct."nom_département"
 where struct.active = 1

@@ -16,7 +16,7 @@ left join
     {{ ref('stg_organisations') }} as organisations
     on organisations.id = candidats.id_auteur_diagnostic_prescripteur
 left join
-    {{ source('emplois', 'structures') }} as structures
+    {{ ref('structures') }} as structures
     on structures.id = candidats.id_auteur_diagnostic_employeur
 left join
     {{ ref('groupes_structures') }} as grp_strct

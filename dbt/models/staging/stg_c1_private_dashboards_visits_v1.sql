@@ -7,7 +7,7 @@ select
     count(distinct cp.id) as visiteurs_uniques
 from
     {{ source('emplois', 'c1_private_dashboard_visits_v0') }} as cp
-left join {{ source('emplois', 'structures') }} as s
+left join {{ ref('structures') }} as s
     on cp.department = s."département"
 left join {{ ref('metabase_dashboards') }} as md
     on (cp.dashboard_id)::integer = md.id_tb

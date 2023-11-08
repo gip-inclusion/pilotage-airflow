@@ -52,7 +52,7 @@ from
     {{ ref('stg_fdp_candidatures') }} as fdpc
 left join {{ ref('code_rome_domaine_professionnel') }} as rome
     on fdpc.code_rome_fpd = rome.code_rome
-left join {{ source('emplois', 'structures') }} as s
+left join {{ ref('structures') }} as s
     on fdpc.id_structure = s.id
 left join {{ ref('stg_insee_appartenance_geo_communes') }} as app_geo
     on s.code_commune = app_geo.code_insee

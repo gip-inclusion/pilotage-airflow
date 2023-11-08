@@ -25,7 +25,7 @@ left join {{ ref('metabase_dashboards') }} as metabase_ids
     on metabase_ids.id_tb = cast(visits.dashboard_id as INTEGER)
 left join {{ ref('stg_organisations') }} as organisations
     on organisations.id = cast(visits.current_prescriber_organization_id as INTEGER) and visits.user_kind = 'prescriber'
-left join {{ source('emplois', 'structures') }} as structures
+left join {{ ref('structures') }} as structures
     on structures.id = cast(visits.current_company_id as INTEGER) and visits.user_kind = 'employer'
 left join {{ source('emplois', 'institutions') }} as institutions
     on institutions.id = cast(visits.current_institution_id as INTEGER) and visits.user_kind = 'labor_inspector'

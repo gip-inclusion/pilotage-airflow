@@ -60,7 +60,7 @@ left join
 left join
     {{ source('emplois', 'fiches_de_poste') }} as fdp on fdpc.id_fiche_de_poste = fdp.id
 left join
-    {{ source('emplois', 'structures') }} as structures on structures.id = cel.id_structure
+    {{ ref('structures') }} as structures on structures.id = cel.id_structure
 left join
     etp_conventionnes
     on

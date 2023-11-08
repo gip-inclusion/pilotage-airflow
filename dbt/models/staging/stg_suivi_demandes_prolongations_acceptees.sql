@@ -29,7 +29,7 @@ left join {{ source('emplois', 'demandes_de_prolongation') }} as demandes_prolon
     on prolong.id = demandes_prolong.id_prolongation
 left join {{ ref('stg_organisations') }} as o
     on prolong.id_organisation_prescripteur = o.id
-left join {{ source('emplois', 'structures') }} as s
+left join {{ ref('structures') }} as s
     on prolong."id_structure_déclarante" = s.id
 left join {{ source('emplois', 'pass_agréments') }} as pass
     on prolong."id_pass_agrément" = pass.id
