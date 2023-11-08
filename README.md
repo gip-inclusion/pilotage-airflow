@@ -32,7 +32,7 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
 Sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html) ni de
 lancer `direnv allow` ensuite dans ce répertoire.
-[Tuto](https://stackoverflow.com/questions/49083789/how-to-add-new-line-in-bashrc-file-in-ubuntu) pour ajouter une nouvelle ligne sur le fichier bashrc (linux) ou .bash_profile (mac OS)
+[Tuto](https://stackoverflow.com/questions/49083789/how-to-add-new-line-in-bashrc-file-in-ubuntu) pour ajouter une nouvelle ligne sur le fichier `bashrc` (linux) ou `.bash_profile` (mac OS)
 
 ### Votre fichier ``.env``
 
@@ -52,36 +52,36 @@ Pour définir ```PGPASSWORD=password``` vous pouvez utiliser la commande suivant
     sudo -u postgres psql
     > ALTER USER postgres PASSWORD 'password';
 
-Notez que le fichier commité `.env-base` contient des variables d'environnement
-bonnes quel que soit votre environnement de développement et n'est pas censé
-être "personnalisé".
+Notez que le fichier commité `.env-base` contient les bonnes variables d'environnement
+quel que soit votre environnement de développement et n'est pas censé être "personnalisé".
 
 
 ## DBT et base de données Pilotage
 
-Pour vérifier que DBT est bien configuré:
+Pour vérifier que DBT est bien configuré :
 
     dbt debug
 
-Pour avoir une configuration "prête à l'emploi", il vous faut lancer les commandes suivantes:
+Pour avoir une configuration "prête à l'emploi", il vous faut lancer les commandes suivantes :
 
     make load_dump
     dbt deps
     dbt seed
 
-Si tout va bien, vous pourrez ensuite utiliser DBT pour pour toutes vos opérations.
+Si tout va bien, vous pourrez ensuite utiliser DBT pour toutes vos opérations.
 
     dbt run --select heures_etp_salaries
 
 ### Charger un dump local pilotage
 
-Une commande Makefile est proposée, pourvu que vous ayiez rempli les variables d'environnement nécessaires
+Une commande Makefile est proposée, pourvu que vous ayez rempli les variables d'environnement nécessaires
 pour accéder à la base de données PostgreSQL de production.
 
     make load_dump
+
 ### Ajout de nouvelles colonnes dans les seeds
 
-L'ajout de nouvelle colonnes dans les seeds ne fonctionnera pas avec la colonne
+L'ajout de nouvelles colonnes dans les seeds ne fonctionnera pas avec la colonne
 
     dbt seed
 
@@ -98,14 +98,14 @@ Créez une base de données pour Airflow si elle n'existe pas.
     make airflow_initdb
 
 
-En particulier cette étape:
+En particulier cette étape :
 
 - crée la base de données `airflow`
 - lui applique des migrations
 - importe les variables "par défaut" `dag-variables.json`
-- ajoute un utilsateur `admin/password`
+- ajoute un utilisateur `admin/password`
 
-Pour lancer airflow localement, ouvrez **DEUX** terminaux et:
+Pour lancer airflow localement, ouvrez **DEUX** terminaux et :
 
     airflow webserver
     airflow scheduler
@@ -116,13 +116,13 @@ L'utilisateur local de base a pour credentials "admin" / "password".
 
 ## Linter & en forme de vos scripts
 
-Si les scripts ne respectent pas la mise en forme des différents linter ils ne passeront pas les tests de la CI.
-Afin d'effectuer une mise en forme automatique la commande ci dessous peut être lancée. Elle analysera tous les fichiers et les mettra en forme automatiquement.
+Si les scripts ne respectent pas la mise en forme des différents linters ils ne passeront pas les tests de la CI.
+Afin d'effectuer une mise en forme automatique la commande ci-dessous peut être lancée.
+Elle analysera tous les fichiers et les mettra en forme automatiquement.
 
     make fix
 
 > **Note**
 >
-> Il faut absolument éviter d'utiliser des variables d'environnement dans vos DAGs, et ser
-> cantonner à l'usage de variables Airflow. En effet ces dernières sont en général utilisées
-> par le métier pour agir rapidement et efficacement sur l'exécution des DAGs.
+> Il faut absolument éviter d'utiliser des variables d'environnement dans vos DAGs pour se cantonner à l'usage de variables Airflow.
+> Ces dernières sont en général utilisées par le métier pour agir rapidement et efficacement sur l'exécution des DAGs.
