@@ -59,7 +59,7 @@ jobs:
         AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@localhost:5432/airflow
     - name: Install dbt packages
       run: dbt deps
-    - name: ✨ Lint with black, isort, flake8 & sqlfluff 👌
+    - name: ✨ Verify quality 👌
       run: make quality
       env:
         PGDATABASE: pilotage
