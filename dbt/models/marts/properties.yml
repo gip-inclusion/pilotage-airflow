@@ -202,3 +202,8 @@ models:
     description: >
         Table permettant de suivre les utilisateurs qui restent actifs d'une période à une autre.
         Les périodes peuvent être un mois ou un trimestre.
+  - name: nombre_candidatures_par_structure
+    description: >
+      Table faisant appel a plusieurs ephemeral tables (anciennement des CTEs) afin de pouvoir montrer différentes informations sans être limité par les filtres de Metabase.
+      Ainsi nous pouvons montrer le nombre total de candidatures reçues par une structure dans une colonne tout en ne montrant que les candidatures acceptées provenant d'un PH dans une autre.
+      Table peu évidente à comprendre, c'est un héritage du passé du pilotage. Nous évitons ce genre de constructions désormais et nous divisons l'information en plusieurs tables & indicateurs.

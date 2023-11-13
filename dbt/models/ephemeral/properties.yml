@@ -7,3 +7,15 @@ models:
   - name: stg_dates_annexe_financiere
     description: >
       Vue créée pour récupérer l'année sur laquelle court l'annexe financière
+  - name: eph_nbr_candidatures
+    description: >
+      Vue créée pour récupérer le nombre de candidatures associées à une structure de l'IAE et son origine
+  - name: eph_nbr_cddr_structures
+    description: >
+      Vue créée pour toutes les candidatures reçues par une structure
+  - name: eph_nbr_cddr_prescripteurs
+    description: >
+      Vue créée pour toutes les candidatures reçues par une structure provenant de prescripteurs habilités
+  - name: eph_prop_cddr
+    description: >
+      Vue créée afin de calculer le taux de candidatures par état
