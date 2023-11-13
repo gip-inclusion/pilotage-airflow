@@ -198,3 +198,7 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'structures_v0')
+  - name: suivi_utilisateurs_actifs
+    description: >
+        Table permettant de suivre les utilisateurs qui restent actifs d'une période à une autre.
+        Les périodes peuvent être un mois ou un trimestre.
