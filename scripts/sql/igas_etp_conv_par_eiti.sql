@@ -22,4 +22,4 @@ group by
     id_struct,
     structure.structure_denomination,
     af.af_numero_annexe_financiere,
-    annee_af
+    annee_af;

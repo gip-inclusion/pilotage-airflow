@@ -18,4 +18,4 @@ create table igas_etp_consommes_par_eiti_par_annee as (
     group by
         id_struct,
         annee_af
-)
+);

@@ -186,4 +186,4 @@ select
     left join contrat_par_structure cps on conv.id_struct = cps.id_struct
         and conv.annee_af = cps.annee_embauche
     left join sorties_par_structure sps on conv.id_struct = sps.id_struct
-        and conv.annee_af = sps.annee_sortie
+        and conv.annee_af = sps.annee_sortie;
