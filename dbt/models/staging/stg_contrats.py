@@ -1,5 +1,5 @@
-import numpy as np
 import pandas as pd
+
 
 # test à ajouter pour cette table : nb de ligne == nb de lignes fluxIAE_contratMission where contrat_type_contrat = 0
 
@@ -31,14 +31,13 @@ def model(dbt, session):
     )
 
     # loop over all physical persons of contracts table
-    print(len(pph_ids))
     for pph_id in pph_ids:
         # recover all contrats of this pph
         pph_contrats = df[df["contrat_id_pph"] == pph_id]
+        pph_contrats_rows = [x[1] for x in pph_contrats.iterrows()]
 
         # loop over all contracts to cumulate them
-        for row in pph_contrats.iterrows():
-            curcontrat = row[1]
+        for curcontrat in pph_contrats_rows:
             # if we get a contrat_type_contrat we add last contract
             # and instantiate a new one
             if curcontrat["contrat_type_contrat"] == 0:
@@ -49,6 +48,5 @@ def model(dbt, session):
                 contrats.at[last_row_index, "date_fin_dernier_contrat"] = curcontrat["contrat_date_fin_contrat"]
                 contrats.at[last_row_index, "duree_contrats_cumules"] += curcontrat["contrat_duree_contrat"]
                 contrats.at[last_row_index, "nombre_reconductions"] += 1
-        print(contrats)
 
     return contrats
