@@ -6,6 +6,7 @@ select
     c.date_candidature,
     c.nombre_de_candidatures,
     prop_cddr.total_candidatures,
+    ttes_ccdr.somme_candidatures,
     ttes_ccdr_ph.somme_candidatures_ph,
     c.nom_structure,
     c.type_structure,

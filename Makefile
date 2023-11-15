@@ -40,6 +40,14 @@ dbt_run:
 	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+
 	dbt test
 
+dbt_weekly:
+	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+ --exclude marts.daily+
+	dbt test
+
+dbt_daily:
+	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+ --exclude marts.weekly+
+	dbt test
+
 clean: dbt_clean
 	find . -depth -type d -name "__pycache__" -exec rm -rf '{}' \;
 	find . -type d -empty -delete

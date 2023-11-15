@@ -38,10 +38,10 @@ with airflow.DAG(
     def params_check(params=None, **kwargs):
         is_full_refresh = params.get("full_refresh")
         if is_full_refresh:
-            kwargs["ti"].xcom_push("dbt_run_args", "")
+            kwargs["ti"].xcom_push("dbt_run_args", "--exclude marts.daily")
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
         else:
-            kwargs["ti"].xcom_push("dbt_run_args", "--exclude legacy.oneshot marts.oneshot")
+            kwargs["ti"].xcom_push("dbt_run_args", "--exclude marts.daily legacy.oneshot marts.oneshot")
             kwargs["ti"].xcom_push("dbt_seed_args", "")
 
     params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
