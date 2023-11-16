@@ -41,11 +41,11 @@ dbt_run:
 	dbt test
 
 dbt_weekly:
-	dbt run --select marts.weekly+ --select ephemeral+ --select indexed+ --select staging+
+	dbt run --select marts.weekly ephemeral indexed staging
 	dbt test
 
 dbt_daily:
-	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+ --exclude marts.weekly+
+	dbt run --select marts.daily ephemeral staging
 	dbt test
 
 clean: dbt_clean
