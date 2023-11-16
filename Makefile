@@ -41,7 +41,7 @@ dbt_run:
 	dbt test
 
 dbt_weekly:
-	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+ --exclude marts.daily+
+	dbt run --select marts.weekly+ --select ephemeral+ --select indexed+ --select staging+
 	dbt test
 
 dbt_daily:

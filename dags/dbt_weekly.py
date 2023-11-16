@@ -8,7 +8,7 @@ from dags.common import db, dbt, default_dag_args, slack
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
-    dag_id="final_tables",
+    dag_id="dbt_weekly",
     schedule_interval=None,
     params={
         "full_refresh": Param(False, type="boolean"),
@@ -41,7 +41,7 @@ with airflow.DAG(
             kwargs["ti"].xcom_push("dbt_run_args", "--exclude marts.daily")
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
         else:
-            kwargs["ti"].xcom_push("dbt_run_args", "--exclude marts.daily legacy.oneshot marts.oneshot")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select marts.daily ephemeral indexed staging")
             kwargs["ti"].xcom_push("dbt_seed_args", "")
 
     params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
