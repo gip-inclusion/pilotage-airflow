@@ -1,6 +1,6 @@
 select
     rec.id_premier_contrat           as identifiant_contrat,
-    rec.id_derniere_reconduction     as identifiant_derniere_reconduction,
+    rec.id_derniere_reconduction     as identifiant_derniere_reconduction_contrat,
     ctr.contrat_id_structure,
     rec.contrat_id_pph               as identifiant_salarie,
     ctr.contrat_date_embauche,
