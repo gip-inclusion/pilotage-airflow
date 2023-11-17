@@ -1,49 +1,42 @@
 select
-    rec.id_premier_contrat                                        as identifiant_contrat,
+    rec.id_premier_contrat           as identifiant_contrat,
+    rec.id_derniere_reconduction     as identifiant_derniere_reconduction,
     ctr.contrat_id_structure,
-    ctr.contrat_id_pph                                            as identifiant_salarie,
+    rec.contrat_id_pph               as identifiant_salarie,
     ctr.contrat_date_embauche,
-    emi.emi_afi_id,
-    emi.emi_sme_annee,
-    emi.emi_sme_mois,
-    af.af_numero_annexe_financiere,
     salarie.genre_salarie,
     salarie.tranche_age,
-    salarie.qpv                                                   as qpv,
-    salarie.zrr                                                   as zrr,
-    rnf.rnf_libelle_niveau_form_empl                              as niveau_formation_salarie,
+    salarie.qpv                      as qpv,
+    salarie.zrr                      as zrr,
+    rnf.rnf_libelle_niveau_form_empl as niveau_formation_salarie,
     struct.structure_denomination,
     struct.structure_adresse_admin_commune,
     struct.structure_adresse_admin_code_insee,
     struct.nom_departement_structure,
     struct.nom_region_structure,
     struct.nom_epci_structure,
-    af.nom_departement_af,
-    af.nom_region_af,
-    ref_disp.type_structure_emplois                               as type_siae,
-    cast(date_part('year', ctr.contrat_date_embauche) as integer) as annee_recrutement,
-    rec.nb_reconductions                                          as nb_reconductions,
-    rec.date_recrutement                                          as date_recrutement,
-    rec.date_fin_recrutement                                      as date_fin_recrutement,
-    emi.emi_sme_annee                                             as emi_annee,
+    ref_disp.type_structure_emplois  as type_siae,
+    af_ctr.af_numero_annexe_financiere,
+    af_ctr.af_id_annexe_financiere,
+    af_ctr.nom_departement_af,
+    af_ctr.nom_region_af,
+    rec.nb_reconductions             as nb_reconductions,
+    rec.date_recrutement             as date_recrutement,
+    rec.date_fin_recrutement         as date_fin_recrutement,
     case
         when ctr.contrat_salarie_rqth then 'OUI'
         else 'NON'
-    end                                                           as rqth,
+    end                              as rqth,
     case
         when ctr.contrat_salarie_rsa = 'OUI-M' then 'OUI'
         when ctr.contrat_salarie_rsa = 'OUI-NM' then 'OUI'
         else 'NON'
-    end                                                           as brsa,
-    date_trunc('month', ctr.contrat_date_embauche)                as mois_recrutement,
-    date_trunc('month', ctr.contrat_date_fin_contrat)             as mois_fin_recrutement
+    end                              as brsa
 from {{ ref('stg_recrutements') }} as rec
-left join {{ ref('fluxIAE_ContratMission_v2') }} as ctr
+inner join {{ ref('fluxIAE_ContratMission_v2') }} as ctr
     on rec.id_premier_contrat = ctr.contrat_id_ctr
-left join {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
-    on ctr.contrat_id_pph = emi.emi_pph_id and ctr.contrat_id_ctr = emi.emi_ctr_id
-left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
-    on emi.emi_afi_id = af.af_id_annexe_financiere
+left join {{ ref('corresp_af_contrats') }} as af_ctr
+    on ctr.contrat_id_ctr = af_ctr.contrat_id_ctr and ctr.contrat_id_pph = af_ctr.contrat_id_pph
 left join {{ ref('stg_salarie') }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
 left join {{ source('fluxIAE', 'fluxIAE_RefNiveauFormation') }} as rnf
@@ -52,8 +45,3 @@ left join {{ ref('fluxIAE_Structure_v2') }} as struct
     on ctr.contrat_id_structure = struct.structure_id_siae
 left join {{ ref('ref_mesure_dispositif_asp') }} as ref_disp
     on ctr.contrat_mesure_disp_code = ref_disp.af_mesure_dispositif_code
-where
-    ctr.contrat_type_contrat = 0
-    and af.af_etat_annexe_financiere_code in (
-        'VALIDE', 'PROVISOIRE', 'CLOTURE'
-    )
