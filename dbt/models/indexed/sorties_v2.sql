@@ -49,9 +49,9 @@ select distinct
         when salarie.salarie_rci_libelle = 'M.' then 'Homme'
         else 'Non renseigné'
     end                                                                          as genre_salarie,
-    extract(year from to_date(ctr.contrat_date_embauche, 'DD/MM/YYYY'))          as annee_debut_contrat,
+    extract(year from ctr.contrat_date_embauche)                                 as annee_debut_contrat,
     extract(year from to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')) as annee_sortie_definitive,
-    extract(year from to_date(ctr.contrat_date_fin_contrat, 'DD/MM/YYYY'))       as annee_fin_contrat,
+    extract(year from ctr.contrat_date_fin_contrat)                              as annee_fin_contrat,
     date_trunc('year', date(extract(
         year from
         to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')
