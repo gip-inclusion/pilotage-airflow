@@ -34,7 +34,7 @@ dbt_clean:
 
 dbt_docs:
 	dbt docs generate
-	cd $(DBT_TARGET_PATH) && python3 -m http.server
+	python3 -m http.server --directory $(DBT_TARGET_PATH) --bind 127.0.0.1 $(DBT_DOCS_PORT)
 
 dbt_run:
 	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+
