@@ -54,6 +54,7 @@ sources:
       - name: demandes_de_prolongation
       - name: prolongations
       - name: structures_v0
+      - name: c1_ref_type_prescripteur
 
   - name: oneshot
     schema: public

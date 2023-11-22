@@ -9,7 +9,6 @@ select
     org_prescripteur.type                                  as type_org_prescripteur,
     org_prescripteur.date_inscription                      as date_inscription_orga,
     grp_strct.groupe                                       as categorie_structure,
-    nom_org.type_auteur_diagnostic_detaille,
     case
         when candidatures."état" = 'Candidature déclinée' then 'Candidature refusée'
         else candidatures."état"
@@ -36,8 +35,6 @@ left join {{ ref('stg_structures') }} as struct
     on struct.id = candidatures.id_structure
 left join {{ ref('stg_organisations') }} as org_prescripteur
     on org_prescripteur.id = candidatures.id_org_prescripteur
-left join {{ ref('nom_prescripteur') }} as nom_org
-    on nom_org.origine_detaille = candidatures."origine_détaillée"
 left join
     {{ ref('groupes_structures') }} as grp_strct
     on grp_strct.structure = candidatures.type_structure

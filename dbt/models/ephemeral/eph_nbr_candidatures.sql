@@ -13,7 +13,7 @@ select
     c.nom_org_prescripteur,
     count(c."état") as nombre_de_candidatures
 from
-    {{ source('emplois', 'candidatures') }} as c
+    {{ ref('candidatures_echelle_locale') }} as c
 where
     c.type_structure in (
         'AI', 'ACI', 'EI', 'EITI', 'ETTI'

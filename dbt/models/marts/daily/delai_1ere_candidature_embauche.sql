@@ -38,7 +38,7 @@ with date_1ere_candidature as (
             coalesce(c.date_embauche, '2099-01-01')
         )                           as date_1ere_embauche
     from
-        {{ source('emplois', 'candidatures') }} as c
+        {{ ref('candidatures_echelle_locale') }} as c
     inner join {{ ref('candidats') }} as candidats on c.id_candidat = candidats.id
     group by
         c.id_candidat,

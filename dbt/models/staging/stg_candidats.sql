@@ -1,6 +1,7 @@
 select
     {{ pilo_star(source('emplois', 'candidats_v0'), relation_alias='candidats') }},
     grp_strct.groupe                                                        as categorie_structure,
+    organisations.type_org,
     coalesce(organisations."région", structures."région")                   as "région_diag",
     coalesce(organisations."nom_département", structures."nom_département") as "département_diag",
     -- for know only reliable to the year because we do not consider month for calculating the age
@@ -13,7 +14,7 @@ select
 from
     {{ source('emplois', 'candidats_v0') }} as candidats
 left join
-    {{ ref('stg_organisations') }} as organisations
+    {{ ref('organisations') }} as organisations
     on organisations.id = candidats.id_auteur_diagnostic_prescripteur
 left join
     {{ ref('structures') }} as structures

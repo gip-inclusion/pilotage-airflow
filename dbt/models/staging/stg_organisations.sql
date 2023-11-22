@@ -6,13 +6,15 @@ select
     coalesce(organisations.code_commune, appartenance_geo_communes.code_insee) as code_commune,
     organisations."nom_département"                                            as "nom_département",
     organisations.siret                                                        as siret_org_prescripteur,
-    organisations."nom_département"                                            as dept_org,  /*bien mettre nom département et pas département */
+    /*bien mettre nom département et pas département */
+    organisations."nom_département"                                            as dept_org,
     organisations."région"                                                     as "région_org",
     appartenance_geo_communes.nom_departement                                  as "nom_département_insee",
     appartenance_geo_communes.nom_region                                       as "région",
     appartenance_geo_communes.nom_zone_emploi                                  as zone_emploi,
     appartenance_geo_communes.nom_epci                                         as epci,
-    organisations_libelles.libelle                                             as type_complet,
+    organisations_libelles.label                                               as type_complet,
+    organisations_libelles.code                                                as type_org,
     case
         when organisations.type in ('ML', 'PE', 'CAP_EMPLOI') then 'SPE'
         when organisations.type = 'Autre' then 'Autre'
@@ -31,7 +33,7 @@ select
         when organisations."habilitée" = 0 then concat('Orienteur ', organisations.type_complet)
     end                                                                        as type_complet_avec_habilitation
 from {{ source('emplois', 'organisations_v0') }} as organisations
-left join {{ ref('organisations_libelles') }} as organisations_libelles
-    on organisations.type = organisations_libelles.type
+left join {{ source('emplois','c1_ref_type_prescripteur') }} as organisations_libelles
+    on organisations.type = organisations_libelles.code
 left join {{ ref('stg_insee_appartenance_geo_communes') }} as appartenance_geo_communes
     on organisations.code_commune = ltrim(appartenance_geo_communes.code_insee, '0')
