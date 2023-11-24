@@ -1,6 +1,6 @@
 select
     {{ pilo_star(source('emplois', 'candidatures'),
-        except=["id", "date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "délai_de_réponse", "délai_prise_en_compte", "origine_détaillée"]) }},
+        except=["id", "date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée"]) }},
     {{ pilo_star(ref('stg_organisations'),
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_derniere_candidature"], relation_alias='org_prescripteur') }},
     candidatures.id                                        as id,

@@ -41,7 +41,7 @@ select
     (current_date - fdp."date_création")   as delai_mise_en_ligne,
     (c.date_embauche - c.date_candidature) as delai_embauche
 from
-    {{ source('emplois', 'candidatures') }} as c
+    {{ ref('candidatures_echelle_locale') }} as c
 left join {{ ref('stg_organisations') }} as o
     on o.id = c.id_org_prescripteur
 inner join {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdppc
