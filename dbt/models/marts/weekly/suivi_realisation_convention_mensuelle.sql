@@ -25,10 +25,11 @@ select
     case
         when etp_r.date_saisie is not null then 'Oui'
         else 'Non'
-    end                                                    as saisie_effectuee,
-    coalesce(etp_r.nombre_heures_travaillees, 0)           as nombre_heures_travaillees,
-    coalesce(etp_r.nombre_etp_consommes_reels_annuels, 0)  as nombre_etp_consommes_reels_annuels,
-    coalesce(etp_r.nombre_etp_consommes_reels_mensuels, 0) as nombre_etp_consommes_reels_mensuels
+    end                                                       as saisie_effectuee,
+    etp_c."effectif_annuel_conventionné" / etp_c.duree_annexe as "effectif_annuel_conventionné_mensualisé",
+    coalesce(etp_r.nombre_heures_travaillees, 0)              as nombre_heures_travaillees,
+    coalesce(etp_r.nombre_etp_consommes_reels_annuels, 0)     as nombre_etp_consommes_reels_annuels,
+    coalesce(etp_r.nombre_etp_consommes_reels_mensuels, 0)    as nombre_etp_consommes_reels_mensuels
 from
     {{ ref('suivi_complet_etps_conventionnes') }} as etp_c
 left join {{ ref('suivi_etp_realises_par_structure') }} as etp_r
