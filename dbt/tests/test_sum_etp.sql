@@ -1,7 +1,3 @@
-{{ config(
-    severity = 'warn',
-    warn_if = '>1') }}
-
 with sum_etp as (
     select
         (
@@ -16,4 +12,4 @@ with sum_etp as (
 
 select *
 from sum_etp
-where etp_somme_tous = etp_somme_strct
+where etp_somme_tous != etp_somme_strct
