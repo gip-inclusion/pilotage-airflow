@@ -151,9 +151,3 @@ models:
     description: >
       Ajoute aux contrats un identifiant (id_recrutement) permettant de regrouper les reconductions d'un même contrat.
       Pour une personne physique (contrat_id_pph), tous les contrats qui sont des reconductions d'un contrat initial auront le même id_recrutement.
-  - name: stg_sum_etp
-    description: >
-     Vue permettant d'effectuer un test d'égalité entre deux colonnes etp provenant de deux différentes tables.
-    tests:
-      - dbt_utils.expression_is_true:
-          expression: "etp_somme_tous = etp_somme_strct"

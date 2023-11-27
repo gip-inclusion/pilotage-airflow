@@ -1,0 +1,6 @@
+version: 2
+
+tests:
+  - name: test_sum_etp
+    description: >
+      Test permettant de vérifier l'intégrité d'une table à l'aide de la somme d'etp
