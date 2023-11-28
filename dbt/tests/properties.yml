@@ -7,3 +7,6 @@ tests:
   - name: test_etp_realises
     description: >
       Test permettant de vérifier l'absence de doublons dans la table suivi_etp_realises_v2
+  - name: test_fluxIAE_EtatMensuelIndiv_v2_sum_etp
+    description: >
+      Test permettant de vérifier la somme des ETP entre la source et notre modèle
