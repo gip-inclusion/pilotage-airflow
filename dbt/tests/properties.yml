@@ -4,3 +4,6 @@ tests:
   - name: test_sum_etp
     description: >
       Test permettant de vérifier l'intégrité d'une table à l'aide de la somme d'etp
+  - name: test_etp_realises
+    description: >
+      Test permettant de vérifier l'absence de doublons dans la table suivi_etp_realises_v2

@@ -4,6 +4,7 @@ select distinct
     emi.emi_part_etp                                                                    as nombre_etp_consommes_asp,
     emi.emi_nb_heures_travail                                                           as nombre_heures_travaillees,
     emi.emi_afi_id                                                                      as identifiant_annexe_fin,
+    emi.emi_dsm_id,
     emi.emi_sme_mois,
     emi.emi_sme_annee,
     emi.emi_esm_etat_code,
@@ -60,6 +61,7 @@ left join {{ ref('stg_etat_mensuel_individuel_avec_brsa') }} as brsa
         and emi.emi_pph_id = brsa.emi_pph_id
         and emi.emi_sme_annee = brsa.emi_sme_annee
         and emi.emi_sme_mois = brsa.emi_sme_mois
+        and emi.emi_dsm_id = brsa.emi_dsm_id
 where
     emi.emi_sme_annee >= constantes.annee_en_cours_2
     and firmi.rmi_libelle = 'Nombre d''heures annuelles théoriques pour un salarié à taux plein'

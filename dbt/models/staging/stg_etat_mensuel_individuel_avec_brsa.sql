@@ -4,6 +4,7 @@ select
     emi.emi_sme_mois,
     emi.emi_sme_annee,
     emi.emi_sme_version,
+    emi.emi_dsm_id,
     case
         when ctr.contrat_salarie_rsa = 'OUI-M' then 'RSA majoré'
         when ctr.contrat_salarie_rsa = 'OUI-NM' then 'RSA non majoré'
@@ -31,4 +32,5 @@ group by
     emi.emi_sme_mois,
     emi.emi_sme_annee,
     emi.emi_sme_version,
+    emi.emi_dsm_id,
     ctr.contrat_salarie_rsa
