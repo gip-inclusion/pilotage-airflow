@@ -10,3 +10,6 @@ tests:
   - name: test_fluxIAE_EtatMensuelIndiv_v2_sum_etp
     description: >
       Test permettant de vérifier la somme des ETP entre la source et notre modèle
+  - name: test_suivi_etp_realises_v2_sum_etp
+    description: >
+      Test permettant de vérifier la somme des ETP entre la source et notre modèle
