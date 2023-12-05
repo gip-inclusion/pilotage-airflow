@@ -17,6 +17,7 @@ select
     organisations_libelles.code                                                as type_org,
     case
         when organisations.type in ('ML', 'PE', 'CAP_EMPLOI') then 'SPE'
+        when organisations.type in ('DEPT', 'ODC') then 'Département'
         when organisations.type = 'Autre' then 'Autre'
         else 'Nouveaux prescripteurs'
     end                                                                        as type_prescripteur,
