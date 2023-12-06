@@ -10,3 +10,4 @@ from
     {{ ref('candidatures_echelle_locale') }} as candidatures
 left join {{ ref('organisations') }} as organisations
     on organisations.id = candidatures.id_org_prescripteur
+where candidatures.origine = 'Prescripteur habilité'
