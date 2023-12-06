@@ -66,3 +66,9 @@ def create_df_from_db(sql_query):
 
     with MetabaseDBCursor() as (cursor, conn):
         return pd.read_sql_query(sql_query, conn)
+
+
+def bucket_connection():
+    hostbucket = Variable.get("hostbucket")
+    passwordbucket = Variable.get("passwordbucket")
+    userbucket = Variable.get("userbucket")

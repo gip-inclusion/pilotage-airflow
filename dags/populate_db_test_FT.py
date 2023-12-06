@@ -1,15 +1,17 @@
+import glob
+
+import ftputil
 import numpy as np
 import pandas as pd
 
-
-# FTP connection parameters
+from dags.common import db
 
 
 # Path to the remote file
-
+remote_file_path = glob.glob("version_travail.csv")
 
 # Use the "with" statement to ensure the host automatically closes when done
-with ftputil.FTPHost(host_name, user_name, password) as host:
+with ftputil.FTPHost(db.hostbucket, db.userbucket, db.passwordbucket) as host:
     # Check if the remote file exists
     if host.path.isfile(remote_file_path):
         # Download the file to a local temporary file
