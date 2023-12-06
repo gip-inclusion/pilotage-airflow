@@ -17,6 +17,7 @@ with candidats_p as (
         cdd."département"                     as departement_candidat,
         cdd."nom_département"                 as nom_departement_candidat,
         cdd."région"                          as region_candidat,
+        cdd."type_structure_dernière_embauche",
         cdd.type_org,
         cdd.type_auteur_diagnostic,
         cdd.sous_type_auteur_diagnostic,
@@ -45,6 +46,7 @@ select
     organisations_libelles.label    as type_auteur_diagnostic_detaille,
     prescripteurs.type_prescripteur as type_prescripteur,
     prescripteurs.zone_emploi       as bassin_emploi_prescripteur,
+    prescripteurs.epci              as epci_prescripteur,
     prescripteurs."nom_département" as "nom_département_prescripteur",
     prescripteurs."région"          as "nom_région_prescripteur",
     case
