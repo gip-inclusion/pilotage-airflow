@@ -151,3 +151,7 @@ models:
     description: >
       Ajoute aux contrats un identifiant (id_recrutement) permettant de regrouper les reconductions d'un même contrat.
       Pour une personne physique (contrat_id_pph), tous les contrats qui sont des reconductions d'un contrat initial auront le même id_recrutement.
+  - name: stg_emi_heures
+    description: >
+      Permet d'obtenir le nombre d'heures effectuées par personne physique, contrat et id d'annexe financière.
+      Ces données ont pour but d'identifier le nombre de contrats où il y a 0 heure de travail
