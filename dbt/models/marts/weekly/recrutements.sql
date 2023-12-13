@@ -23,7 +23,7 @@ select
     rec.nb_reconductions             as nb_reconductions,
     rec.date_recrutement             as date_recrutement,
     rec.date_fin_recrutement         as date_fin_recrutement,
-    emi.emi_nb_heures_travail        as nombre_heures_travaillees,
+    emi.date_recrutement_reelle,
     case
         when ctr.contrat_salarie_rqth then 'OUI'
         else 'NON'
@@ -46,8 +46,5 @@ left join {{ ref('fluxIAE_Structure_v2') }} as struct
     on ctr.contrat_id_structure = struct.structure_id_siae
 left join {{ ref('ref_mesure_dispositif_asp') }} as ref_disp
     on ctr.contrat_mesure_disp_code = ref_disp.af_mesure_dispositif_code
-left join {{ ref('stg_emi_heures') }} as emi
-    on
-        ctr.contrat_id_pph = emi.emi_pph_id
-        and ctr.contrat_id_ctr = emi.emi_ctr_id
-        and af_ctr.af_id_annexe_financiere = emi.emi_afi_id
+inner join {{ ref('stg_emi_date_recrutement') }} as emi
+    on rec.id_premier_contrat = emi.emi_ctr_id
