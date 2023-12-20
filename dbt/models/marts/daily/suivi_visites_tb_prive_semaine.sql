@@ -1,4 +1,8 @@
 select
+    visits.region                      as "région",
+    visits.departement                 as "département_num",
+    visits.type_utilisateur            as type_utilisateur,
+    visits.type_organisation           as profil,
     visits.nom_tb,
     visits.semaine,
     visits.num_semaine,
@@ -16,6 +20,10 @@ from {{ ref('suivi_utilisateurs_tb_prive_semaine') }} as visits
 left join {{ source('emplois', 'utilisateurs') }} as c1_users
     on c1_users.id = cast(visits.id_utilisateur as INTEGER)
 group by
+    visits.region,
+    visits.departement,
+    visits.type_utilisateur,
+    visits.type_organisation,
     visits.num_semaine,
     visits.nom_tb,
     visits.semaine
