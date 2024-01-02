@@ -9,7 +9,7 @@ select
     type_organisation,
     -- nb de fois ou l'utilisateur est revenu cette semaine
     count(*) as nb_visites_sem
-from suivi_utilisateurs_tb_prive_semaine
+from {{ ref('suivi_utilisateurs_tb_prive_semaine') }}
 group by
     id_utilisateur,
     email_utilisateur,
