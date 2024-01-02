@@ -8,46 +8,46 @@ def model(dbt, session):
     depts = [d for d in organisations["dept_org"].unique() if d is not None]
     regions = [r for r in organisations["région_org"].unique() if r is not None]
 
-    potentiel_records = []
+    potential_records = []
 
     for dept in depts:
         num_dept = dept.split(" ")[0]
-        for reg in regions:
+        for region in regions:
             # organisations
             for orga_type in organisations["type"].unique():
-                cur_pot = len(
+                potential = len(
                     organisations[
                         (organisations["type"] == orga_type)
                         & (organisations["dept_org"] == dept)
-                        & (organisations["région_org"] == reg)
+                        & (organisations["région_org"] == region)
                     ]
                 )
-                potentiel_records.append([reg, num_dept, dept, "prescripteur", orga_type, cur_pot])
+                potential_records.append([region, num_dept, dept, "prescripteur", orga_type, potential])
 
             # institutions
             for inst_type in institutions["type"].unique():
-                cur_pot = len(
+                potential = len(
                     institutions[
                         (institutions["type"] == inst_type)
                         & (institutions["nom_département"] == dept)
-                        & (institutions["région"] == reg)
+                        & (institutions["région"] == region)
                     ]
                 )
-                potentiel_records.append([reg, num_dept, dept, "institution", inst_type, cur_pot])
+                potential_records.append([region, num_dept, dept, "institution", inst_type, potential])
 
             # structures
             structures = structures[structures["active"] == 1]
             for struct_type in structures["type"].unique():
-                cur_pot = len(
+                potential = len(
                     structures[
                         (structures["type"] == struct_type)
                         & (structures["nom_département"] == dept)
-                        & (structures["région"] == reg)
+                        & (structures["région"] == region)
                     ]
                 )
-                potentiel_records.append([reg, num_dept, dept, "siae", struct_type, cur_pot])
+                potential_records.append([region, num_dept, dept, "siae", struct_type, potential])
 
     return pd.DataFrame.from_records(
-        potentiel_records,
-        columns=["région", "département_num", "département", "type_utilisateur", "profil", "potentiel"],
+        potential_records,
+        columns=["région", "département_num", "département", "type_utilisateur", "profil", "potential"],
     )
