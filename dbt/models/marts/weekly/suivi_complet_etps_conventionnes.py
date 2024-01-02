@@ -40,6 +40,8 @@ def get_zero_etp(df):
     # and remove the duplicates where df_replicate[etp] != 0
     for year in three_last_years:
         df_temp = df[df["annee_af"] == year]
+        if df_temp.empty:
+            continue
         df_temp["af_date_debut_effet_v2"] = pd.to_datetime(df_temp["af_date_debut_effet_v2"])
         df_temp["af_date_fin_effet_v2"] = pd.to_datetime(df_temp["af_date_fin_effet_v2"])
 
