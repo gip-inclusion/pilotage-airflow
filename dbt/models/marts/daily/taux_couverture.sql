@@ -9,7 +9,7 @@ select
     potentiel.potentiel,
     case
         when potentiel.potentiel = 0 then null
-        else visites.nb_utilisateurs::float / potentiel.potentiel::float
+        else cast(visites.nb_utilisateurs as float) / cast(potentiel.potentiel as float)
     end as taux_couverture
 from {{ ref('suivi_visites_tb_prive_semaine') }} as visites
 left join {{ ref('nb_utilisateurs_potentiels') }} as potentiel
