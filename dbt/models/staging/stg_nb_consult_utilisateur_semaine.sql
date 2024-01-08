@@ -11,9 +11,9 @@ select
     count(*) as nb_visites_sem
 from {{ ref('suivi_utilisateurs_tb_prive_semaine') }}
 group by
-    num_semaine,
-    email_utilisateur,
     id_utilisateur,
+    email_utilisateur,
+    num_semaine,
     nom_tb,
     region,
     departement,
