@@ -2,9 +2,11 @@ import pandas as pd
 
 
 def subdf_by_value_if_exists(df, column, value):
-    if value not in set(column):
-        return pd.DataFrame()
-    return df.groupby(column).get_group(value)
+    if value in list(set(column)):
+        outdf = df.groupby(column).get_group(value)
+    else:
+        outdf = pd.DataFrame()
+    return outdf
 
 
 def model(dbt, session):
@@ -13,7 +15,7 @@ def model(dbt, session):
     structures = dbt.source("emplois", "structures")
     structures = structures[structures["active"] == 1]
 
-    regions = filter(None, institutions["région"].unique())
+    regions = [r for r in institutions["région"].unique() if r is not None]
 
     potential_records = []
 
@@ -26,7 +28,7 @@ def model(dbt, session):
 
         for dept in depts:
             num_dept = dept.split(" ")[0]
-            # institutions
+            # institions
             dept_inst = region_inst.groupby(region_inst.nom_département).get_group(dept)
             for inst_type in dept_inst["type"].unique():
                 potential = len(dept_inst[dept_inst.type == inst_type])
