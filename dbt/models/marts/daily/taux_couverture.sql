@@ -1,8 +1,8 @@
 select
     visites.semaine,
-    visites.nom_tb,
     visites.type_utilisateur,
     visites.profil,
+    visites.nom_tb,
     visites."département_num",
     visites."région",
     visites.nb_utilisateurs,
@@ -20,10 +20,10 @@ left join {{ ref('nb_utilisateurs_potentiels') }} as potentiel
         and visites."région" = potentiel."région"
 group by
     visites.semaine,
-    visites.nom_tb,
-    visites."région",
-    visites."département_num",
     visites.type_utilisateur,
     visites.profil,
+    visites.nom_tb,
+    visites."département_num",
+    visites."région",
     visites.nb_utilisateurs,
     potentiel.potentiel
