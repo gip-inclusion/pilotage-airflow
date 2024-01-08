@@ -1,6 +1,5 @@
 select
-    visites.semaine,
-    visites.type_utilisateur,
+    visites.type,
     visites.profil,
     visites.nom_tb,
     visites."département_num",
@@ -14,13 +13,12 @@ select
 from {{ ref('suivi_visites_tb_prive_semaine') }} as visites
 left join {{ ref('nb_utilisateurs_potentiels') }} as potentiel
     on
-        visites.type_utilisateur = potentiel.type_utilisateur
+        visites.type = potentiel.type
         and visites.profil = potentiel.profil
         and visites."département_num" = potentiel."département_num"
         and visites."région" = potentiel."région"
 group by
-    visites.semaine,
-    visites.type_utilisateur,
+    visites.type,
     visites.profil,
     visites.nom_tb,
     visites."département_num",

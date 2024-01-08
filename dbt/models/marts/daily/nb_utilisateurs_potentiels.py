@@ -1,54 +1,53 @@
 import pandas as pd
 
 
-def subdf_by_value_if_exists(df, column, value):
-    if value in list(set(column)):
-        outdf = df.groupby(column).get_group(value)
-    else:
-        outdf = pd.DataFrame()
-    return outdf
-
-
 def model(dbt, session):
     organisations = dbt.ref("organisations")
     institutions = dbt.source("emplois", "institutions")
     structures = dbt.source("emplois", "structures")
-    structures = structures[structures["active"] == 1]
-
-    regions = [r for r in institutions["région"].unique() if r is not None]
+    depts = [d for d in organisations["dept_org"].unique() if d is not None]
+    regions = [r for r in organisations["région_org"].unique() if r is not None]
 
     potential_records = []
 
-    for region in regions:
-        region_inst = institutions.groupby(institutions.région).get_group(region)
-        region_struct = subdf_by_value_if_exists(structures, structures.région, region)
-        region_orga = subdf_by_value_if_exists(organisations, organisations.région_org, region)
+    for dept in depts:
+        num_dept = dept.split(" ")[0]
+        for region in regions:
+            # organisations
+            for orga_type in organisations["type"].unique():
+                potential = len(
+                    organisations[
+                        (organisations["type"] == orga_type)
+                        & (organisations["dept_org"] == dept)
+                        & (organisations["région_org"] == region)
+                    ]
+                )
+                potential_records.append([region, num_dept, dept, "prescripteur", orga_type, potential])
 
-        depts = [d for d in region_inst["nom_département"].unique() if d is not None]
-
-        for dept in depts:
-            num_dept = dept.split(" ")[0]
-            # institions
-            dept_inst = region_inst.groupby(region_inst.nom_département).get_group(dept)
-            for inst_type in dept_inst["type"].unique():
-                potential = len(dept_inst[dept_inst.type == inst_type])
+            # institutions
+            for inst_type in institutions["type"].unique():
+                potential = len(
+                    institutions[
+                        (institutions["type"] == inst_type)
+                        & (institutions["nom_département"] == dept)
+                        & (institutions["région"] == region)
+                    ]
+                )
                 potential_records.append([region, num_dept, dept, "institution", inst_type, potential])
 
-            # organisations
-            if not region_orga.empty:
-                dept_orga = subdf_by_value_if_exists(region_orga, region_orga.dept_org, dept)
-                for orga_type in dept_orga["type"].unique():
-                    potential = len(dept_orga[dept_orga.type == orga_type])
-                    potential_records.append([region, num_dept, dept, "prescripteur", orga_type, potential])
-
             # structures
-            if not region_struct.empty:
-                dept_struct = subdf_by_value_if_exists(region_struct, region_struct.nom_département, dept)
-                for struct_type in dept_struct["type"].unique():
-                    potential = len(dept_struct[dept_struct.type == struct_type])
-                    potential_records.append([region, num_dept, dept, "siae", struct_type, potential])
+            structures = structures[structures["active"] == 1]
+            for struct_type in structures["type"].unique():
+                potential = len(
+                    structures[
+                        (structures["type"] == struct_type)
+                        & (structures["nom_département"] == dept)
+                        & (structures["région"] == region)
+                    ]
+                )
+                potential_records.append([region, num_dept, dept, "siae", struct_type, potential])
 
     return pd.DataFrame.from_records(
         potential_records,
-        columns=["région", "département_num", "département", "type_utilisateur", "profil", "potentiel"],
+        columns=["région", "département_num", "département", "type_utilisateur", "profil", "potential"],
     )
