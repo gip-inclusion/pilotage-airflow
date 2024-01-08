@@ -1,10 +1,11 @@
 select
-    visits.semaine,
-    visits.nom_tb,
     visits.region                      as "région",
     visits.departement                 as "département_num",
     visits.type_utilisateur            as type_utilisateur,
     visits.type_organisation           as profil,
+    visits.nom_tb,
+    visits.semaine,
+    visits.num_semaine,
     -- nb utilisateurs revenus plusieurs fois cette semaine
     nb_revenus.nb_utilisateurs_plusieurs_visites,
     -- mail des utilisateurs venus cette semaine
@@ -23,10 +24,11 @@ left join {{ ref('stg_nb_utilisateurs_revenus_semaine') }} as nb_revenus
         and nb_revenus.type_utilisateur = visits.type_utilisateur
         and nb_revenus.type_organisation = visits.type_organisation
 group by
-    visits.semaine,
-    visits.nom_tb,
     visits.region,
     visits.departement,
     visits.type_utilisateur,
     visits.type_organisation,
+    visits.num_semaine,
+    visits.nom_tb,
+    visits.semaine,
     nb_revenus.nb_utilisateurs_plusieurs_visites
