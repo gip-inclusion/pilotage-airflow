@@ -157,7 +157,7 @@ models:
       Ces données ont pour but d'identifier le nombre de contrats où il y a 0 heure de travail
   - name: stg_nb_consult_utilisateur_semaine
     description: >
-      Comptabilise le nb de fois où un utilisateur se connecte par semaine et tb.
+      Compte le nb de fois où un utilisateur se connecte sur une semaine données.
   - name: stg_nb_utilisateurs_revenus_semaine
     description: >
       Compte le nb d'utilisateurs qui se sont connectés plusieurs fois sur un tableau de bord sur une semaine donnée.
