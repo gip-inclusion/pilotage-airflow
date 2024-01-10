@@ -9,10 +9,9 @@ def subdf_by_value_if_exists(df, column, value):
 
 def model(dbt, session):
     organisations = dbt.ref("organisations")
+    organisations = organisations[organisations["total_membres"] != 0]
     institutions = dbt.source("emplois", "institutions")
     structures = dbt.source("emplois", "structures")
-    structures = structures[structures["active"] == 1]
-
     regions = filter(None, institutions["région"].unique())
 
     potential_records = []
