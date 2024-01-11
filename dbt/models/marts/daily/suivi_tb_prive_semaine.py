@@ -32,11 +32,8 @@ def add_past_and_current_users(dtf):
         all_col.append(list(preceding))
         nb_all.append(len(preceding))
 
-    dtf["nouveaux"] = new_col
     dtf["nb_nouveaux"] = nb_new
-    dtf["anciens"] = already_visited_col
     dtf["nb_anciens"] = nb_ancient
-    dtf["tous"] = all_col
     dtf["nb_visiteurs_cumulé"] = nb_all
     return dtf
 
