@@ -18,5 +18,7 @@ def model(dbt, session):
     df["nb_brsa_cible_mensuel"] = (df["af_mt_cofinance"] / df["duree_annexe"]) / (0.88 * df["montant_rsa"])
     # idem par an
     df["nb_brsa_cible_annuel"] = df["af_mt_cofinance"] / (0.88 * df["montant_rsa"])
-
+    # remplissage des null avec des 0 afin de ne pas casser les scripts
+    # dependants de cette table lors du début d'une nouvelle année
+    df["af_mt_cofinance"] = df["af_mt_cofinance"].fillna(0)
     return df
