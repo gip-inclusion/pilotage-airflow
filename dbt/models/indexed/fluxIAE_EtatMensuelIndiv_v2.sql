@@ -16,12 +16,7 @@ select
 from
     {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
 where
-    emi.emi_sme_annee in
-    (
-        date_part('year', current_date),
-        date_part('year', current_date) - 1,
-        date_part('year', current_date) - 2
-    )
+    emi.emi_sme_annee >= 2021
 {% if is_incremental() %}
     and {{ to_timestamp('emi.emi_date_modification') }} > (select max({{ to_timestamp('emi_date_modification') }}) from {{ this }})
 {% endif %}

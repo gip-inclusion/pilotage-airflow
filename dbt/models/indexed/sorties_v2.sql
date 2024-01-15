@@ -72,8 +72,7 @@ where
     af.af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE', 'CLOTURE')
     and
     rms.rms_libelle is not null
-    and emi.emi_sme_annee in (
-        date_part('year', current_date),
-        date_part('year', current_date) - 1,
-        date_part('year', current_date) - 2
-    )
+    /* Gardons un historique à partir de 2022.
+    Néamoins, pour que les sorties soient de 2022 soient calculées correctement
+    il faut prendre en compte l'année 2021 */
+    and emi.emi_sme_annee >= 2021
