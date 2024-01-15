@@ -157,3 +157,7 @@ models:
   - name: suivi_visites_tb_prive_semaine
     description: >
       Permet le suivi par semaine des connections des utilisateurs aux tbs prives.
+  - name: taux_couverture_semaine
+    description: >
+      Donne le taux de couverture par semaine et par tb prive.
+
