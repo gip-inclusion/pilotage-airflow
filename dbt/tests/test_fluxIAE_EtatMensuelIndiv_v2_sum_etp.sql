@@ -4,12 +4,7 @@ with etp_sum as (
             select sum(emi_part_etp)
             from {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }}
             where
-                emi_sme_annee in
-                (
-                    date_part('year', current_date),
-                    date_part('year', current_date) - 1,
-                    date_part('year', current_date) - 2
-                )
+                emi_sme_annee >= 2021
         ) as theirs,
         (
             select sum(emi_part_etp)
