@@ -19,11 +19,10 @@ L'objectif est de calculer le délai entre la 1ère candidature et l'embauche de
 with date_1ere_candidature as (
     select
         c.id_candidat,
-        candidats."nom_département" as "nom_département_candidat",
+        candidats."nom_département"                               as "nom_département_candidat",
         c.date_candidature,
         c.date_embauche,
         c.origine,
-        c."origine_détaillée",
         candidats."type_structure_dernière_embauche",
         c.id_org_prescripteur,
         c.nom_org_prescripteur,
@@ -33,10 +32,11 @@ with date_1ere_candidature as (
         c.nom_complet_structure,
         c."région_structure",
         c."nom_département_structure",
-        min(c.date_candidature)     as date_1ere_candidature,
+        coalesce(c.type_avec_habilitation, c."origine_détaillée") as "origine_détaillée",
+        min(c.date_candidature)                                   as date_1ere_candidature,
         min(
             coalesce(c.date_embauche, '2099-01-01')
-        )                           as date_1ere_embauche
+        )                                                         as date_1ere_embauche
     from
         {{ ref('candidatures_echelle_locale') }} as c
     inner join {{ ref('candidats') }} as candidats on c.id_candidat = candidats.id
@@ -46,6 +46,7 @@ with date_1ere_candidature as (
         c.date_candidature,
         c.date_embauche,
         c.origine,
+        c.type_avec_habilitation,
         c."origine_détaillée",
         c.nom_org_prescripteur,
         c.id_structure,
