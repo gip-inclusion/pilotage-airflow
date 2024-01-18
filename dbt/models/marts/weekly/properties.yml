@@ -54,6 +54,9 @@ models:
     description: >
       Table permettant de suivre par id d'annexe financiere (i.e. par structure et par an) les etps conventionnés, réalisés et la différence entre ces derniers.
       Le delta calculé ici permet de calculer un % de réalisation sur les états mensuels validés très utile au pilotage de l'activité des structures effectuée par les réseaux.
+  - name: suivi_visites_tb_prive_semaine
+    description: >
+      Permet le suivi par semaine des connections des utilisateurs aux tbs prives.
   - name: suivi_visites_tb_prive_mois
     description: >
       Donne la liste des visiteurs de chaque tb prive s'étant connecté sur un mois donné.
@@ -66,6 +69,9 @@ models:
   - name: suivi_visites_tous_tb_prive_trimestre
     description: >
       Donne la liste des visiteurs s'étant connecté sur nos tbs privé sur un trimestre donné (peu importe le tb).
+  - name: taux_couverture_semaine
+    description: >
+      Donne le taux de couverture par semaine et par tb prive.
   - name: taux_couverture_global_mensuel
     description: >
       Donne le taux de couverture par mois, tous tb prive confondus.

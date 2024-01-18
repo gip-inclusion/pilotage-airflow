@@ -4,9 +4,9 @@ select
     potentiel."département_num",
     potentiel.type_utilisateur,
     potentiel.profil,
-    visites.nb_organisations                                                     as nb_visites,
-    potentiel.potentiel                                                          as potentiel,
-    cast(visites.nb_organisations as float) / cast(potentiel.potentiel as float) as taux_couv
+    visites.nb_organisations                       as nb_visites,
+    potentiel.potentiel                            as potentiel,
+    visites.nb_organisations / potentiel.potentiel as taux_couv
 from {{ ref('nb_utilisateurs_potentiels') }} as potentiel
 left join {{ ref('suivi_visites_tous_tb_prive_trimestre') }} as visites
     on

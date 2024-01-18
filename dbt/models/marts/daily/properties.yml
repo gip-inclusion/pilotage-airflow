@@ -116,6 +116,10 @@ models:
   - name: nb_utilisateurs_potentiels
     description: >
       Table pour le suivi des statistiques de pilotage en interne : pour chaque cible, donne le nb d'utilisateurs potentiels des TBs.
+    columns:
+        - name: potentiel
+          meta:
+            column_type: float
   - name: utilisateurs_jamais_venus
     description: >
       Table permettant de récupérer les mails des utilisateurs des emplois ne s'étant jamais connecté sur les tb prives.
@@ -154,10 +158,4 @@ models:
       Table faisant appel a plusieurs ephemeral tables (anciennement des CTEs) afin de pouvoir montrer différentes informations sans être limité par les filtres de Metabase.
       Ainsi nous pouvons montrer le nombre total de candidatures reçues par une structure dans une colonne tout en ne montrant que les candidatures acceptées provenant d'un PH dans une autre.
       Table peu évidente à comprendre, c'est un héritage du passé du pilotage. Nous évitons ce genre de constructions désormais et nous divisons l'information en plusieurs tables & indicateurs.
-  - name: suivi_visites_tb_prive_semaine
-    description: >
-      Permet le suivi par semaine des connections des utilisateurs aux tbs prives.
-  - name: taux_couverture_semaine
-    description: >
-      Donne le taux de couverture par semaine et par tb prive.
 
