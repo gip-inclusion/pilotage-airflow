@@ -24,6 +24,8 @@ select distinct
     ctr.contrat_date_embauche,
     ctr.contrat_date_sortie_definitive,
     ctr.contrat_date_fin_contrat,
+    rcrt.date_recrutement,
+    rcrt.date_sortie_definitive,
     ctr.contrat_duree_contrat,
     ctr.contrat_salarie_rsa,
     emi.emi_afi_id,
@@ -38,24 +40,26 @@ select distinct
         when ctr.contrat_salarie_rsa = 'OUI-M' then 'RSA majoré'
         when ctr.contrat_salarie_rsa = 'OUI-NM' then 'RSA non majoré'
         else 'Non bénéficiaire du RSA'
-    end                                                                          as majoration_brsa,
+    end                                                                             as majoration_brsa,
     case
         when ctr.contrat_salarie_rsa = 'OUI-M' then 'OUI'
         when ctr.contrat_salarie_rsa = 'OUI-NM' then 'OUI'
         else 'NON'
-    end                                                                          as salarie_brsa,
+    end                                                                             as salarie_brsa,
     case
         when salarie.salarie_rci_libelle = 'MME' then 'Femme'
         when salarie.salarie_rci_libelle = 'M.' then 'Homme'
         else 'Non renseigné'
-    end                                                                          as genre_salarie,
-    extract(year from ctr.contrat_date_embauche)                                 as annee_debut_contrat,
-    extract(year from to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')) as annee_sortie_definitive,
-    extract(year from ctr.contrat_date_fin_contrat)                              as annee_fin_contrat,
+    end                                                                             as genre_salarie,
+    extract(year from ctr.contrat_date_embauche)                                    as annee_debut_contrat,
+    extract(year from to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY'))    as annee_sortie_definitive,
+    extract(year from ctr.contrat_date_fin_contrat)                                 as annee_fin_contrat,
     date_trunc('year', date(extract(
         year from
         to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')
-    ) || '-01-01'))                                                              as debut_annee_fin_contrat
+    ) || '-01-01'))                                                                 as debut_annee_fin_contrat,
+    /* 0.0328767 = the value to convert days to months */
+    (rcrt.date_sortie_definitive::DATE - rcrt.date_recrutement::DATE) * (0.0328767) as duree_en_mois
 from
     {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
@@ -68,6 +72,8 @@ left join {{ ref('fluxIAE_RefCategorieSort_v2') }} as rcs
     on rms.rcs_id = rcs.rcs_id
 left join {{ ref('fluxIAE_Salarie_v2') }} as salarie
     on salarie.salarie_id = emi.emi_pph_id
+left join {{ ref('stg_recrutements') }} as rcrt
+    on rcrt.contrat_id_pph = emi.emi_pph_id
 where
     af.af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE', 'CLOTURE')
     and
