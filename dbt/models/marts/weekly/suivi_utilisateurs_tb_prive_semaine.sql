@@ -19,7 +19,11 @@ select
     case
         when visits.measured_at = first_visit.premiere_visite then 'Oui'
         else 'Non'
-    end                                                                                                     as premiere_visite
+    end                                                                                                     as premiere_visite,
+    case
+        when visits.measured_at = max(first_visit_all_tbs.premiere_visite) then 'Oui'
+        else 'Non'
+    end                                                                                                     as premiere_visite_tous_tb
 from {{ source('emplois', 'c1_private_dashboard_visits_v0') }} as visits
 left join {{ ref('metabase_dashboards') }} as metabase_ids
     on metabase_ids.id_tb = cast(visits.dashboard_id as INTEGER)
@@ -33,6 +37,8 @@ left join {{ source('emplois', 'utilisateurs') }} as c1_users
     on c1_users.id = cast(visits.user_id as INTEGER)
 left join {{ ref('stg_premiere_visite') }} as first_visit
     on visits.user_id = first_visit.user_id and visits.dashboard_id = first_visit.dashboard_id
+left join {{ ref('stg_premiere_visite_tous_tb') }} as first_visit_all_tbs
+    on visits.user_id = first_visit_all_tbs.user_id
 -- ignore intern staff and 119 dashboard (c1 intern stats)
 where c1_users.email not in (select email from {{ ref('pilotage_c1_users') }}) and visits.dashboard_id != '119'
 group by
@@ -47,4 +53,4 @@ group by
     semaine,
     num_semaine,
     visits.measured_at,
-    premiere_visite
+    first_visit.premiere_visite

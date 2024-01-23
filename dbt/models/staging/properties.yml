@@ -117,7 +117,10 @@ models:
       Vue permettant de récupérer les demandes de prolongation non acceptées
   - name: stg_premiere_visite
     description: >
-      Vue permettant de récupérer la première visite d'un utilisateur sur l'un de nos tableaux de bord privés
+      Vue permettant de récupérer la première visite d'un utilisateur sur l'un de nos tableaux de bord privés.
+  - name: stg_premiere_visite_tous_tb
+    description: >
+      Vue permettant de récupérer la première visite d'un utilisateur sur l'un des tb privé du pilotage.
   - name: stg_test_suivi_etp_realises_par_structure
     description: >
       Vue permettant de tester le nombre de lignes de la table suivi_etp_realises_par_structure.
