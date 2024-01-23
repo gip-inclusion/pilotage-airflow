@@ -4,7 +4,7 @@ select distinct
     ctr.contrat_date_embauche,
     ctr.contrat_date_fin_contrat,
     ctr.contrat_type_contrat,
-    ctr.contrat_date_sortie_definitive,
+    ctr.contrat_date_sortie_definitive::DATE,
     sum(case
         when ctr.contrat_type_contrat = 0 then 1
         else 0
