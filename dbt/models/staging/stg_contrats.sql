@@ -4,7 +4,7 @@ select distinct
     ctr.contrat_date_embauche,
     ctr.contrat_date_fin_contrat,
     ctr.contrat_type_contrat,
-    ctr.contrat_date_sortie_definitive,
+    to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')                      as contrat_date_sortie_definitive,
     sum(case
         when ctr.contrat_type_contrat = 0 then 1
         else 0
