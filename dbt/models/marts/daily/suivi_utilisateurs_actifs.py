@@ -32,11 +32,11 @@ def compare_months(df):
             comp_col.append(comp_month)
 
             # extract users that came in tb in ref_month
-            ref_users = list(tb_df[tb_df["month"] == ref_month]["liste_utilisateurs"])
+            ref_users = list(tb_df[tb_df["month"] == ref_month]["liste_organisations"])
             ref_users = list(set([usr for sublist in ref_users for usr in sublist]))
 
             # extract users that came in tb in comp_month
-            comp_users = list(tb_df[tb_df["month"] == comp_month]["liste_utilisateurs"])
+            comp_users = list(tb_df[tb_df["month"] == comp_month]["liste_organisations"])
             comp_users = list(set([usr for sublist in comp_users for usr in sublist]))
 
             # get difference
@@ -90,7 +90,7 @@ def compare_quarters(df):
                 | (tb_df["month"] == ref_quarter[1])
                 | (tb_df["month"] == ref_quarter[2])
             )
-            ref_users = list(tb_df[ref_mask]["liste_utilisateurs"])
+            ref_users = list(tb_df[ref_mask]["liste_organisations"])
             ref_users = list(set([usr for sublist in ref_users for usr in sublist]))
 
             # extract users that came in tb in comp_month
@@ -99,7 +99,7 @@ def compare_quarters(df):
                 | (tb_df["month"] == comp_quarter[1])
                 | (tb_df["month"] == comp_quarter[2])
             )
-            comp_users = list(tb_df[comp_mask]["liste_utilisateurs"])
+            comp_users = list(tb_df[comp_mask]["liste_organisations"])
             comp_users = list(set([usr for sublist in comp_users for usr in sublist]))
 
             # get difference
