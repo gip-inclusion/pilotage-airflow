@@ -11,7 +11,10 @@ def compare_months(df):
     # recover months pairs
     df["month"] = df["semaine"].apply(get_month_from_date)
     months = list(set([datetime.date(x.year, x.month, 1) for x in df["semaine"]]))
+    months.sort(reverse=True)
     month_pairs = [(months[i], months[j]) for i in range(len(months)) for j in range(i + 1, len(months))]
+
+    month_pairs = [(months[i], months[i + 1]) for i in range(0, len(months) - 1)]
 
     tbs = list(set(df["nom_tb"]))
 
@@ -57,16 +60,22 @@ def compare_quarters(df):
     tbs = list(set(df["nom_tb"]))
 
     # recover quarters pairs
-    years = [datetime.datetime.today().year, datetime.datetime.today().year - 1]
-    quarters_month = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
-    quarters_names = [t + " - " + str(y) for t in ["T1", "T2", "T3", "T4"] for y in years]
-    quarters = [[datetime.date(y, m, 1) for m in q] for q in quarters_month for y in years]
+    years = [datetime.datetime.today().year - i for i in range(0, 3)]
+    quarters_month = [[10, 11, 12], [7, 8, 9], [4, 5, 6], [1, 2, 3]]
+    quarters_names = [t + " - " + str(y) for y in years for t in ["T4", "T3", "T2", "T1"]]
+    quarters = [[datetime.date(y, m, 1) for m in q] for y in years for q in quarters_month]
 
+    # ajout des paires N/N-1
     quarters_pairs = [
-        (quarters[i], quarters[j], quarters_names[i], quarters_names[j])
-        for i in range(len(quarters))
-        for j in range(i + 1, len(quarters))
+        (quarters[i], quarters[i + 1], quarters_names[i], quarters_names[i + 1])
+        for i in range(0, len(quarters_names) - 1)
     ]
+    # ajout des paires Na/ Na-1 / Na-2
+    for i in range(0, 4):
+        # Na / Na-1
+        quarters_pairs.append((quarters[i], quarters[i + 4], quarters_names[i], quarters_names[i + 4]))
+        # Na / Na-2
+        quarters_pairs.append((quarters[i], quarters[i + 8], quarters_names[i], quarters_names[i + 8]))
 
     outdtf = pd.DataFrame()
 
