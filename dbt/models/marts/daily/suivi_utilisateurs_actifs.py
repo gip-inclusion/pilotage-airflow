@@ -7,6 +7,27 @@ def get_month_from_date(date):
     return datetime.date(date.year, date.month, 1)
 
 
+def users_came_again(df, ref_quarter, comp_quarter):
+    """
+    extract from df users that came in ref_quarter and already came in comp_quarter
+    """
+
+    # extract users that came in ref_month
+    ref_mask = (df["month"] == ref_quarter[0]) | (df["month"] == ref_quarter[1]) | (df["month"] == ref_quarter[2])
+    ref_users = list(df[ref_mask]["liste_organisations"])
+    ref_users = list(set([usr for sublist in ref_users for usr in sublist]))
+
+    # extract users that came in comp_month
+    comp_mask = (df["month"] == comp_quarter[0]) | (df["month"] == comp_quarter[1]) | (df["month"] == comp_quarter[2])
+    comp_users = list(df[comp_mask]["liste_organisations"])
+    comp_users = list(set([usr for sublist in comp_users for usr in sublist]))
+
+    # get difference
+    diff = [usr for usr in comp_users if usr in ref_users]
+
+    return diff
+
+
 def compare_months(df):
     # recover months pairs
     df["month"] = df["semaine"].apply(get_month_from_date)
@@ -27,6 +48,24 @@ def compare_months(df):
     nb_visiteurs_actifs = []
 
     for ref_month, comp_month in month_pairs:
+        # tous tbs confondus
+        tb_col.append("tous_tb")
+        ref_col.append(ref_month)
+        comp_col.append(comp_month)
+
+        # extract users that came in tb in ref_month
+        ref_users = list(df[df["month"] == ref_month]["liste_organisations"])
+        ref_users = list(set([usr for sublist in ref_users for usr in sublist]))
+
+        # extract users that came in tb in comp_month
+        comp_users = list(df[df["month"] == comp_month]["liste_organisations"])
+        comp_users = list(set([usr for sublist in comp_users for usr in sublist]))
+
+        # get difference
+        diff = [usr for usr in comp_users if usr in ref_users]
+        visiteurs_actifs.append(diff)
+        nb_visiteurs_actifs.append(len(diff))
+
         for tb in tbs:
             tb_df = df[df["nom_tb"] == tb]
 
@@ -50,8 +89,8 @@ def compare_months(df):
     outdtf["tb"] = tb_col
     outdtf["ref"] = ref_col
     outdtf["comp"] = comp_col
-    outdtf["visiteurs_actifs"] = visiteurs_actifs
-    outdtf["nb_visiteurs_actifs"] = nb_visiteurs_actifs
+    outdtf["utilisateurs_revenus"] = visiteurs_actifs
+    outdtf["nb_utilisateurs_revenus"] = nb_visiteurs_actifs
 
     return outdtf
 
@@ -86,6 +125,17 @@ def compare_quarters(df):
     nb_visiteurs_actifs = []
 
     for ref_quarter, comp_quarter, ref_quarter_name, comp_quarter_name in quarters_pairs:
+        # tous tbs confondus
+        tb_col.append("tous_tb")
+        ref_col.append(ref_quarter_name)
+        comp_col.append(comp_quarter_name)
+
+        # extract users that came in tb in ref_month
+        diff = users_came_again(df, ref_quarter, comp_quarter)
+        visiteurs_actifs.append(diff)
+        nb_visiteurs_actifs.append(len(diff))
+
+        # par tb
         for tb in tbs:
             tb_df = df[df["nom_tb"] == tb]
 
@@ -94,33 +144,16 @@ def compare_quarters(df):
             comp_col.append(comp_quarter_name)
 
             # extract users that came in tb in ref_month
-            ref_mask = (
-                (tb_df["month"] == ref_quarter[0])
-                | (tb_df["month"] == ref_quarter[1])
-                | (tb_df["month"] == ref_quarter[2])
-            )
-            ref_users = list(tb_df[ref_mask]["liste_organisations"])
-            ref_users = list(set([usr for sublist in ref_users for usr in sublist]))
+            diff = users_came_again(tb_df, ref_quarter, comp_quarter)
 
-            # extract users that came in tb in comp_month
-            comp_mask = (
-                (tb_df["month"] == comp_quarter[0])
-                | (tb_df["month"] == comp_quarter[1])
-                | (tb_df["month"] == comp_quarter[2])
-            )
-            comp_users = list(tb_df[comp_mask]["liste_organisations"])
-            comp_users = list(set([usr for sublist in comp_users for usr in sublist]))
-
-            # get difference
-            diff = [usr for usr in comp_users if usr in ref_users]
             visiteurs_actifs.append(diff)
             nb_visiteurs_actifs.append(len(diff))
 
     outdtf["tb"] = tb_col
     outdtf["ref"] = ref_col
     outdtf["comp"] = comp_col
-    outdtf["visiteurs_actifs"] = visiteurs_actifs
-    outdtf["nb_visiteurs_actifs"] = nb_visiteurs_actifs
+    outdtf["utilisateurs_revenus"] = visiteurs_actifs
+    outdtf["nb_utilisateurs_revenus"] = nb_visiteurs_actifs
 
     return outdtf
 
@@ -132,6 +165,7 @@ def compare_periods(df):
     quarter_df = compare_quarters(df)
 
     out_df = pd.concat([month_df, quarter_df], ignore_index=True)
+    out_df = out_df.dropna(subset=["tb"])
 
     return out_df
 
