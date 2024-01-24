@@ -1,11 +1,3 @@
-{{ config(
-    materialized='incremental',
-    unique_key='emi_dsm_id',
-    indexes=[
-      {'columns': ['emi_dsm_id'], 'unique' : True},
-    ]
- ) }}
-
 select distinct
     emi.emi_pph_id                                                                      as identifiant_salarie,
     emi.emi_afi_id                                                                      as id_annexe_financiere,
@@ -76,6 +68,3 @@ where
     and firmi.rmi_libelle = 'Nombre d''heures annuelles théoriques pour un salarié à taux plein'
     and af.af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE', 'CLOTURE')
     and af.af_mesure_dispositif_code not like '%FDI%'
-{% if is_incremental() %}
-    and {{ to_timestamp('emi.emi_date_modification') }} > (select max({{ to_timestamp('emi_date_modification') }}) from {{ this }})
-{% endif %}
