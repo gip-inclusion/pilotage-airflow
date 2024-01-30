@@ -7,9 +7,9 @@ select
         else 'Non renseigné'
     end as tranche_age,
     case
-        when age_selon_nir > 16 and age_selon_nir <= 25 then 'Eligible CEJ'
-        when age_selon_nir > 16 and age_selon_nir <= 30 then 'Eligible CEJ si RQTH'
-        when age_selon_nir >= 57 then 'Eligible CDI inclusion'
+        when age_selon_nir > 16 and age_selon_nir <= 25 then 'Éligible CEJ'
+        when age_selon_nir > 16 and age_selon_nir <= 30 then 'Éligible CEJ si RQTH'
+        when age_selon_nir >= 57 then 'Éligible CDI inclusion'
         else 'Non renseigné'
     end as eligibilite_dispositif,
     case
