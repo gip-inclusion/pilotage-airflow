@@ -40,25 +40,14 @@ def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
 
         rep = requests.get(url, headers=headers)
 
-        def get_visit_info(produit, json_visit):
-            """
-            from a json visit extracted from matomo via api, returns a dict of relevant informations
-            """
-
-            def get_rounded_minutes(seconds):
-                return round(int(seconds) / 60)
-
+        for json in rep.json():
             infos = {
                 "produit": produit,
-                "poste": json_visit["referrerKeyword"],
-                "date": json_visit["serverDate"],
-                "visiteur": json_visit["visitorId"],
-                "nb_actions": len(json_visit["actionDetails"]),
-                "duree": get_rounded_minutes(json_visit["visitDuration"]),
+                "poste": json["referrerKeyword"],
+                "date": json["serverDate"],
+                "visiteur": json["visitorId"],
+                "nb_actions": len(json["actionDetails"]),
+                "duree": round(int(json["visitDuration"]) / 60),
             }
-            return infos
-
-        for json in rep.json():
-            infos = get_visit_info(produit, json)
             dtf = dtf._append(infos, ignore_index=True)
     return dtf
