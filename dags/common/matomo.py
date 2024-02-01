@@ -1,3 +1,5 @@
+import logging
+
 import requests
 
 
@@ -38,9 +40,19 @@ def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
             f"&token_auth={tok}"
         )
 
-        rep = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers)
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as e:
+            logging.error("HTTP error: %s", str(e).replace(f"&token_auth={tok}", "&token_auth=[TOKEN]"))
+            continue
 
-        for json in rep.json():
+        data = response.json()
+        if isinstance(data, dict):
+            logging.error("Matomo %s: %s", data.get("result"), data.get("message"))
+            continue
+
+        for json in data:
             infos = {
                 "produit": produit,
                 "poste": json["referrerKeyword"],
