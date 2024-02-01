@@ -18,9 +18,10 @@ with DAG(
 
     @task(task_id="get_visits_per_campaign")
     def get_visits_per_campaign(**kwargs):
-        matomo_base_url = Variable.get("MATOMO_BASE_URL")
-        tok = Variable.get("GIP_MATOMO_TOKEN")
-        out_dtf = matomo.get_visits_per_campaign_from_matomo(matomo_base_url, tok)
+        out_dtf = matomo.get_visits_per_campaign_from_matomo(
+            Variable.get("MATOMO_BASE_URL"),
+            Variable.get("GIP_MATOMO_TOKEN"),
+        )
         out_dtf.to_sql(
             "visits_per_campaign_c0",
             con=db.connection_engine(),

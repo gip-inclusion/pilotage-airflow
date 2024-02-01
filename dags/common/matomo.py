@@ -3,7 +3,7 @@ import logging
 import requests
 
 
-produits = {
+PROJECTS_SITE_ID = {
     "carnet de bord": 209,
     "emplois": 117,  # ITOU
     "dora": 211,
@@ -15,17 +15,15 @@ produits = {
 }
 
 
-def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
+def get_visits_per_campaign_from_matomo(matomo_base_url, token):
     """
     creates a dataframe composed of all visits for all c0 campaigns and all gip products
     """
     import pandas as pd
 
-    headers = {"Accept": "application/json"}
-
     dtf = pd.DataFrame()
 
-    for produit, idsite in produits.items():
+    for project_name, site_id in PROJECTS_SITE_ID.items():
         url = (
             f"{matomo_base_url}"
             "?module=API"
@@ -33,18 +31,18 @@ def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
             "&apiModule=Referrers"
             # we recover all campaigns that are launched by c0
             "&segment=referrerType==campaign;referrerName==c0"
-            f"&idSite={idsite}"
+            f"&idSite={site_id}"
             "&expanded=1"
             "&period=month"
             "&format=json"
-            f"&token_auth={tok}"
+            f"&token_auth={token}"
         )
 
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers={"Accept": "application/json"})
         try:
             response.raise_for_status()
         except requests.HTTPError as e:
-            logging.error("HTTP error: %s", str(e).replace(f"&token_auth={tok}", "&token_auth=[TOKEN]"))
+            logging.error("HTTP error: %s", str(e).replace(f"&token_auth={token}", "&token_auth=[TOKEN]"))
             continue
 
         data = response.json()
@@ -52,14 +50,16 @@ def get_visits_per_campaign_from_matomo(matomo_base_url, tok):
             logging.error("Matomo %s: %s", data.get("result"), data.get("message"))
             continue
 
-        for json in data:
-            infos = {
-                "produit": produit,
-                "poste": json["referrerKeyword"],
-                "date": json["serverDate"],
-                "visiteur": json["visitorId"],
-                "nb_actions": len(json["actionDetails"]),
-                "duree": round(int(json["visitDuration"]) / 60),
-            }
-            dtf = dtf._append(infos, ignore_index=True)
+        for result in data:
+            dtf = dtf._append(
+                {
+                    "produit": project_name,
+                    "poste": result["referrerKeyword"],
+                    "date": result["serverDate"],
+                    "visiteur": result["visitorId"],
+                    "nb_actions": len(result["actionDetails"]),
+                    "duree": round(int(result["visitDuration"]) / 60),
+                },
+                ignore_index=True,
+            )
     return dtf
