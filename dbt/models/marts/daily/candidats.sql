@@ -1,6 +1,10 @@
 select
     {{ pilo_star(ref('stg_candidats')) }},
     case
+        when date_diagnostic > current_date - interval '6 months' then 1
+        else 0
+    end as diagnostic_valide,
+    case
         when age_selon_nir <= 25 then 'Jeune (- de 26 ans)'
         when age_selon_nir > 25 and age_selon_nir <= 54 then 'Adulte (26-54 ans)'
         when age_selon_nir >= 55 then 'Senior (55 ans et +)'
