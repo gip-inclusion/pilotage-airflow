@@ -24,6 +24,8 @@ select
             then 'La typologie de SIAE ne correspond plus aux besoins / à la situation de la personne'
         when demandes_prolong.motif_de_refus = 'DURATION'
             then 'La durée de prolongation demandée n’est pas adaptée à la situation du candidat'
+        when demandes_prolong.motif_de_refus = 'REASON'
+            then 'Le motif de prolongation demandé n’est pas adapté à la situation du candidat.'
         else 'Pas de donnée disponible'
     end                                                                                     as motif_de_refus,
     case
