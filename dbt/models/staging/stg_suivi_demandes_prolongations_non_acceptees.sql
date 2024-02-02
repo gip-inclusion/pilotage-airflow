@@ -19,7 +19,7 @@ select
     demandes_prolong.date_de_demande                                                        as "date_de_création",
     case
         when demandes_prolong.motif_de_refus = 'IAE'
-            then 'L IAE ne correspond plus aux besoins / à la situation de la personne'
+            then 'L’IAE ne correspond plus aux besoins / à la situation de la personne'
         when demandes_prolong.motif_de_refus = 'SIAE'
             then 'La typologie de SIAE ne correspond plus aux besoins / à la situation de la personne'
         when demandes_prolong.motif_de_refus = 'DURATION'
