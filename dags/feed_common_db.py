@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 from airflow.decorators import dag, task
+from airflow.models import Variable
 from sqlalchemy import create_engine
 
 from dags.common import dbt, default_dag_args, slack
@@ -32,9 +33,9 @@ def feed_common_db():
     def download_csv(csv_name):
         file_path = Path(AIRFLOW_HOME, csv_name)
         with FTP(
-            host=os.getenv("COMMON_DB_FTP_HOST"),
-            user=os.getenv("COMMON_DB_FTP_USER"),
-            passwd=os.getenv("COMMON_DB_FTP_PASSWORD"),
+            host=Variable.get("COMMON_DB_FTP_HOST"),
+            user=Variable.get("COMMON_DB_FTP_USER"),
+            passwd=Variable.get("COMMON_DB_FTP_PASSWORD"),
         ) as ftp:
             # AIRFLOW_HOME is the only directory Airflow has writing rights.
             # Even subdirectories are read-only.
@@ -44,10 +45,10 @@ def feed_common_db():
     @task()
     def populate_table(csv_name, table_name):
         file_path = Path(AIRFLOW_HOME, csv_name)
-        engine = create_engine(os.getenv("COMMON_DB_PG_URI"))
+        engine = create_engine(Variable.get("COMMON_DB_PG_URI"))
         with open(file_path, "r") as fp:
             df = pd.read_csv(fp)
-            df.to_sql(table_name, engine, if_exists="replace", index=False)
+            return df.to_sql(table_name, engine, if_exists="replace", index=False)
 
     @task()
     def rm_file(csv_name):
