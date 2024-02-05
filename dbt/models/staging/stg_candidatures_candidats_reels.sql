@@ -14,4 +14,7 @@ left join {{ source('emplois', 'candidatures') }} as cd
     on c.id = cd.id_candidat
 left join {{ ref('pass_agrements_valides') }} as pass
     on pass.id_candidat = c.id
-where (total_candidatures > 0 or diagnostic_valide = 1) and (date_diagnostic is null or date_diagnostic <= date_candidature)
+-- ce sont des candidats reels soit si ils ont un diagnostic valide ou au moins une candidature
+-- et si la date de diagnostic n'est pas nulle, on ne garde que les candidatures après son dernier diagnostic
+where (c.diagnostic_valide = 1 and (c.date_diagnostic <= cd.date_candidature or cd.date_candidature is null))
+       or (cd.date_candidature is not null) -- cas des candidats non encore diagnostiqués

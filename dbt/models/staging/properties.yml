@@ -164,7 +164,7 @@ models:
   - name: stg_nb_utilisateurs_revenus_semaine
     description: >
       Compte le nb d'utilisateurs qui se sont connectés plusieurs fois sur un tableau de bord sur une semaine donnée.
-  - name: stg_candidatures_candidats_entres
+  - name: stg_candidatures_candidats_reels
     description: >
       Contient les candidats et les candidatures des candidats qui ont au moins une candidature émise ou un diagnostic réalisé.
       Pour le suivi des candidats sans solution.
