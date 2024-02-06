@@ -4,6 +4,7 @@ select
     cd.date_embauche,
     cd.date_candidature,
     cd."état",
+    cd.type_structure,
     cd.id_structure,
     cd.origine
 from {{ ref('candidats') }} as c
