@@ -158,6 +158,7 @@ models:
       Table faisant appel a plusieurs ephemeral tables (anciennement des CTEs) afin de pouvoir montrer différentes informations sans être limité par les filtres de Metabase.
       Ainsi nous pouvons montrer le nombre total de candidatures reçues par une structure dans une colonne tout en ne montrant que les candidatures acceptées provenant d'un PH dans une autre.
       Table peu évidente à comprendre, c'est un héritage du passé du pilotage. Nous évitons ce genre de constructions désormais et nous divisons l'information en plusieurs tables & indicateurs.
-  - name: candidats_sans_solutions
+  - name: candidats_recherche_active
     description: >
-      Candidats sans solution à 30 jours (et leurs candidatures).
+      Table contenant les candidats actifs les 6 derniers mois et permettant de savoir s'ils ont eu des candidatures acceptées ainsi que le délai depuis la dernière candidature émise.
+      Utile pour le calcul des candidats sans solution selon la définition simplifiée 'candidat actif les 6 derniers mois n'ayant eu aucune candidature acceptée'.
