@@ -3,6 +3,8 @@ select
     type_inscription,
     diagnostic_valide,
     type_auteur_diagnostic,
+    total_diagnostics,
+    date_diagnostic,
     "région",
     "nom_département",
     coalesce(sum(case when "type_structure" in ('ACI', 'AI', 'EI', 'EITI', 'ETTI') then 1 else 0 end) > 0) as candidat_iae,
@@ -17,6 +19,8 @@ from {{ ref('stg_candidats_candidatures') }}
 where date_candidature >= current_date - interval '6 months'
 group by
     id,
+    total_diagnostics,
+    date_diagnostic,
     type_inscription,
     "région",
     "nom_département",
