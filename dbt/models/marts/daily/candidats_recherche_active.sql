@@ -14,7 +14,8 @@ select
     max(case when "état" = 'Candidature acceptée' then date_candidature end)                               as date_derniere_candidature_acceptee,
     sum(case when "état" = 'Candidature acceptée' then 1 else 0 end)                                       as nb_candidatures_acceptees,
     sum(case when "état" != 'Candidature acceptée' then 1 else 0 end)                                      as nb_candidatures_sans_accept,
-    coalesce(sum(case when "état" = 'Candidature acceptée' then 1 else 0 end) > 0)                         as a_eu_acceptation
+    coalesce(sum(case when "état" = 'Candidature acceptée' then 1 else 0 end) > 0)                         as a_eu_acceptation,
+    coalesce(max(date_embauche) >= current_date - interval '6 months')                                     as a_eu_embauche
 from {{ ref('stg_candidats_candidatures') }}
 where date_candidature >= current_date - interval '6 months'
 group by
