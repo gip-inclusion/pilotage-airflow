@@ -16,6 +16,8 @@ select
     s.type                                                                                  as type_structure,
     s."nom_département_c1"                                                                  as "département_structure",
     s."région_c1"                                                                           as "région_structure",
+    s."nom_département_c1"                                                                  as "département_structure_filtre",
+    s."région_c1"                                                                           as "région_structure_filtre",
     demandes_prolong.date_de_demande                                                        as "date_de_création",
     case
         when demandes_prolong.motif_de_refus = 'IAE'

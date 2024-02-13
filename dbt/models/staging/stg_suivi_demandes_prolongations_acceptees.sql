@@ -16,6 +16,8 @@ select
     s.type                                                                                  as type_structure,
     s."nom_département_c1"                                                                  as "département_structure",
     s."région_c1"                                                                           as "région_structure",
+    s."nom_département_c1"                                                                  as "département_structure_filtre",
+    s."région_c1"                                                                           as "région_structure_filtre",
     prolong."date_de_création",
     demandes_prolong.motif_de_refus,
     case
