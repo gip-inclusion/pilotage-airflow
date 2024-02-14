@@ -1,5 +1,6 @@
 select
     etp.id_annexe_financiere,
+    etp.af_numero_annexe_financiere,
     etp.emi_esm_etat_code,
     etp.annee_af,
     etp.type_structure,
@@ -21,6 +22,7 @@ select
 from {{ ref('suivi_realisation_convention_mensuelle') }} as etp
 group by
     etp.id_annexe_financiere,
+    etp.af_numero_annexe_financiere,
     etp.emi_esm_etat_code,
     etp.annee_af,
     etp.type_structure,
