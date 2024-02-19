@@ -7,6 +7,7 @@ select
     date_diagnostic,
     "région",
     "nom_département",
+    "département",
     coalesce(sum(case when "type_structure" in ('ACI', 'AI', 'EI', 'EITI', 'ETTI') then 1 else 0 end) > 0) as candidat_iae,
     max(date_candidature)                                                                                  as date_derniere_candidature,
     current_date - max(date_candidature)                                                                   as delai_derniere_candidature,
@@ -25,5 +26,6 @@ group by
     type_inscription,
     "région",
     "nom_département",
+    "département",
     diagnostic_valide,
     type_auteur_diagnostic
