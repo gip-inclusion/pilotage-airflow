@@ -84,5 +84,9 @@ models:
   - name: taux_couverture_trimestre
     description: >
       Donne le taux de couverture par trimestre et par tb prive.
+  - name: marche_suivi_structure
+    description: >
+      Table créée afin que le marché puisse produire des rapports sur les salariées des structures travaillant avec eux.
+
 
 
