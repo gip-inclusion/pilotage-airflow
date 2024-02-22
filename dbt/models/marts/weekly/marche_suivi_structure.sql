@@ -7,6 +7,7 @@ select
     ctr.contrat_salarie_rqth,
     etp_r.id_annexe_financiere,
     etp_r.emi_sme_annee,
+    salarie.salarie_annee_naissance,
     case
         when salarie.salarie_adr_qpv_type = 'QP' then 'QPV'
         when salarie.salarie_adr_qpv_type = 'NQP' then 'Non QPV'
@@ -44,4 +45,5 @@ group by
     salarie.salarie_adr_is_zrr,
     salarie.salarie_rci_libelle,
     etp_r.id_annexe_financiere,
-    etp_r.emi_sme_annee
+    etp_r.emi_sme_annee,
+    salarie.salarie_annee_naissance
