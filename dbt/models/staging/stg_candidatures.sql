@@ -28,7 +28,8 @@ select
         else candidatures."origine_détaillée"
     end                                                    as "origine_détaillée",
     extract(day from candidatures."délai_de_réponse")      as temps_de_reponse,
-    extract(day from candidatures."délai_prise_en_compte") as temps_de_prise_en_compte
+    extract(day from candidatures."délai_prise_en_compte") as temps_de_prise_en_compte,
+    extract(year from candidatures.date_candidature)       as annee_candidature
 from
     {{ source('emplois', 'candidatures') }} as candidatures
 left join {{ ref('stg_structures') }} as struct
