@@ -39,10 +39,10 @@ with airflow.DAG(
         is_full_refresh = params.get("full_refresh")
         if is_full_refresh:
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
-            kwargs["ti"].xcom_push("dbt_run_args", "--full-refresh --exclude marts.weekly")
+            kwargs["ti"].xcom_push("dbt_run_args", "--full-refresh --exclude marts.weekly marts.manual")
         else:
             kwargs["ti"].xcom_push("dbt_seed_args", "")
-            kwargs["ti"].xcom_push("dbt_run_args", "--select marts.daily legacy.daily ephemeral staging")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select marts.daily marts.manual legacy.daily ephemeral staging")
 
     params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
 

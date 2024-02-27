@@ -1,6 +1,6 @@
 import airflow
 from airflow.models.param import Param
-from airflow.operators import bash, empty, python, trigger_dagrun
+from airflow.operators import bash, empty, python
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -8,7 +8,7 @@ from dags.common import db, dbt, default_dag_args, slack
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
-    dag_id="dbt_weekly",
+    dag_id="dbt_france_travail",
     schedule_interval=None,
     params={
         "full_refresh": Param(False, type="boolean"),
@@ -39,12 +39,10 @@ with airflow.DAG(
         is_full_refresh = params.get("full_refresh")
         if is_full_refresh:
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
-            kwargs["ti"].xcom_push("dbt_run_args", "--full-refresh --exclude marts.daily marts.oneshot marts.manual")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select france_travail_donnees_prod")
         else:
-            kwargs["ti"].xcom_push("dbt_seed_args", "")
-            kwargs["ti"].xcom_push(
-                "dbt_run_args", "--select marts.weekly marts.manual legacy.weekly ephemeral indexed staging"
-            )
+            kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select france_travail_donnees_recette")
 
     params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
 
@@ -62,13 +60,6 @@ with airflow.DAG(
         append_env=True,
     )
 
-    dbt_snapshot = bash.BashOperator(
-        task_id="dbt_snapshot",
-        bash_command="dbt snapshot",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_clean = bash.BashOperator(
         task_id="dbt_clean",
         bash_command="dbt clean",
@@ -76,8 +67,4 @@ with airflow.DAG(
         append_env=True,
     )
 
-    dag_data_consistency = trigger_dagrun.TriggerDagRunOperator(
-        trigger_dag_id="data_consistency", task_id="trigger_data_consistency"
-    )
-
-    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_snapshot >> dbt_clean >> dag_data_consistency >> end)
+    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_clean >> end)

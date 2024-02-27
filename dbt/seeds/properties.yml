@@ -60,3 +60,22 @@ seeds:
   - name: groupes_structures
     description: >
       Seed permettant de regrouper les structures de l'IAE et hors IAE dans deux catégories distinctes.
+  - name: departements_xp_ft
+    description: >
+      Correspondance entre le code postal des agences France Travail participant à l'expérimentation et le territoire spécifique sur lequel cette dernière est menée.
+  - name: formation_xp_ft
+    description: >
+      Correspondance entre les sigles sur la formation, provenant du fichier brut expérimentation FT, et le niveau de formation réel
+  - name: sexe_xp_ft
+    description: >
+      Correspondance entre les sigles sur le sexe, provenant du fichier brut expérimentation FT, et le sexe écrit en toutes lettres
+  - name: situation_familiale_xp_ft
+    description: >
+      Correspondance entre les sigles sur la sitation familiale, provenant du fichier brut expérimentation FT, et la situation familiale écrite en toutes lettres
+  - name: stock_xp_ft
+    description: >
+      Suite à des demandes métier, prise en compte d'uniquement 3 populations présentes dans le stock : entrant, immersion, formation
+  - name: type_parcours_xp_ft
+    description: >
+      Correspondance entre les sigles du type de parcours, provenant du fichier brut expérimentation FT, et le type de parcours en toutes lettres
+
