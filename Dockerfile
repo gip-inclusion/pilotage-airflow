@@ -1,7 +1,7 @@
 # build me as docker build . -t my-airflow
 # run me as docker run -ti -p 8080:8080 --env-file=.env my-airflow
 
-FROM apache/airflow:2.5.1-python3.10
+FROM apache/airflow:2.6.2-python3.10
 
 USER root
 
