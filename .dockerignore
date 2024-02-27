@@ -1,9 +1,15 @@
-.env
-tests
-logs
-Dockerfile
-.latest.dump
-.latest.restore
-dbt/packages/
-tests/
-scripts/
+# Ignore everythings by default
+*
+# Dependencies
+!requirements-ci.txt
+# Airflow
+!custom-prod-entrypoint.sh
+!.env-base
+!dags
+# Airflow - Local
+!dag-variables.json
+# DBT
+!dbt_project.yml
+!dbt
+!packages.yml
+!profiles.yml

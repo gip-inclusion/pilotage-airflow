@@ -53,7 +53,9 @@ jobs:
         make update
         echo ".venv/bin" >> $GITHUB_PATH
     - name: ⚙ Setup airflow database
-      run: make airflow_initdb
+      run: |
+        airflow db reset --yes
+        airflow db upgrade
       env:
         AIRFLOW__CORE__FERNET_KEY: U7sOUkZeQ6JGmwQoG6anMTdnl_nzy4f74IFkNmMeW50=
         AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@localhost:5432/airflow

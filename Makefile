@@ -111,14 +111,13 @@ endif
 
 load_dump: pg_dump pg_restore
 
-
-# Airflow
+# Docker shell.
 # =============================================================================
-.PHONY: airflow_initdb
 
-airflow_initdb:
-	createdb airflow || true
-	airflow db reset -y && \
-		airflow db upgrade && \
-		airflow variables import dag-variables.json && \
-		airflow users create --role Admin --email admin@example.com --username admin --password password -f "" -l ""
+.PHONY: shell_on_django_container shell_on_django_container_as_root
+
+shell_on_airflow_container:
+	docker exec -ti pilotage_airflow /bin/bash
+
+shell_on_airflow_container_as_root:
+	docker exec -ti --user root pilotage_airflow /bin/bash

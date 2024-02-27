@@ -93,22 +93,7 @@ Afin d'ajouter les nouvelles colonnes utiliser la fonction
 
 Créez une base de données pour Airflow si elle n'existe pas.
 
-    # attention, cette commande remettra également à zéro votre base de données Airflow
-    # lors du premier lancement de cette commande, le message d'erreur 'Variable PGHOST does not exist' s'affichera : c'est normal et il est à ignorer.
-    make airflow_initdb
-
-
-En particulier cette étape :
-
-- crée la base de données `airflow`
-- lui applique des migrations
-- importe les variables "par défaut" `dag-variables.json`
-- ajoute un utilisateur `admin/password`
-
-Pour lancer airflow localement, ouvrez **DEUX** terminaux et :
-
-    airflow webserver
-    airflow scheduler
+    docker compose up
 
 Vous pouvez ensuite accéder à l'interface Web sur http://127.0.0.1:8080 et lancer les DAGs.
 
