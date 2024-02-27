@@ -59,7 +59,7 @@ sources:
   - name: oneshot
     schema: public
     description: >
-      Tables gérées soit manuellement, soit mises à jour de manière très peu fréquente (DAG annuel, par exemple)
+      Tables gérées soit manuellement, soit mises à jour de manière très peu fréquente (DAG annuel, ou données FT par exemple)
     tables:
       # TODO(vgrange): A remplacer par codes_insee_vs_codes_postaux. Attention cette derniere est juste un mapping.
       # Il faut donc avoir une seconde table contenant pour chaque code INSEE ou postal, les coordonnees GPS.
@@ -100,6 +100,9 @@ sources:
         description: >
           Table historiquement générée depuis les Emplois en interrogeant Matomo. Depuis l'introduction de la table
           emplois.c1_private_dashboard_visits, cette table n'est plus nécessaire.
+      - name: FT_donnees_brutes
+        description: >
+          Table contenant les données brutes de l'expérimentation FT. Mise à jour manuellement, via lancement d'un DAG, environ tous les 15j.
 
 
   - name: matomo

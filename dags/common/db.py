@@ -66,3 +66,12 @@ def create_df_from_db(sql_query):
 
     with MetabaseDBCursor() as (cursor, conn):
         return pd.read_sql_query(sql_query, conn)
+
+
+def drop_view(view_name):
+    from psycopg2 import sql
+
+    with MetabaseDBCursor() as (cursor, conn):
+        drop_view_query = sql.SQL("DROP VIEW IF EXISTS {name};").format(name=sql.Identifier(view_name))
+        cursor.execute(drop_view_query)
+        conn.commit()
