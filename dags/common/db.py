@@ -66,3 +66,10 @@ def create_df_from_db(sql_query):
 
     with MetabaseDBCursor() as (cursor, conn):
         return pd.read_sql_query(sql_query, conn)
+
+
+def drop_view(view_name):
+    with MetabaseDBCursor() as (cursor, conn):
+        drop_view_query = f"DROP VIEW IF EXISTS {view_name};"
+        cursor.execute(drop_view_query)
+        conn.commit()
