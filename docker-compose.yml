@@ -1,0 +1,66 @@
+services:
+  minio:
+    image: bitnami/minio
+    container_name: pilotage_minio
+    restart: unless-stopped
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    ports:
+      - "127.0.0.1:${MINIO_PORT_ON_DOCKER_HOST:-9000}:9000"
+      - "127.0.0.1:${MINIO_ADMIN_PORT_ON_DOCKER_HOST:-9001}:9001"
+    volumes:
+      - minio_data:/bitnami/minio/data
+
+  postgres:
+    container_name: pilotage_postgres
+    image: postgres:15
+    # Disable some safety switches for a faster postgres: https://www.postgresql.org/docs/current/non-durability.html
+    command: -c fsync=off -c full_page_writes=off -c synchronous_commit=off
+    environment:
+      # Required by the "_/postgres" image
+      - POSTGRES_PASSWORD=password
+      # Avoid a log error when starting the container:
+      # > Role "root" does not exist.
+      # Without this variable, the default Unix account ('root')
+      # is used automatically when starting postgres.
+      # https://www.postgresql.org/docs/current/libpq-envars.html
+      - PGUSER=postgres
+      - PGPASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/initdb.d:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT_ON_DOCKER_HOST:-5432}:5432"
+
+  airflow:
+    container_name: pilotage_airflow
+    environment:
+      - AIRFLOW__CORE__FERNET_KEY=${AIRFLOW__CORE__FERNET_KEY}
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql://postgres:password@postgres:5432/airflow
+      - AIRFLOW_CONN_LOG_CONNECTION=aws://@/?endpoint_url=http%3A%2F%2Fminio:9000&region_name=eu-west-1&aws_access_key_id=minioadmin&aws_secret_access_key=minioadmin
+      - AIRFLOW__LOGGING__REMOTE_LOGGING=True
+      - AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER=s3://airflow/logs
+      - AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID=log_connection
+      - AIRFLOW__LOGGING__ENCRYPT_S3_LOGS=False
+      - S3_DOCS_HOST=http://minio:9000
+      - S3_DOCS_HOST_BUCKET=http://minio:9000
+      - S3_DOCS_BUCKET=dbt-docs
+      - S3_DOCS_ACCESS_KEY=minioadmin
+      - S3_DOCS_SECRET_KEY=minioadmin
+    depends_on:
+      - postgres
+      - minio
+    build:
+      context: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${AIRFLOW_PORT_ON_DOCKER_HOST:-8080}:8080"
+    volumes:
+      - ./custom-dev-entrypoint.sh:/entrypoint.sh
+      - ./dags:/opt/airflow/dags
+
+volumes:
+  postgres_data:
+  minio_data:

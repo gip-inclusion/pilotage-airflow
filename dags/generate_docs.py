@@ -1,3 +1,5 @@
+import os
+
 import airflow
 from airflow.operators import bash, empty
 
@@ -14,6 +16,7 @@ with airflow.DAG(
     start = empty.EmptyOperator(task_id="start")
 
     env_vars = db.connection_envvars()
+    S3_DOCS_HOST = os.getenv("S3_DOCS_HOST")
 
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
@@ -43,6 +46,8 @@ with airflow.DAG(
         "/tmp/dbt-docs/",
         "s3://${S3_DOCS_BUCKET}/",
     ]
+    if os.getenv("S3_DOCS_HOST", "").startswith("http://"):
+        cellar_sync_cmd_parts.insert(1, "--no-ssl")
     cellar_sync = bash.BashOperator(
         task_id="cellar_sync",
         bash_command=" ".join(cellar_sync_cmd_parts),
