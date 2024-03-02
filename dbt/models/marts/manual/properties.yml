@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: france_travail_donnees_requetage
+    description: >
+      Ce script permet de finaliser la traitement des données FT, précedemment effectué via un notebook python.
+      L'usage des seed nous permet d'anticiper de futures modifications dans les différentes colonnes ainsi que ne pas écrire de nombreux case...when.
