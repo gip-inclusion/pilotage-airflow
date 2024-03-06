@@ -1,12 +1,15 @@
 select
     etp_r.identifiant_salarie,
+    etp_r.id_annexe_financiere,
+    etp_r.emi_sme_annee,
+    etp_r.nombre_etp_consommes_reels_annuels,
+    etp_r.nombre_etp_consommes_reels_mensuels,
     etp_c."effectif_annuel_conventionné",
+    etp_c."effectif_mensuel_conventionné",
     s.structure_siret_signature,
     s.structure_siret_actualise,
     s.structure_denomination,
     ctr.contrat_salarie_rqth,
-    etp_r.id_annexe_financiere,
-    etp_r.emi_sme_annee,
     salarie.salarie_annee_naissance,
     case
         when salarie.salarie_adr_qpv_type = 'QP' then 'QPV'
@@ -36,7 +39,10 @@ left join {{ ref('fluxIAE_ContratMission_v2') }} as ctr
 where etp_r.type_structure not in ('ACIPA_DC', 'EIPA_DC', 'FDI')
 group by
     etp_r.identifiant_salarie,
+    etp_r.nombre_etp_consommes_reels_annuels,
+    etp_r.nombre_etp_consommes_reels_mensuels,
     etp_c."effectif_annuel_conventionné",
+    etp_c."effectif_mensuel_conventionné",
     s.structure_siret_signature,
     s.structure_siret_actualise,
     s.structure_denomination,
