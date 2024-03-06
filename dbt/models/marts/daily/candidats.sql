@@ -1,5 +1,6 @@
 select
     {{ pilo_star(ref('stg_candidats')) }},
+    derniere_candidature.date_derniere_candidature,
     case
         when date_diagnostic > current_date - interval '6 months' then 1
         else 0
@@ -25,4 +26,7 @@ select
         else 'NON'
     end as eligible_cdi_inclusion
 from
-    {{ ref('stg_candidats') }}
+    {{ ref('stg_candidats') }} as candidats
+left join
+    {{ ref('stg_candidatures_candidats') }} as derniere_candidature
+    on derniere_candidature.id_candidat = candidats.id
