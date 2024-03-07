@@ -27,6 +27,12 @@ select
             then 'Prescripteur habilité par habilitation préfectorale'
         else candidatures."origine_détaillée"
     end                                                    as "origine_détaillée",
+    case
+        when candidatures."état" = 'Embauche annulée' or candidatures."état" = 'Embauché ailleurs'
+            then extract(day from candidatures."délai_prise_en_compte")
+        when candidatures."état" = 'Candidature acceptée' or candidatures."état" = 'Candidature refusée'
+            then extract(day from candidatures."délai_de_réponse")
+    end                                                    as temps_de_reponse_non_embauche,
     extract(day from candidatures."délai_de_réponse")      as temps_de_reponse,
     extract(day from candidatures."délai_prise_en_compte") as temps_de_prise_en_compte,
     extract(year from candidatures.date_candidature)       as annee_candidature
