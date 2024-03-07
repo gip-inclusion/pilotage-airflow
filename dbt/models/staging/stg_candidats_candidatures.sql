@@ -6,7 +6,8 @@ select
     cd."état",
     cd.type_structure,
     cd.id_structure,
-    cd.origine
+    cd.origine,
+    cd.type_prescripteur
 from {{ ref('candidats') }} as c
 left join {{ ref('candidatures_echelle_locale') }} as cd
     on c.id = cd.id_candidat
