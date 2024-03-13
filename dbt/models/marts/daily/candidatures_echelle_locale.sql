@@ -10,18 +10,18 @@ select
         else candidatures."origine_détaillée"
     end                                                 as "origine_détaillée",
     case
-        when temps_de_prise_en_compte <= 30 then '30 jours ou moins'
-        when temps_de_prise_en_compte > 30 and temps_de_prise_en_compte <= 45 then '31 à 45 jours'
-        when temps_de_prise_en_compte > 45 and temps_de_prise_en_compte <= 60 then '46 à 60 jours'
-        when temps_de_prise_en_compte > 60 and temps_de_prise_en_compte <= 90 then '61 à 90 jours'
-        when temps_de_prise_en_compte > 90 then 'Plus de 90 jours'
+        when candidatures.temps_de_prise_en_compte <= 30 then '30 jours ou moins'
+        when candidatures.temps_de_prise_en_compte > 30 and candidatures.temps_de_prise_en_compte <= 45 then '31 à 45 jours'
+        when candidatures.temps_de_prise_en_compte > 45 and candidatures.temps_de_prise_en_compte <= 60 then '46 à 60 jours'
+        when candidatures.temps_de_prise_en_compte > 60 and candidatures.temps_de_prise_en_compte <= 90 then '61 à 90 jours'
+        when candidatures.temps_de_prise_en_compte > 90 then 'Plus de 90 jours'
     end                                                 as temps_de_prise_en_compte_intervalle,
     case
-        when temps_de_reponse <= 30 then '30 jours ou moins'
-        when temps_de_reponse > 30 and temps_de_reponse <= 45 then '31 à 45 jours'
-        when temps_de_reponse > 45 and temps_de_reponse <= 60 then '46 à 60 jours'
-        when temps_de_reponse > 60 and temps_de_reponse <= 90 then '61 à 90 jours'
-        when temps_de_reponse > 90 then 'Plus de 90 jours'
+        when candidatures.temps_de_reponse <= 30 then '30 jours ou moins'
+        when candidatures.temps_de_reponse > 30 and candidatures.temps_de_reponse <= 45 then '31 à 45 jours'
+        when candidatures.temps_de_reponse > 45 and candidatures.temps_de_reponse <= 60 then '46 à 60 jours'
+        when candidatures.temps_de_reponse > 60 and candidatures.temps_de_reponse <= 90 then '61 à 90 jours'
+        when candidatures.temps_de_reponse > 90 then 'Plus de 90 jours'
     end                                                 as temps_de_reponse_intervalle,
     coalesce(candidats.tranche_age, 'Non renseigné')    as tranche_age,
     coalesce(candidats.sexe_selon_nir, 'Non renseigné') as genre_candidat,
