@@ -4,6 +4,7 @@ select
     cd.date_embauche,
     cd.date_candidature,
     cd."état",
+    cd.motif_de_refus,
     cd.type_structure,
     cd.id_structure,
     cd.origine,
