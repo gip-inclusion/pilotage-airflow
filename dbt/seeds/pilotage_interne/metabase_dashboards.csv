@@ -38,4 +38,5 @@ id_tb,nom_tb,public,type
 327,tb 327 - ACI - Suivi du cofinancement CD,SIAE,TB privé
 330,tb 330 - CD - Suivi des prescriptions des accompagnateurs des publics bRSA,CD,TB privé
 346,tb 346 - CD - Facilitation des embauches en IAE,CD,TB privé
+349,tb 349 - SIAE - Déclaration d’embauche,SIAE,TB privé
 357,tb 357 - DDETS/DREETS - Suivi des demandes de prolongation réalisées par les SIAE,DDETS/DREETS,TB privé
