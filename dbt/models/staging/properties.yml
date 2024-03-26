@@ -164,3 +164,7 @@ models:
   - name: stg_nb_utilisateurs_revenus_semaine
     description: >
       Compte le nb d'utilisateurs qui se sont connectés plusieurs fois sur un tableau de bord sur une semaine donnée.
+  - name: stg_france_travail
+    description: >
+      Les données France travail étaient traitées via un notebook python développé par Jules.
+      Ce premier script sql permet de faire une partie du traitement effectué par le notebook.
