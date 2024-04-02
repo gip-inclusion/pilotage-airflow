@@ -10,6 +10,7 @@ select
     cc."région",
     cc."nom_département",
     cc."département",
+    blablabla,
     coalesce(sum(case when cc.type_prescripteur = 'SPE' then 1 else 0 end) > 0)                               as candidatures_spe,
     coalesce(sum(case when cc."type_structure" in ('ACI', 'AI', 'EI', 'EITI', 'ETTI') then 1 else 0 end) > 0) as candidat_iae,
     max(cc.date_candidature)                                                                                  as date_derniere_candidature,
