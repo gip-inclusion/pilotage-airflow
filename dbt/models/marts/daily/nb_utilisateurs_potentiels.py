@@ -12,6 +12,8 @@ def model(dbt, session):
     organisations = organisations[organisations["total_membres"] != 0]
     institutions = dbt.source("emplois", "institutions")
     structures = dbt.source("emplois", "structures")
+    # we only consider mother structures
+    structures = structures[structures["source"] != "Utilisateur (Antenne)"]
     regions = filter(None, institutions["région"].unique())
 
     potential_records = []
