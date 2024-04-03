@@ -16,3 +16,6 @@ tests:
   - name: test_source_opcs
     description: >
       Permet de vérifier que le nb de structures opcs est le même que le nb de structures qui ont pour source un opcs.
+   - name: test_potentiel_structures
+    description: >
+      Permet de vérifier que le nb de structures comptées dans le potentiel correspond bien au nombre de structures mères de la table structure
