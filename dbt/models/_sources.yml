@@ -103,8 +103,10 @@ sources:
       - name: FT_donnees_brutes
         description: >
           Table contenant les données brutes de l'expérimentation FT. Mise à jour manuellement, via lancement d'un DAG, environ tous les 15j.
-
-
+      - name: ft_iae_nord
+        description: >
+          Table créée via le dag ft_expe_nord qui télécharge les données de l'expérimentation sur un drive.
+          Contient 13 600 demandeurs d’emploi du Nord auxquels un pass IAE a été attribué entre le 1 janvier 2021 et le 30 juin 2023.
   - name: matomo
     schema: public
     tables:
