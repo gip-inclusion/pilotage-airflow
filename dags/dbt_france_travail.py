@@ -11,7 +11,7 @@ with airflow.DAG(
     dag_id="dbt_france_travail",
     schedule_interval=None,
     params={
-        "full_refresh": Param(False, type="boolean"),
+        "donnees_prod": Param(False, type="boolean"),
     },
     **dag_args,
 ) as dag:
@@ -36,13 +36,13 @@ with airflow.DAG(
     )
 
     def params_check(params=None, **kwargs):
-        is_full_refresh = params.get("full_refresh")
-        if is_full_refresh:
+        is_prod = params.get("donnees_prod")
+        if is_prod:
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
-            kwargs["ti"].xcom_push("dbt_run_args", "--select france_travail_donnees_prod")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select stg_france_travail france_travail_donnees_prod")
         else:
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
-            kwargs["ti"].xcom_push("dbt_run_args", "--select france_travail_donnees_recette")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select stg_france_travail france_travail_donnees_recette")
 
     params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
 
