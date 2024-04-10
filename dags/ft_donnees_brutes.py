@@ -16,7 +16,6 @@ with DAG(
 
     @task(task_id="store_ft")
     def store_ft(**kwargs):
-
         import ftputil
         import pandas as pd
 
