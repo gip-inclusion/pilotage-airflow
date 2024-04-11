@@ -1,5 +1,6 @@
 select
     {{ pilo_star(ref('candidats'),  relation_alias="c") }},
+    cd.genre_candidat,
     cd.id as id_candidature,
     cd.date_embauche,
     cd.date_candidature,

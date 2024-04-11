@@ -1,5 +1,7 @@
 select
     cc.id,
+    cc.tranche_age,
+    cc.genre_candidat,
     cc.type_inscription,
     cc.diagnostic_valide,
     cc.type_auteur_diagnostic,
@@ -25,6 +27,8 @@ from {{ ref('stg_candidats_candidatures') }} as cc
 where cc.date_candidature >= current_date - interval '6 months'
 group by
     cc.id,
+    cc.tranche_age,
+    cc.genre_candidat,
     cc.total_diagnostics,
     cc.date_diagnostic,
     cc."date_dernière_connexion",
