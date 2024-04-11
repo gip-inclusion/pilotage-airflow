@@ -52,10 +52,6 @@ models:
   - name: suivi_visiteurs_tous_tb
     description: >
       Table introduite pour suivre les visiteurs uniques des TBs prives et publics.
-  - name: atigip_2022
-    description: >
-      Table créée à la demande de l'ATIGIP pour suivre les prescriptions des SPIPs.
-      Focus sur 2022 donc table fixe, mais rangée dans le dossier marts car mis à dispo sur Metabase pour le partage avec ATIGIP.
   - name: pass_agrements_valides
     description: >
       A la demande du C1, cette table a été créée pour suivre le nombre de pass IAE valides. Ici un pass est considéré valide quand sa date de fin n'a pas expiré.
