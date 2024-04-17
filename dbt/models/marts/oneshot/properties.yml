@@ -4,6 +4,8 @@ models:
   - name: atigip_2022
     description: >
       Suivi des prescriptions des SPIP en 2022 pour l'ATIGIP.
+      Table créée à la demande de l'ATIGIP pour suivre les prescriptions des SPIPs.
+      Focus sur 2022 donc table fixe, mais rangée dans le dossier marts car mis à dispo sur Metabase pour le partage avec ATIGIP.
   - name: candidatures_convergence
     description: >
       Suivi des candidatures réalisées par les ACI de Convergence.
@@ -19,3 +21,10 @@ models:
   - name: motif_sortie_contrat_termine
     description: >
       Contient les dates et motifs de sortie pour les candidats à l'IAE. Permet de récupérer les dates de sortie des candidats de l'XP Nord pour permettre à FT de nous fournir la donnée sortie via la DSN.
+  - name: sorties_definitives
+    description: >
+      Table qui contient les dates de sorties pour chaque contrat du fluxiae.
+      Sert à obtenir les sorties pour l'expé nord france travail (table ft_candidats_sorties)
+  - name: ft_candidats_sorties
+    description: >
+      Contient les données candidats + les dates de sorties de ces candidats.
