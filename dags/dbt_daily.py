@@ -60,13 +60,6 @@ with airflow.DAG(
         append_env=True,
     )
 
-    dbt_snapshot = bash.BashOperator(
-        task_id="dbt_snapshot",
-        bash_command="dbt snapshot",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_clean = bash.BashOperator(
         task_id="dbt_clean",
         bash_command="dbt clean",
@@ -78,4 +71,4 @@ with airflow.DAG(
         trigger_dag_id="data_consistency", task_id="trigger_data_consistency"
     )
 
-    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_snapshot >> dbt_clean >> dag_data_consistency >> end)
+    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_clean >> dag_data_consistency >> end)

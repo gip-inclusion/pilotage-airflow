@@ -4,3 +4,7 @@ snapshots:
   - name: etp_conventionne_snapshot
     description: >
       Ce snapshot permet de suivre les modifications au sein des annexes financières pour l'année en cours.
+  - name: candidats_recherche_active_snapshot
+    description: >
+      Ce snapshot permet de suivre les modifications au sein des candidats en recherche active.
+      Il suit l'ajout de nouveaux candidats (via l'id) et les nouvelles dates de derniere candidature, d'embauche et de candidature acceptée.
