@@ -161,3 +161,30 @@ models:
   - name: visites_ft
     description: >
       Table permettant le suivi des visites et visiteurs uniques sur le TB 406 - Requetage FT.
+    columns:
+        - name: région
+          description: région du candidat
+        - name: nom_département
+          description: nom du département du candidat
+        - name: département
+          description: numéro du département du candidat
+        - name: candidatures_spe
+          description: 1 si le candidat a réalisé une candidature vers le SPE dans les 6 derniers mois, 0 sinon
+        - name: candidat_iae
+          description: 1 si le candidat a réalisé une candidature vers une SIAE dans les 6 derniers mois, 0 sinon
+        - name: nb_candidatures
+          description: nombre de candidatures émises dans les 6 derniers mois
+        - name: nb_candidatures_acceptees
+          description: nombre de candidatures émises dans les 6 derniers mois et aujourd'hui à l'état accepté
+        - name: nb_candidatures_sans_accept
+          description: nombre de candidatures émises dans les 6 derniers mois et aujourd'hui pas à l'état accepté
+        - name: delai_premiere_candidature
+          description: nombre de jours entre aujourd'hui et la première candidature émise. permet de ne récupérer que les candidats qui n'ont pas émis leur première candidature dans les 30 derniers jours
+        - name: delai_derniere_candidature
+          description: nombre de jours entre la dernière candidature et aujourd'hui
+        - name: delai_derniere_candidature_acceptee
+          description: nombre de jours entre la dernière candidature acceptée et aujourd'hui
+        - name: a_eu_acceptation
+          description: 1 si le candidat a eu une candidature acceptée dans les 6 derniers mois, 0 sinon
+        - name: a_eu_embauche
+          description: 1 si le candidat a eu une embauche dans les 6 derniers mois, 0 sinon
