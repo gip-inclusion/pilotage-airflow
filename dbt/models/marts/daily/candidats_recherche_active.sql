@@ -21,7 +21,7 @@ select
     current_date - min(cc.date_premiere_candidature)                                                          as delai_premiere_candidature,
     current_date - max(cc.date_candidature)                                                                   as delai_derniere_candidature,
     current_date - max(case when cc."état" = 'Candidature acceptée' then cc.date_candidature end)             as delai_derniere_candidature_acceptee,
-    count(*)                                                                                                  as nb_candidatures,
+    count(cc.id)                                                                                              as nb_candidatures,
     sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end)                                       as nb_candidatures_acceptees,
     sum(case when cc."état" != 'Candidature acceptée' then 1 else 0 end)                                      as nb_candidatures_sans_accept,
     coalesce(sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end) > 0)                         as a_eu_acceptation,
