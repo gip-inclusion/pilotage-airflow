@@ -19,3 +19,9 @@ tests:
    - name: test_potentiel_structures
     description: >
       Permet de vérifier que le nb de structures comptées dans le potentiel correspond bien au nombre de structures mères de la table structure
+   - name: test_candidats_recherche_active
+    description: >
+      Permet de vérifier qu'il n'y a pas de doublons ou lignes absentes dans la table candidats recherche active.
+   - name: test_candidatures_candidats_recherche_active
+    description: >
+      Permet de vérifier qu'il n'y a pas de doublons ou lignes absentes dans la table candidatures candidats recherche active.
