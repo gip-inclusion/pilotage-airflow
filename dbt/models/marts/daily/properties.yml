@@ -158,3 +158,6 @@ models:
     description: >
       Table contenant les candidats actifs les 6 derniers mois et permettant de savoir s'ils ont eu des candidatures acceptées ainsi que le délai depuis la dernière candidature émise.
       Utile pour le calcul des candidats sans solution selon la définition simplifiée 'candidat actif les 6 derniers mois n'ayant eu aucune candidature acceptée'.
+  - name: visites_ft
+    description: >
+      Table permettant le suivi des visites et visiteurs uniques sur le TB 406 - Requetage FT.
