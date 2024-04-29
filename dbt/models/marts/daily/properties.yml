@@ -180,6 +180,8 @@ models:
           description: nombre de candidatures émises dans les 6 derniers mois et aujourd'hui pas à l'état accepté
         - name: delai_premiere_candidature
           description: nombre de jours entre aujourd'hui et la première candidature émise. permet de ne récupérer que les candidats qui n'ont pas émis leur première candidature dans les 30 derniers jours
+        - name: delai_derniere_candidature_interval_order
+          description: colonne contenant un entier représentant les intervalles de 30 jours afin de permettre de trier selon ces intervalles
         - name: delai_derniere_candidature
           description: nombre de jours entre la dernière candidature et aujourd'hui
         - name: delai_derniere_candidature_acceptee
