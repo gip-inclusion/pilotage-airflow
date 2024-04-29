@@ -119,3 +119,6 @@ models:
         description: salarie vivant en zrr (oui/non/non renseigné)
       - name: genre_salarie
         description: genre salarié (oui/non/non renseigné)
+  - name: candidats_decrochage
+    description: >
+      Table permettant l'identification des candidats en decrochage, c'est a dire les candidats ayant effectué une candidature après une sortie non positive.

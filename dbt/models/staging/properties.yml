@@ -67,9 +67,6 @@ models:
   - name: stg_salarie
     description: >
       Vue créée pour récupérer les id uniques des salarié(e)s ainsi que leur caractéristiques (p.exp genre), car le modele fluxIAE_Salarie contient des `salarie_id` en doublon (car un salarie peut avoir plusieurs `hash_numero_pass_IAE`).
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: ref('fluxIAE_Salarie_v2')
   - name: stg_candidats
     description: >
       Vue permettant de calculer des informations concernant les candidats. Elle sert à ce jour à récupérer l'âge du candidat à partir du nir.
@@ -168,3 +165,10 @@ models:
     description: >
       Les données France travail étaient traitées via un notebook python développé par Jules.
       Ce premier script sql permet de faire une partie du traitement effectué par le notebook.
+  - name: stg_candidats_asp_derniere_sortie
+    description: >
+      Vue permettant d'isoler les motifs et causes de sortie ainsi que les dates de derniere sortie et candidature afin de permettre l'identification des id salarie asp en decrochage.
+  - name: stg_candidats_derniere_sortie
+    description: >
+      Vue permettant d'isoler les dates de derniere sortie et candidature afin de permettre l'identification des salaries des emplois en decrochage.
+      Cette 2nde table permet d'éviter les doublons causés par le fait l'id salarie de l'asp n'est pas unique.
