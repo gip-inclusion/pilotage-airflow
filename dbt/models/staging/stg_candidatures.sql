@@ -5,6 +5,10 @@ select
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
     candidatures.id                                        as id,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
+    case
+        when scvg.siret is not null and struct.type_struct = 'ACI' then 'Oui'
+        else 'Non'
+    end                                                    as structure_convergence,
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
     org_prescripteur.type                                  as type_org_prescripteur,
     org_prescripteur.date_inscription                      as date_inscription_orga,
@@ -39,3 +43,5 @@ left join {{ ref('stg_organisations') }} as org_prescripteur
 left join
     {{ ref('groupes_structures') }} as grp_strct
     on grp_strct.structure = candidatures.type_structure
+left join {{ ref('sirets_structures_convergence') }} as scvg
+    on struct.siret = scvg.siret
