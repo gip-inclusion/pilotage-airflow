@@ -8,6 +8,7 @@ with nb_candidatures as (
         (
             select count(*)
             from candidatures_candidats_recherche_active
+            where date_candidature >= current_date - interval '6 months'
         ) as candidatures_cra
 )
 

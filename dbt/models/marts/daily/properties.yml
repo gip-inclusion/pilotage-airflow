@@ -185,3 +185,6 @@ models:
           description: 1 si le candidat a eu une candidature acceptée dans les 6 derniers mois, 0 sinon
         - name: a_eu_embauche
           description: 1 si le candidat a eu une embauche dans les 6 derniers mois, 0 sinon
+  - name: visites_ft
+    description: >
+      Table permettant le suivi des visites et visiteurs uniques sur le TB 406 - Requetage FT.
