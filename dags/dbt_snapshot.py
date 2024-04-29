@@ -8,7 +8,7 @@ from dags.common import db, dbt, default_dag_args, slack
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
-    dag_id="dbt_weekly",
+    dag_id="dbt_snapshot",
     schedule_interval=None,
     params={
         "full_refresh": Param(False, type="boolean"),
