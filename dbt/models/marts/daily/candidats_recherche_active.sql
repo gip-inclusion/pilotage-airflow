@@ -21,7 +21,7 @@ select
     current_date - min(cc.date_premiere_candidature)                                                          as delai_premiere_candidature,
     current_date - max(cc.date_candidature)                                                                   as delai_derniere_candidature,
     {{ interval_30_days('current_date - max(cc.date_candidature)', 0) }}                                      as delai_derniere_candidature_interval,
-    {{ interval_30_days('current_date - max(cc.date_candidature)', 1) }}::integer                             as delai_derniere_candidature_interval_order,
+    cast({{ interval_30_days('current_date - max(cc.date_candidature)', 1) }} as integer)                                                                                                  as delai_derniere_candidature_interval_order,
     current_date - max(case when cc."état" = 'Candidature acceptée' then cc.date_candidature end)             as delai_derniere_candidature_acceptee,
     count(cc.id)                                                                                              as nb_candidatures,
     sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end)                                       as nb_candidatures_acceptees,
