@@ -27,6 +27,9 @@ models:
   - name: stg_candidatures
     description: >
       Ce modèle récupère les données de la table c1 candidatures et y applique quelques modifications de renommage ou d'extraction de données.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'candidatures')
   - name: stg_organisations
     description: >
       Ce modèle récupère les données de la table c1 organisations et y ajoute des colonnes pour faciliter le déploiement de tableaux metabase liés aux prescripteurs.
