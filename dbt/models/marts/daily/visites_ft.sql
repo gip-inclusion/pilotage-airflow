@@ -6,4 +6,4 @@ select
 from
     /* Nouvelle table créée par Victor qui reprend toutes les infos des visiteurs des TBs publics */
     {{ source('matomo', 'suivi_visiteurs_tb_publics_v1') }} as vp
-where vp."Tableau de bord" = 'tb 406 - Requêtage des données de l''''expérimentation RSA'
+where vp."Tableau de bord" = 'tb 406 - Requêtage des données de l''expérimentation RSA'
