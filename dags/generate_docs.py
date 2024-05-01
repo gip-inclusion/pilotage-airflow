@@ -32,6 +32,8 @@ with airflow.DAG(
     # these can stay as env vars since they are considered deployment secrets, not business vars.
     cellar_sync_cmd_parts = [
         "s3cmd",
+        "--host=${S3_DOCS_HOST}",
+        "--host-bucket=${S3_DOCS_HOST_BUCKET}",
         "--access_key=${S3_DOCS_ACCESS_KEY}",
         "--secret_key=${S3_DOCS_SECRET_KEY}",
         "sync",
