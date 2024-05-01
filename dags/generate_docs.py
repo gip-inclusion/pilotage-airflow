@@ -15,9 +15,6 @@ with airflow.DAG(
 
     env_vars = db.connection_envvars()
 
-    # these can stay as env vars since they are considered deployment secrets, not business vars.
-    s3cmd_prefix = "s3cmd --access_key=${S3_DOCS_ACCESS_KEY} --secret_key=${S3_DOCS_SECRET_KEY} "
-
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
         bash_command="dbt deps",
@@ -32,12 +29,21 @@ with airflow.DAG(
         append_env=True,
     )
 
+    # these can stay as env vars since they are considered deployment secrets, not business vars.
+    cellar_sync_cmd_parts = [
+        "s3cmd",
+        "--access_key=${S3_DOCS_ACCESS_KEY}",
+        "--secret_key=${S3_DOCS_SECRET_KEY}",
+        "sync",
+        "--delete-removed",
+        "--guess-mime-type",
+        "--acl-public",
+        "/tmp/dbt-docs/",
+        "s3://${S3_DOCS_BUCKET}/",
+    ]
     cellar_sync = bash.BashOperator(
         task_id="cellar_sync",
-        bash_command=(
-            s3cmd_prefix + "sync --delete-removed --guess-mime-type --acl-public "
-            "/tmp/dbt-docs/ s3://${S3_DOCS_BUCKET}/"
-        ),
+        bash_command=" ".join(cellar_sync_cmd_parts),
     )
 
     end = empty.EmptyOperator(task_id="end")
