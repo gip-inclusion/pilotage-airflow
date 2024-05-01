@@ -6,6 +6,7 @@ logs/
 **/__pycache__
 
 .env
+.envrc.local
 dbt/packages/
 airflow/
 .latest.dump
