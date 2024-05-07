@@ -6,7 +6,7 @@ select
     sortie.rms_libelle                               as motif_sortie,
     max(sortie.contrat_date_sortie_definitive::date) as date_derniere_sortie,
     max(cddr.date_candidature)                       as date_derniere_candidature
-from {{ ref('fluxIAE_Salarie_v2') }} as salarie
+from {{ source('fluxIAE','fluxIAE_Salarie') }} as salarie
 -- pour récupérer le nir pour ensuite pouvoir filtrer les candidats non ft
 left join {{ ref('pass_agrements_valides') }} as pass
     on salarie."hash_numéro_pass_iae" = pass."hash_numéro_pass_iae"
