@@ -1,6 +1,7 @@
 select
     etp_r.identifiant_salarie,
     etp_r.id_annexe_financiere,
+    etp_r.emi_sme_mois,
     etp_r.emi_sme_annee,
     etp_r.nombre_etp_consommes_reels_annuels,
     etp_r.nombre_etp_consommes_reels_mensuels,
@@ -52,4 +53,5 @@ group by
     salarie.salarie_rci_libelle,
     etp_r.id_annexe_financiere,
     etp_r.emi_sme_annee,
+    etp_r.emi_sme_mois,
     salarie.salarie_annee_naissance
