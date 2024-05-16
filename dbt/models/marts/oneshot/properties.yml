@@ -4,12 +4,7 @@ models:
   - name: atigip_2022
     description: >
       Suivi des prescriptions des SPIP en 2022 pour l'ATIGIP.
-  - name: candidatures_convergence
-    description: >
-      Suivi des candidatures réalisées par les ACI de Convergence.
-  - name: contrats_convergence_2023
-    description: >
-      Contient tous les contrats terminés en 2023 et leur durée pour permettre de comparer les durées des parcours dans les ACI convergence vs toutes structures confondues.
+
   - name: ft_candidats_nord
     description: >
       Contient les informations entrées sur les emplois des candidats du Nord identifiés chez France Travail.

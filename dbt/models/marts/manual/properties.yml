@@ -9,3 +9,9 @@ models:
     description: >
       Ce script permet de finaliser la traitement des données FT de recette, précedemment effectué via un notebook python (il y a 2 tb, un de prod un de recette avec deux tables différentes)
       L'usage des seed nous permet d'anticiper de futures modifications dans les différentes colonnes ainsi que ne pas écrire de nombreux case...when.
+  - name: candidatures_convergence
+    description: >
+      Suivi des candidatures réalisées par les ACI de Convergence.
+  - name: contrats_convergence_2023
+    description: >
+      Contient tous les contrats terminés en 2023 et leur durée pour permettre de comparer les durées des parcours dans les ACI convergence vs toutes structures confondues.
