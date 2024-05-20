@@ -1,7 +1,7 @@
 # Ignore everythings by default
 *
 # Dependencies
-!requirements-ci.txt
+!requirements/base.txt
 # Airflow
 !custom-prod-entrypoint.sh
 !.env-base

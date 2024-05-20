@@ -1,0 +1,16 @@
+-r base.in
+
+uv  # https://github.com/astral-sh/uv
+
+# Code quality
+# ------------------------------------------------------------------------------
+black  # https://github.com/psf/black
+ruff  # https://github.com/astral-sh/ruff
+sqlfluff  # https://github.com/sqlfluff/sqlfluff
+sqlfluff-templater-dbt  # https://pypi.org/project/sqlfluff-templater-dbt/
+
+# Test & Mock
+# ------------------------------------------------------------------------------
+freezegun  # https://github.com/spulec/freezegun
+pytest  # https://github.com/pytest-dev/pytest
+pytest-subtests  # https://github.com/pytest-dev/pytest-subtests

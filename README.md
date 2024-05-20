@@ -10,15 +10,8 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
 ### Votre environnement virtuel Python
 
-    python -m venv venv
+    make venv
     source venv/bin/activate
-    make update
-
-
-> **Note**
->
-> Pour l'instant nous devons utiliser `requirements-ci.txt` pour des raisons d'incompatibilité
-> entre dépendances, cf. `generate-requirements.sh`
 
 
 ### Votre serveur de base de données PostgreSQL pour Airflow & DBT
