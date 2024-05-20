@@ -4,23 +4,29 @@
 # > practice; so for compatibility, you must explicitly request it
 .DELETE_ON_ERROR:
 
-VIRTUAL_ENV ?= $(shell pwd)/.venv
+PYTHON_VERSION := python3.10
+REQUIREMENTS_PATH ?= requirements/dev.txt
+
+VIRTUAL_ENV ?= .venv
 export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
 
 # Python
 # =============================================================================
-.PHONY: venv_ci update
+.PHONY: venv compile-deps
 
-PYTHON_VERSION := python3.10
+$(VIRTUAL_ENV): $(REQUIREMENTS_PATH)
+	$(PYTHON_VERSION) -m venv $@
+	$@/bin/pip install uv
+	$@/bin/uv pip sync --require-hashes $^
+	touch $@
 
-venv_ci:
-	$(PYTHON_VERSION) -m venv $(VIRTUAL_ENV)
+venv: $(VIRTUAL_ENV)
 
-update:
-	$(VIRTUAL_ENV)/bin/pip install --force-reinstall --no-color --progress-bar off -r requirements-ci.txt
-	$(VIRTUAL_ENV)/bin/pip install --force-reinstall --no-color --progress-bar off dbt-fal==1.5.4 dbt-core==1.5.1
-
+PIP_COMPILE_FLAGS := --generate-hashes $(PIP_COMPILE_OPTIONS)
+compile-deps: $(VIRTUAL_ENV)
+	uv pip compile $(PIP_COMPILE_FLAGS) -o requirements/base.txt requirements/base.in
+	uv pip compile $(PIP_COMPILE_FLAGS) -o requirements/dev.txt requirements/dev.in
 
 # Quality
 # =============================================================================
@@ -30,17 +36,17 @@ MONITORED_DIRS := dags dbt tests
 SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
 
 # if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
-fix:
+fix: $(VIRTUAL_ENV)
 	black $(MONITORED_DIRS)
 	ruff check --fix $(MONITORED_DIRS)
 	sqlfluff fix --force $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
-quality:
+quality: $(VIRTUAL_ENV)
 	black --check $(MONITORED_DIRS)
 	ruff check $(MONITORED_DIRS)
 	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
-test:
+test: $(VIRTUAL_ENV)
 	pytest -v -W ignore::DeprecationWarning
 
 clean: dbt_clean
@@ -52,23 +58,23 @@ clean: dbt_clean
 # =============================================================================
 .PHONY: dbt_clean dbt_docs dbt_run dbt_weekly dbt_daily
 
-dbt_clean:
+dbt_clean: $(VIRTUAL_ENV)
 	rm -rf $(DBT_TARGET_PATH)
 	dbt clean
 
-dbt_docs:
+dbt_docs: $(VIRTUAL_ENV)
 	dbt docs generate
 	python3 -m http.server --directory $(DBT_TARGET_PATH) --bind 127.0.0.1 $(DBT_DOCS_PORT)
 
-dbt_run:
+dbt_run: $(VIRTUAL_ENV)
 	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+
 	dbt test
 
-dbt_weekly:
+dbt_weekly: $(VIRTUAL_ENV)
 	dbt run --select marts.weekly legacy.weekly ephemeral indexed staging
 	dbt test
 
-dbt_daily:
+dbt_daily: $(VIRTUAL_ENV)
 	dbt run --select marts.daily legacy.daily ephemeral staging
 	dbt test
 

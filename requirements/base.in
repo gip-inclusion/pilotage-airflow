@@ -1,0 +1,14 @@
+# Airflow
+# ------------------------------------------------------------------------------
+apache-airflow[amazon,sentry,slack]==2.6.2  # https://github.com/apache/airflow
+
+# DBT
+# ------------------------------------------------------------------------------
+dbt-core  # https://github.com/dbt-labs/dbt-core
+dbt-postgres  # https://github.com/dbt-labs/postgres
+dbt-fal  # https://github.com/fal-ai/dbt-fal
+
+# Data management (scripts, DAG, ...)
+# ------------------------------------------------------------------------------
+ftputil  # https://ftputil.sschwarzer.net/
+pandas  # https://github.com/pandas-dev/pandas

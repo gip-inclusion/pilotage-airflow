@@ -1,4 +1,0 @@
-apache-airflow[amazon,sentry,slack]
-dbt-postgres==1.5.1
-dbt-fal[postgres]
-pandas

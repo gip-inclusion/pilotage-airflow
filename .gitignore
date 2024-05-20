@@ -13,5 +13,6 @@ airflow/
 .latest.restore
 .user.yml
 venv/
+.venv/
 .DS_Store
 target/

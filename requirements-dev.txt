@@ -1,9 +1,0 @@
--r requirements.txt
-
-black
-freezegun
-pytest
-pytest-subtests
-ruff
-sqlfluff
-sqlfluff-templater-dbt
