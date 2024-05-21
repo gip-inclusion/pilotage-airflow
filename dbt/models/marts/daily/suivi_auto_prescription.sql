@@ -1,8 +1,8 @@
 select
     {{ pilo_star(ref('stg_candidatures_autoprescription'), relation_alias='autopr_all') }},
-    s.siret                 as siret,
-    s.active                as active,
-    s.ville                 as ville,
+    s.siret,
+    s.active,
+    s.ville,
     s.nom_structure_complet as "nom_structure_complet"
 from
     {{ ref('stg_candidatures_autoprescription') }} as autopr_all

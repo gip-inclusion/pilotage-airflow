@@ -3,7 +3,7 @@ select
     visits.nom_tb,
     visits.region                                          as "région",
     visits.departement                                     as "département_num",
-    visits.type_utilisateur                                as type_utilisateur,
+    visits.type_utilisateur,
     visits.type_organisation                               as profil,
     -- nb utilisateurs revenus plusieurs fois cette semaine
     nb_revenus.nb_utilisateurs_plusieurs_visites,
@@ -20,11 +20,11 @@ left join {{ source('emplois', 'utilisateurs_v0') }} as c1_users
 left join {{ ref('stg_nb_utilisateurs_revenus_semaine') }} as nb_revenus
     on
         nb_revenus.num_semaine = cast(visits.num_semaine as integer)
-        and nb_revenus.nom_tb = visits.nom_tb
-        and nb_revenus.region = visits.region
-        and nb_revenus.departement = visits.departement
-        and nb_revenus.type_utilisateur = visits.type_utilisateur
-        and nb_revenus.type_organisation = visits.type_organisation
+        and visits.nom_tb = nb_revenus.nom_tb
+        and visits.region = nb_revenus.region
+        and visits.departement = nb_revenus.departement
+        and visits.type_utilisateur = nb_revenus.type_utilisateur
+        and visits.type_organisation = nb_revenus.type_organisation
 group by
     visits.semaine,
     visits.nom_tb,

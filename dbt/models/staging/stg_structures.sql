@@ -1,13 +1,13 @@
 select
-    s.id                      as id,
-    s.nom                     as nom,
+    s.id,
+    s.nom,
     s.type                    as type_struct,
-    s.siret                   as siret,
-    s.active                  as active,
-    s.ville                   as ville,
-    s."département"           as "département",
-    s."nom_département"       as "nom_département",
-    s."région"                as "région",
+    s.siret,
+    s.active,
+    s.ville,
+    s."département",
+    s."nom_département",
+    s."région",
     insee_geo.nom_zone_emploi as bassin_d_emploi,
     s.nom_complet             as "nom_structure_complet"
 from

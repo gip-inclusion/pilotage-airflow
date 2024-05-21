@@ -1,8 +1,8 @@
 select
-    visits.nom_tb                                          as nom_tb,
+    visits.nom_tb,
     visits.region                                          as "région",
     visits.departement                                     as "département_num",
-    visits.type_utilisateur                                as type_utilisateur,
+    visits.type_utilisateur,
     visits.type_organisation                               as profil,
     cast(count(distinct visits.nom_organisation) as float) as nb_organisations,
     -- organisations venues ce trimestre

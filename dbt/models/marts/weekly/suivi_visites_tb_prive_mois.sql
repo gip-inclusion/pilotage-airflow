@@ -2,7 +2,7 @@ select
     visits.nom_tb,
     visits.region                                          as "région",
     visits.departement                                     as "département_num",
-    visits.type_utilisateur                                as type_utilisateur,
+    visits.type_utilisateur,
     visits.type_organisation                               as profil,
     cast(count(distinct visits.nom_organisation) as float) as nb_organisations,
     date_trunc('month', visits.semaine)                    as mois,

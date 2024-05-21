@@ -4,19 +4,19 @@ select
                  relation_alias = "organisations") }},
     -- récupérer la ville insee si le croisement insee a bien pu se faire
     -- pour les 492 villes restantes, récupérer la ville des emplois
-    coalesce(appartenance_geo_communes.libelle_commune, initcap(organisations.ville)) as ville,
-    coalesce(organisations.code_commune, appartenance_geo_communes.code_insee)        as code_commune,
-    organisations."nom_département"                                                   as "nom_département",
+    organisations."nom_département",
     organisations.siret                                                               as siret_org_prescripteur,
-    /*bien mettre nom département et pas département */
     organisations."nom_département"                                                   as dept_org,
     organisations."région"                                                            as "région_org",
+    /*bien mettre nom département et pas département */
     appartenance_geo_communes.nom_departement                                         as "nom_département_insee",
     appartenance_geo_communes.nom_region                                              as "région",
     appartenance_geo_communes.nom_zone_emploi                                         as zone_emploi,
     appartenance_geo_communes.nom_epci                                                as epci,
     organisations_libelles.label                                                      as type_complet,
     organisations_libelles.code                                                       as type_org,
+    coalesce(appartenance_geo_communes.libelle_commune, initcap(organisations.ville)) as ville,
+    coalesce(organisations.code_commune, appartenance_geo_communes.code_insee)        as code_commune,
     case
         when organisations.type in ('ML', 'PE', 'CAP_EMPLOI') then 'SPE'
         when organisations.type in ('DEPT', 'ODC') then 'Département'

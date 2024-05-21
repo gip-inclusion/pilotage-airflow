@@ -44,7 +44,7 @@ select
     /* On selectionne les colonnes finales qui nous intéressent */
     c.*,
     organisations_libelles.label    as type_auteur_diagnostic_detaille,
-    prescripteurs.type_prescripteur as type_prescripteur,
+    prescripteurs.type_prescripteur,
     prescripteurs.zone_emploi       as bassin_emploi_prescripteur,
     prescripteurs.epci              as epci_prescripteur,
     prescripteurs."nom_département" as "nom_département_prescripteur",
@@ -58,6 +58,6 @@ from
     candidats_p as c
 left join {{ ref('stg_organisations') }} as prescripteurs
     on
-        prescripteurs.id = c.id_org_prescripteur
+        c.id_org_prescripteur = prescripteurs.id
 left join {{ source('emplois','c1_ref_type_prescripteur') }} as organisations_libelles
     on c.type_org = organisations_libelles.code

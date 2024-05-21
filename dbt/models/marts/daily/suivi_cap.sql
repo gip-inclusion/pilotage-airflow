@@ -67,7 +67,7 @@ cap_struct_counts as (
 
 select
     cap_camp.nom                                                    as "nom_campagne",
-    struct."nom_département"                                        as "nom_département",
+    struct."nom_département",
     struct."région",
     -- récupération du pct de sélection attendu
     -- que l'on divise par 100 pour permettre l'affichage correct sur metabase
@@ -82,8 +82,8 @@ select
 from
     cap_struct_counts as cap_struct_cnt
 left join {{ ref('structures') }} as struct on cap_struct_cnt.id_structure = struct.id
-left join {{ source('emplois', 'cap_campagnes') }} as cap_camp on cap_camp.id = cap_struct_cnt.id_cap_campagne
-left join nb_structures_par_dept as nb_tot_dep on nb_tot_dep."nom_département" = struct."nom_département"
+left join {{ source('emplois', 'cap_campagnes') }} as cap_camp on cap_struct_cnt.id_cap_campagne = cap_camp.id
+left join nb_structures_par_dept as nb_tot_dep on struct."nom_département" = nb_tot_dep."nom_département"
 where struct.active = 1
 group by
     cap_camp.nom,

@@ -1,15 +1,15 @@
 select
-    cap_campagnes.id              as id_cap_campagne,
-    cap_campagnes.nom             as nom_campagne,
-    cap_structures.id_structure   as id_cap_structure,
-    structures.id                 as id_structure,
-    structures.type_struct        as "type",
-    structures."département"      as "département",
-    structures."nom_département"  as "nom_département",
-    structures."région"           as "région",
-    structures.bassin_d_emploi    as bassin_d_emploi,
-    cap_structures."état"         as "état",
-    cap_rep."réponse_au_contrôle" as "réponse_au_contrôle",
+    cap_campagnes.id            as id_cap_campagne,
+    cap_campagnes.nom           as nom_campagne,
+    cap_structures.id_structure as id_cap_structure,
+    structures.id               as id_structure,
+    structures.type_struct      as "type",
+    structures."département",
+    structures."nom_département",
+    structures."région",
+    structures.bassin_d_emploi,
+    cap_structures."état",
+    cap_rep."réponse_au_contrôle",
     case
         when
             structures."active" = 1
@@ -17,7 +17,7 @@ select
                 'Oui'
         else
             'Non'
-    end                           as active,
+    end                         as active,
     case
         when
             cap_structures."date_contrôle" is not null
@@ -25,7 +25,7 @@ select
                 'Oui'
         else
             'Non'
-    end                           as "controlee"
+    end                         as "controlee"
 from
     {{ ref('stg_structures') }} as structures
 left join {{ source('emplois', 'cap_structures') }} as cap_structures
