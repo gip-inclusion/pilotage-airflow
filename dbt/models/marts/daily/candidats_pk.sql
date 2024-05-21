@@ -1,5 +1,6 @@
 select
-    salarie_asp."hash_numéro_pass_iae" as "hash_numéro_pass_iae",
+    salarie_asp."hash_numéro_pass_iae" as "hash_numéro_pass_iae_asp",
+    pass."hash_numéro_pass_iae"        as "hash_numéro_pass_iae_emplois",
     salarie_asp.salarie_id             as id_salarie_asp,
     candidat_emploi.id                 as id_candidat_emplois,
     candidat_emploi.hash_nir           as hash_nir
