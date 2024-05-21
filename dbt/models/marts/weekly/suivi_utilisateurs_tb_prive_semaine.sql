@@ -1,9 +1,9 @@
 select
     visits.user_id                                                                                          as id_utilisateur,
     c1_users.email                                                                                          as email_utilisateur,
-    metabase_ids.nom_tb                                                                                     as nom_tb,
+    metabase_ids.nom_tb,
     visits.department                                                                                       as departement,
-    visits.region                                                                                           as region,
+    visits.region,
     case
         when visits.user_kind = 'prescriber' then 'prescripteur'
         when visits.user_kind = 'employer' then 'siae'

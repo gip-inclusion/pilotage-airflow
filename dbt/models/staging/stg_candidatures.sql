@@ -3,16 +3,16 @@ select
         except=["id", "date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée"]) }},
     {{ pilo_star(ref('stg_organisations'),
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
-    candidatures.id                                        as id,
+    candidatures.id,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
-    case
-        when scvg.siret is not null and struct.type_struct = 'ACI' then 'Oui'
-        else 'Non'
-    end                                                    as structure_convergence,
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
     org_prescripteur.type                                  as type_org_prescripteur,
     org_prescripteur.date_inscription                      as date_inscription_orga,
     grp_strct.groupe                                       as categorie_structure,
+    case
+        when scvg.siret is not null and struct.type_struct = 'ACI' then 'Oui'
+        else 'Non'
+    end                                                    as structure_convergence,
     case
         when candidatures."état" = 'Candidature déclinée' then 'Candidature refusée'
         else candidatures."état"
@@ -37,11 +37,11 @@ select
 from
     {{ source('emplois', 'candidatures') }} as candidatures
 left join {{ ref('stg_structures') }} as struct
-    on struct.id = candidatures.id_structure
+    on candidatures.id_structure = struct.id
 left join {{ ref('stg_organisations') }} as org_prescripteur
-    on org_prescripteur.id = candidatures.id_org_prescripteur
+    on candidatures.id_org_prescripteur = org_prescripteur.id
 left join
     {{ ref('groupes_structures') }} as grp_strct
-    on grp_strct.structure = candidatures.type_structure
+    on candidatures.type_structure = grp_strct.structure
 left join {{ ref('sirets_structures_convergence') }} as scvg
     on struct.siret = scvg.siret

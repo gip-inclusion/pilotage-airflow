@@ -6,8 +6,8 @@ select
     ctr.contrat_date_embauche,
     salarie.genre_salarie,
     salarie.tranche_age,
-    salarie.qpv                      as qpv,
-    salarie.zrr                      as zrr,
+    salarie.qpv,
+    salarie.zrr,
     rnf.rnf_libelle_niveau_form_empl as niveau_formation_salarie,
     struct.structure_denomination,
     struct.structure_adresse_admin_commune,
@@ -20,9 +20,9 @@ select
     af_ctr.af_id_annexe_financiere,
     af_ctr.nom_departement_af,
     af_ctr.nom_region_af,
-    rec.nb_reconductions             as nb_reconductions,
-    rec.date_recrutement             as date_recrutement,
-    rec.date_fin_recrutement         as date_fin_recrutement,
+    rec.nb_reconductions,
+    rec.date_recrutement,
+    rec.date_fin_recrutement,
     emi.date_recrutement_reelle,
     case
         when ctr.contrat_salarie_rqth then 'OUI'

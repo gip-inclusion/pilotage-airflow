@@ -118,6 +118,6 @@ select
 from
     date_1ere_candidature as date_cddr
 left join prescripteurs as p
-    on p.id = date_cddr.id_org_prescripteur
+    on date_cddr.id_org_prescripteur = p.id
 /* Ecarter les candidats qui ne sont pas recrutés à aujourd'hui */
 where date_cddr.date_1ere_embauche != '2099-01-01'

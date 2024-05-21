@@ -1,7 +1,7 @@
 select
     svtp."Tableau de bord"   as tableau_de_bord,
     'TB privé'               as type_de_tb,
-    svtp."Département"       as "département",
+    svtp."Département",
     svtp."Nom Département"   as "nom_département",
     svtp."Date"              as semaine,
     svtp."Visiteurs uniques" as visiteurs_uniques

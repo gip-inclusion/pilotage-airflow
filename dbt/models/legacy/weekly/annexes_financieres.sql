@@ -15,7 +15,7 @@ structure_af as (
         af.af_mesure_dispositif_code,
         af.af_date_fin_effet_v2,
         af.af_etat_annexe_financiere_code,
-        s.structure_denomination       as structure_denomination,
+        s.structure_denomination,
         s.structure_siret_actualise    as structure_siret,
         s.nom_departement_structure,
         s.nom_region_structure,
