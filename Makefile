@@ -27,10 +27,7 @@ update:
 .PHONY: fix quality test clean
 
 MONITORED_DIRS := dags dbt tests
-# FIXME(vperron): In the long run we should include "references.consistent,references.from,references.qualification" rules.
-SQLFLUFF_OPTIONS := \
-	--exclude-rules ambiguous.distinct,layout.long_lines,references.consistent,references.from,references.qualification,references.special_chars,convention.left_join \
-	--disable-progress-bar --nocolor
+SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
 
 # if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
 fix:
