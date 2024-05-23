@@ -29,7 +29,9 @@ with DAG(
         import pandas as pd
 
         with db.MetabaseDBCursor() as (_, conn):
-            df = pd.read_sql_query('SELECT * FROM "suivi_satisfaction";', conn)
+            df = pd.read_sql_query(
+                'SELECT * FROM "suivi_satisfaction" WHERE suivi_satisfaction."Recommendation"  is not null;', conn
+            )
             df.rename(columns={"Recommendation": "Recommandation"}, inplace=True)
             df["Produit"] = "Pilotage de l'inclusion"
             df = df[["Date", "Recommandation", "Produit"]]
