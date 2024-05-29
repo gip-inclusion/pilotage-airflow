@@ -33,7 +33,7 @@ left join {{ ref('structures') }} as structures
     on structures.id = cast(visits.current_company_id as INTEGER) and visits.user_kind = 'employer'
 left join {{ source('emplois', 'institutions') }} as institutions
     on institutions.id = cast(visits.current_institution_id as INTEGER) and visits.user_kind = 'labor_inspector'
-left join {{ source('emplois', 'utilisateurs') }} as c1_users
+left join {{ source('emplois', 'utilisateurs_v0') }} as c1_users
     on c1_users.id = cast(visits.user_id as INTEGER)
 left join {{ ref('stg_premiere_visite') }} as first_visit
     on visits.user_id = first_visit.user_id and visits.dashboard_id = first_visit.dashboard_id

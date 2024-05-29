@@ -15,7 +15,7 @@ select
     -- nb total d'utilisateurs cette semaine
     count(distinct c1_users.email)                         as nb_utilisateurs
 from {{ ref('suivi_utilisateurs_tb_prive_semaine') }} as visits
-left join {{ source('emplois', 'utilisateurs') }} as c1_users
+left join {{ source('emplois', 'utilisateurs_v0') }} as c1_users
     on c1_users.id = cast(visits.id_utilisateur as integer)
 left join {{ ref('stg_nb_utilisateurs_revenus_semaine') }} as nb_revenus
     on

@@ -116,6 +116,12 @@ models:
         - name: potentiel
           meta:
             column_type: float
+  - name: utilisateurs
+    description: >
+        Table contenant les utilisateurs des emplois ainsi que l'id de la structure/orga/institution à laquelle ils sont rattachés.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'utilisateurs_v0')
   - name: utilisateurs_jamais_venus
     description: >
       Table permettant de récupérer les mails des utilisateurs des emplois ne s'étant jamais connecté sur les tb prives.
