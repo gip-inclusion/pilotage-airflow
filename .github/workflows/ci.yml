@@ -40,9 +40,9 @@ jobs:
           CREATE DATABASE airflow;
         SQL
         docker kill --signal=SIGHUP ${{ job.services.postgres.id }}
-    - uses: actions/checkout@v3.5.0
+    - uses: actions/checkout@v4.1.6
     - name: 🐍 Install Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5.1.0
       with:
         python-version: "3.10"
         cache: pip

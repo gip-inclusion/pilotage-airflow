@@ -3,7 +3,7 @@ from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import empty
 
-from dags.common import dates, db, default_dag_args, slack
+from dags.common import db, default_dag_args, slack
 
 
 with DAG(
@@ -17,7 +17,6 @@ with DAG(
 
     @task(task_id="create_nps")
     def create_nps(**kwargs):
-        import numpy as np
         import pandas as pd
 
         df_int = []
@@ -28,8 +27,12 @@ with DAG(
             sheet_df.rename(
                 columns={
                     "Submitted at": "Date",
+                    # Here the two questions are almost identicals because it's the tally question that changed.
+                    # But the final output is the same, thus the two lines.
                     "Quelle est la probabilité que vous recommandiez ce tableau de bord à un collègue, "
                     "partenaire ou homologue ?": "Recommendation",
+                    "Quelle est la probabilité que vous recommandiez ce tableau de bord à un partenaire "
+                    "ou homologue ?": "Recommendation",
                 },
                 inplace=True,
             )
@@ -38,14 +41,9 @@ with DAG(
             df_int.append(sheet_df)
         df = pd.concat(df_int)
 
-        # Since this df is appended to a table where these columns exist they need to be created and added to the df
-        columns = ["Utilité Indicateurs", "Prise De Decision Grace Au Tb", "Satisfaction Globale"]
-        for col in columns:
-            df[col] = np.nan
         df["Date"] = pd.to_datetime(df["Date"], dayfirst=True)
-        df = df[(df["Date"] >= dates.start_of_previous_week()) & (df["Date"] <= dates.end_of_previous_week())]
 
-        df.to_sql("suivi_satisfaction", con=db.connection_engine(), if_exists="append", index=False)
+        df.to_sql("suivi_satisfaction", con=db.connection_engine(), if_exists="replace", index=False)
 
     create_nps_task = create_nps()
 
