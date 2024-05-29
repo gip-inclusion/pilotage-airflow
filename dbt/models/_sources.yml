@@ -41,6 +41,7 @@ sources:
       - name: cap_structures
       - name: codes_insee_vs_codes_postaux
       - name: codes_rome
+      - name: collaborations
       - name: communes  # Cities
       - name: critères_iae
       - name: departements
@@ -50,7 +51,7 @@ sources:
       - name: organisations_v0
       - name: pass_agréments
       - name: structures
-      - name: utilisateurs
+      - name: utilisateurs_v0
       - name: demandes_de_prolongation
       - name: prolongations
       - name: structures_v0

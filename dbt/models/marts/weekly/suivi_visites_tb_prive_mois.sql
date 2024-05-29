@@ -11,7 +11,7 @@ select
     -- mail des utilisateurs venus ce mois
     array_agg(distinct c1_users.email)                     as liste_utilisateurs
 from {{ ref('suivi_utilisateurs_tb_prive_semaine') }} as visits
-left join {{ source('emplois', 'utilisateurs') }} as c1_users
+left join {{ source('emplois', 'utilisateurs_v0') }} as c1_users
     on c1_users.id = cast(visits.id_utilisateur as integer)
 group by
     date_trunc('month', visits.semaine),
