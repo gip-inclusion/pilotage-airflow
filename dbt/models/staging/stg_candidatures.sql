@@ -1,9 +1,8 @@
 select
     {{ pilo_star(source('emplois', 'candidatures'),
-        except=["id", "date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée"]) }},
+        except=["date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée"]) }},
     {{ pilo_star(ref('stg_organisations'),
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
-    candidatures.id, -- noqa: aliasing.unique.column
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
     org_prescripteur.type                                  as type_org_prescripteur,
@@ -22,10 +21,7 @@ select
             then 'Motif "Autre" saisi sur les emplois'
         else candidatures.motif_de_refus
     end                                                    as motif_de_refus,
-    case
-        when candidatures.origine = 'Candidat' then 'Candidature en ligne'
-        else candidatures.origine
-    end                                                    as origine,
+    candidatures.origine,
     case
         when candidatures."origine_détaillée" = 'Prescripteur habilité Autre'
             then 'Prescripteur habilité par habilitation préfectorale'
