@@ -35,5 +35,4 @@ if [[ "x$AIRFLOW_SUPERUSER_PASSWORD" != "x" ]]; then
         --password "${AIRFLOW_SUPERUSER_PASSWORD}"
 fi
 
-exec /entrypoint "scheduler" &
-exec /entrypoint "webserver"
+exec /entrypoint "standalone"
