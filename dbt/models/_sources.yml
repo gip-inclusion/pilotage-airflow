@@ -18,6 +18,7 @@ sources:
       - name: fluxIAE_RefMontantIae
       - name: fluxIAE_RefMotifSort
       - name: fluxIAE_RefNiveauFormation
+      - name: fluxIAE_RefFormeContrat
       - name: fluxIAE_Salarie
       - name: fluxIAE_Structure
 
