@@ -9,7 +9,7 @@ set +o allexport
 
 export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="${POSTGRESQL_ADDON_URI//\"/}"
 
-airflow db upgrade
+airflow db migrate
 
 if [[ "x$CELLAR_ADDON_HOST" != "x" ]]; then
     export AIRFLOW_CONN_LOG_CONNECTION="aws://@/?endpoint_url=https%3A%2F%2F${CELLAR_ADDON_HOST//\"/}&region_name=eu-west-1&aws_access_key_id=${CELLAR_ADDON_KEY_ID//\"/}&aws_secret_access_key=${CELLAR_ADDON_KEY_SECRET//\"/}"
