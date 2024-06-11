@@ -1,6 +1,6 @@
 # Airflow
 # ------------------------------------------------------------------------------
-apache-airflow[amazon,sentry,slack]==2.7.3  # https://github.com/apache/airflow
+apache-airflow[amazon,sentry,slack]==2.8.4  # https://github.com/apache/airflow
 
 # DBT
 # ------------------------------------------------------------------------------
