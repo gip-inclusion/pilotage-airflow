@@ -7,7 +7,7 @@ set -o allexport
 source .env-base
 set +o allexport
 
-airflow db upgrade
+airflow db migrate
 airflow variables import dag-variables.json
 
 airflow users create \
