@@ -1,5 +1,6 @@
 select
     {{ pilo_star(ref('suivi_etp_realises_v2'), relation_alias='etp_r') }},
+    salarie.hash_nir,
     etp_c."effectif_mensuel_conventionné",
     etp_c."effectif_annuel_conventionné",
     (etp_r.nombre_etp_consommes_reels_annuels * etp_r.af_montant_unitaire_annuel_valeur) as montant_utilise,
