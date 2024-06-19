@@ -4,7 +4,7 @@ apache-airflow[amazon,sentry,slack]==2.8.4  # https://github.com/apache/airflow
 
 # DBT
 # ------------------------------------------------------------------------------
-dbt-core  # https://github.com/dbt-labs/dbt-core
+dbt-core==1.5.*  # https://github.com/dbt-labs/dbt-core
 dbt-postgres  # https://github.com/dbt-labs/postgres
 dbt-fal  # https://github.com/fal-ai/dbt-fal
 
@@ -12,3 +12,7 @@ dbt-fal  # https://github.com/fal-ai/dbt-fal
 # ------------------------------------------------------------------------------
 ftputil  # https://ftputil.sschwarzer.net/
 pandas  # https://github.com/pandas-dev/pandas
+
+# Transitional pinning
+# ------------------------------------------------------------------------------
+numpy<2  # 2024-06-19: ValueError: numpy.dtype size changed, may indicate binary incompatibility. Expected 96 from C header, got 88 from PyObject
