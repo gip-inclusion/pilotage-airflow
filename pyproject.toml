@@ -40,9 +40,12 @@ addopts = "--ignore=dbt/packages"
 
 
 [tool.ruff]
-ignore = []
 line-length = 119
-# see prefixes in https://beta.ruff.rs/docs/rules/
+
+[tool.ruff.lint]
+exclude = ["dbt/packages/*"]
+ignore = []
+# see prefixes in https://docs.astral.sh/ruff/rules/
 select = [
     "F",  # pyflakes
     "E",  # pycodestyle errors
@@ -50,8 +53,6 @@ select = [
     "I",  # isort
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 combine-as-imports = true
-known-first-party = ["itou"]
 lines-after-imports = 2
-
