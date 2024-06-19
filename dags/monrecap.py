@@ -49,5 +49,4 @@ with DAG(
 
     monrecap_gsheet = monrecap_gsheet()
 
-
-(start >> monrecap_airtable >> monrecap_gsheet >> end)
+    (start >> monrecap_airtable >> monrecap_gsheet >> end)
