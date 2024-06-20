@@ -1,21 +1,4 @@
-/* L'objectif est de suivre le taux de refus par type de structure */
-with etp_conventionnes as (
-    select
-        type_siae,
-        nom_departement_af,
-        nom_region_af,
-        sum("nombre_etp_conventionnés") as nombre_etp_conventionnes
-    from {{ ref('nombre_etp_conventionnes') }}
-    where annee_af = date_part('year', current_date)
-    group by
-        type_siae,
-        nom_departement_af,
-        nom_region_af
-)
-
 select
-    /* Nombre de candidatures acceptées initiées par l'employeur de type SIAE */
-    etp_conventionnes.nombre_etp_conventionnes,
     /* Nombre de candidatures initiées par l'employeur de type SIAE */
     cel.date_candidature,
     cel.type_structure,
@@ -67,12 +50,6 @@ left join
     {{ source('emplois', 'fiches_de_poste') }} as fdp on fdpc.id_fiche_de_poste = fdp.id
 left join
     {{ ref('structures') }} as structures on structures.id = cel.id_structure
-left join
-    etp_conventionnes
-    on
-        etp_conventionnes.type_siae = cel.type_structure
-        and etp_conventionnes.nom_departement_af = cel."nom_département_structure"
-        and etp_conventionnes.nom_region_af = cel."région_structure"
 where
     cel.injection_ai = 0
     and fdp.recrutement_ouvert = 1
@@ -80,7 +57,6 @@ where
     and cel.date_candidature >= date_trunc('month', cast((cast(now() as timestamp) + (interval '-12 month')) as timestamp))
     and cel.type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
 group by
-    etp_conventionnes.nombre_etp_conventionnes,
     cel.date_candidature,
     cel.type_structure,
     cel.categorie_structure,
