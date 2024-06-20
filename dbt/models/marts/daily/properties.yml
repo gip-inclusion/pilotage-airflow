@@ -154,6 +154,10 @@ models:
     description: >
         Table permettant de suivre les utilisateurs qui restent actifs d'une période à une autre.
         Les périodes peuvent être un mois ou un trimestre.
+  - name: taux_refus_siae
+    description: >
+        Donne le nombre de candidatures emises et refusées (avec et sans autoprescription) pour permettre le calcul des taux de refus par SIAE.
+        Agrégation par date_candidature, origine (détaillée), territoires, etc, pour permettre d'y associer les filtres sur metabase.
   - name: nombre_candidatures_par_structure
     description: >
       Table faisant appel a plusieurs ephemeral tables (anciennement des CTEs) afin de pouvoir montrer différentes informations sans être limité par les filtres de Metabase.
