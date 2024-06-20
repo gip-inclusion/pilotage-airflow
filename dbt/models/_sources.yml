@@ -57,6 +57,10 @@ sources:
       - name: prolongations
       - name: structures_v0
       - name: c1_ref_type_prescripteur
+      - name: c1_ref_motif_de_refus
+        description: >
+          Table de correspondance entre le code d'un motif de refus et son label affiché sur les emplois.
+          Sert de base pour la table motif de refus qui contient le label affiché sur le pilotage.
 
   - name: oneshot
     schema: public

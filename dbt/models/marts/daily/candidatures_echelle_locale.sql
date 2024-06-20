@@ -1,5 +1,7 @@
 select
-    {{ pilo_star(ref('stg_candidatures'), except=['origine_détaillée'], relation_alias='candidatures') }},
+    {{ pilo_star(ref('stg_candidatures'), except=['origine_détaillée', 'motif_de_refus'], relation_alias='candidatures') }},
+    {{ translate_motif_refus('candidatures.motif_de_refus') }}
+    as motif_de_refus,
     case
         when candidatures.injection_ai = 0 then 'Non'
         else 'Oui'

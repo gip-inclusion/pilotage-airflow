@@ -84,4 +84,3 @@ seeds:
     config:
         column_types:
             siret: varchar(30)
-
