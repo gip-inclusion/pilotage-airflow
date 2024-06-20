@@ -17,11 +17,17 @@ select
     /* Nombre de candidatures acceptées initiées par l'employeur de type SIAE */
     etp_conventionnes.nombre_etp_conventionnes,
     /* Nombre de candidatures initiées par l'employeur de type SIAE */
+    cel.date_candidature,
     cel.type_structure,
     cel."nom_département_structure",
     cel."région_structure",
     cel.epci,
     cel.bassin_emploi_structure,
+    cel.type_prescripteur,
+    cel.origine,
+    cel."origine_détaillée",
+    cel.tranche_age,
+    cel.genre_candidat,
     count(distinct cel.id)
     filter (
         where
@@ -74,9 +80,16 @@ where
     and cel.date_candidature >= date_trunc('month', cast((cast(now() as timestamp) + (interval '-12 month')) as timestamp))
     and cel.type_structure in ('EI', 'ETTI', 'AI', 'ACI', 'EITI')
 group by
+    etp_conventionnes.nombre_etp_conventionnes,
+    cel.date_candidature,
     cel.type_structure,
+    cel.categorie_structure,
     cel."nom_département_structure",
     cel."région_structure",
-    etp_conventionnes.nombre_etp_conventionnes,
     cel.epci,
-    cel.bassin_emploi_structure
+    cel.bassin_emploi_structure,
+    cel.type_prescripteur,
+    cel.origine,
+    cel."origine_détaillée",
+    cel.tranche_age,
+    cel.genre_candidat
