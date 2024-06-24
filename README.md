@@ -57,11 +57,11 @@ Pour vérifier que DBT est bien configuré :
 
 Si votre base de données n'existe pas vérifiez les bases existantes avec :
 
-    psql -h localhost -U postgres -p 5432 -l
+    psql -l
 
 Si elle n'apparait pas, créez la avec :
 
-    createdb -h localhost -U postgres -p 5432 pilotage
+    createdb pilotage
 
 
 Pour avoir une configuration "prête à l'emploi", il vous faut lancer les commandes suivantes :
