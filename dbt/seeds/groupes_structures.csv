@@ -1,11 +1,11 @@
 structure,groupe
-ACI,Structures IAE
-AI,Structures IAE
-EI,Structures IAE
-EITI,Structures IAE
-ETTI,Structures IAE
-EA,Structures hors IAE
-EATT,Structures hors IAE
-ESAT,Structures hors IAE
-GEIQ,Structures hors IAE
-OPCS,Structures hors IAE
+ACI,IAE
+AI,IAE
+EI,IAE
+EITI,IAE
+ETTI,IAE
+EA,Hors IAE
+EATT,Hors IAE
+ESAT,Hors IAE
+GEIQ,Hors IAE
+OPCS,Hors IAE
