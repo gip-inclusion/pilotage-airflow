@@ -32,10 +32,13 @@ select
     candidats.eligibilite_dispositif,
     candidats.eligible_cej,
     candidats.eligible_cdi_inclusion,
-    candidats.date_inscription                          as date_inscription_candidat
+    candidats.date_inscription                          as date_inscription_candidat,
+    orga."département"                                  as "département_orga"
 from
     {{ ref('stg_candidatures') }} as candidatures
 left join {{ ref('candidats') }} as candidats
     on candidats.id = candidatures.id_candidat
+left join {{ ref('organisations') }} as orga
+    on orga.id = candidatures.id_org_prescripteur
 left join {{ source('emplois','c1_ref_type_prescripteur') }} as org
     on org.code = candidatures.type_org_prescripteur
