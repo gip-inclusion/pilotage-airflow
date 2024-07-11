@@ -41,8 +41,6 @@ addopts = "--ignore=dbt/packages"
 
 [tool.ruff]
 line-length = 119
-
-[tool.ruff.lint]
 exclude = ["dbt/packages/*"]
 ignore = []
 # see prefixes in https://docs.astral.sh/ruff/rules/
@@ -53,6 +51,6 @@ select = [
     "I",  # isort
 ]
 
-[tool.ruff.lint.isort]
+[tool.ruff.isort]
 combine-as-imports = true
 lines-after-imports = 2
