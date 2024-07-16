@@ -39,6 +39,9 @@ id_tb,nom_tb,public,type
 327,tb 327 - ACI - Suivi du cofinancement CD,SIAE,TB privé
 330,tb 330 - CD - Suivi des prescriptions des accompagnateurs des publics bRSA,CD,TB privé
 346,tb 346 - CD - Facilitation des embauches en IAE,CD,TB privé
-349,tb 349 - SIAE - Déclaration d’embauche,SIAE,TB privé
 357,tb 357 - DDETS/DREETS - Suivi des demandes de prolongation réalisées par les SIAE,DDETS/DREETS,TB privé
-389,tb 389 - Fiches de poste en tension DDETS/DREETS,DDETS/DREETS, TB privé
+389,tb 389 - Fiches de poste en tension DDETS/DREETS,DDETS/DREETS,TB privé
+394,tb 394 - SIAE - Déclaration d’embauche,SIAE,TB privé
+408,tb 408 - Candidats dans la file active,tous,TB public
+440,tb 440 - SIAE - Données conventionnement - Maille structure,SIAE,TB privé
+465,tb 465 - SIAE- Données IAE : Suivi des effectifs annuels et mensuels en ETP,SIAE,TB privé
