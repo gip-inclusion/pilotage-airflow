@@ -1,9 +1,12 @@
+import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators import empty
 
-from dags.common import airtable, db_monrecap, default_dag_args, slack
+from dags.common import airtable, db, default_dag_args, slack
 
+
+DB_SCHEMA = "monrecap"
 
 with DAG(
     "mon_recap",
@@ -30,11 +33,17 @@ with DAG(
             elif table_name == "Baromètre - Airflow":
                 df["Submitted at"] = pd.to_datetime(df["Submitted at"])
                 table_name = "barometre"
+
             df.to_sql(
                 table_name,
-                con=db_monrecap.connection_engine_monrecap(),
+                con=db.connection_engine(),
+                schema=DB_SCHEMA,
                 if_exists="replace",
                 index=False,
+                dtype={
+                    "Validation manuelle": sqlalchemy.types.JSON,
+                    "Demande de prise de RDV": sqlalchemy.types.JSON,
+                },
             )
 
     monrecap_airtable = monrecap_airtable()
