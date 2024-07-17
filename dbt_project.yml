@@ -36,9 +36,13 @@ models:
       +materialized: table
     staging:
       +materialized: view
+    monrecap:
+      +schema: monrecap
 seeds:
   dbt_pilotage:
     sa_ept:
       +column_types:
         departement: varchar(3)
         code_comm: varchar(25)
+    monrecap:
+        +schema: monrecap
