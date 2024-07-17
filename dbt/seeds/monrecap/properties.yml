@@ -1,0 +1,6 @@
+version: 2
+
+seeds:
+  - name: settings
+    description: >
+      Paramètres de configuration pour "mon recap"
