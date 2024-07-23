@@ -1,6 +1,6 @@
 select
     {{ pilo_star(source('emplois', 'candidatures'),
-        except=["date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée"], relation_alias='candidatures') }},
+        except=["date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée", "candidature_archivee"], relation_alias='candidatures') }},
     {{ pilo_star(ref('stg_organisations'),
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
@@ -21,12 +21,20 @@ select
             then 'Motif "Autre" saisi sur les emplois'
         else candidatures.motif_de_refus
     end                                                    as motif_de_refus,
-    candidatures.origine,
+    case
+        when candidatures.origine_id_structure != candidatures.id_structure
+            then 'Employeur (transfert candidature)'
+        else candidatures.origine
+    end                                                    as origine,
     case
         when candidatures."origine_détaillée" = 'Prescripteur habilité Autre'
             then 'Prescripteur habilité par habilitation préfectorale'
         else candidatures."origine_détaillée"
     end                                                    as "origine_détaillée",
+    case
+        when candidatures.candidature_archivee = 1 then 'Candidatures archivées'
+        else 'Candidatures non archivées'
+    end                                                    as candidature_archivee,
     extract(day from candidatures."délai_de_réponse")      as temps_de_reponse,
     extract(day from candidatures."délai_prise_en_compte") as temps_de_prise_en_compte,
     extract(year from candidatures.date_candidature)       as annee_candidature
