@@ -23,7 +23,7 @@ select
     end                                                    as motif_de_refus,
     case
         when candidatures.origine_id_structure != candidatures.id_structure
-            then 'Employeur (transfert candidature)'
+            then 'Employeur orienteur'
         else candidatures.origine
     end                                                    as origine,
     case
