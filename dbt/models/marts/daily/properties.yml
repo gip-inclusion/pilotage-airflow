@@ -199,3 +199,12 @@ models:
           description: 1 si le candidat a eu une candidature acceptée dans les 6 derniers mois, 0 sinon
         - name: a_eu_embauche
           description: 1 si le candidat a eu une embauche dans les 6 derniers mois, 0 sinon
+  - name: candidatures_acceptees_employeurs_orienteurs
+    description: >
+      Table permettant le suivi des SIAE qui ont orienté un candidat ayant déjà travaillé chez elles vers d'autres SIAE.
+  - name: candidatures_refusees_employeurs_orienteurs
+    description: >
+      Table permettant le suivi des SIAE qui ont orienté un candidat dont la candidature avait été refusée au sein de la SIAE, vers d'autres SIAE.
+  - name: candidatures_iconnues_employeurs_orienteurs
+    description: >
+      Table permettant le suivi des SIAE qui ont orienté un candidat n'ayant jamais postulé chez elles, vers d'autres SIAE.
