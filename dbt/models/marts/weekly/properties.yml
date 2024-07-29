@@ -4,6 +4,9 @@ models:
   - name: contrats_cvg_phc
     description: >
       Table créée pour que convergence puisse visualiser le nombre de contrats de type cvg phc par structure et par année.
+  - name: contrats_aci
+    description: >
+      Table contenant tous les contrats en ACI et leur durée. Permettant de comparer les durées et motifs des contrats convergence par rapport aux autres ACI.
   - name: suivi_etp_realises_v2
     description: >
       Table créée pour suivre le nombre d'etp réalisés. Cette table, permet, à travers le calcul du nombre d'heures x la valeur d'un etp de retrouver le nombre d'etp réalisés par mois et par personne physique.
