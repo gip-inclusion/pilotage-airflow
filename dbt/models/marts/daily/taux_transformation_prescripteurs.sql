@@ -13,6 +13,8 @@ with candidats_p as (
         cdd.id                                as id_candidat,
         cdd.actif,
         cdd.age,
+        cdd.tranche_age,
+        cdd.sexe_selon_nir,
         cdd.date_diagnostic,
         cdd."département"                     as departement_candidat,
         cdd."nom_département"                 as nom_departement_candidat,
