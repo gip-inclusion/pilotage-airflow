@@ -3,6 +3,8 @@ select
     cd.id                                  as id_candidature,
     c.hash_nir,
     c.age,
+    c.tranche_age,
+    c.sexe_selon_nir,
     c."département",
     c."nom_département",
     c."région",
