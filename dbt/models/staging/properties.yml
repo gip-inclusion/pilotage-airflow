@@ -149,11 +149,11 @@ models:
       Fiches de poste en difficulté de recrutement et n'ayant jamais reçu de candidatures.
   - name: stg_recrutements
     description: >
-      Permet de calculer les recrutements à partir des contrats. Une agrégation des reconductions (via id_recrutement) permet de récupérer l'identifiant du premier/dernier contrat, ainsi que la date de début et de fin du recrutement.
+      Permet de calculer les recrutements à partir des contrats. Une agrégation des reconductions (via groupe_contrat) permet de récupérer l'identifiant du premier/dernier contrat, ainsi que la date de début et de fin du recrutement.
   - name: stg_contrats
     description: >
       Ajoute aux contrats un identifiant (id_recrutement) permettant de regrouper les reconductions d'un même contrat.
-      Pour une personne physique (contrat_id_pph), tous les contrats qui sont des reconductions d'un contrat initial auront le même id_recrutement.
+      Pour une personne physique (contrat_id_pph), tous les contrats qui sont des reconductions d'un contrat initial auront le même groupe_contrat.
   - name: stg_emi_date_recrutement
     description: >
       Permet d'obtenir le nombre d'heures effectuées par personne physique, contrat et id d'annexe financière.

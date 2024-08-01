@@ -1,26 +1,29 @@
 select
-    ctr.id_recrutement,
     ctr.contrat_id_structure,
     ctr.contrat_id_pph,
+    salarie.hash_nir,
+    max(structs.code_dept_structure)        as departement_structure,
+    max(structs.nom_departement_structure)  as nom_departement_structure,
+    max(structs.nom_region_structure)       as nom_region_structure,
     max(motif_sortie)                       as motif_sortie,
+    case
+        when max(motif_sortie) is null then 'Non'
+        else 'Oui'
+    end                                     as salarie_sorti,
     array_agg(ctr.contrat_id_ctr)           as id_contrats,
+    max(contrat_mesure_disp_code)           as type_aci,
     min(ctr.contrat_date_embauche)          as date_embauche_premier_contrat,
     max(ctr.contrat_date_fin_contrat)       as date_fin_dernier_contrat,
     max(ctr.contrat_date_sortie_definitive) as date_sortie_definitive_dernier_contrat,
     case
-        when max(ctr.contrat_date_sortie_definitive) is not null then age(max(ctr.contrat_date_sortie_definitive), min(ctr.contrat_date_embauche))
-        else age(max(ctr.contrat_date_fin_contrat), min(ctr.contrat_date_embauche))
-    end                                     as duree_contrat_reelle_jours,
+        when max(ctr.contrat_date_sortie_definitive) is not null then {{ duration_in_days('min(ctr.contrat_date_embauche)', 'max(ctr.contrat_date_sortie_definitive)') }}
+        else {{ duration_in_days('min(ctr.contrat_date_embauche)', 'max(ctr.contrat_date_fin_contrat)') }}
+    end                                     as duree_contrat_jours,
     case
-        when max(ctr.contrat_date_sortie_definitive) is not null
-            then
-                (date_part('year', max(ctr.contrat_date_sortie_definitive)) - date_part('year', min(ctr.contrat_date_embauche))) * 12
-                + (date_part('month', max(ctr.contrat_date_sortie_definitive)) - date_part('month', min(ctr.contrat_date_embauche)))
-        else
-            (date_part('year', max(ctr.contrat_date_fin_contrat)) - date_part('year', min(ctr.contrat_date_embauche))) * 12
-            + (date_part('month', max(ctr.contrat_date_fin_contrat)) - date_part('month', min(ctr.contrat_date_embauche)))
-    end                                     as duree_contrat_reelle_mois,
-    sum(ctr.contrat_duree_contrat)          as duree_contrat_estimee,
+        when max(ctr.contrat_date_sortie_definitive) is not null then {{ duration_in_months('min(ctr.contrat_date_embauche)', 'max(ctr.contrat_date_sortie_definitive)') }}
+        else {{ duration_in_months('min(ctr.contrat_date_embauche)', 'max(ctr.contrat_date_fin_contrat)') }}
+    end                                     as duree_contrat_mois,
+    sum(ctr.contrat_duree_contrat)          as duree_contrat_asp_mois,
     case
         when cgv_structs.siret is not null then 'Oui'
         else 'Non'
@@ -30,9 +33,12 @@ left join {{ ref("fluxIAE_Structure_v2") }} as structs
     on ctr.contrat_id_structure = structs.structure_id_siae
 left join {{ ref("sirets_structures_convergence") }} as cgv_structs
     on structs.structure_siret_signature = cast(cgv_structs.siret as bigint)
+left join {{ ref("fluxIAE_Salarie_v2") }} as salarie
+    on ctr.contrat_id_pph = salarie.salarie_id
 where (contrat_mesure_disp_code = 'ACI_DC' or contrat_mesure_disp_code = 'ACI_MP') and contrat_nb_heures > 0
 group by
-    ctr.id_recrutement,
+    ctr.groupe_contrat,
+    salarie.hash_nir,
     ctr.contrat_id_structure,
     ctr.contrat_id_pph,
     cgv_structs.siret
