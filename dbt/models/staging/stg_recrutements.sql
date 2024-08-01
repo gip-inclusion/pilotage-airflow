@@ -9,4 +9,4 @@ select
 from {{ ref('stg_contrats') }}
 group by
     contrat_id_pph,
-    id_recrutement
+    groupe_contrat
