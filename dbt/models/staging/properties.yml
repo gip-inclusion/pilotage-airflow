@@ -175,15 +175,15 @@ models:
     description: >
       Vue permettant d'isoler les dates de derniere sortie et candidature afin de permettre l'identification des salaries des emplois en decrochage.
       Cette 2nde table permet d'éviter les doublons causés par le fait l'id salarie de l'asp n'est pas unique.
-  - name: stg_candidat_candidature_acceptee
+  - name: stg_candidats_candidatures_acceptees
     description: >
       vue permettant d'isoler les candidats + structures où la candidature qui a pour origine "Employeur" a été acceptée.
       Cette vue permet de créer la table (candidatures_acceptees_employeurs_orienteurs) suivant les employeurs orienteurs qui transfèrent les candidatures d'anciens salariés.
-  - name: stg_candidat_candidature_refusee
+  - name: stg_candidats_candidatures_refusees
     description: >
       vue permettant d'isoler les candidats + structures où la candidature qui a pour origine "Employeur" a été refusée.
       Cette vue permet de créer la table (candidatures_refusees_employeurs_orienteurs) suivant les employeurs orienteurs qui transfèrent les candidatures refusées.
-  - name: stg_candidat_candidature_inconnue
+  - name: stg_candidats_candidatures_employeurs_orienteurs
     description: >
       vue permettant d'isoler les candidats + structures dont les candidatures ont pour origine "Employeur".
       Cette vue permet de créer la table (candidatures_inconnues_employeurs_orienteurs) suivant les employeurs orienteurs qui transfèrent les candidatures de candidats n'étant jamais passé chez eux.
