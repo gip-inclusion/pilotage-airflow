@@ -5,7 +5,7 @@ select
     min(contrat_date_embauche)          as date_recrutement,
     max(contrat_date_fin_contrat)       as date_fin_recrutement,
     max(contrat_date_sortie_definitive) as date_sortie_definitive,
-    max(contrat_type_contrat)           as nb_reconductions
+    max(num_reconduction)               as nb_reconductions
 from {{ ref('stg_contrats') }}
 group by
     contrat_id_pph,

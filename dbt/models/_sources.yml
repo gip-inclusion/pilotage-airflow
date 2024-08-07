@@ -56,6 +56,9 @@ sources:
       - name: demandes_de_prolongation
       - name: prolongations
       - name: structures_v0
+      - name: c1_ref_type_contrat
+        description: >
+          Table de correspondance entre le code d'un type de contrat et son label affiché sur les emplois.
       - name: c1_ref_type_prescripteur
       - name: c1_ref_motif_de_refus
         description: >
