@@ -1,8 +1,9 @@
 select
     {{ pilo_star(source('emplois', 'candidatures'),
-        except=["date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée", "candidature_archivee"], relation_alias='candidatures') }},
+        except=["date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée", "candidature_archivee", "type_contrat"], relation_alias='candidatures') }},
     {{ pilo_star(ref('stg_organisations'),
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
+    c_type.label                                           as type_contrat_candidature,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
     org_prescripteur.type                                  as type_org_prescripteur,
@@ -40,6 +41,8 @@ select
     extract(year from candidatures.date_candidature)       as annee_candidature
 from
     {{ source('emplois', 'candidatures') }} as candidatures
+left join {{ source('emplois', 'c1_ref_type_contrat') }} as c_type
+    on candidatures.type_contrat = c_type.code
 left join {{ ref('stg_structures') }} as struct
     on candidatures.id_structure = struct.id
 left join {{ ref('stg_organisations') }} as org_prescripteur
