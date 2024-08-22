@@ -6,8 +6,8 @@
  ) }}
 
 select
-    /* l'ASP préconise l'utilisation de l'adresse administrative pour récupérer la commune de la structure */
     {{ pilo_star(source('fluxIAE', 'fluxIAE_Structure')) }},
+    -- l'ASP préconise l'utilisation de l'adresse administrative pour récupérer la commune de la structure
     app_geo.nom_epci                as nom_epci_structure,
     app_geo.nom_region              as nom_region_structure,
     app_geo.code_dept               as code_dept_structure,

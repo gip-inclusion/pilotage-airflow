@@ -9,10 +9,7 @@ select
     org_prescripteur.type                                  as type_org_prescripteur,
     org_prescripteur.date_inscription                      as date_inscription_orga,
     grp_strct.groupe                                       as categorie_structure,
-    case
-        when scvg.siret is not null and struct.type_struct = 'ACI' then 'Oui'
-        else 'Non'
-    end                                                    as structure_convergence,
+    struct.structure_convergence,
     case
         when candidatures."état" = 'Candidature déclinée' then 'Candidature refusée'
         else candidatures."état"
@@ -50,5 +47,3 @@ left join {{ ref('stg_organisations') }} as org_prescripteur
 left join
     {{ ref('groupes_structures') }} as grp_strct
     on candidatures.type_structure = grp_strct.structure
-left join {{ ref('sirets_structures_convergence') }} as scvg
-    on struct.siret = scvg.siret

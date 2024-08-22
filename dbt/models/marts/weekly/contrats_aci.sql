@@ -27,15 +27,12 @@ select
         else {{ duration_in_months('min(ctr.contrat_date_embauche)', 'max(ctr.contrat_date_fin_contrat)') }}
     end                                                                 as duree_contrat_mois,
     sum(ctr.contrat_duree_contrat)                                      as duree_contrat_asp_mois,
-    case
-        when cgv_structs.siret is not null then 'Oui'
-        else 'Non'
-    end                                                                 as structure_convergence
+    max(struct_emplois.structure_convergence)                           as structure_convergence
 from {{ ref('stg_contrats') }} as ctr
 left join {{ ref("fluxIAE_Structure_v2") }} as structs
     on ctr.contrat_id_structure = structs.structure_id_siae
-left join {{ ref("sirets_structures_convergence") }} as cgv_structs
-    on structs.structure_siret_signature = cast(cgv_structs.siret as bigint)
+left join {{ ref('stg_structures') }} as struct_emplois
+    on structs.structure_siret_actualise = struct_emplois.siret
 left join {{ ref("fluxIAE_Salarie_v2") }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
 where (contrat_mesure_disp_code = 'ACI_DC' or contrat_mesure_disp_code = 'ACI_MP') and contrat_nb_heures > 0
@@ -43,5 +40,4 @@ group by
     ctr.groupe_contrat,
     salarie.hash_nir,
     ctr.contrat_id_structure,
-    ctr.contrat_id_pph,
-    cgv_structs.siret
+    ctr.contrat_id_pph
