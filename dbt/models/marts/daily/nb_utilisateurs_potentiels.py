@@ -36,16 +36,18 @@ def model(dbt, session):
             # organisations
             if not region_orga.empty:
                 dept_orga = subdf_by_value_if_exists(region_orga, region_orga.dept_org, dept)
-                for orga_type in dept_orga["type"].unique():
-                    potential = len(dept_orga[dept_orga.type == orga_type])
-                    potential_records.append([region, num_dept, dept, "prescripteur", orga_type, potential])
+                if not dept_orga.empty:
+                    for orga_type in dept_orga["type"].unique():
+                        potential = len(dept_orga[dept_orga.type == orga_type])
+                        potential_records.append([region, num_dept, dept, "prescripteur", orga_type, potential])
 
             # structures
             if not region_struct.empty:
                 dept_struct = subdf_by_value_if_exists(region_struct, region_struct.nom_département, dept)
-                for struct_type in dept_struct["type"].unique():
-                    potential = len(dept_struct[dept_struct.type == struct_type])
-                    potential_records.append([region, num_dept, dept, "siae", struct_type, potential])
+                if not dept_struct.empty:
+                    for struct_type in dept_struct["type"].unique():
+                        potential = len(dept_struct[dept_struct.type == struct_type])
+                        potential_records.append([region, num_dept, dept, "siae", struct_type, potential])
 
     return pd.DataFrame.from_records(
         potential_records,
