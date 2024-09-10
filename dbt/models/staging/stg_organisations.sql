@@ -7,10 +7,11 @@ select
     organisations."nom_département",
     organisations.siret                                                               as siret_org_prescripteur,
     organisations."nom_département"                                                   as dept_org,
+    -- les deux colonnes suivantes sont en doublons le temps de vérifier les branchements de filtre sur metabase
     organisations."région"                                                            as "région_org",
+    organisations."région",
     /*bien mettre nom département et pas département */
     appartenance_geo_communes.nom_departement                                         as "nom_département_insee",
-    appartenance_geo_communes.nom_region                                              as "région",
     appartenance_geo_communes.nom_zone_emploi                                         as zone_emploi,
     appartenance_geo_communes.nom_epci                                                as epci,
     organisations_libelles.label                                                      as type_complet,
