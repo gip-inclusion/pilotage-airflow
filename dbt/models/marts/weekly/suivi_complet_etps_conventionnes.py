@@ -72,6 +72,7 @@ def get_zero_etp(df):
                             "type_structure_emplois",
                             "structure_id_siae",
                             "structure_denomination",
+                            "structure_denomination_unique",
                             "type_structure",
                             "year_diff",
                             "af_montant_total_annuel",
