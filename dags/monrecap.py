@@ -3,7 +3,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.operators import empty
 
-from dags.common import airtable, db, default_dag_args, slack
+from dags.common import airtable, db, default_dag_args, departments, slack
 
 
 DB_SCHEMA = "monrecap"
@@ -21,12 +21,23 @@ with DAG(
     def monrecap_airtable(**kwargs):
         import pandas as pd
 
+        con = db.connection_engine()
+        # Need to drop these tables and the views created with them in order to be able to run the df.to_sql()
+        con.execute(
+            """drop table if exists monrecap."Commandes" cascade;
+                    drop table if exists monrecap.barometre cascade;"""
+        )
+
         tables = ["Commandes", "Contacts", "Baromètre - Airflow"]
         for table_name in tables:
             url, headers = airtable.connection_airtable(table_name)
             df = airtable.fetch_airtable_data(url, headers)
+
             if table_name == "Commandes":
                 df["Submitted at"] = pd.to_datetime(df["Submitted at"])
+                df["Nom Departement"] = df["Code Postal"].apply(
+                    lambda cp: "-".join([item for item in departments.get_department(cp) if item is not None])
+                )
             if table_name == "Contacts":
                 df["Date de première commande"] = pd.to_datetime(df["Date de première commande"])
                 df["Date de dernière commande"] = pd.to_datetime(df["Date de dernière commande"])
@@ -36,7 +47,7 @@ with DAG(
 
             df.to_sql(
                 table_name,
-                con=db.connection_engine(),
+                con=con,
                 schema=DB_SCHEMA,
                 if_exists="replace",
                 index=False,
