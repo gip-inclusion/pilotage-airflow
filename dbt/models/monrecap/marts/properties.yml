@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name: monrecap_starmetric
+    description: >
+      Table créée afin de calculer la mesure d'impact principale de Mon Récap

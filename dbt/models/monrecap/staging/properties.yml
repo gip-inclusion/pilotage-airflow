@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_commandes_starmetric
+    description: >
+      Vue créée afin de récupérer les colonnes de la table commandes nécessaires au calcul de la mesure d'impact de Mon Récap
+  - name: stg_barometre_starmetric
+    description: >
+      Vue créée afin de récupérer les colonnes de la table baromètre nécessaires au calcul de la mesure d'impact de Mon Récap
+  - name: stg_baro_commandes_starmetric
+    description: >
+      Vue créée afin de récupérer les colonnes de la table baromètre,commandes et contacts nécessaires au calcul de la mesure d'impact de Mon Récap
+  - name: stg_email_departement
+    description: >
+      Vue créée afin de récupérer les départements par utilisateurs de la table commandes
+  - name: stg_total_reponses
+    description: >
+      Vue créée afin de récupérer le total de réponses au baromètre par date
+  - name: stg_starmetric
+    description: >
+      Vue créée afin de créer l'indicateur d'impact de Mon Récap. Cette vue est jointe a la vue stg_total_reponses pour la création de l'indicateur final.
