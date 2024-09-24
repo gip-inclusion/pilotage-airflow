@@ -38,6 +38,10 @@ models:
       +materialized: view
     monrecap:
       +schema: monrecap
+      marts:
+        +materialized: table
+      staging:
+        +materialized: view
 seeds:
   dbt_pilotage:
     sa_ept:

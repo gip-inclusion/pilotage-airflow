@@ -1,21 +1,20 @@
 import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators import empty
+from airflow.operators import bash, empty
 
-from dags.common import airtable, db, default_dag_args, departments, slack
+from dags.common import airtable, db, dbt, default_dag_args, departments, slack
 
 
+dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 DB_SCHEMA = "monrecap"
 
-with DAG(
-    "mon_recap",
-    schedule_interval="@daily",
-    **default_dag_args(),
-) as dag:
+with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
     start = empty.EmptyOperator(task_id="start")
 
     end = slack.success_notifying_task()
+
+    env_vars = db.connection_envvars()
 
     @task(task_id="monrecap_airtable")
     def monrecap_airtable(**kwargs):
@@ -59,4 +58,25 @@ with DAG(
 
     monrecap_airtable = monrecap_airtable()
 
-    (start >> monrecap_airtable >> end)
+    dbt_deps = bash.BashOperator(
+        task_id="dbt_deps",
+        bash_command="dbt deps",
+        env=env_vars,
+        append_env=True,
+    )
+
+    dbt_seed = bash.BashOperator(
+        task_id="dbt_seed",
+        bash_command="dbt seed",
+        env=env_vars,
+        append_env=True,
+    )
+
+    dbt_monrecap = bash.BashOperator(
+        task_id="dbt_monrecap",
+        bash_command="dbt run --select monrecap",
+        env=env_vars,
+        append_env=True,
+    )
+
+    (start >> monrecap_airtable >> dbt_deps >> dbt_seed >> dbt_monrecap >> end)

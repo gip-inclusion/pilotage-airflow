@@ -12,10 +12,10 @@ def get_department(code_postal):
     # Départements métropolitains
     else:
         department = code_postal[:2]
-    return department, departements.get(department)
+    return department, DEPARTMENTS.get(department)
 
 
-departements = {
+DEPARTMENTS = {
     "01": "Ain",
     "02": "Aisne",
     "03": "Allier",
