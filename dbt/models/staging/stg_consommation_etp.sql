@@ -12,6 +12,7 @@ select
     etp.structure_id_siae,
     etp.type_structure,
     etp.structure_denomination,
+    etp.structure_denomination_unique,
     etp.code_departement_af,
     etp.nom_departement_af,
     etp.nom_region_af,
@@ -113,6 +114,7 @@ group by
     etp.type_structure,
     etp.structure_id_siae,
     etp.structure_denomination,
+    etp.structure_denomination_unique,
     etp.code_departement_af,
     etp.nom_departement_af,
     etp.nom_region_af
