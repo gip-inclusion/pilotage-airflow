@@ -14,6 +14,7 @@ select
     etp_c.structure_id_siae,
     etp_c.type_structure,
     etp_c.structure_denomination,
+    etp_c.structure_denomination_unique,
     etp_c.commune_structure,
     etp_c.code_insee_structure,
     etp_c.siret_structure,
