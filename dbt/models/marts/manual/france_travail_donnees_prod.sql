@@ -26,7 +26,7 @@ select
         when ft."AGE" between 31 and 40 then '2. 30-40'
         when ft."AGE" between 41 and 50 then '4. 40-50'
         when ft."AGE" > 50 then '4. 50+'
-    end                     as "tranche_d_age",
+    end                     as tranche_d_age,
     case
         when ft."Freins" = 0 then 'b. 0 frein'
         when ft."Freins" = 1 then 'c. 1 frein'

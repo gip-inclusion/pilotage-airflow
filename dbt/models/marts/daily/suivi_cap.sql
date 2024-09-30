@@ -66,7 +66,7 @@ cap_struct_counts as (
 )
 
 select
-    cap_camp.nom                                                    as "nom_campagne",
+    cap_camp.nom                                                    as nom_campagne,
     struct."nom_département",
     struct."région",
     -- récupération du pct de sélection attendu
@@ -75,7 +75,7 @@ select
     sum(cap_struct_cnt."nb_contrôlées")                             as "nb_contrôlées",
     sum(cap_struct_cnt."nb_acceptées")                              as "nb_acceptées",
     sum(cap_struct_cnt."nb_refusées")                               as "nb_refusées",
-    sum(cap_struct_cnt."nb_attente")                                as "nb_attente",
+    sum(cap_struct_cnt.nb_attente)                                  as nb_attente,
     -- pourcentage de SIAE contrôlées :
     -- les contrôlées / ttes les siae
     sum(cap_struct_cnt."nb_contrôlées") / max(nb_tot_dep.nb_struct) as "part_structures_contrôlées"

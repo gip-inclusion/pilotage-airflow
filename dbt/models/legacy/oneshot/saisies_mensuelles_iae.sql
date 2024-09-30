@@ -153,10 +153,10 @@ left join
         and emi.emi_sme_annee >= annee_en_cours_2
 left join
     {{ source('emplois', 'codes_rome') }} as code_rome
-    on code_rome.code_rome = ctr_mis.contrat_code_rome
+    on ctr_mis.contrat_code_rome = code_rome.code_rome
 left join
     {{ source('fluxIAE', 'fluxIAE_RefNiveauFormation') }} as niv_formation
-    on ctr_mis."contrat_niveau_de_formation_id" = niv_formation.rnf_id
+    on ctr_mis.contrat_niveau_de_formation_id = niv_formation.rnf_id
 left join salarie
     on
         emi.emi_pph_id = salarie.salarie_id
@@ -168,7 +168,7 @@ left join
     on emi.emi_motif_sortie_id = sortie.rms_id
 left join
     {{ source('fluxIAE', 'fluxIAE_RefCategorieSort') }} as categoriesort
-    on categoriesort.rcs_id = sortie.rcs_id
+    on sortie.rcs_id = categoriesort.rcs_id
 left join
     {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
     on
@@ -183,6 +183,6 @@ left join coordonnees_gps as commune_structure
 left join {{ ref('ref_mesure_dispositif_asp') }} as ref_asp
     on af.af_mesure_dispositif_code = ref_asp.af_mesure_dispositif_code
 /* On récupère le découpage établissement public territorial */
-left join {{ ref('sa_ept') }} as ept on ept.code_comm = structure.structure_adresse_admin_code_insee
-left join {{ source('oneshot', 'sa_zones_infradepartementales') }} as infra on infra.code_commune = structure.structure_adresse_admin_code_insee
+left join {{ ref('sa_ept') }} as ept on structure.structure_adresse_admin_code_insee = ept.code_comm
+left join {{ source('oneshot', 'sa_zones_infradepartementales') }} as infra on structure.structure_adresse_admin_code_insee = infra.code_commune
 where emi.emi_sme_annee >= annee_en_cours_2

@@ -6,7 +6,7 @@ select
     communes.code_dept,
     departements."LIBELLE"                                                  as nom_departement,
     epci."LIBEPCI"                                                          as nom_epci,
-    epci_libelle."libelle"                                                  as type_epci,
+    epci_libelle.libelle                                                    as type_epci,
     arrondissements."LIBELLE"                                               as nom_arrondissement,
     zone_emploi."LIBZE2020"                                                 as nom_zone_emploi,
     concat(lpad(communes.code_dept, 2, '0'), ' - ', departements."LIBELLE") as nom_departement_complet
