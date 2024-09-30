@@ -49,7 +49,7 @@ select
     prescripteurs.type_prescripteur,
     prescripteurs.zone_emploi    as bassin_emploi_prescripteur,
     prescripteurs.epci           as epci_prescripteur,
-    prescripteurs."dept_org"     as "nom_département_prescripteur",
+    prescripteurs.dept_org       as "nom_département_prescripteur",
     prescripteurs."région_org"   as "nom_région_prescripteur",
     case
         /* ajout d'une colonne permettant de calculer le taux de candidats acceptées

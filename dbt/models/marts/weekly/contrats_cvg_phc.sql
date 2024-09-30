@@ -6,7 +6,7 @@ select
     count(cm.contrat_id_ctr)                                           as nb_contrats
 from {{ source("fluxIAE", "fluxIAE_ContratMission") }} as cm
 left join {{ source("fluxIAE", "fluxIAE_RefFormeContrat") }} as rfc
-    on cm."contrat_format_contrat_code" = rfc."rfc_code_forme_contrat"
+    on cm.contrat_format_contrat_code = rfc.rfc_code_forme_contrat
 left join {{ source("fluxIAE", "fluxIAE_Structure") }} as struct
     on cm.contrat_id_structure = struct.structure_id_siae
 where

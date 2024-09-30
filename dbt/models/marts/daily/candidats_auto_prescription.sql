@@ -1,7 +1,7 @@
 select
     {{ pilo_star(ref('stg_candidats_autoprescription'), relation_alias="autopr_c") }},
     ac.total_candidats,
-    s.nom_structure_complet as "nom_structure_complet"
+    s.nom_structure_complet
 from
     {{ ref('stg_candidats_autoprescription') }} as autopr_c
 left join
