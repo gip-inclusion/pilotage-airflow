@@ -40,7 +40,6 @@ sources:
       - name: cap_candidatures
       - name: cap_critères_iae
       - name: cap_structures
-      - name: codes_insee_vs_codes_postaux
       - name: codes_rome
       - name: collaborations
       - name: communes  # Cities
