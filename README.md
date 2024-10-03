@@ -72,7 +72,7 @@ Pour avoir une configuration "prête à l'emploi", il vous faut lancer les comma
 
 Si tout va bien, vous pourrez ensuite utiliser DBT pour toutes vos opérations.
 
-    dbt run --select heures_etp_salaries
+    dbt run
 
 ### Charger un dump local pilotage
 
