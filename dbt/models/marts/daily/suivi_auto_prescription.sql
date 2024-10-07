@@ -3,7 +3,7 @@ select
     s.siret,
     s.active,
     s.ville,
-    s.nom_structure_complet as "nom_structure_complet"
+    s.nom_structure_complet
 from
     {{ ref('stg_candidatures_autoprescription') }} as autopr_all
 left join

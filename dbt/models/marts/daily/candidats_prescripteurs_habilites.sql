@@ -1,7 +1,7 @@
 select
     {{ pilo_star(ref('candidats'), relation_alias="cdd") }},
-    cdd."total_critères_niveau_1" + cdd."total_critères_niveau_2" as "total_critères",
-    org.type_prescripteur                                         as "type_prescripteur"
+    org.type_prescripteur,
+    cdd."total_critères_niveau_1" + cdd."total_critères_niveau_2" as "total_critères"
 from
     {{ ref('candidats') }} as cdd
 left join

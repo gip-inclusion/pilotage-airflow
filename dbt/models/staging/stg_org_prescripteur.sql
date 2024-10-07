@@ -3,6 +3,6 @@ select
     org.siret             as siret_org_prescripteur,
     org."nom_département" as dept_org,  /*bien mettre nom département et pas département */
     org."région"          as "région_org",
-    org."type"            as type_org_prescripteur
+    org.type              as type_org_prescripteur
 from
     {{ source('emplois', 'organisations_v0') }} as org

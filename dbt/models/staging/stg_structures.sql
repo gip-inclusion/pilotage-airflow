@@ -9,7 +9,7 @@ select
     s."nom_département",
     s."région",
     insee_geo.nom_zone_emploi as bassin_d_emploi,
-    s.nom_complet             as "nom_structure_complet"
+    s.nom_complet             as nom_structure_complet
 from
     {{ ref('structures') }} as s
 left join
