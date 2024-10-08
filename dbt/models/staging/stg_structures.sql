@@ -1,5 +1,6 @@
 select
     s.id,
+    s.id_asp,
     s.nom,
     s.type                    as type_struct,
     s.siret,
@@ -10,7 +11,11 @@ select
     s."région",
     s.nom_epci_structure,
     insee_geo.nom_zone_emploi as bassin_d_emploi,
-    s.nom_complet             as nom_structure_complet
+    s.nom_complet             as nom_structure_complet,
+    case
+        when s.convergence_france = 1 then 'Oui'
+        else 'Non'
+    end                       as structure_convergence
 from
     {{ ref('structures') }} as s
 left join
