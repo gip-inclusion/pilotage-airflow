@@ -3,7 +3,7 @@ select
     s.id_asp,
     s.nom,
     s.type                    as type_struct,
-    cast(s.siret as bigint)   as siret,
+    s.siret,
     s.active,
     s.ville,
     s."département",

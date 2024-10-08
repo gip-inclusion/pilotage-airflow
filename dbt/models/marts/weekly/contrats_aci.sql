@@ -32,7 +32,7 @@ from {{ ref('stg_contrats') }} as ctr
 left join {{ ref("fluxIAE_Structure_v2") }} as structs
     on ctr.contrat_id_structure = structs.structure_id_siae
 left join {{ ref('stg_structures') }} as struct_emplois
-    on structs.structure_siret_actualise = struct_emplois.siret
+    on structs.structure_siret_actualise = cast(struct_emplois.siret as bigint)
 left join {{ ref("fluxIAE_Salarie_v2") }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
 where (contrat_mesure_disp_code = 'ACI_DC' or contrat_mesure_disp_code = 'ACI_MP') and contrat_nb_heures > 0
