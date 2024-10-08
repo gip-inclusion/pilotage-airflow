@@ -78,9 +78,3 @@ seeds:
   - name: type_parcours_xp_ft
     description: >
       Correspondance entre les sigles du type de parcours, provenant du fichier brut expérimentation FT, et le type de parcours en toutes lettres
-  - name: sirets_structures_convergence
-    description: >
-      Liste des sirets des structures convergence (source : convergence) et du territoire auxquelles elles sont rattachées.
-    config:
-        column_types:
-            siret: varchar(30)
