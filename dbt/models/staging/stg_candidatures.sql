@@ -17,11 +17,7 @@ select
         when candidatures."état" = 'Candidature déclinée' then 'Candidature refusée'
         else candidatures."état"
     end                                                    as "état",
-    case
-        when candidatures.motif_de_refus = 'Autre (détails dans le message ci-dessous)'
-            then 'Motif "Autre" saisi sur les emplois'
-        else candidatures.motif_de_refus
-    end                                                    as motif_de_refus,
+    {{ translate_motif_refus('candidatures.motif_de_refus') }},
     case
         when candidatures.origine_id_structure != candidatures.id_structure
             then 'Employeur orienteur'
