@@ -131,7 +131,7 @@ models:
   - name: stg_fdp
     description: >
       Contient la liste des fiches de poste et leur état (active, sans recrutement, difficulte de recrutement...) pour toutes les structures.
-      Les états sont calculés à partir de la vue stg_candidatures
+      Les états sont calculés à partir de la vue stg_candidatures.
   - name: stg_fdp_actives
     description: >
       Contient la liste des fiches de poste actives, ie celles qui ont le statut "recrutement ouvert".
