@@ -40,7 +40,6 @@ sources:
       - name: cap_candidatures
       - name: cap_critères_iae
       - name: cap_structures
-      - name: codes_insee_vs_codes_postaux
       - name: codes_rome
       - name: collaborations
       - name: communes  # Cities
@@ -70,11 +69,6 @@ sources:
     description: >
       Tables gérées soit manuellement, soit mises à jour de manière très peu fréquente (DAG annuel, ou données FT par exemple)
     tables:
-      # TODO(vgrange): A remplacer par codes_insee_vs_codes_postaux. Attention cette derniere est juste un mapping.
-      # Il faut donc avoir une seconde table contenant pour chaque code INSEE ou postal, les coordonnees GPS.
-      # Attention, les "villes" ont été mises à jour mais ce n'est pas la meme chose que les communes ASP.
-      - name: commune_gps
-
       - name: reseau_iae_adherents
         description: >
           Table très utilisée et source de nombreuses autres données. Les réseaux IAE (Coorace, Cocagne, ...)

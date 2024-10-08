@@ -1,6 +1,6 @@
 {% macro translate_motif_refus(field) -%}
 case {{ field }}
-    when 'other' then 'Autre motif saisi sur les emplois de l''inclusion'
+    when 'other' then 'Motif "Autre" saisi sur les emplois'
     when 'hired_elsewhere' then 'Candidat indisponible (en emploi)'
     when 'training' then 'Candidat indisponible (en formation)'
     when 'unavailable' then 'Candidat indisponible ou non intéressé par le poste'

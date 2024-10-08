@@ -144,6 +144,11 @@ models:
   - name: fiches_deposte_en_tension_recrutement
     description: >
       Fiches de postes par structure et leur état. Pour la réalisation du TB fiches postes en tension.
+      Une fiche de poste est considérée en tension si elle rempli les 4 conditions suivantes :
+        - elle est active (l'employeur a déclaré sur les emplois de l'inclusion que le recrutement est ouvert sur cette fiche de poste)
+        - elle est sans recrutement sur les 30 derniers jours (soit elle n'a reçu aucune candidature, soit elle a reçu des candidature mais aucune n'a été acceptée)
+        - elle a été publiée depuis plus de 30 jours (car en moyenne une fiche de poste reçoit une première candidature 30 jours après sa création)
+        - l’employeur n'a pas refusé des candidatures dans les 30 derniers jours pour le motif “Pas de poste ouvert”
   - name: structures
     description: >
       Copie de la table structures_v0 du c1 enrichie de données pour faire marcher certains filtres sur metabase.
