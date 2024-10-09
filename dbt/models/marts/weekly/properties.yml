@@ -128,3 +128,6 @@ models:
   - name: candidats_decrochage
     description: >
       Table permettant l'identification des candidats en decrochage, c'est a dire les candidats ayant effectué une candidature après une sortie non positive.
+  - name: candidats_recherche_active_histo
+    description: >
+      Table permettant le suivi des candidats en recherche active mois par mois. Contient pour chaque mois les candidats et leur état de recherche (nombre de candidatures acceptées, delai depuis la premiere candidature envoyée).
