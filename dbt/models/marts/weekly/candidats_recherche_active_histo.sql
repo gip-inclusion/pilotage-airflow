@@ -13,11 +13,7 @@ from
         date_trunc('week', dbt_valid_from),
         -- when dbt_valid_to is empty, state is still the same today
         -- so we compute row for each week from valid_to to today
-        case
-            -- si valid to n'est pas null, on créée une ligne par semaine
-            when dbt_valid_to is not null then date_trunc('week', dbt_valid_to)
-            else date_trunc('week', current_date)
-        end,
+        date_trunc('week', coalesce(dbt_valid_to, current_date)),
         interval '1 week'
     ) as week_series
 
