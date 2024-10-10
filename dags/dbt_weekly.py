@@ -10,7 +10,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 with airflow.DAG(
     dag_id="dbt_weekly",
     schedule_interval=None,
-    params={"full_refresh": Param(False, type="boolean"), "convergence_refresh": Param(False, type="boolean")},
+    params={"full_refresh": Param(False, type="boolean")},
     **dag_args,
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
@@ -35,21 +35,12 @@ with airflow.DAG(
 
     def params_check(params=None, **kwargs):
         is_full_refresh = params.get("full_refresh")
-        is_convergence_refresh = params.get("convergence_refresh")
         if is_full_refresh:
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
             kwargs["ti"].xcom_push("dbt_run_args", "--full-refresh --exclude marts.daily marts.oneshot marts.manual")
         else:
-            if is_convergence_refresh:
-                kwargs["ti"].xcom_push("dbt_seed_args", "--select sirets_structures_convergence")
-                kwargs["ti"].xcom_push(
-                    "dbt_run_args",
-                    "--select marts.weekly legacy.weekly ephemeral indexed staging"
-                    " candidatures_convergence contrats_convergence_2023",
-                )
-            else:
-                kwargs["ti"].xcom_push("dbt_seed_args", "")
-                kwargs["ti"].xcom_push("dbt_run_args", "--select marts.weekly legacy.weekly ephemeral indexed staging")
+            kwargs["ti"].xcom_push("dbt_seed_args", "")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select marts.weekly legacy.weekly ephemeral indexed staging")
 
     params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
 
