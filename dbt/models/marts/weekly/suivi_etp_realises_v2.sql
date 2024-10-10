@@ -25,6 +25,7 @@ select distinct
     structure.structure_adresse_admin_commune                                           as commune_structure,
     structure.structure_adresse_admin_code_insee                                        as code_insee_structure,
     structure.structure_siret_actualise                                                 as siret_structure,
+    structure.nom_epci_structure                                                        as epci_structure,
     structure.nom_departement_structure,
     structure.nom_region_structure,
     af.num_dep_af                                                                       as code_departement_af,
