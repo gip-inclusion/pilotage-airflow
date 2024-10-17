@@ -4,6 +4,7 @@ select
     {{ pilo_star(ref('stg_organisations'),
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
     c_type.label                                           as type_contrat_candidature,
+    struct.nom_epci_structure,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
     org_prescripteur.type                                  as type_org_prescripteur,

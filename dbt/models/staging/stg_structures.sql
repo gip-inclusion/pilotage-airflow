@@ -8,6 +8,7 @@ select
     s."département",
     s."nom_département",
     s."région",
+    s.nom_epci_structure,
     insee_geo.nom_zone_emploi as bassin_d_emploi,
     s.nom_complet             as nom_structure_complet
 from
