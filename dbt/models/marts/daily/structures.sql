@@ -3,6 +3,10 @@ select
     insee.libelle_commune as ville,
     grp_strct.groupe      as categorie_structure,
     case
+        when struct.source = 'Export ASP' then strct_asp.nom_epci_structure
+        else insee.nom_epci
+    end                   as nom_epci_structure,
+    case
         when struct.type = 'OPCS' and struct.source = 'Utilisateur (Antenne)' then 'Utilisateur (OPCS)'
         when struct.type = 'OPCS' and struct.source = 'Staff Itou' then 'Staff Itou (OPCS)'
         else struct.source
@@ -13,5 +17,8 @@ left join
     {{ ref('groupes_structures') }} as grp_strct
     on grp_strct.structure = struct.type
 left join
-    {{ ref('insee_communes') }} as insee
+    {{ ref('stg_insee_appartenance_geo_communes') }} as insee
     on coalesce(ltrim(struct.code_commune, '0'), ltrim(struct.code_commune_c1, '0')) = insee.code_insee
+left join
+    {{ ref('fluxIAE_Structure_v2') }} as strct_asp
+    on strct_asp.structure_id_siae = struct.id_asp
