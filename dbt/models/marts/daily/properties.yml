@@ -155,10 +155,6 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'structures_v0')
-  - name: suivi_utilisateurs_actifs
-    description: >
-        Table permettant de suivre les utilisateurs qui restent actifs d'une période à une autre.
-        Les périodes peuvent être un mois ou un trimestre.
   - name: taux_refus_siae
     description: >
         Donne le nombre de candidatures emises et refusées (avec et sans autoprescription) pour permettre le calcul des taux de refus par SIAE.
