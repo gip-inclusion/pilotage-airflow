@@ -13,6 +13,5 @@ select
 from {{ ref('candidatures_echelle_locale') }} as cel
 left join {{ ref('stg_candidats_candidatures') }} as cc on cel.id = cc.id_candidature
 where
-    date_part('year', cel.date_candidature) = 2024
-    and date_part('month', cel.date_candidature) <= 6
+    cel.date_candidature between '2023-01-01' and '2024-06-30'
     and cel.dept_org = '50 - Manche'
