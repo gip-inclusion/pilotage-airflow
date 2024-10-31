@@ -8,24 +8,24 @@ et modèles [DBT](https://docs.getdbt.com/) maintenus par l'équipe.
 
 ## Environnement & Installation
 
+### Exigences du système
+
+Pour lancer ce projet sur votre machine locale vous devez [installer Docker](https://docs.docker.com/engine/install/).
+
+Vous devrez réserver temporairement environ 110 Go d'espace pour l'installation des données en direct sur votre machine (voir ce README). Une fois l'installation terminée, cette taille sera réduite à ~50 Go. Si vous utilisez Docker Desktop, l'espace maximum disponible pour le conteneur est inférieur par défaut, vous devrez donc augmenter l'espace réservé à Docker dans Settings > Resources > Virtual Disk Limit (Paramètres > Ressources > Limite de disque virtuel).
+
 ### Votre environnement virtuel Python
 
     make venv
-    source venv/bin/activate
-
-
-### Votre serveur de base de données PostgreSQL pour Airflow & DBT
-
-    sudo apt install postgresql  # sous Linux
-    brew install postgresql  # sous MacOS
-
-
+    source .venv/bin/activate
 
 ### Le logiciel [direnv](https://direnv.net)
 
 Sans oublier d'installer les [hooks](https://direnv.net/docs/hook.html) ni de
 lancer `direnv allow` ensuite dans ce répertoire.
 [Tuto](https://stackoverflow.com/questions/49083789/how-to-add-new-line-in-bashrc-file-in-ubuntu) pour ajouter une nouvelle ligne sur le fichier `bashrc` (linux) ou `.bash_profile` (mac OS)
+
+Créer un fichier `.envrc.local` contenant au minimum le chemin vers le .venv : `echo "source .venv/bin/activate" >> .envrc.local`
 
 ### Votre fichier ``.env``
 
@@ -48,38 +48,31 @@ Pour définir ```PGPASSWORD=password``` vous pouvez utiliser la commande suivant
 Notez que le fichier commité `.env-base` contient les bonnes variables d'environnement
 quel que soit votre environnement de développement et n'est pas censé être "personnalisé".
 
+## Docker
+
+La base de données (PostgreSQL), le serveur S3 (MinIO) et Airflow peuvent tous être lancés ensemble avec
+
+    docker compose up --build
 
 ## DBT et base de données Pilotage
 
-Pour vérifier que DBT est bien configuré :
-
-    dbt debug
-
-Si votre base de données n'existe pas vérifiez les bases existantes avec :
-
-    psql -l
-
-Si elle n'apparait pas, créez la avec :
-
-    createdb pilotage
-
-
-Pour avoir une configuration "prête à l'emploi", il vous faut lancer les commandes suivantes :
+Pour avoir une configuration "prête à l'emploi", il vous faut configurer la connexion au DB du prod
+(e.g. PROD_PGHOST dans votre `.env`) et lancer les commandes suivantes :
 
     make load_dump
     dbt deps
     dbt seed
 
+Après `load_dump`, si vous trouvez des erreurs liées à les `EXTENSIONS` non-existantes (comme `postgis` par exemple), veuillez les ignorer ;
+elles sont causées par la différence entre votre environmment local et notre environmment de déploiement web.
+
+Pour vérifier que DBT est bien configuré :
+
+    dbt debug
+
 Si tout va bien, vous pourrez ensuite utiliser DBT pour toutes vos opérations.
 
     dbt run
-
-### Charger un dump local pilotage
-
-Une commande Makefile est proposée, pourvu que vous ayez rempli les variables d'environnement nécessaires
-pour accéder à la base de données PostgreSQL de production.
-
-    make load_dump
 
 ### Ajout de nouvelles colonnes dans les seeds
 
@@ -93,7 +86,7 @@ Afin d'ajouter les nouvelles colonnes utiliser la fonction
 
 ## Airflow
 
-Créez une base de données pour Airflow si elle n'existe pas.
+Démarrer Airflow avec Docker
 
     docker compose up
 
