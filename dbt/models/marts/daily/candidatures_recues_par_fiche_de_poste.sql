@@ -1,10 +1,3 @@
-/*
-
-L'objectif est d'analyser les candidatures qui sont reliées à une fiche de poste dans le but de détécter celles qui ont
-des difficultés à recruter.
-
-*/
-
 select
     c.date_candidature,
     c.date_embauche,

@@ -209,3 +209,6 @@ models:
   - name: candidatures_inconnues_employeurs_orienteurs
     description: >
       Table permettant le suivi des SIAE qui ont orienté un candidat n'ayant jamais postulé chez elles, vers d'autres SIAE.
+  - name: candidatures_recues_par_fiche_de_poste
+    description: >
+        Candidatures reçues pour chaque fiche de poste. La table contient l'ensemble des candidatures et pour chacune la fiche de poste à laquelle elle est rattachée. L'objectif est d'analyser les candidatures qui sont reliées à une fiche de poste dans le but de détécter celles qui ont des difficultés à recruter. Utile aussi pour avoir des indicateurs sur les domaines professionnels.
