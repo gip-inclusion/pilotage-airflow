@@ -27,6 +27,7 @@ select
     cd."département_structure",
     cd."nom_département_structure",
     cd."région_structure",
+    cd.nom_epci_structure,
     cd.bassin_emploi_prescripteur,
     cd.bassin_emploi_structure,
     date_part('year', c.date_diagnostic)   as "année_diagnostic",
