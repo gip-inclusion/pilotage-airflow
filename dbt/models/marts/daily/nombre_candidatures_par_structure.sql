@@ -20,6 +20,7 @@ select
     c.injection_ai,
     s.ville,
     s.siret,
+    s.nom_epci_structure,
     /* calcul de la proportion de candidatures en % */
     c.nombre_de_candidatures / prop_cddr.total_candidatures as taux_de_candidatures
 from
