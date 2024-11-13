@@ -49,6 +49,7 @@ services:
       - S3_DOCS_BUCKET=dbt-docs
       - S3_DOCS_ACCESS_KEY=minioadmin
       - S3_DOCS_SECRET_KEY=minioadmin
+      - HASH_SALT=${HASH_SALT}
     depends_on:
       - postgres
       - minio
