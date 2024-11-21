@@ -1,5 +1,4 @@
 select
-    cel.date_candidature,
     cel.type_structure,
     cel.categorie_structure,
     cel."nom_département_structure",
@@ -33,7 +32,6 @@ where
     and fdp.recrutement_ouvert = 1
     and cel.date_candidature >= date_trunc('month', now() - interval '12 month')
 group by
-    cel.date_candidature,
     cel.type_structure,
     cel.categorie_structure,
     cel."nom_département_structure",
