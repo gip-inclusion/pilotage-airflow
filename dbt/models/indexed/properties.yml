@@ -32,3 +32,6 @@ models:
   - name: corresp_af_contrats
     description: >
       Table permettant de récupérer les annexes financières associées aux contrats.
+  - name: fluxIAE_MarchesPublics_v2
+    description: >
+      Table introduite afin d'ajouter des index aux tables provenant du fluxIAE + on ne prend pas en compte les 10 entrées dans cette table qui sont dupliquées.
