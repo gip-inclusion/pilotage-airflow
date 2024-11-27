@@ -115,6 +115,19 @@ def join_etp_null_and_realized(df_replicate, df_etp_null):
 
 def model(dbt, session):
     df = dbt.ref("suivi_etp_conventionnes_v2")
+    # We don't need these columns
+    df.drop(
+        columns=[
+            "mpu_sct_mt_recet_nettoyage",
+            "mpu_sct_mt_recet_serv_pers",
+            "mpu_sct_mt_recet_btp",
+            "mpu_sct_mt_recet_agri",
+            "mpu_sct_mt_recet_recycl",
+            "mpu_sct_mt_recet_transp",
+            "mpu_sct_mt_recet_autres",
+        ],
+        inplace=True,
+    )
     df["af_date_debut_effet_v2"] = pd.to_datetime(df["af_date_debut_effet_v2"])
     df["af_date_fin_effet_v2"] = pd.to_datetime(df["af_date_fin_effet_v2"])
     df_replicate = explode_by_month(df)
