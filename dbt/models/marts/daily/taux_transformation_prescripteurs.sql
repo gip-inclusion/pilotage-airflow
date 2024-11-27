@@ -45,17 +45,18 @@ with candidats_p as (
 select
     /* On selectionne les colonnes finales qui nous intéressent */
     c.*,
-    organisations_libelles.label as type_auteur_diagnostic_detaille,
+    organisations_libelles.label     as type_auteur_diagnostic_detaille,
     prescripteurs.type_prescripteur,
-    prescripteurs.zone_emploi    as bassin_emploi_prescripteur,
-    prescripteurs.epci           as epci_prescripteur,
-    prescripteurs.dept_org       as "nom_département_prescripteur",
-    prescripteurs."région_org"   as "nom_région_prescripteur",
+    prescripteurs.nom_arrondissement as nom_arrondissement_prescripteur,
+    prescripteurs.zone_emploi        as bassin_emploi_prescripteur,
+    prescripteurs.epci               as epci_prescripteur,
+    prescripteurs.dept_org           as "nom_département_prescripteur",
+    prescripteurs."région_org"       as "nom_région_prescripteur",
     case
         /* ajout d'une colonne permettant de calculer le taux de candidats acceptées
             tout en faisant une jointure avec la table candidatures */
         when c.total_embauches > 0 then concat(cast(c.id_candidat as varchar), '_accepté')
-    end                          as "candidature_acceptée"
+    end                              as "candidature_acceptée"
 from
     candidats_p as c
 left join {{ ref('stg_organisations') }} as prescripteurs

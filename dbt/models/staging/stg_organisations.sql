@@ -12,6 +12,7 @@ select
     organisations."région",
     /*bien mettre nom département et pas département */
     appartenance_geo_communes.nom_departement                                         as "nom_département_insee",
+    appartenance_geo_communes.nom_arrondissement,
     appartenance_geo_communes.nom_zone_emploi                                         as zone_emploi,
     appartenance_geo_communes.nom_epci                                                as epci,
     organisations_libelles.label                                                      as type_complet,
