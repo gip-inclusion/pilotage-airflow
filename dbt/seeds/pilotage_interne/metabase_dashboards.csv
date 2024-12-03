@@ -47,3 +47,4 @@ id_tb,nom_tb,public,type
 465,tb 465 - SIAE- Données IAE : Suivi des effectifs annuels et mensuels en ETP,SIAE,TB privé
 485,tb 485 - DDETS/DREETS/CD - Données conventionnement - Maille structure,DDETS/DREETS/CD, TB privé
 488,tb 488 - PH - Etat des candidatures orientées,PH,TB privé
+496,tb 496 - FT - Etat des candidatures orientées,FT,TB privé
