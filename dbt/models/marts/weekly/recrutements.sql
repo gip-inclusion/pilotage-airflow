@@ -1,21 +1,21 @@
 select
-    rec.id_premier_contrat           as identifiant_contrat,
-    rec.id_derniere_reconduction     as identifiant_derniere_reconduction_contrat,
+    rec.id_premier_contrat                  as identifiant_contrat,
+    rec.id_derniere_reconduction            as identifiant_derniere_reconduction_contrat,
     ctr.contrat_id_structure,
-    rec.contrat_id_pph               as identifiant_salarie,
+    rec.contrat_id_pph                      as identifiant_salarie,
     ctr.contrat_date_embauche,
     salarie.genre_salarie,
     salarie.tranche_age,
     salarie.qpv,
     salarie.zrr,
-    rnf.rnf_libelle_niveau_form_empl as niveau_formation_salarie,
+    rnf.rnf_libelle_niveau_form_empl        as niveau_formation_salarie,
     struct.structure_denomination,
     struct.structure_adresse_admin_commune,
     struct.structure_adresse_admin_code_insee,
     struct.nom_departement_structure,
     struct.nom_region_structure,
     struct.nom_epci_structure,
-    ref_disp.type_structure_emplois  as type_siae,
+    ref_disp.type_structure_emplois         as type_siae,
     af_ctr.af_numero_annexe_financiere,
     af_ctr.af_id_annexe_financiere,
     af_ctr.nom_departement_af,
@@ -23,16 +23,16 @@ select
     rec.nb_reconductions,
     rec.date_recrutement,
     rec.date_fin_recrutement,
-    emi.date_recrutement_reelle,
+    extract(year from rec.date_recrutement) as annee_recrutement,
     case
         when ctr.contrat_salarie_rqth then 'OUI'
         else 'NON'
-    end                              as rqth,
+    end                                     as rqth,
     case
         when ctr.contrat_salarie_rsa = 'OUI-M' then 'OUI'
         when ctr.contrat_salarie_rsa = 'OUI-NM' then 'OUI'
         else 'NON'
-    end                              as brsa
+    end                                     as brsa
 from {{ ref('stg_recrutements') }} as rec
 inner join {{ ref('fluxIAE_ContratMission_v2') }} as ctr
     on rec.id_premier_contrat = ctr.contrat_id_ctr
