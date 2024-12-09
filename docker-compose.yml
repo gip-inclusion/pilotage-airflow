@@ -49,6 +49,12 @@ services:
       - S3_DOCS_BUCKET=dbt-docs
       - S3_DOCS_ACCESS_KEY=minioadmin
       - S3_DOCS_SECRET_KEY=minioadmin
+      - ASP_S3_ACCESS_KEY=${ASP_S3_ACCESS_KEY}
+      - ASP_S3_SECRET_KEY=${ASP_S3_SECRET_KEY}
+      - ASP_S3_HOST=${ASP_S3_HOST}
+      - ASP_S3_BUCKET=${ASP_S3_BUCKET}
+      - ASP_RIAE_UNZIP_PASSWORD=${ASP_RIAE_UNZIP_PASSWORD}
+      - HASH_SALT=${HASH_SALT}
     depends_on:
       - postgres
       - minio
