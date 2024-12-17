@@ -4,3 +4,21 @@ models:
   - name: monrecap_starmetric
     description: >
       Table créée afin de calculer la mesure d'impact principale de Mon Récap
+  - name: Contacts
+    description: >
+      Table des contacts de mon recap. Nous créeons cette table à partir d'une version v0 afin de faire des modifications eventuelle en sql et non en python
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('monrecap','Contacts_v0')
+  - name: Commandes
+    description: >
+      Table des commandes de mon recap. Nous créeons cette table à partir d'une version v0 afin de faire des modifications eventuelle en sql et non en python
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('monrecap','Commandes_v0')
+  - name: barometre
+    description: >
+      Table du barometre de mon recap. Nous créeons cette table à partir d'une version v0 afin de faire des modifications eventuelle en sql et non en python
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('monrecap','barometre_v0')

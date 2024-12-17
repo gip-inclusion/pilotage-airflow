@@ -19,3 +19,7 @@ models:
   - name: stg_starmetric
     description: >
       Vue créée afin de créer l'indicateur d'impact de Mon Récap. Cette vue est jointe a la vue stg_total_reponses pour la création de l'indicateur final.
+  - name: stg_departments
+    description: >
+      Vue créée afin d'isoler un département. Certains mails sont associés a deux départements différents.
+      Nous avons décidés de façon arbitraire de choisir le département avec le chiffre le + élévé.

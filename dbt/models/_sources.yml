@@ -124,6 +124,6 @@ sources:
     description: >
       Données de Mon Récap
     tables:
-      - name: barometre
-      - name: Contacts
-      - name: Commandes
+      - name: barometre_v0
+      - name: Contacts_v0
+      - name: Commandes_v0

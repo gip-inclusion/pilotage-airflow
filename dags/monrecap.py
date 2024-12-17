@@ -1,6 +1,7 @@
 import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
+from airflow.models import Variable
 from airflow.operators import bash, empty
 
 from dags.common import airtable, db, dbt, default_dag_args, departments, slack
@@ -23,11 +24,12 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         con = db.connection_engine()
         # Need to drop these tables and the views created with them in order to be able to run the df.to_sql()
         con.execute(
-            """drop table if exists monrecap."Commandes" cascade;
+            """drop table if exists monrecap."Commandes_v0" cascade;
                     drop table if exists monrecap.barometre cascade;"""
         )
 
-        tables = ["Commandes", "Contacts", "Baromètre - Airflow"]
+        table_mapping = {"Commandes": "Commandes_v0", "Contacts": "Contacts_v0"}
+        tables = ["Commandes", "Contacts"]
         for table_name in tables:
             url, headers = airtable.connection_airtable(table_name)
             df = airtable.fetch_airtable_data(url, headers)
@@ -37,15 +39,22 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
                 df["Nom Departement"] = df["Code Postal"].apply(
                     lambda cp: "-".join([item for item in departments.get_department(cp) if item is not None])
                 )
-            if table_name == "Contacts":
+            elif table_name == "Contacts":
+                # fixing Annaelle's double quotes, if you read this I'll get my revenge
+                df = df.rename(
+                    columns={
+                        'Date envoi mail "Relance" J+71': "Date envoi mail Relance J+71",
+                        'Envoi mail "merci"': "Envoi mail merci",
+                        'Date envoi mail "merci"': "Date envoi mail merci",
+                    }
+                )
                 df["Date de première commande"] = pd.to_datetime(df["Date de première commande"])
                 df["Date de dernière commande"] = pd.to_datetime(df["Date de dernière commande"])
-            elif table_name == "Baromètre - Airflow":
-                df["Submitted at"] = pd.to_datetime(df["Submitted at"])
-                table_name = "barometre"
+
+            db_table_name = table_mapping[table_name]
 
             df.to_sql(
-                table_name,
+                db_table_name,
                 con=con,
                 schema=DB_SCHEMA,
                 if_exists="replace",
@@ -57,6 +66,20 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
             )
 
     monrecap_airtable = monrecap_airtable()
+
+    # Tally handle poorly the import to airtable, therefore we used a gsheet instead
+    @task(task_id="monrecap_gsheet")
+    def monrecap_gsheet(**kwargs):
+        import pandas as pd
+
+        sheet_url = Variable.get("BAROMETRE_MON_RECAP")
+        print(f"reading barometre mon recap at {sheet_url=}")
+        df = pd.read_csv(sheet_url)
+        df.drop_duplicates()  # if the synch of the gsheet is forced, duplicates will be created
+        df["Submitted at"] = pd.to_datetime(df["Submitted at"])
+        df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
+
+    monrecap_gsheet = monrecap_gsheet()
 
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
@@ -79,4 +102,4 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         append_env=True,
     )
 
-    (start >> monrecap_airtable >> dbt_deps >> dbt_seed >> dbt_monrecap >> end)
+    (start >> monrecap_airtable >> monrecap_gsheet >> dbt_deps >> dbt_seed >> dbt_monrecap >> end)
