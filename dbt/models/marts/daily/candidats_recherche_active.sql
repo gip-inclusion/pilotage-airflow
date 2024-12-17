@@ -20,14 +20,17 @@ select
     max(cc.date_embauche)                                                                                    as date_derniere_embauche,
     current_date - min(cc.date_premiere_candidature)                                                         as delai_premiere_candidature,
     current_date - max(cc.date_candidature)                                                                  as delai_derniere_candidature,
-    {{ interval_30_days('current_date - max(cc.date_candidature)', 0) }}                                      as delai_derniere_candidature_interval,
-    cast({{ interval_30_days('current_date - max(cc.date_candidature)', 1) }} as integer)                                                                                                 as delai_derniere_candidature_interval_order,
+    {{ interval_30_days('current_date - max(cc.date_candidature)', 0) }}                                     as delai_derniere_candidature_interval,
+    {{ interval_30_days('current_date - max(cc.date_candidature)', 1) }}                                     as delai_derniere_candidature_interval_order,
     current_date - max(case when cc."état" = 'Candidature acceptée' then cc.date_candidature end)            as delai_derniere_candidature_acceptee,
     count(cc.id)                                                                                             as nb_candidatures,
     sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end)                                      as nb_candidatures_acceptees,
     sum(case when cc."état" != 'Candidature acceptée' then 1 else 0 end)                                     as nb_candidatures_sans_accept,
     coalesce(sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end) > 0)                        as a_eu_acceptation,
-    coalesce(max(cc.date_embauche) >= current_date - interval '6 months', max(cc.date_embauche) is not null) as a_eu_embauche
+    coalesce(max(cc.date_embauche) >= current_date - interval '6 months', max(cc.date_embauche) is not null) as a_eu_embauche,
+    coalesce(
+        min(cc.date_premiere_candidature) <= current_date - interval '30 days' and coalesce(sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end), 0) = 0
+    )                                                                                                        as file_active_30_jours
 from {{ ref('stg_candidats_candidatures') }} as cc
 where cc.date_candidature >= current_date - interval '6 months'
 group by
