@@ -1,7 +1,8 @@
 select
-    {{ pilo_star(ref('candidats'),  relation_alias="c", except=["categorie_structure"]) }},
+    {{ pilo_star(ref('candidats'),  relation_alias="c", except=["categorie_structure", "id_auteur_diagnostic_prescripteur", "id_auteur_diagnostic_employeur" ]) }},
+    coalesce(c.id_auteur_diagnostic_prescripteur, c.id_auteur_diagnostic_employeur) as id_auteur_diagnostic,
+    cd.id                                                                           as id_candidature,
     cd.genre_candidat,
-    cd.id as id_candidature,
     cd.date_embauche,
     cd.date_candidature,
     cd."état",
