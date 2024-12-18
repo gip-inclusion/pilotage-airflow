@@ -6,6 +6,11 @@ select
     cc.diagnostic_valide,
     cc.type_auteur_diagnostic,
     cc.sous_type_auteur_diagnostic,
+    cc.nom_auteur_diagnostic,
+    cc.id_auteur_diagnostic,
+    orga.nom_arrondissement                                                                                  as nom_arrondissement_auteur_diag,
+    orga.zone_emploi                                                                                         as nom_zone_emploi_auteur_diag,
+    orga.epci                                                                                                as nom_epci_auteur_diag,
     cc.total_diagnostics,
     cc.date_diagnostic,
     cc."date_dernière_connexion",
@@ -20,8 +25,8 @@ select
     max(cc.date_embauche)                                                                                    as date_derniere_embauche,
     current_date - min(cc.date_premiere_candidature)                                                         as delai_premiere_candidature,
     current_date - max(cc.date_candidature)                                                                  as delai_derniere_candidature,
-    {{ interval_30_days('current_date - max(cc.date_candidature)', 0) }}                                      as delai_derniere_candidature_interval,
-    cast({{ interval_30_days('current_date - max(cc.date_candidature)', 1) }} as integer)                                                                                                 as delai_derniere_candidature_interval_order,
+    {{ interval_30_days('current_date - max(cc.date_candidature)', 0) }}                                     as delai_derniere_candidature_interval,
+    {{ interval_30_days('current_date - max(cc.date_candidature)', 1) }}                                     as delai_derniere_candidature_interval_order,
     current_date - max(case when cc."état" = 'Candidature acceptée' then cc.date_candidature end)            as delai_derniere_candidature_acceptee,
     count(cc.id)                                                                                             as nb_candidatures,
     sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end)                                      as nb_candidatures_acceptees,
@@ -29,6 +34,8 @@ select
     coalesce(sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end) > 0)                        as a_eu_acceptation,
     coalesce(max(cc.date_embauche) >= current_date - interval '6 months', max(cc.date_embauche) is not null) as a_eu_embauche
 from {{ ref('stg_candidats_candidatures') }} as cc
+left join {{ ref('organisations') }} as orga
+    on cc.id_auteur_diagnostic = orga.id
 where cc.date_candidature >= current_date - interval '6 months'
 group by
     cc.id,
@@ -36,6 +43,11 @@ group by
     cc.genre_candidat,
     cc.total_diagnostics,
     cc.date_diagnostic,
+    cc.nom_auteur_diagnostic,
+    cc.id_auteur_diagnostic,
+    orga.nom_arrondissement,
+    orga.zone_emploi,
+    orga.epci,
     cc."date_dernière_connexion",
     cc.type_inscription,
     cc."région",
