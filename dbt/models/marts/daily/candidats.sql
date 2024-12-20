@@ -1,11 +1,8 @@
 select
-    {{ pilo_star(ref('stg_candidats')) }},
+    {{ pilo_star(ref('stg_candidats'), except=["diagnostic_valide"]) }},
     cdd.date_derniere_candidature,
     cdd.date_premiere_candidature,
-    case
-        when candidats.date_diagnostic > current_date - interval '6 months' then 1
-        else 0
-    end as diagnostic_valide,
+    candidats.diagnostic_valide, -- We put it here in order to avoid a metabase mismatch in the column orders and break everything
     case
         when candidats.age_selon_nir <= 25 then 'Jeune (- de 26 ans)'
         when candidats.age_selon_nir > 25 and candidats.age_selon_nir <= 54 then 'Adulte (26-54 ans)'
