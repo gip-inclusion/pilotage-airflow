@@ -75,3 +75,11 @@ def drop_view(view_name):
         drop_view_query = sql.SQL("DROP VIEW IF EXISTS {name};").format(name=sql.Identifier(view_name))
         cursor.execute(drop_view_query)
         conn.commit()
+
+
+def create_schema(schema_name):
+    from psycopg2 import sql
+
+    with MetabaseDBCursor() as (cursor, conn):
+        cursor.execute(sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(schema_name)))
+        conn.commit()
