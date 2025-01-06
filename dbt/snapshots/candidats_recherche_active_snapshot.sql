@@ -10,5 +10,7 @@
         )
     }}
 
-    select * from {{ ref('candidats_recherche_active') }}
+    select
+        {{ pilo_star(ref('candidats_recherche_active'), except=['delai_derniere_candidature_interval_order']) }}
+    from {{ ref('candidats_recherche_active') }}
 {% endsnapshot %}
