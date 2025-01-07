@@ -9,3 +9,7 @@ models:
     description: >
       Ce script permet de finaliser la traitement des données FT de recette, précedemment effectué via un notebook python (il y a 2 tb, un de prod un de recette avec deux tables différentes)
       L'usage des seed nous permet d'anticiper de futures modifications dans les différentes colonnes ainsi que ne pas écrire de nombreux case...when.
+  - name: stg_france_travail
+    description: >
+      Les données France travail étaient traitées via un notebook python développé par Jules.
+      Ce premier script sql permet de faire une partie du traitement effectué par le notebook.
