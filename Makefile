@@ -88,16 +88,16 @@ RESTORE_DIR ?= .latest.restore
 
 pg_dump:
 	@PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
-			psql -c ";" || { \
-				echo "\n\n### Your connexion to the production database failed. Is the port blocked by a firewall ? ###\n" ; \
-				false ; \
-			}
+		psql -c ";" || { \
+			echo "\n\n### Your connexion to the production database failed. Is the port blocked by a firewall ? ###\n" ; \
+			false ; \
+		}
 	rm -rf $(DUMP_DIR)
 	@echo "\n\n### Dumping the production database on your machine, check your disk size and connection speeds ! ###\n"
 	PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
-		   time pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 \
-		   --exclude-table="lh_*" --exclude-table="yp_*" --exclude-table="z_*" \
-		   --file=$(DUMP_DIR)
+		time pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 \
+		--exclude-table="lh_*" --exclude-table="yp_*" --exclude-table="z_*" \
+		--file=$(DUMP_DIR)
 	@echo "\n\n### Database dumped successfully. ###\n"
 	rm -rf $(RESTORE_DIR)
 	mv $(DUMP_DIR) $(RESTORE_DIR)
@@ -108,11 +108,49 @@ ifneq (,$(findstring clever-cloud,$(PGHOST)))
 else
 	dropdb ${PGDATABASE} || true
 	createdb ${PGDATABASE}
-	time pg_restore --format=directory --clean --jobs=4 --verbose --no-owner --no-acl -d ${PGDATABASE} $(RESTORE_DIR) || true
+	time pg_restore --format=directory --clean --jobs=4 --verbose --no-owner --no-acl -d ${PGDATABASE} \
+		--table="fluxIAE_AnnexeFinanciere" --table="fluxIAE_ContratMission" \
+		--table="fluxIAE_EtatMensuelIndiv" --table="fluxIAE_Missions" \
+		--table="fluxIAE_MissionsEtatMensuelIndiv" --table="fluxIAE_RefCategorieSort" \
+		--table="fluxIAE_RefMontantIae" --table="fluxIAE_RefMotifSort" \
+		--table="fluxIAE_RefNiveauFormation" --table="fluxIAE_RefFormeContrat" \
+		--table="fluxIAE_Salarie" --table="fluxIAE_Structure" \
+		--table="fluxIAE_MarchesPublics" --table="candidats_v0" \
+		--table="candidatures" --table="cap_campagnes" \
+		--table="cap_candidatures" --table="cap_critères_iae" \
+		--table="cap_structures" --table="codes_rome" \
+		--table="collaborations" --table="communes" \
+		--table="critères_iae" --table="departements" \
+		--table="fiches_de_poste" --table="fiches_de_poste_par_candidature" \
+		--table="institutions" --table="organisations_v0" \
+		--table="pass_agréments" --table="structures" \
+		--table="utilisateurs_v0" --table="demandes_de_prolongation" \
+		--table="prolongations" --table="structures_v0" \
+		--table="c1_ref_type_contrat" --table="c1_ref_type_prescripteur" \
+		--table="c1_ref_motif_de_refus" --table="c1_analytics_v0" \
+		--table="insee_communes" --table="c1_private_dashboard_visits_v0" \
+		--table="suivi_visiteurs_tb_prives" --table="suivi_visiteurs_tb_prives_v1" \
+		--table="suivi_utilisateurs_tb_prives" --table="suivi_visiteurs_tb_publics_v1" \
+		--table="sorties_v2" --table="sa_zones_infradepartementales" \
+		$(RESTORE_DIR) || true
 	@echo "\n\n### Database restored successfully ! ###\n"
 endif
 
-load_dump: pg_dump pg_restore
+run_dags_pilotage:
+	@echo "\n\n### Triggering dbt seed first ###\n"
+	dbt seed
+	@echo "\n\n### dbt seed triggered successfully ###\n"
+	@echo "\n\n### Triggering nps_pilotage DAG ###\n"
+	airflow dags trigger nps_pilotage
+	@echo "\n\n### DAG triggered successfully ###\n"
+	@echo "\n\n### Triggering reseau_iae_adherents DAG ###\n"
+	airflow dags trigger reseau_iae_adherents
+	@echo "\n\n### DAG triggered successfully ###\n"
+	@echo "\n\n### Triggering reseau_iae_adherents DAG ###\n"
+	airflow dags trigger mon_recap
+	@echo "\n\n### DAG triggered successfully ###\n"
+
+load_dump: pg_dump run_dags_pilotage pg_restore
 
 # Docker shell.
 # =============================================================================
