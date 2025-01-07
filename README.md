@@ -56,7 +56,7 @@ La base de données (PostgreSQL), le serveur S3 (MinIO) et Airflow peuvent tous 
 
 ## DBT et base de données Pilotage
 
-Pour avoir une configuration "prête à l'emploi", il vous faut configurer la connexion au DB du prod
+Pour récupérer les tables sources non générables pas un DAG, il vous faut configurer la connexion au DB du prod
 (e.g. PROD_PGHOST dans votre `.env`) et lancer les commandes suivantes :
 
     make load_dump
@@ -70,7 +70,22 @@ Pour vérifier que DBT est bien configuré :
 
     dbt debug
 
-Si tout va bien, vous pourrez ensuite utiliser DBT pour toutes vos opérations.
+
+### Génération de toutes les tables de la DB
+
+Après le `load_dump` et afin de récupérer d'autres tables sources vous devrez lancer la commande dbt suivante :
+
+    dbt seed --full-refresh
+
+
+Puis les DAG suivants :
+
+    reseau_iae_adherents
+    dgefp_etp
+    mon_recap
+    nps_pilotage
+
+Enfin vous pouver lancer :
 
     dbt run
 
