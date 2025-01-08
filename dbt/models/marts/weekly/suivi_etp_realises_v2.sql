@@ -15,8 +15,10 @@ select distinct
     af.af_numero_convention,
     af.af_etat_annexe_financiere_code,
     af.af_montant_unitaire_annuel_valeur,
+    af.af_duree_heure_annuel_etp_id,
     firmi.rmi_libelle,
     firmi.rmi_valeur,
+    firmi.rmi_id,
     af.af_mesure_dispositif_code,
     ref_asp.type_structure,
     ref_asp.type_structure_emplois,
@@ -48,10 +50,12 @@ cross join
 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
     on
         emi.emi_afi_id = af.af_id_annexe_financiere
-        and emi.emi_sme_annee >= constantes.annee_en_cours_2
-left join {{ source('fluxIAE', 'fluxIAE_RefMontantIae') }} as firmi
+        and constantes.annee_en_cours_2 <= emi.emi_sme_annee
+left join {{ ref('stg_ref_montant_heures_iae') }} as firmi
     on
-        af.af_mesure_dispositif_id = firmi.rme_id
+    --be careful, there are two columns on annexefinanviere_v2 that match rmi_id.
+    -- You need to chose the right column based on the code (detailled on the asp doc)
+        af.af_duree_heure_annuel_etp_id = firmi.rmi_id
 left join {{ ref('fluxIAE_Structure_v2') }} as structure
     on
         af.af_id_structure = structure.structure_id_siae
@@ -67,6 +71,5 @@ left join {{ ref('stg_etat_mensuel_individuel_avec_brsa') }} as brsa
         and emi.emi_dsm_id = brsa.emi_dsm_id
 where
     emi.emi_sme_annee >= constantes.annee_en_cours_2
-    and firmi.rmi_libelle = 'Nombre d''heures annuelles théoriques pour un salarié à taux plein'
     and af.af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE', 'CLOTURE')
     and af.af_mesure_dispositif_code not like '%FDI%'
