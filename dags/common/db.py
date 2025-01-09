@@ -3,7 +3,7 @@ import textwrap
 from airflow.models import Variable
 from sqlalchemy import create_engine
 
-from . import dataframes
+from dags.common import dataframes
 
 
 def connection_envvars():
@@ -40,6 +40,45 @@ class MetabaseDBCursor:
             dbname=Variable.get("PGDATABASE"),
             user=Variable.get("PGUSER"),
             password=Variable.get("PGPASSWORD"),
+        )
+        self.cursor = self.connection.cursor()
+        return self.cursor, self.connection
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.cursor:
+            self.cursor.close()
+        if self.connection:
+            self.connection.close()
+
+
+class MetabaseDatabaseCursor3:
+    """
+    dbt-postgres requires us to use psycopg2 for our database connections in most DAGs.
+
+    We use psycopg3 for database connections where the utility of this library is useful,
+    but where dbt is not relevant.
+
+    If and when dbt-postgres moves from psycopg2 this class will replace MetabaseDBCursor
+    https://github.com/dbt-labs/dbt-postgres/issues/122
+    """
+
+    def __init__(self):
+        self.cursor = None
+        self.connection = None
+
+    def __enter__(self):
+        import psycopg
+
+        self.connection = psycopg.connect(
+            host=Variable.get("PGHOST"),
+            port=Variable.get("PGPORT"),
+            dbname=Variable.get("PGDATABASE"),
+            user=Variable.get("PGUSER"),
+            password=Variable.get("PGPASSWORD"),
+            keepalives=1,
+            keepalives_idle=30,
+            keepalives_interval=5,
+            keepalives_count=5,
         )
         self.cursor = self.connection.cursor()
         return self.cursor, self.connection
