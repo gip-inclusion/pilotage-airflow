@@ -50,12 +50,14 @@ select
     id_structure,
     nom_structure,
     etape,
-    sum(valeur) as valeur
+    sum(valeur)                                    as valeur,
+    substring(rome from position('-' in rome) + 1) as "métier"
 from all_fdp
 group by
     domaine_professionnel,
     grand_domaine,
     rome,
+    substring(rome from position('-' in rome) + 1),
     "nom_département_structure",
     "département_structure",
     "région_structure",
