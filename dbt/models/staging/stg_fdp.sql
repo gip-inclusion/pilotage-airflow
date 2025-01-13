@@ -16,6 +16,7 @@ select
     fdpc."date_création_fdp",
     rome.domaine_professionnel,
     rome.grand_domaine,
+    fdpc.nom_rome_fdp                                       as "métier",
     count(distinct fdpc.id_fdp)                             as nb_fdp_struct,
     min(fdpc.date_candidature)                              as date_1ere_candidature,
     max(fdpc.date_candidature)                              as date_derniere_candidature_recue,
@@ -36,7 +37,6 @@ select
         true
     )                                                       as embauche_30_derniers_jours,
     -- aucune candidature n'a été reçue
-    -- incorrect -> regarder si array agg date candidature ne contient que des null
     coalesce(
         max(fdpc.date_candidature) is null,
         true
