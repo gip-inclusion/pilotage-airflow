@@ -164,9 +164,6 @@ models:
   - name: stg_nb_utilisateurs_revenus_semaine
     description: >
       Compte le nb d'utilisateurs qui se sont connectés plusieurs fois sur un tableau de bord sur une semaine donnée.
-  - name: stg_candidats_asp_derniere_sortie
-    description: >
-      Vue permettant d'isoler les motifs et causes de sortie ainsi que les dates de derniere sortie et candidature afin de permettre l'identification des id salarie asp en decrochage.
   - name: stg_candidats_derniere_sortie
     description: >
       Vue permettant d'isoler les dates de derniere sortie et candidature afin de permettre l'identification des salaries des emplois en decrochage.
@@ -186,4 +183,7 @@ models:
   - name: stg_ref_montant_heures_iae
     description: >
       vue permettant d'isoler le nombre d'heures nécessaires pour réaliser un ETP. En effet le nombre d'heures liées à un ETP évolue en fonction des décrets.
+  - name: stg_candidats_asp_derniere_sortie
+    description: >
+      Vue permettant d'isoler les motifs et causes de sortie ainsi que les dates de derniere sortie et candidature afin de permettre l'identification des id salarie asp en decrochage.
 

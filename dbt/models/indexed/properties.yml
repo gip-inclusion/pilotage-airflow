@@ -13,16 +13,6 @@ models:
   - name: fluxIAE_RefCategorieSort_v2
     description: >
       Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
-  - name: sorties_v2
-    description: >
-      Table introduite afin d'extraire toutes les informations du fluxIAE, nécessaires au calcul des sorties.
-  - name: nombre_mois_travailles
-    description: >
-      Table introduite afin de calculer le nombre de mois travailles par un salarie lorsqu'il a travaillé plus de 0 heure.
-  - name: nombre_heures_travaillees_af
-    description: >
-      Table introduite afin de calculer le nombre d'heures travaillées quand l'année de sortie est égale à l'année de l'af.
-      Ce cas particulier est nécessaire au calcul des sorties.
   - name: fluxIAE_Salarie_v2
     description: >
       Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
@@ -36,3 +26,18 @@ models:
     description: >
       Table introduite afin d'ajouter des index à la table fluxIAE_MarchesPublics.
       On ne prend pas en compte les 10 entrées dans cette table qui sont dupliquées, et on ignore les lignes où aucune valeur de recette n'est remplie (aucune valeur différente de null ou zéro).
+  - name: etat_mensuel_heures_travaillees_sorties
+    description: >
+        Table introduite afin de recuperer le nombre d'heures travaillées par salarié, via l'état mensuel individuel, dans le cadre du calcul des sorties
+  - name: motif_sorties_salaries
+    description: >
+        Table introduite afin de récupérer les motifs de sortie par id salarié dans le cadre du calcul des sorties
+  - name: contrats_sorties
+    description: >
+        Table introduite afin de récupérer les informations autour des contrats dans le cadre du calcul des sorties
+  - name: heures_ai_etti
+    description: >
+        Table introduite afin de permettre le calcul du nombre de sorties des ai/etti (qui se base sur le nombre d'heures travaillées)
+  - name: sorties_v2
+    description: >
+      Table introduite afin d'extraire toutes les informations du fluxIAE, nécessaires au calcul des sorties.

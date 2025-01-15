@@ -1,35 +1,31 @@
-/* For the ACI and EI the exit will be considered only
-if the employee worked at least 3 months in the enteprise */
-
 select
-    {{ pilo_star(ref('sorties_v2'), relation_alias="sorties",
-    except=["emi_nb_heures_travail", "emi_sme_version", "af_id_annexe_financiere", "emi_afi_id", "emi_sme_annee", "emi_sme_mois"]) }},
-    nbr.nombre_mois_travailles,
-    nbr_h.total_heures_travaillees_derniere_af,
-    disp.type_structure,
-    disp.type_structure_emplois,
-    (extract(day from age(
-        sorties.contrat_date_sortie_definitive::DATE, sorties.contrat_date_embauche::DATE
-    )))
-    as duree_contrat_regles_asp
-from {{ ref('sorties_v2') }} as sorties
-left join {{ ref('nombre_mois_travailles') }} as nbr
+    {{ pilo_star(ref('etat_mensuel_heures_travaillees_sorties'), relation_alias='ems') }},
+    {{ pilo_star(ref('motif_sorties_salaries'), relation_alias='sorties') }},
+    contrats.emi_pph_id as ctr_pph_id,
+    contrats.emi_ctr_id as contrat_id,
+    contrats.contrat_date_creation,
+    contrats.contrat_date_embauche,
+    contrats.contrat_date_sortie_definitive,
+    contrats.contrat_date_fin_contrat,
+    contrats.date_recrutement,
+    contrats.date_sortie_definitive,
+    contrats.contrat_duree_contrat,
+    contrats.contrat_salarie_rsa,
+    contrats.annee_sortie_definitive,
+    contrats.annee_fin_contrat,
+    contrats.debut_annee_fin_contrat,
+    contrats.duree_en_mois
+from {{ ref("etat_mensuel_heures_travaillees_sorties") }} as ems
+left join {{ ref("motif_sorties_salaries") }} as sorties
     on
-        sorties.emi_pph_id = nbr.emi_pph_id
-        and sorties.af_numero_annexe_financiere = nbr.af_numero_annexe_financiere
-left join {{ ref('nombre_heures_travaillees_af') }} as nbr_h
+        ems.emi_pph_id = sorties.sorties_pph_id
+        and ems.emi_afi_id = sorties.sorties_afi_id
+left join {{ ref("contrats_sorties") }} as contrats
     on
-        sorties.emi_pph_id = nbr_h.emi_pph_id
-        and sorties.af_numero_annexe_financiere = nbr_h.af_numero_annexe_financiere
-left join {{ ref('ref_mesure_dispositif_asp') }} as disp
-    on sorties.af_mesure_dispositif_code = disp.af_mesure_dispositif_code
+        ems.emi_pph_id = contrats.emi_pph_id
+        and ems.emi_afi_id = contrats.emi_afi_id
+        and ems.emi_ctr_id = contrats.emi_ctr_id
 where
-    sorties.rcs_libelle != 'Retrait des sorties constatées' and disp.type_structure_emplois in ('ACI', 'EI')
-    and sorties.duree_en_mois >= 3 and nbr_h.total_heures_travaillees_derniere_af > 0
-group by
-    {{ pilo_star(ref('sorties_v2'), relation_alias="sorties",
-    except=["emi_nb_heures_travail", "emi_sme_version", "af_id_annexe_financiere", "emi_afi_id", "emi_sme_annee", "emi_sme_mois"]) }},
-    nbr.nombre_mois_travailles,
-    nbr_h.total_heures_travaillees_derniere_af,
-    disp.type_structure,
-    disp.type_structure_emplois
+    ems.nombre_heures_travaillees >= 1
+    and contrats.duree_en_mois > 2.65
+    and ems.af_mesure_dispositif_code in ('ACI_DC', 'ACI_MP', 'EI_MP', 'EI_DC')
