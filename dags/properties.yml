@@ -17,3 +17,7 @@ models:
     description: >
       Ce DAG permet de récupérer de manière quotidienne les données de contacts & commandes sur le airtable de monrecap.
       A travers un google sheet (tally) nous récupérons les réponses au baromètre. Ces 3 tables permettent la réalisation de la page statistiques de mon recap !
+- name: dgefp_get_etp
+    description: >
+      Ce DAG permet de récupérer le .csv de la DGEFP contenant la part CD/Etat pour chaque annexe financiere.
+      Le .csv doit être téléchargé sur POP puis déposé manuellement dans le ftp c2-bucket.

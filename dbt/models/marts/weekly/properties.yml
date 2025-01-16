@@ -128,3 +128,7 @@ models:
   - name: candidats_decrochage
     description: >
       Table permettant l'identification des candidats en decrochage, c'est a dire les candidats ayant effectué une candidature après une sortie non positive.
+  - name: dgefp_etp_etat_cd
+    description: >
+      Table permettant d'identifier d'associer les données de la DGEFP contenant la part CD et Etat aux informations de structure et d'annexe financiere du flux IAE.
+

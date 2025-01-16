@@ -127,3 +127,10 @@ sources:
       - name: barometre_v0
       - name: Contacts_v0
       - name: Commandes_v0
+  - name: DGEFP
+    schema: public
+    description: >
+      Tables générées chaque semaine, manuellement via un DAG, après récupération des données auprès de la DGEFP
+    tables:
+      - name: dgefp_donnees_etp
+
