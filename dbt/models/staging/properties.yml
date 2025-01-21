@@ -52,12 +52,6 @@ models:
   - name: stg_visiteurs_publics
     description: >
       Permet de suivre les metrics matomo associees aux TB publics
-  - name: stg_visiteurs_prives
-    description: >
-      Cette table suit les metrics des TBs prives avant l'automatisation des requêtes API Matomo introduite par Victor.
-  - name: stg_visiteurs_prives_v1
-    description: >
-      Cette table suit les metrics des TBs prives après l'automatisation des requêtes API Matomo introduite par Victor.
   - name: stg_duree_annexe
     description: >
       Vue créée pour extraire des informations sur la durée des annexes financières à partir du fluxIAE de l'ASP.
@@ -117,10 +111,10 @@ models:
       Vue permettant de récupérer les demandes de prolongation non acceptées
   - name: stg_premiere_visite
     description: >
-      Vue permettant de récupérer la première visite d'un utilisateur sur l'un de nos tableaux de bord privés.
+      Vue permettant de connaître la date de la première visite d'un utilisateur sur un tableau de bord privé.
   - name: stg_premiere_visite_tous_tb
     description: >
-      Vue permettant de récupérer la première visite d'un utilisateur sur l'un des tb privé du pilotage.
+      Vue permettant de connaître la date de la première visite d'un utilisateur tous tableaux de bord privés confondus.
   - name: stg_test_suivi_etp_realises_par_structure
     description: >
       Vue permettant de tester le nombre de lignes de la table suivi_etp_realises_par_structure.
