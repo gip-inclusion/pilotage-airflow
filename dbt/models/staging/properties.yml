@@ -52,12 +52,6 @@ models:
   - name: stg_visiteurs_publics
     description: >
       Permet de suivre les metrics matomo associees aux TB publics
-  - name: stg_visiteurs_prives
-    description: >
-      Cette table suit les metrics des TBs prives avant l'automatisation des requêtes API Matomo introduite par Victor.
-  - name: stg_visiteurs_prives_v1
-    description: >
-      Cette table suit les metrics des TBs prives après l'automatisation des requêtes API Matomo introduite par Victor.
   - name: stg_duree_annexe
     description: >
       Vue créée pour extraire des informations sur la durée des annexes financières à partir du fluxIAE de l'ASP.
