@@ -49,9 +49,6 @@ models:
   - name: reseaux
     description: >
       Table introduite pour obtenir la liste des réseaux et les structures attachées à ces derniers.
-  - name: suivi_visiteurs_tous_tb
-    description: >
-      Table introduite pour suivre les visiteurs uniques des TBs prives et publics.
   - name: pass_agrements_valides
     description: >
       A la demande du C1, cette table a été créée pour suivre le nombre de pass IAE valides. Ici un pass est considéré valide quand sa date de fin n'a pas expiré.

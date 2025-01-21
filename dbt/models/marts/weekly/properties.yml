@@ -131,4 +131,8 @@ models:
   - name: dgefp_etp_etat_cd
     description: >
       Table permettant d'identifier d'associer les données de la DGEFP contenant la part CD et Etat aux informations de structure et d'annexe financiere du flux IAE.
-
+  - name: retention
+    description: >
+      Table permettant le calcul de la retention à deux mois.
+      Définition simpliste : nombre d'utilisateurs qui se sont connectés au moins une fois par mois sur une période de deux mois.
+      Permier jet permettant d'aller vers une analyse temporelle plus fine et éventuellement par cas d'usage.
