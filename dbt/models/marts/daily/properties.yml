@@ -213,3 +213,16 @@ models:
   - name: candidatures_inconnues_employeurs_orienteurs
     description: >
       Table permettant le suivi des SIAE qui ont orienté un candidat n'ayant jamais postulé chez elles, vers d'autres SIAE.
+  - name: fdp_tension
+    description: >
+      Fiches de postes en fonction de leur statut en tension (6 etapes entonoire).
+      Cette table est constituée de l'union de 6 tables, regroupées dans 3 sous tables (fdp_tension_12, fdp_tension_34, fdp_tension_56) pour des raisons de mémoire.
+  - name: fdp_tension_12
+    description: >
+      Sous-table des étapes 1 et 2 pour la table fiches de postes en tension.
+  - name: fdp_tension_34
+    description: >
+      Sous-table des étapes 3 et 4 pour la table fiches de postes en tension.
+  - name: fdp_tension_56
+    description: >
+      Sous-table des étapes 5 et 6 pour la table fiches de postes en tension.
