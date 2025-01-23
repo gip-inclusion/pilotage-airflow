@@ -14,7 +14,7 @@ select
     nom_structure,
     etape,
     sum(valeur) as valeur
-from stg_all_fdp
+from {{ ref('fdp_tension') }}
 group by
     domaine_professionnel,
     grand_domaine,
