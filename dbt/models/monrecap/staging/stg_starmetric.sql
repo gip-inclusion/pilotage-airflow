@@ -17,7 +17,7 @@ select
         else 'Non'
     end   as reponse_barometre
 from {{ ref('stg_baro_commandes_starmetric') }} as starm
-left join {{ ref('stg_departments') }} as dpt
+left join {{ ref('stg_departement_derniere_commandes') }} as dpt
     on starm.email_commande = dpt.email_commande
 where (starm.date_de_derniere_reponse_au_barometre = starm.derniere_reponse_barometre or starm.derniere_reponse_barometre is null or starm.date_de_derniere_reponse_au_barometre is null)
 group by

@@ -25,11 +25,17 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         # Need to drop these tables and the views created with them in order to be able to run the df.to_sql()
         con.execute(
             """drop table if exists monrecap."Commandes_v0" cascade;
-                    drop table if exists monrecap.barometre cascade;"""
+                    drop table if exists monrecap.barometre cascade;
+                    drop table if exists monrecap.contacts_non_commandeurs_v0 cascade;
+                    drop table if exists monrecap.Contacts_v0 cascade"""
         )
 
-        table_mapping = {"Commandes": "Commandes_v0", "Contacts": "Contacts_v0"}
-        tables = ["Commandes", "Contacts"]
+        table_mapping = {
+            "Commandes": "Commandes_v0",
+            "Contacts": "Contacts_v0",
+            "Contacts non commandeurs": "contacts_non_commandeurs_v0",
+        }
+        tables = list(table_mapping.values())
         for table_name in tables:
             url, headers = airtable.connection_airtable(table_name)
             df = airtable.fetch_airtable_data(url, headers)
@@ -50,6 +56,12 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
                 )
                 df["Date de première commande"] = pd.to_datetime(df["Date de première commande"])
                 df["Date de dernière commande"] = pd.to_datetime(df["Date de dernière commande"])
+                df["Type de contact"] = "contact commandeur"
+
+            elif table_name == "Contacts non commandeurs":
+                df["Date de première commande"] = pd.to_datetime(df["Date de première commande"])
+                df["Date de dernière commande"] = pd.to_datetime(df["date de la dernière commande"])
+                df["Type de contact"] = "contact non commandeur"
 
             db_table_name = table_mapping[table_name]
 

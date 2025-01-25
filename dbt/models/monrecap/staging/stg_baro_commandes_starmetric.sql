@@ -11,3 +11,4 @@ left join {{ ref('stg_barometre_starmetric') }} as baro
     on cmd.email_commande = baro.votre_adresse_mail
 left join {{ ref('Contacts') }} as contacts
     on cmd.email_commande = contacts."EMAIL"
+where contacts."Type de contact" = 'contact commandeur'

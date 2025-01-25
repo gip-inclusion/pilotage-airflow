@@ -19,7 +19,16 @@ models:
   - name: stg_starmetric
     description: >
       Vue créée afin de créer l'indicateur d'impact de Mon Récap. Cette vue est jointe a la vue stg_total_reponses pour la création de l'indicateur final.
-  - name: stg_departments
+  - name: stg_departement_derniere_commandes
     description: >
-      Vue créée afin d'isoler un département. Certains mails sont associés a deux départements différents.
-      Nous avons décidés de façon arbitraire de choisir le département avec le chiffre le + élévé.
+      Vue créée afin d'isoler un département et un email de commande. Certains mails sont associés a deux départements différents.
+      Nous avons décidé après discussion avec le métier de prendre le département de la dernière commande ou il y a eu le + de commandes et ou le numéro du département est le plus élévé.
+  - name: stg_commandes_max
+    description: >
+      Vue créée afin de selectionner toutes les colonnes de la table Commandes_v0 correspondant à l'email isolé par stg_derpartement_derniere_commandes
+  - name: stg_contacts_non_commanders
+    description: >
+      Vue créée afin d'isoler les contacts non commandeurs et faire l'union avec la table contacts commandeurs pour créer la table Contacts
+  - name: stg_contacts_commanders
+    description: >
+      Vue créée afin d'isoler les contacts commandeurs et faire l'union avec la table contacts non commandeurs pour créer la table Contacts
