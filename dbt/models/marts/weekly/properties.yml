@@ -128,3 +128,8 @@ models:
   - name: candidats_decrochage
     description: >
       Table permettant l'identification des candidats en decrochage, c'est a dire les candidats ayant effectué une candidature après une sortie non positive.
+  - name: retention
+    description: >
+      Table permettant le calcul de la retention à deux mois.
+      Définition simpliste : nombre d'utilisateurs qui se sont connectés au moins une fois par mois sur une période de deux mois.
+      Permier jet permettant d'aller vers une analyse temporelle plus fine et éventuellement par cas d'usage.

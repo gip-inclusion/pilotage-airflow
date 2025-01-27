@@ -13,8 +13,8 @@ select
     end                                                                                                     as type_utilisateur,
     coalesce(organisations.type, structures.type, institutions.type)                                        as type_organisation,
     coalesce(organisations.nom, structures.nom, institutions.nom)                                           as nom_organisation,
-
     -- recover date of the monday of the current week
+    date_trunc('month', visits.measured_at)                                                                 as mois,
     date_trunc('day', visits.measured_at) - INTERVAL '1 day' * (extract('dow' from visits.measured_at) - 1) as semaine,
     date_part('week', visits.measured_at)                                                                   as num_semaine,
     count(distinct visits.measured_at)                                                                      as nb_visites,
@@ -52,6 +52,7 @@ group by
     type_utilisateur,
     type_organisation,
     nom_organisation,
+    mois,
     semaine,
     num_semaine,
     visits.measured_at,
