@@ -12,7 +12,8 @@ select
     cd.id_structure,
     cd.origine,
     cd."origine_détaillée",
-    cd.type_prescripteur
+    cd.type_prescripteur,
+    cd."nom_prénom_conseiller"
 from {{ ref('candidats') }} as c
 left join {{ ref('candidatures_echelle_locale') }} as cd
     on c.id = cd.id_candidat
