@@ -7,7 +7,7 @@ select
     type_utilisateur,
     type_organisation,
     departement,
-    premiere_visite_tous_tb,
+    count(distinct case when premiere_visite_tous_tb = 'Oui' then id_utilisateur end)          as premiere_visite,
     count(distinct case when date_trunc('month', jour_visite) = mois1 then id_utilisateur end) as visites_mois1,
     count(distinct case when date_trunc('month', jour_visite) = mois2 then id_utilisateur end) as visites_mois2
 from {{ ref('suivi_utilisateurs_tb_prive_semaine') }}
@@ -21,5 +21,4 @@ group by
     id_utilisateur,
     type_utilisateur,
     type_organisation,
-    departement,
-    premiere_visite_tous_tb
+    departement
