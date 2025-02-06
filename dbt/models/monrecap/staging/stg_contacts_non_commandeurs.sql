@@ -48,7 +48,7 @@ select
     cmd."declaratif autre outil",
     cmd."declaratif plusieurs freins",
     cmd."declaratif quels freins",
-    cmd.label,
+    cmd."Votre structure appartient à une structure, un réseau ou un l",
     dpt.nom_departement,
     null::BOOLEAN                                                       as "Commande passée",
     null::INT                                                           as "Nombre de carnets commandés Total",
