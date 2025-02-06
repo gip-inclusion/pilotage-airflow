@@ -65,6 +65,16 @@ sources:
           Table de correspondance entre le code d'un motif de refus et son label affiché sur les emplois.
           Sert de base pour la table motif de refus qui contient le label affiché sur le pilotage.
 
+  - name: france_travail_marche_travail
+    schema: france_travail
+    description: >
+      Nombre et % de demandeurs par catégories x caractéristiques, % par activités (Rome, Compétence), par territoire.
+    tables:
+     - name: job_seeker_stats
+       description: >
+         Table qui stocke des statistiques sur les chercheurs d'emploi du API France Travail. Les statistiques sont organisées
+         par territoire, characteristique, activité et période, selon le schema du API.
+
   - name: oneshot
     schema: public
     description: >
