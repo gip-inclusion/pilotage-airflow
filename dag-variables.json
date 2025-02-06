@@ -3,5 +3,7 @@
     "PGHOST": "postgres",
     "PGPASSWORD": "password",
     "PGPORT": 5432,
-    "PGUSER": "postgres"
+    "PGUSER": "postgres",
+    "FT_API_CLIENT_ID": "",
+    "FT_API_CLIENT_SECRET": ""
 }
