@@ -48,7 +48,7 @@ select
     cmd."declaratif autre outil",
     cmd."declaratif plusieurs freins",
     cmd."declaratif quels freins",
-    cmd.label,
+    cmd."Votre structure appartient à une structure, un réseau ou un l",
     dpt.nom_departement,
     contacts."Commande passée",
     contacts."Nombre de carnets commandés Total",
