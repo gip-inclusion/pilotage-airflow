@@ -67,7 +67,7 @@ for week in week_list:
     glob_nps = get_nps(df_cur_week)
     nps_data = add_nps_row(nps_data, week, "Tous TB", glob_nps, len(df_cur_week))
 
-    # get PE nps
+    # get PE/FT nps
     tb_pe = ["tb 169 - Taux de transformation PE",
              "tb 162 - Fiches de poste en tension PE",
              "tb 149 - Candidatures orientées PE",
