@@ -51,7 +51,7 @@ def model(dbt, session):
         glob_nps_data = {"date": i, "tb": "tous tb", "nps": glob_nps, "users": len(df_cur_week)}
         df_nps = df_nps.append(glob_nps_data, ignore_index=True)
 
-        # get PE nps
+        # get PE/FT nps
         tb_pe = [
             "tb 169 - Taux de transformation PE",
             "tb 162 - Fiches de poste en tension PE",

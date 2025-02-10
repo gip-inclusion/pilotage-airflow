@@ -20,7 +20,7 @@ select
     coalesce(appartenance_geo_communes.libelle_commune, initcap(organisations.ville)) as ville,
     coalesce(organisations.code_commune, appartenance_geo_communes.code_insee)        as code_commune,
     case
-        when organisations.type in ('ML', 'PE', 'CAP_EMPLOI') then 'SPE'
+        when organisations.type in ('ML', 'FT', 'CAP_EMPLOI') then 'SPE'
         when organisations.type in ('DEPT', 'ODC') then 'Département'
         when organisations.type = 'Autre' then 'Autre'
         else 'Nouveaux prescripteurs'

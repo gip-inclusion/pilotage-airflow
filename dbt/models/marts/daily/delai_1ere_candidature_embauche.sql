@@ -1,5 +1,5 @@
 /*
-L'objectif est de calculer le délai entre la 1ère candidature et l'embauche des candidats orientés par PE:
+L'objectif est de calculer le délai entre la 1ère candidature et l'embauche des candidats orientés par FT:
 - le nombre de candidats orientés par des prescripteurs habilités
     qui ont trouvé un emploi en IAE moins d 1 mois après leur première candidature
 - le nombre de candidats orientés par des prescripteurs habilités
