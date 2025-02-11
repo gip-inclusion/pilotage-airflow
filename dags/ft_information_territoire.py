@@ -13,9 +13,7 @@ from dags.common.errors import ImproperlyConfiguredException
 
 
 DB_SCHEMA = "france_travail"
-REGISTERED_JOBSEEKER_STATS_BY_TERRITORY_ENDPOINT = (
-    "https://api.francetravail.io/partenaire/stats-offres-demandes-emploi/v1/indicateur/stat-demandeurs"
-)
+FT_API_BASE_URL = "https://api.francetravail.io/partenaire/stats-offres-demandes-emploi/v1"
 
 
 Territory = namedtuple("Territory", ["type", "code"])
@@ -24,11 +22,7 @@ Territory = namedtuple("Territory", ["type", "code"])
 logger = logging.getLogger(__name__)
 
 
-with DAG(
-    "ft_information_territoire",
-    schedule_interval=None,
-    **default_dag_args(),
-) as dag:
+with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_interval="@weekly") as dag:
 
     @task(task_id="information_territoire_access_token")
     def information_territoire_access_token(**kwargs):
@@ -69,11 +63,8 @@ with DAG(
             """
 
             def get_territories_for_type(territory_type):
-                FT_API_ENDPOINT = (
-                    "https://api.francetravail.io/partenaire/stats-offres-demandes-emploi/v1/referentiel/territoires"
-                )
                 response = requests.get(
-                    url=f"{FT_API_ENDPOINT}/{territory_type}",
+                    url=f"{FT_API_BASE_URL}/referentiel/territoires/{territory_type}",
                     headers={"Accept": "application/json", "Authorization": access_token},
                 )
                 return [
@@ -85,7 +76,7 @@ with DAG(
 
         def get_stats_for_territory(territory_type, territory_code):
             response = requests.post(
-                url=REGISTERED_JOBSEEKER_STATS_BY_TERRITORY_ENDPOINT,
+                url=f"{FT_API_BASE_URL}/indicateur/stat-demandeurs",
                 headers={
                     "Accept": "application/json",
                     "Authorization": access_token,
@@ -119,7 +110,6 @@ with DAG(
                 table_description = table["libNomenclature"]
                 table_descriptions[table_name] = table_description
 
-                # TODO(calum): use keys for these values instead of literals and store them in new tables?
                 data_for_rows = {
                     key: table[key]
                     for key in [
