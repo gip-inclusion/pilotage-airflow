@@ -22,6 +22,8 @@ Territory = namedtuple("Territory", ["type", "code"])
 logger = logging.getLogger(__name__)
 
 
+# NOTE: We recuperate the stats on a quarterly basis. Since we don't know when the stats will be updated API-side
+# we cannot reliably schedule this DAG, so we run it regularly.
 with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_interval="@weekly") as dag:
 
     @task(task_id="information_territoire_access_token")
@@ -54,6 +56,10 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
 
     @task(task_id="registered_jobseeker_stats_by_territory")
     def registered_jobseeker_stats_by_territory(access_token, **kwargs):
+        # We log which quarters have already been accessed by previous executions of this task
+        # If this cache is empty, we'll pull everything available from the API
+        logged_sessions_by_territory = Variable.get("FT_INFORMATION_TERRITOIRE_PERIOD_LOG", {})
+
         table_descriptions = {}  # Maps table name to description during import
 
         def list_territories(access_token, **kwargs):
@@ -74,7 +80,12 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
 
             return get_territories_for_type("REG") + get_territories_for_type("DEP")
 
-        def get_stats_for_territory(territory_type, territory_code):
+        def get_stats_for_territory(territory_type, territory_code, limit_to_most_recent_quarter=True):
+            """
+            Makes an API request for the given territory, parses and imports the data in SQL.
+            :param territory_type: REG or DEP
+            :param limit_to_most_recent_quarter: if True, will request only the most recent quarter from the API
+            """
             response = requests.post(
                 url=f"{FT_API_BASE_URL}/indicateur/stat-demandeurs",
                 headers={
@@ -89,12 +100,21 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
                     "codeActivite": "CUMUL",
                     "codeTypePeriode": "TRIMESTRE",
                     "codeTypeNomenclature": "CATCAND",  # Stats sur le nombre des demandeurs d'emplois
+                    "dernierePeriode": limit_to_most_recent_quarter,
                 },
             )
             # NOTE: the response JSON is a very large dictionary
             response_data = response.json()
             data_category = response_data["codeFamille"]
             data = response_data["listeValeursParPeriode"] if "listeValeursParPeriode" in response_data else []
+
+            if limit_to_most_recent_quarter:
+                if logged_sessions_by_territory[log_key] == data[0]["codePeriode"]:
+                    logger.info(f"No new data for territory {log_key}, skipping SQL import.")
+                    return
+
+                # New data available! Continue with the import
+                logged_sessions_by_territory[log_key] = data[0]["codePeriode"]
 
             # The response groups characteristic values by nomenclature,
             # e.g. by category of jobseeker.
@@ -178,7 +198,15 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
 
         # Import data from the API for each territory targeted.
         for territory in list_territories(access_token):
-            get_stats_for_territory(territory.type, territory.code)
+            # If a log is present, we make the assumptions that
+            # - the DAG has run successfully since the last quarter
+            # - the data we have for previous quarters don't need to be updated
+            # - the most recently updated quarter is the only one we are missing
+            log_key = f"{territory.type}_{territory.code}"
+            limit_to_most_recent_quarter = (
+                len(logged_sessions_by_territory) > 0 and log_key in logged_sessions_by_territory
+            )
+            get_stats_for_territory(territory.type, territory.code, limit_to_most_recent_quarter)
 
         with db.MetabaseDBCursor() as (cursor, conn):
             for table_name, table_description in table_descriptions.items():
