@@ -1,0 +1,20 @@
+select
+    af_id_annexe_financiere,
+    af_numero_convention,
+    af_numero_annexe_financiere,
+    af_etat_annexe_financiere_code,
+    af_etp_postes_insertion,
+    af_mesure_dispositif_code,
+    af_numero_avenant_modification,
+    af_montant_total_annuel,
+    af_montant_unitaire_annuel_valeur,
+    af_mt_cofinance,
+    type_siae,
+    denomination_structure,
+    nom_departement_structure,
+    nom_region_structure,
+    af_date                                                                                                             as most_recent_date,
+    lag(af_date) over (partition by af_id_annexe_financiere order by af_date)                                           as oldest_date,
+    lag(af_etp_postes_insertion) over (partition by af_id_annexe_financiere order by af_date asc)                       as previous_period,
+    af_etp_postes_insertion - lag(af_etp_postes_insertion) over (partition by af_id_annexe_financiere order by af_date) as delta_etp
+from {{ ref('stg_annexe_financiere_etat_recent_ancien') }}

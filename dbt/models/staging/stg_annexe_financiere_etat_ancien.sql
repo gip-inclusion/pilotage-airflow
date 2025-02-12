@@ -1,0 +1,20 @@
+select
+    af_id_annexe_financiere,
+    af_numero_convention,
+    af_etp_postes_insertion,
+    af_numero_annexe_financiere,
+    af_etat_annexe_financiere_code,
+    af_mesure_dispositif_code,
+    af_numero_avenant_modification,
+    af_montant_total_annuel,
+    af_montant_unitaire_annuel_valeur,
+    af_mt_cofinance,
+    type_siae,
+    denomination_structure,
+    nom_departement_structure,
+    nom_region_structure,
+    to_date(af_date_fin_effet, 'DD/MM/YYYY')                                                                            as date_fin_effet,
+    to_date(af_date_debut_effet, 'DD/MM/YYYY')                                                                          as date_debut_effet,
+    to_date(af_date_etat_historise, 'DD/MM/YYYY')                                                                       as old_date,
+    row_number() over (partition by af_id_annexe_financiere order by to_date(af_date_etat_historise, 'DD/MM/YYYY') asc) as rn
+from {{ ref('fluxIAE_AnnexeFinanciere_v2') }}

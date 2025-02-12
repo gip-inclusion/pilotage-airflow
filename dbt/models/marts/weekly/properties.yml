@@ -131,4 +131,7 @@ models:
   - name: dgefp_etp_etat_cd
     description: >
       Table permettant d'identifier d'associer les données de la DGEFP contenant la part CD et Etat aux informations de structure et d'annexe financiere du flux IAE.
+  - name: historisation_annexe_financiere
+    description: >
+      Table permettant d'identifier l'évolution de conventionnement entre la signature de l'annexe et son dernier avenant.
 

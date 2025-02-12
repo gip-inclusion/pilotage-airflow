@@ -186,4 +186,12 @@ models:
   - name: stg_candidats_asp_derniere_sortie
     description: >
       Vue permettant d'isoler les motifs et causes de sortie ainsi que les dates de derniere sortie et candidature afin de permettre l'identification des id salarie asp en decrochage.
-
+  - name: stg_annexe_financiere_etat_ancien
+    description: >
+      Vue permettant de récupérer les informations de conventionnement au premier état d'un id d'annexe financiere
+  - name: stg_annexe_financiere_etat_recent
+    description: >
+      Vue permettant de récupérer les informations de conventionnement au dernier état d'un id d'annexe financiere
+  - name: stg_annexe_financiere_etat_ancient_recnet
+    description: >
+      Vue permettant de récupérer les informations de conventionnement au premier et dernier état d'un id d'annexe financiere
