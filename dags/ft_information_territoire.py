@@ -7,6 +7,9 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import python
+from sqlalchemy import Column, MetaData, PrimaryKeyConstraint, Table
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.types import DECIMAL, DateTime, Integer, String
 
 from dags.common import db, default_dag_args, slack
 from dags.common.errors import ImproperlyConfiguredException
@@ -62,6 +65,44 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
 
         table_descriptions = {}  # Maps table name to description during import
 
+        # Table configuration
+        # Columns defined in the main body of the request
+        shared_columns = [
+            # Part of the composite primary key
+            "codeTypeTerritoire",
+            "codeTerritoire",
+            "codePeriode",
+            # Other fields
+            "libTerritoire",
+            "codeTypeActivite",
+            "codeActivite",
+            "libActivite",
+            "codeNomenclature",
+            "libNomenclature",
+            "codeTypePeriode",
+            "libPeriode",
+            "dateMaj",
+        ]
+        # Columns defined on each characteristic (row) of the table
+        characteristic_columns = [
+            # Part of the composite primary key
+            "codeCaract",
+            "codeTypeCaract",
+            # Other fields
+            "libCaract",
+            "nombre",
+            "pourcentage",
+        ]
+        # TODO: refactor columns to include definitions for types if Romain likes the approach
+        # columns = shared_columns + characteristic_columns
+        composite_primary_key = [
+            "codeTypeTerritoire",
+            "codeTerritoire",
+            "codePeriode",
+            "codeCaract",
+            "codeTypeCaract",
+        ]
+
         def list_territories(access_token, **kwargs):
             """
             Fetch a list of regions to use with the API.
@@ -79,6 +120,35 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
                 ]
 
             return get_territories_for_type("REG") + get_territories_for_type("DEP")
+
+        def serialize_table_data_from_response(table_data):
+            """Build row data from the main body of the response and data for each characteristic"""
+
+            def get_val(row, key):
+                return row[key] if key in row else None
+
+            data_for_rows = {key: get_val(table_data, key) for key in shared_columns}
+            data_for_rows["dateMaj"] = pd.to_datetime(data_for_rows["dateMaj"])
+            logger.info("data for rows: " + str(data_for_rows))
+
+            rows = [
+                {key: get_val(row, key) for key in characteristic_columns} | data_for_rows
+                for row in table_data["listeValeurParCaract"]
+            ]
+
+            # The total isn't included in the list of characteristics, so we add it
+            rows.append(
+                {
+                    "codeTypeCaract": "CUMUL",  # Our own value, mimicking the API's style
+                    "codeCaract": "CUMUL",
+                    "libCaract": None,
+                    "nombre": table_data["valeurPrincipaleNombre"],
+                    "pourcentage": table_data["valeurSecondairePourcentage"],
+                }
+                | data_for_rows
+            )
+
+            return rows
 
         def get_stats_for_territory(territory_type, territory_code, limit_to_most_recent_quarter=True):
             """
@@ -108,9 +178,15 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
             data_category = response_data["codeFamille"]
             data = response_data["listeValeursParPeriode"] if "listeValeursParPeriode" in response_data else []
 
+            if not len(data):
+                logger.info(
+                    "No data found for territory %s (%s), skipping SQL import.", territory_code, territory_type
+                )
+                return
+
             if limit_to_most_recent_quarter:
                 if logged_sessions_by_territory[log_key] == data[0]["codePeriode"]:
-                    logger.info(f"No new data for territory {log_key}, skipping SQL import.")
+                    logger.info("No new data for territory %s, skipping SQL import.", log_key)
                     return
 
                 # New data available! Continue with the import
@@ -120,7 +196,7 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
             # e.g. by category of jobseeker.
             # We restructure the data into tables.
             rows_created = 0
-            connection = db.connection_engine()
+            engine = db.connection_engine()
 
             for table in data:
                 # TODO(calum): for protecting against an obscure hypothetical SQL injection,
@@ -130,63 +206,45 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
                 table_description = table["libNomenclature"]
                 table_descriptions[table_name] = table_description
 
-                data_for_rows = {
-                    key: table[key]
-                    for key in [
-                        "codeTypeTerritoire",
-                        "codeTerritoire",
-                        "libTerritoire",
-                        "codeTypeActivite",
-                        "codeActivite",
-                        "libActivite",
-                        "codeNomenclature",
-                        "libNomenclature",
-                        "codeTypePeriode",
-                        "codePeriode",
-                        "libPeriode",
-                    ]
-                    if key in table
-                }
-                data_for_rows["dateMaj"] = pd.to_datetime(table["datMaj"])
+                df = pd.DataFrame(serialize_table_data_from_response(table))
 
-                rows = [row | data_for_rows for row in table["listeValeurParCaract"]]
-
-                # The total isn't included in the list of characteristics, so we add it.
-                rows.append(
-                    {
-                        "codeTypeCaract": "CUMUL",  # Our own value, mimicking their style.
-                        "codeCaract": "CUMUL",
-                        "libCaract": None,
-                        "nombre": table["valeurPrincipaleNombre"],
-                        "pourcentage": table["valeurSecondairePourcentage"],
-                        "masque": False,
-                    }
-                    | data_for_rows
-                )
-
-                df = pd.DataFrame(rows)
-                # Set the index as a unique identifier for the information represented by the row.
-                df.set_index(
-                    [
-                        "codeTypeTerritoire",
-                        "codeTerritoire",
-                        "codeTypeActivite",
-                        "codeActivite",
-                        "codeNomenclature",
-                        "codeTypePeriode",
-                        "codePeriode",
-                    ],
-                    inplace=True,
-                )
-                # TODO: upsert behaviour on this query, if the dateMaj is newer
-                rows_created += df.to_sql(
+                metadata = MetaData(bind=engine)
+                table = Table(
                     table_name,
-                    con=connection,
+                    metadata,
+                    # Primary key fields
+                    Column("codeCaract", String),
+                    Column("codeTypeCaract", String),
+                    Column("codeTypeTerritoire", String),
+                    Column("codeTerritoire", String),
+                    Column("codePeriode", String),
+                    # Other fields
+                    Column("libTerritoire", String),
+                    Column("codeTypeActivite", String),
+                    Column("codeActivite", String),
+                    Column("libActivite", String),
+                    Column("codeNomenclature", String),
+                    Column("libNomenclature", String),
+                    Column("codeTypePeriode", String),
+                    Column("libPeriode", String),
+                    Column("libCaract", String),
+                    Column("nombre", Integer),
+                    Column("pourcentage", DECIMAL),
+                    Column("dateMaj", DateTime),
+                    PrimaryKeyConstraint(*composite_primary_key, name=f"pk_{table_name}"),
                     schema=DB_SCHEMA,
-                    if_exists="append",
-                    index=True,
                 )
-                logger.info("Imported %r rows into table %s", rows_created, table_name)
+
+                # Create table before inserting data
+                metadata.create_all(engine)
+
+                with engine.connect() as connection:
+                    stmt = pg_insert(table).values(df.to_dict("records"))
+                    stmt = stmt.on_conflict_do_update(
+                        index_elements=composite_primary_key, set_={key: stmt.excluded[key] for key in df.columns}
+                    )
+                    rows_upserted = connection.execute(stmt).rowcount
+                    logger.info("Imported %r rows into table %s", rows_upserted, table_name)
 
             logger.info(
                 "Import complete for territory %s (%s). Created %r rows across %r tables",
