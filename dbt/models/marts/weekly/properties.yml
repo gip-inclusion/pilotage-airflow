@@ -136,3 +136,6 @@ models:
       Table permettant le calcul de la retention à deux mois.
       Définition simpliste : nombre d'utilisateurs qui se sont connectés au moins une fois par mois sur une période de deux mois.
       Permier jet permettant d'aller vers une analyse temporelle plus fine et éventuellement par cas d'usage.
+  - name: beneficiaires
+    description: >
+      Table d'identifier tous les bénéficiaires de l'IAE ainsi que les critères associés à ces derniers.
