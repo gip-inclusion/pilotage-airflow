@@ -66,3 +66,6 @@ left join {{ ref('stg_commandes_max') }} as cmd
     on cnm.submission_id = cmd."Submission ID"
 left join {{ ref('stg_departement_derniere_commandes') }} as dpt
     on cnm."Commandeur référent" = dpt.email_commande
+-- A contact who did not place an order cannot have the filed email and commandeur referent completed
+-- this condition removes the persons that placed an order and made a mistake while filling the form
+where cnm."EMAIL" != cnm."Commandeur référent"
