@@ -22,3 +22,9 @@ models:
   - name: eph_accompagnement_freins
     description: >
       Vue créée pour récupérer les freins à l'emploi des salariés et les mettres dans un format exploitable (pivot effectué)
+  - name: eph_stg_contrats
+    description: >
+      Vue créée pour ajouter la colonne contrat_parent_id donnent l'information sur le
+      contrat initiale d'un salarié à partir duquel des renouvellement peuvent avoir eu lieu.
+      Les colonnes nom_region_structure, nom_departement_structure, nom_commune_structure ont
+      également été ajoutées
