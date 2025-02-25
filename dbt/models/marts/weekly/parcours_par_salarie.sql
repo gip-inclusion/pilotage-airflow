@@ -1,3 +1,4 @@
+-- WIP
 SELECT
 	salarie.hash_nir,
 	COUNT(DISTINCT pass_ag.hash_numéro_pass_iae) AS nombre_pass,
