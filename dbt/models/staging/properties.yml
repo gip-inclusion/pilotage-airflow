@@ -148,6 +148,24 @@ models:
     description: >
       Ajoute aux contrats un identifiant (id_recrutement) permettant de regrouper les reconductions d'un même contrat.
       Pour une personne physique (contrat_id_pph), tous les contrats qui sont des reconductions d'un contrat initial auront le même groupe_contrat.
+    columns:
+      - name: contrat_id_ctr
+        tests:
+          - unique
+          - not_null
+  - name: stg_contrats_parent
+    description: >
+      Permet de récupérer les contrats parents (contrats initiaux) à partir des contrats.
+    columns:
+      - name: contrat_parent_id
+        tests:
+          - not_null
+      - name: contrat_id_pph
+        tests:
+          - not_null
+      - name: contrat_id_structure
+        tests:
+          - not_null
   - name: stg_emi_date_recrutement
     description: >
       Permet d'obtenir le nombre d'heures effectuées par personne physique, contrat et id d'annexe financière.
@@ -277,4 +295,34 @@ models:
       - name: acc_nb_sal_acc
         tests:
           - not_null
+  - name: stg_parcours_salarie_info_contrats
+    description: >
+      Vue permettant de récupérer les informations agregées sur les contrats des salariés aux cours de leurs parcours.
+    columns:
+      - name: hash_nir
+        tests:
+          - unique
+          - not_null
+  - name: stg_uniques_salarie_id
+    description: >
+      Vue créée pour récupérer les salariés uniques
+    columns:
+      - name: salarie_id
+        tests:
+          - unique
+          - not_null
+      - name: hash_nir
+        tests:
+          - not_null
+  - name: stg_parcours_salarie_info_pass
+    description: >
+      Vue permettant de récupérer les informations agregées sur les passIAE des salariés aux cours de leurs parcours.
+    columns:
+      - name: hash_nir
+        tests:
+          - unique
+          - not_null
+  - name: stg_info_structure_AnnexeFinanciere_v2
+    description: >
+      Vue permettant de récupérer des informations sur les structures à partir des annexes financières.
 

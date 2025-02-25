@@ -26,6 +26,12 @@ models:
         tests:
           - unique
           - not_null
+      - name: structure_id_siae
+        description: >
+          id de la structure dans la base SIAE
+        tests:
+          - unique
+          - not_null
   - name: corresp_af_contrats
     description: >
       Table permettant de récupérer les annexes financières associées aux contrats.

@@ -35,7 +35,7 @@ left join {{ ref('stg_structures') }} as struct_emplois
     on structs.structure_siret_actualise = cast(struct_emplois.siret as bigint)
 left join {{ ref("fluxIAE_Salarie_v2") }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
-where (contrat_mesure_disp_code = 'ACI_DC' or contrat_mesure_disp_code = 'ACI_MP') and contrat_nb_heures > 0
+where (contrat_mesure_disp_code = 'ACI_DC' or contrat_mesure_disp_code = 'ACI_MP') and contrat_nb_heures > 0 and extract(year from contrat_date_embauche) >= 2021
 group by
     ctr.groupe_contrat,
     salarie.hash_nir,
