@@ -56,9 +56,17 @@ models:
   - name: recrutements
     description: >
       Table permettant de suivre les recrutements réalisés et déclarés à l'ASP.
-  - name: parcours_par_salarie
+  - name: parcours_salarie
     description: >
       Table resumant le parcours de chaque salarié dans les SIAE
+    test:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_parcours_salarie_info_pass')
+    columns:
+    - name: hash_nir
+      tests:
+        - unique
+        - not_null
     columns:
     - name: hash_nir
       description: Hash du NIR du salarié

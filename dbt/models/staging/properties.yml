@@ -155,6 +155,7 @@ models:
         - name: contrat_parent_id
           tests:
             - unique
+            - not_null
   - name: stg_emi_date_recrutement
     description: >
       Permet d'obtenir le nombre d'heures effectuées par personne physique, contrat et id d'annexe financière.
@@ -187,4 +188,23 @@ models:
   - name: stg_candidats_asp_derniere_sortie
     description: >
       Vue permettant d'isoler les motifs et causes de sortie ainsi que les dates de derniere sortie et candidature afin de permettre l'identification des id salarie asp en decrochage.
+  - name: stg_parcours_salarie_info_contrats
+    description: >
+      Vue permettant de récupérer les informations agregées sur les contrats des salariés aux cours de leurs parcours.
+    columns:
+      - name: hash_nir
+        tests:
+          - unique
+          - not_null
+  - name: stg_uniques_salarie_id
+    description: >
+      Vue créée pour récupérer les salariés uniques
+  - name: stg_parcours_salarie_info_pass
+    description: >
+      Vue permettant de récupérer les informations agregées sur les passIAE des salariés aux cours de leurs parcours.
+    columns:
+      - name: hash_nir
+        tests:
+          - unique
+          - not_null
 
