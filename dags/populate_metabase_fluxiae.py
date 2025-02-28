@@ -81,6 +81,7 @@ with airflow.DAG(
 
         populate_fluxiae_referentials()
 
+        populate_fluxiae_view(vue_name="fluxIAE_Accompagnement")
         populate_fluxiae_view(vue_name="fluxIAE_AnnexeFinanciere")
         populate_fluxiae_view(vue_name="fluxIAE_AnnexeFinanciereACI")
         populate_fluxiae_view(vue_name="fluxIAE_Convention")
