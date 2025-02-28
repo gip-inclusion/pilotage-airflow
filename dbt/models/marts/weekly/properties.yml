@@ -59,29 +59,14 @@ models:
   - name: parcours_salarie
     description: >
       Table resumant le parcours de chaque salarié dans les SIAE
-    test:
+    tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('stg_parcours_salarie_info_pass')
     columns:
-    - name: hash_nir
-      tests:
-        - unique
-        - not_null
-    columns:
-    - name: hash_nir
-      description: Hash du NIR du salarié
-    - name: nombre_pass
-      description: Nombre de passes IAE eu par le salarié pendant son parcours
-    - name: date_début_premier_pass
-      description: Date de début du premier pass IAE du salarié
-    - name: date_fin_dernier_pass
-      description: Date de fin du dernier pass IAE du salarié
-    - name: personne_en_parcours
-      description: Indique si "oui" ou "non" la personne est encore en parcours IAE
-    - name: somme_durée_tous_pass
-      description: Somme des durées des passes IAE du salarié
-    - name: année_début_premier_pass
-      description: Année de début du premier pass IAE du salarié
+      - name: hash_nir
+        tests:
+          - unique
+          - not_null
   - name: suivi_realisation_convention_par_structure
     description: >
       Table permettant de suivre par id d'annexe financiere (i.e. par structure et par an) les etps conventionnés, réalisés et la différence entre ces derniers.

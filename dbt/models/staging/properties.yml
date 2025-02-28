@@ -199,6 +199,14 @@ models:
   - name: stg_uniques_salarie_id
     description: >
       Vue créée pour récupérer les salariés uniques
+    columns:
+      - name: salarie_id
+        tests:
+          - unique
+          - not_null
+      - name: hash_nir
+        tests:
+          - not_null
   - name: stg_parcours_salarie_info_pass
     description: >
       Vue permettant de récupérer les informations agregées sur les passIAE des salariés aux cours de leurs parcours.
