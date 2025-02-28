@@ -52,3 +52,4 @@ left join {{ ref("stg_recrutements" ) }} as rcrt
 where
     emi.emi_sme_annee >= 2021
     and (ctr.contrat_date_sortie_definitive is not null or rcrt.date_sortie_definitive is not null)
+    and ctr.contrat_motif_sortie_id is not null
