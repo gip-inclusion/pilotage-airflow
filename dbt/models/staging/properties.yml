@@ -215,4 +215,7 @@ models:
         tests:
           - unique
           - not_null
+  - name: stg_info_structure_AnnexeFinanciere_v2
+    description: >
+      Vue permettant de récupérer des informations sur les structures à partir des annexes financières.
 
