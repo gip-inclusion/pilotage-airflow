@@ -88,16 +88,42 @@ RESTORE_DIR ?= .latest.restore
 
 pg_dump:
 	@PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
-			psql -c ";" || { \
-				echo "\n\n### Your connexion to the production database failed. Is the port blocked by a firewall ? ###\n" ; \
-				false ; \
-			}
+		psql -c ";" || { \
+			echo "\n\n### Your connexion to the production database failed. Is the port blocked by a firewall ? ###\n" ; \
+			false ; \
+		}
 	rm -rf $(DUMP_DIR)
 	@echo "\n\n### Dumping the production database on your machine, check your disk size and connection speeds ! ###\n"
 	PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
-		   time pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 \
-		   --exclude-table="lh_*" --exclude-table="yp_*" --exclude-table="z_*" \
-		   --file=$(DUMP_DIR)
+		time pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 \
+		--table='"fluxIAE_"*' \
+		--table='"c1_"*' \
+		--table='"cap_"*' \
+		--table='candidats_v0' \
+		--table='candidatures' \
+		--table="codes_rome" \
+		--table="collaborations" \
+		--table="communes" \
+		--table="critères_iae" \
+		--table="departements" \
+		--table="fiches_de_poste" \
+		--table="fiches_de_poste_par_candidature" \
+		--table="institutions" \
+		--table="organisations_v0" \
+		--table="pass_agréments" \
+		--table="structures" \
+		--table="utilisateurs_v0" \
+		--table="demandes_de_prolongation" \
+		--table="prolongations" \
+		--table="structures_v0" \
+		--table="insee_communes" \
+		--table="suivi_visiteurs_tb_prives" \
+		--table="suivi_visiteurs_tb_prives_v1" \
+		--table="suivi_utilisateurs_tb_prives" \
+		--table="suivi_visiteurs_tb_publics_v1" \
+		--table="sorties_v2" \
+		--table="sa_zones_infradepartementales" \
+		--file=$(DUMP_DIR)
 	@echo "\n\n### Database dumped successfully. ###\n"
 	rm -rf $(RESTORE_DIR)
 	mv $(DUMP_DIR) $(RESTORE_DIR)
