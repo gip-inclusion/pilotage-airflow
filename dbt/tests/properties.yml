@@ -36,5 +36,7 @@ tests:
         Test permettant de vérifier que nos données d'ETP sont raccord avec celle de la DGEFP.
         Les données de la DGEFP étant importées à la main, ce test doit être lancé manuellement.
         L'execution de ce test se fait, après import des données DGEGP, à l'aide d'un "all_tests" du dag data_consistency via l'interface graphique d'airflow.
-
+   - name: test_contrats
+     description: >
+        Test permettant de s'assurer que les contrats calculés dans stg_contrats correspondent à ceux de la table source fluxIAE_contratMission.
 
