@@ -17,7 +17,6 @@ select
     cc."région",
     cc."nom_département",
     cc."département",
-    cc."nom_prénom_conseiller",
     coalesce(sum(case when cc.type_prescripteur = 'SPE' then 1 else 0 end) > 0)                              as candidatures_spe,
     coalesce(sum(case when cc.type_structure in ('ACI', 'AI', 'EI', 'EITI', 'ETTI') then 1 else 0 end) > 0)  as candidat_iae,
     min(cc.date_premiere_candidature)                                                                        as date_premiere_candidature,
@@ -54,7 +53,6 @@ group by
     cc."région",
     cc."nom_département",
     cc."département",
-    cc."nom_prénom_conseiller",
     cc.diagnostic_valide,
     cc.type_auteur_diagnostic,
     cc.sous_type_auteur_diagnostic
