@@ -1,10 +1,12 @@
 import dataclasses
 import json
 import logging
+from collections import Counter
 
 import httpx
 import pandas as pd
 from airflow.models import Variable
+from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
@@ -22,6 +24,10 @@ FT_JOBSEEKER_STATS_BASE_URL = "https://api.francetravail.io/partenaire/stats-off
 class Territory:
     type: TerritoryType
     code: str
+
+
+class MissingPeriodException(Exception):
+    pass
 
 
 logger = logging.getLogger(__name__)
@@ -134,7 +140,7 @@ def get_stats_for_territory(access_token, territory, get_all_periods=False):
     # If this cache is empty, we'll pull everything available from the API
     logged_sessions_by_territory = json.loads(Variable.get("FT_INFORMATION_TERRITOIRE_PERIOD_LOG", "{}"))
 
-    # If a log is present, we make the assumptions that
+    # If a log is present, this should indicate that
     # - the DAG has run successfully since the last quarter
     # - the data we have for previous quarters don't need to be updated
     # - the most recently updated quarter is the only one we are missing
@@ -201,3 +207,43 @@ def get_stats_for_territory(access_token, territory, get_all_periods=False):
 
     Variable.set("FT_INFORMATION_TERRITOIRE_PERIOD_LOG", json.dumps(logged_sessions_by_territory))
     logger.info("Import complete for territory %s.", territory)
+
+
+def raise_for_missing_periods():
+    """
+    There may be gaps for specific territories in FranceTravail's data but if there are any quarters
+    missing from all territoires then this more likely indicates a problem with our assumption that quarters
+    will be uploaded one at a time, an assumption we use as the basis for some caching logic.
+
+    This function checks if there are any unexpected gaps between quarters in the database and raises a
+    MissingPeriodException if there are.
+
+    NOTE: we rely on this solution because the FT endpoint for listing available periods includes those in the future,
+    for which no data is available. When this function is run after an import, it is safe to assume that the last
+    period we have in the database is the latest available, and the first is the earliest available.
+    """
+    missing_periods = []
+    with Session(db.connection_engine()) as session:
+        query = text(
+            """
+            SELECT DISTINCT "codePeriode"
+            FROM france_travail.job_seeker_stats
+            WHERE "codeTypePeriode" = 'TRIMESTRE';
+            """
+        )
+        quarters = [q[0] for q in session.execute(query).all()]
+        quarters.sort()
+        quarters_by_year = Counter(q[: q.index("T")] for q in quarters)
+        for year, count in quarters_by_year.items():
+            if count < 4:  # Incomplete year
+                expected = {f"{year}T{i}" for i in range(1, count + 1)}
+                actual = {q for q in quarters if q.startswith(year)}
+                if expected != actual:
+                    missing = list(expected - actual)
+                    missing_periods += missing
+    if missing_periods:
+        raise MissingPeriodException(
+            "There are missing periods in the dataset, which is unexpected."
+            "Please test the API response manually and the assumptions made by this DAG. "
+            f"The missing periods were: {missing_periods}"
+        )

@@ -30,5 +30,6 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_inte
         >> python.PythonOperator(
             task_id="registered_jobseeker_stats_by_territory", python_callable=registered_jobseeker_stats_by_territory
         )
+        >> python.PythonOperator(task_id="verify_periods", python_callable=ft_api_helpers.raise_for_missing_periods)
         >> end
     )
