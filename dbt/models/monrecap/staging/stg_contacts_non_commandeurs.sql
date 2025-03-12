@@ -12,8 +12,6 @@ select
     cnm."LIEN_BARO",
     cmd."Code Postal",
     cmd."Source",
-    cnm."date du dernier envoi de baro"                                 as "Date d'envoi du dernier baromètre",
-    cnm."date du premier envoi de baro"                                 as "Date d'envoi du premier Baromètre",
     cnm."Nombre d'envois du baro"                                       as "Nombre d'envois du baromètre",
     cmd."Type de structure",
     cnm."Date de première commande",
@@ -60,7 +58,9 @@ select
     null::FLOAT                                                         as "Nombre de réponses au baromètre",
     null::BOOLEAN                                                       as "Envoi mail merci",
     null::BOOLEAN                                                       as "Logement ?",
-    null::BOOLEAN                                                       as "Conseil Consultatif"
+    null::BOOLEAN                                                       as "Conseil Consultatif",
+    (cnm."date du dernier envoi de baro")::DATE                         as "Date d'envoi du dernier baromètre",
+    (cnm."date du premier envoi de baro")::DATE                         as "Date d'envoi du premier Baromètre"
 from {{ source('monrecap', 'contacts_non_commandeurs_v0') }} as cnm
 left join {{ ref('stg_commandes_max') }} as cmd
     on cnm.submission_id = cmd."Submission ID"
