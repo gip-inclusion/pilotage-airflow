@@ -12,8 +12,6 @@ select
     contacts."LIEN_BARO",
     contacts."Code postal",
     contacts."Source",
-    contacts."Date d'envoi du dernier baromètre",
-    contacts."Date d'envoi du premier Baromètre",
     contacts."Nombre d'envois du baromètre",
     contacts."Type de Structure",
     contacts."Date de première commande",
@@ -39,11 +37,11 @@ select
     contacts."Suivi appels",
     contacts."Mail CC",
     contacts."Type de contact",
-    null as "Commandeur référent",
-    null as "Commandes",
-    null as "date de la dernière commande",
-    null as "Adresse",
-    null as "Ville",
+    null                                                       as "Commandeur référent",
+    null                                                       as "Commandes",
+    null                                                       as "date de la dernière commande",
+    null                                                       as "Adresse",
+    null                                                       as "Ville",
     cmd."declaratif autonomie",
     cmd."declaratif autre outil",
     cmd."declaratif plusieurs freins",
@@ -60,7 +58,9 @@ select
     contacts."Nombre de réponses au baromètre",
     contacts."Envoi mail merci",
     contacts."Logement ?",
-    contacts."Conseil Consultatif"
+    contacts."Conseil Consultatif",
+    cast(contacts."Date d'envoi du dernier baromètre" as DATE) as "Date d'envoi du dernier baromètre",
+    cast(contacts."Date d'envoi du premier Baromètre" as DATE) as "Date d'envoi du premier Baromètre"
 from {{ source('monrecap', 'Contacts_v0') }} as contacts
 left join {{ ref('stg_departement_derniere_commandes') }} as dpt
     on contacts."EMAIL" = dpt.email_commande
