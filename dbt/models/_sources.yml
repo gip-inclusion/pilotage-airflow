@@ -22,6 +22,7 @@ sources:
       - name: fluxIAE_Salarie
       - name: fluxIAE_Structure
       - name: fluxIAE_MarchesPublics
+      - name: fluxIAE_Accompagnement
 
   - name: emplois
     schema: public

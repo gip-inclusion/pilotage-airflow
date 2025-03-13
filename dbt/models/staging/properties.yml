@@ -180,4 +180,73 @@ models:
   - name: stg_candidats_asp_derniere_sortie
     description: >
       Vue permettant d'isoler les motifs et causes de sortie ainsi que les dates de derniere sortie et candidature afin de permettre l'identification des id salarie asp en decrochage.
+  - name: stg_fluxIAE_Accompagnement
+    description: >
+      Vue permettant de gérer les doublons d'accompagnement par annexe financiere et d'obtenir l'année de création
+    columns:
+      - name: acc_afi_id
+        description: "Identifiant unique de l'annexe financiere associée à l'accompagnement"
+        tests:
+          - unique
+          - not_null
+      - name: acc_id
+        description: "Identifiant unique de l'accompagnement"
+        tests:
+          - unique
+          - not_null
+  - name: stg_accompagnement_freins
+    description: >
+      Vue créée pour récupérer les salariés ayant des freins et les éventuels accompagnements effectués par annexe financière.
+    columns:
+      - name: acc_afi_id
+        description: "Identifiant unique de l'annexe financiere associée à l'accompagnement"
+        tests:
+          - unique
+          - not_null
+      - name: acc_id
+        description: "Identifiant unique de l'accompagnement"
+        tests:
+          - unique
+          - not_null
+      - name: annee_creation_accompagnement
+        description: "Année de création de l'accompagnement"
+        tests:
+          - not_null
+      - name: type_frein
+        description: "nom de la difficulté du salarié"
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_conc
+        description: "Nombre de salariés concernés par la difficulté"
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_int
+        description: "Nombre de salariés ayant bénéficié d'un accompagnement en interne"
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_ext
+        description: "Nombre de salariés ayant bénéficié d'un accompagnement en externe"
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_int_ext
+        description: "Nombre de salariés ayant bénéficié d'un accompagnement en interne et externe"
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_acc
+        description: "Nombre de salariés ayant bénéficié d'un accompagnement"
+        tests:
+          - not_null
+          - test_stg_accompagnement_freins
 
+  - name: stg_info_per_annexe_financiere
+    description: >
+      Vue créée pour récupérer les informations par annexe financière avec les filtres nécessaires.
+    columns:
+      - name: af_mesure_dispositif_code
+      - name: af_id_annexe_financiere
+        tests:
+          - unique
+          - not_null
+      - name: af_id_structure
+      - name: af_date_debut_effet_v2
+      - name: af_date_fin_effet_v2
