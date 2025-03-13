@@ -94,16 +94,51 @@ def get_filename(import_directory, filename_prefix, filename_extension, descript
 
 
 def get_fluxiae_referential_filenames(import_directory):
-    filename_prefixes = [
+    known_and_expected_prefixes = {
+        "fluxIAE_RefCategorieJuridique",
+        "fluxIAE_RefCategorieSort",
+        "fluxIAE_RefCotisationEiti",
+        "fluxIAE_RefDepartement",
+        "fluxIAE_RefDispositif",
+        "fluxIAE_RefDureeAllocationEmploi",
+        "fluxIAE_RefDureePoleEmploi",
+        "fluxIAE_RefEtatAvenant",
+        "fluxIAE_RefEtatSuiviMensuel",
+        "fluxIAE_RefFinanceur",
+        "fluxIAE_RefFormeContrat",
+        "fluxIAE_RefGroupePaysPmsmp",
+        "fluxIAE_RefIdcc",
+        "fluxIAE_RefMesure",
+        "fluxIAE_RefMontantIae",
+        "fluxIAE_RefMotifRejet",
+        "fluxIAE_RefMotifSort",
+        "fluxIAE_RefNatureAction",
+        "fluxIAE_RefNiveauFormation",
+        "fluxIAE_RefObjectifFormation",
+        "fluxIAE_RefObjetEcheance",
+        "fluxIAE_RefObjPrincipalPmsmp",
+        "fluxIAE_RefOrienteur",
+        "fluxIAE_RefSecteurActivite",
+        "fluxIAE_RefTypeAide",
+        "fluxIAE_RefTypeElementPaiement",
+        "fluxIAE_RefTypeEmployeur",
+        "fluxIAE_RefTypeFormation",
+        "fluxIAE_RefTypeOperation",
+        "fluxIAE_RefTypeVersement",
+    }
+    filename_prefixes = {
         # Example of raw filename: fluxIAE_RefCategorieJuridique_29032021_090124.csv.gz
         # Let's drop the digits and keep the first relevant part only.
         "_".join(filename.split("_")[:2])
         for filename in os.listdir(import_directory)
         if filename.startswith("fluxIAE_Ref")
-    ]
+    }
 
-    if len(filename_prefixes) != 29:
-        raise RuntimeError(f"Fatal error: 29 fluxIAE referentials expected but only {len(filename_prefixes)} found.")
+    if filename_prefixes != known_and_expected_prefixes:
+        raise RuntimeError(
+            f"{len(known_and_expected_prefixes)} files expected but {len(filename_prefixes)} were found: "
+            f"{filename_prefixes ^ known_and_expected_prefixes}"
+        )
 
     return filename_prefixes
 
