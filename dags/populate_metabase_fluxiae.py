@@ -71,32 +71,30 @@ with airflow.DAG(
 
     @task(task_id="process")
     def process(imported_file_key, import_directory, **kwargs):
-        def populate_fluxiae_view(vue_name, skip_first_row=True):
-            df = get_fluxiae_df(import_directory=import_directory, vue_name=vue_name, skip_first_row=skip_first_row)
-            store_df(df=df, table_name=vue_name)
-
-        def populate_fluxiae_referentials():
-            for filename in get_fluxiae_referential_filenames(import_directory):
-                populate_fluxiae_view(vue_name=filename)
-
-        populate_fluxiae_referentials()
-
-        populate_fluxiae_view(vue_name="fluxIAE_Accompagnement")
-        populate_fluxiae_view(vue_name="fluxIAE_AnnexeFinanciere")
-        populate_fluxiae_view(vue_name="fluxIAE_AnnexeFinanciereACI")
-        populate_fluxiae_view(vue_name="fluxIAE_Convention")
-        populate_fluxiae_view(vue_name="fluxIAE_ContratMission")
-        populate_fluxiae_view(vue_name="fluxIAE_Encadrement")
-        populate_fluxiae_view(vue_name="fluxIAE_EtatMensuelAgregat")
-        populate_fluxiae_view(vue_name="fluxIAE_EtatMensuelIndiv")
-        populate_fluxiae_view(vue_name="fluxIAE_Financement")
-        populate_fluxiae_view(vue_name="fluxIAE_Formations")
-        populate_fluxiae_view(vue_name="fluxIAE_MarchesPublics")
-        populate_fluxiae_view(vue_name="fluxIAE_Missions")
-        populate_fluxiae_view(vue_name="fluxIAE_MissionsEtatMensuelIndiv")
-        populate_fluxiae_view(vue_name="fluxIAE_PMSMP")
-        populate_fluxiae_view(vue_name="fluxIAE_Salarie")
-        populate_fluxiae_view(vue_name="fluxIAE_Structure")
+        views_to_populate = [
+            *get_fluxiae_referential_filenames(import_directory),
+            "fluxIAE_Accompagnement"
+            "fluxIAE_AnnexeFinanciere"
+            "fluxIAE_AnnexeFinanciereACI"
+            "fluxIAE_Convention"
+            "fluxIAE_ContratMission"
+            "fluxIAE_Encadrement"
+            "fluxIAE_EtatMensuelAgregat"
+            "fluxIAE_EtatMensuelIndiv"
+            "fluxIAE_Financement"
+            "fluxIAE_Formations"
+            "fluxIAE_MarchesPublics"
+            "fluxIAE_Missions"
+            "fluxIAE_MissionsEtatMensuelIndiv"
+            "fluxIAE_PMSMP"
+            "fluxIAE_Salarie"
+            "fluxIAE_Structure",
+        ]
+        for view in views_to_populate:
+            store_df(
+                df=get_fluxiae_df(import_directory=import_directory, vue_name=view, skip_first_row=True),
+                table_name=view,
+            )
 
         # Process complete. Mark this run as the most recent successful import.
         logger.info(f"Populated FluxIAE. Logging {imported_file_key} to configuration")
