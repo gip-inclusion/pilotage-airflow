@@ -139,3 +139,9 @@ models:
   - name: beneficiaires
     description: >
       Table d'identifier tous les bénéficiaires de l'IAE ainsi que les critères associés à ces derniers.
+  - name: accompagnement_freins
+    description: >
+      Table permettant de suivre les accompagnements proposés en fonction des difficultés des salariés.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_accompagnement_freins')
