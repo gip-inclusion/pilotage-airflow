@@ -1,3 +1,5 @@
+import re
+
 import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
@@ -17,8 +19,11 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
     env_vars = db.connection_envvars()
 
+    date_pattern = re.compile(r"^date", re.IGNORECASE)
+
     @task(task_id="monrecap_airtable")
     def monrecap_airtable(**kwargs):
+
         import pandas as pd
 
         con = db.connection_engine()
@@ -41,11 +46,30 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
             df = airtable.fetch_airtable_data(url, headers)
 
             if table_name == "Commandes":
-                df["Submitted at"] = pd.to_datetime(df["Submitted at"])
+                # getting all the columns starting with date + Submitted at when needed.
+                # This is repeated for all imported tables
+                commandes_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
+
+                for col in commandes_dates:
+                    # Sometimes the monrecap team might add a column starting with "date" that does not contain a date
+                    # here we handle this case
+                    try:
+                        df[col] = pd.to_datetime(df[col])
+                        print(f"Successfully converted {col}")
+                    except Exception as e:
+                        print(f"Error converting {col}: {e}")
                 df["Nom Departement"] = df["Code Postal"].apply(
                     lambda cp: "-".join([item for item in departments.get_department(cp) if item is not None])
                 )
             elif table_name == "Contacts":
+                contacts_dates = [col for col in df.columns if date_pattern.match(col)]
+                for col in contacts_dates:
+                    try:
+                        df[col] = pd.to_datetime(df[col])
+                        print(f"Successfully converted {col}")
+                    except Exception as e:
+                        print(f"Error converting {col}: {e}")
+                df["Type de contact"] = "contact commandeur"
                 # fixing Annaelle's double quotes, if you read this I'll get my revenge
                 df = df.rename(
                     columns={
@@ -54,13 +78,15 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
                         'Date envoi mail "merci"': "Date envoi mail merci",
                     }
                 )
-                df["Date de première commande"] = pd.to_datetime(df["Date de première commande"])
-                df["Date de dernière commande"] = pd.to_datetime(df["Date de dernière commande"])
-                df["Type de contact"] = "contact commandeur"
 
             elif table_name == "Contacts non commandeurs":
-                df["Date de première commande"] = pd.to_datetime(df["Date de première commande"])
-                df["Date de dernière commande"] = pd.to_datetime(df["date de la dernière commande"])
+                contacts_non_commandeurs_dates = [col for col in df.columns if date_pattern.match(col)]
+                for col in contacts_non_commandeurs_dates:
+                    try:
+                        df[col] = pd.to_datetime(df[col])
+                        print(f"Successfully converted {col}")
+                    except Exception as e:
+                        print(f"Error converting {col}: {e}")
                 df["Type de contact"] = "contact non commandeur"
 
             db_table_name = table_mapping[table_name]
@@ -88,7 +114,13 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         print(f"reading barometre mon recap at {sheet_url=}")
         df = pd.read_csv(sheet_url)
         df.drop_duplicates()  # if the synch of the gsheet is forced, duplicates will be created
-        df["Submitted at"] = pd.to_datetime(df["Submitted at"])
+        baro_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
+        for col in baro_dates:
+            try:
+                df[col] = pd.to_datetime(df[col])
+                print(f"Successfully converted {col}")
+            except Exception as e:
+                print(f"Error converting {col}: {e}")
         df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
 
     monrecap_gsheet = monrecap_gsheet()
