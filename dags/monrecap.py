@@ -6,7 +6,7 @@ from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import bash, empty
 
-from dags.common import airtable, db, dbt, default_dag_args, departments, slack
+from dags.common import airtable, db, dbt, default_dag_args, departments, monrecap, slack
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -23,8 +23,6 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
     @task(task_id="monrecap_airtable")
     def monrecap_airtable(**kwargs):
-
-        import pandas as pd
 
         con = db.connection_engine()
         # Need to drop these tables and the views created with them in order to be able to run the df.to_sql()
@@ -49,26 +47,14 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
                 # getting all the columns starting with date + Submitted at when needed.
                 # This is repeated for all imported tables
                 commandes_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
+                monrecap.convert_date_columns(df, commandes_dates)
 
-                for col in commandes_dates:
-                    # Sometimes the monrecap team might add a column starting with "date" that does not contain a date
-                    # here we handle this case
-                    try:
-                        df[col] = pd.to_datetime(df[col])
-                        print(f"Successfully converted {col}")
-                    except Exception as e:
-                        print(f"Error converting {col}: {e}")
                 df["Nom Departement"] = df["Code Postal"].apply(
                     lambda cp: "-".join([item for item in departments.get_department(cp) if item is not None])
                 )
             elif table_name == "Contacts":
                 contacts_dates = [col for col in df.columns if date_pattern.match(col)]
-                for col in contacts_dates:
-                    try:
-                        df[col] = pd.to_datetime(df[col])
-                        print(f"Successfully converted {col}")
-                    except Exception as e:
-                        print(f"Error converting {col}: {e}")
+                monrecap.convert_date_columns(df, contacts_dates)
                 df["Type de contact"] = "contact commandeur"
                 # fixing Annaelle's double quotes, if you read this I'll get my revenge
                 df = df.rename(
@@ -81,12 +67,7 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
             elif table_name == "Contacts non commandeurs":
                 contacts_non_commandeurs_dates = [col for col in df.columns if date_pattern.match(col)]
-                for col in contacts_non_commandeurs_dates:
-                    try:
-                        df[col] = pd.to_datetime(df[col])
-                        print(f"Successfully converted {col}")
-                    except Exception as e:
-                        print(f"Error converting {col}: {e}")
+                monrecap.convert_date_columns(df, contacts_non_commandeurs_dates)
                 df["Type de contact"] = "contact non commandeur"
 
             db_table_name = table_mapping[table_name]
@@ -115,12 +96,7 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         df = pd.read_csv(sheet_url)
         df.drop_duplicates()  # if the synch of the gsheet is forced, duplicates will be created
         baro_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
-        for col in baro_dates:
-            try:
-                df[col] = pd.to_datetime(df[col])
-                print(f"Successfully converted {col}")
-            except Exception as e:
-                print(f"Error converting {col}: {e}")
+        monrecap.convert_date_columns(df, baro_dates)
         df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
 
     monrecap_gsheet = monrecap_gsheet()
