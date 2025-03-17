@@ -8,6 +8,7 @@ import pandas as pd
 from psycopg import sql
 
 from dags.common.db import MetabaseDatabaseCursor3
+from dags.common.python import batched
 
 
 PANDA_DATAFRAME_TO_PSQL_TYPES_MAPPING = {
@@ -279,6 +280,161 @@ def store_df(df, table_name, max_attempts=5):
 
     rename_table_atomically(new_table_name, table_name)
     print(f"Stored {table_name} in database ({len(df)} rows).")
+    print("")
+
+
+FLUX_IAE_MODELS = {
+    "fluxIAE_EtatMensuelIndiv": {
+        "emi_date_creation": "text",
+        "emi_date_modification": "text",
+        "emi_afi_id": "bigint",
+        "emi_sme_mois": "bigint",
+        "emi_sme_annee": "bigint",
+        "emi_esm_etat_id": "bigint",
+        "emi_esm_etat_code": "text",
+        "emi_sme_version": "bigint",
+        "emi_date_validation": "text",
+        "emi_pph_id": "bigint",
+        "emi_ctr_id": "bigint",
+        "emi_nb_heures_travail": "bigint",
+        "emi_nb_mission": "double precision",
+        "emi_nb_heures_facturees": "bigint",
+        "emi_mt_salaire_brut": "double precision",
+        "emi_salarie_tjs_accomp": "boolean",
+        "emi_part_etp": "double precision",
+        "emi_date_fin_reelle": "text",
+        "emi_motif_sortie_id": "double precision",
+        "emi_motif_sortie_code": "double precision",
+        "emi_dsm_id": "bigint",
+        "emi_coefficient_degressive": "double precision",
+        "emi_dsm_ca_reel": "bigint",
+        "emi_dsm_ca_lisse": "bigint",
+        "emi_dsm_rdv_phy": "double precision",
+        "emi_dsm_rdv_dis": "double precision",
+        "emi_dsm_rdv_com": "double precision",
+        "emi_dsm_rdv_soc": "double precision",
+        "emi_dsm_acre": "boolean",
+        "emi_dsm_nb_rdv_mens_ti": "double precision",
+        "emi_dsm_nb_mois": "double precision",
+    }
+}
+
+
+def type_fluxiae_row(row, specs):
+    for k, v in row.items():
+        if v == "":
+            row[k] = None
+            continue
+
+        match specs.get(k, None):
+            case "bigint":
+                row[k] = int(v)
+            case "double precision":
+                row[k] = float(v)
+            case "boolean":
+                row[k] = bool(v)
+
+
+def anonymize_fluxiae_row(row):
+    if "salarie_date_naissance" in row:
+        row["salarie_annee_naissance"] = int(row.salarie_date_naissance[-4:])
+
+    if "salarie_agrement" in row:
+        row["hash_numéro_pass_iae"] = hash_content(row["salarie_agrement"])
+    if "salarie_nir" in row:
+        row["hash_nir"] = hash_content(row["salarie_nir"])
+
+    # Any column having any of these keywords inside its name will be dropped.
+    # E.g. if `courriel` is a deletable keyword, then columns named `referent_courriel`,
+    # `representant_courriel` etc will all be dropped.
+    deletable_keywords = {
+        "courriel",
+        "telephone",
+        "prenom",
+        "nom_usage",
+        "nom_naissance",
+        "responsable_nom",
+        "urgence_nom",
+        "referent_nom",
+        "representant_nom",
+        "date_naissance",
+        "adr_mail",
+        "nationalite",
+        "titre_sejour",
+        "observations",
+        "salarie_date_naissance",
+        "salarie_agrement",
+        "salarie_nir",
+        "salarie_adr_point_remise",
+        "salarie_adr_cplt_point_geo",
+        "salarie_adr_numero_voie",
+        "salarie_codeextensionvoie",
+        "salarie_codetypevoie",
+        "salarie_adr_libelle_voie",
+        "salarie_adr_cplt_distribution",
+        "salarie_adr_qpv_nom",
+        # Sensitive banking information.
+        "bban",  # Basic Bank Account Number.
+        "bic",  # Bank code.
+        "nom_bqe",  # Bank name.
+    }
+
+    for keyword in deletable_keywords:
+        if keyword in row:
+            del row[keyword]
+
+
+def get_fluxiae_rows(filepath, model):
+    with Path(filepath).open("r") as f:
+        for raw_row in f:
+            raw_row = raw_row.replace("\ufeff", "").strip()
+            if raw_row.startswith("DEB"):
+                next(f)  # Skip columns headers
+                continue
+            if raw_row.startswith("FIN"):
+                break
+
+            row = dict(zip(model.keys(), raw_row.split("|")))
+            type_fluxiae_row(row, model)
+            anonymize_fluxiae_row(row)
+            yield row
+
+
+def save_fluxiae_view(import_directory, view_name, *, chunk_size=20_000):
+    new_table_name = get_new_table_name(view_name)
+    print(f"Create table {new_table_name} for {view_name}...")
+    columns = FLUX_IAE_MODELS[view_name].items()
+    create_table(new_table_name, columns, reset=True)
+
+    print(f"Storing {view_name} in chunks of (max) {chunk_size} rows...")
+    rows = get_fluxiae_rows(
+        get_filename(
+            import_directory=import_directory,
+            filename_prefix=view_name,
+            filename_extension=".csv",
+        ),
+        FLUX_IAE_MODELS[view_name],
+    )
+    with MetabaseDatabaseCursor3() as (cursor, conn):
+        rows_count = 0
+        for counter, batch in enumerate(batched(rows, chunk_size), start=1):
+            with cursor.copy(
+                sql.SQL("COPY {table_name} FROM STDIN WITH (FORMAT BINARY)").format(
+                    table_name=sql.Identifier(new_table_name),
+                    Fields=sql.SQL(",").join(
+                        [sql.Identifier(col[0]) for col in columns],
+                    ),
+                ),
+            ) as cpo:
+                cpo.set_types([col[1] for col in columns])
+                for row in batch:
+                    cpo.write_row(tuple(row.values()))
+            conn.commit()
+            print(f"Saved chunk #{counter} ({len(batch)} rows)")
+            rows_count += len(batch)
+
+    rename_table_atomically(new_table_name, view_name)
+    print(f"Stored {rows_count} rows in table {new_table_name!r}.")
     print("")
 
 
