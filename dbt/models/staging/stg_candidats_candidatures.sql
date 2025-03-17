@@ -10,12 +10,19 @@ select
     cd.type_structure,
     cd.categorie_structure,
     cd.id_structure,
+    cd.nom_structure,
     cd.origine,
     cd."origine_détaillée",
     cd.type_prescripteur,
     cd."nom_prénom_conseiller",
     cd.nom_org_prescripteur,
-    cd.id_org_prescripteur
+    cd.id_org_prescripteur,
+    cd.dept_org,
+    cd."région_org",
+    cd.bassin_emploi_prescripteur,
+    cd."nom_département_structure",
+    cd.reprise_de_stock_ai,
+    cd.epci
 from {{ ref('candidats') }} as c
 left join {{ ref('candidatures_echelle_locale') }} as cd
     on c.id = cd.id_candidat
