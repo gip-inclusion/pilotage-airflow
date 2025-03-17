@@ -10,7 +10,7 @@ from airflow.models import Variable
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 from dags.common import default_dag_args, s3, slack
-from dags.common.flux_iae import get_fluxiae_df, get_fluxiae_referential_filenames, store_df
+from dags.common.flux_iae import get_fluxiae_df, get_fluxiae_referential_filenames, save_fluxiae_view, store_df
 
 
 logger = logging.getLogger(__name__)
@@ -80,7 +80,6 @@ with airflow.DAG(
             "fluxIAE_ContratMission",
             "fluxIAE_Encadrement",
             "fluxIAE_EtatMensuelAgregat",
-            "fluxIAE_EtatMensuelIndiv",
             "fluxIAE_Financement",
             "fluxIAE_Formations",
             "fluxIAE_MarchesPublics",
@@ -95,6 +94,10 @@ with airflow.DAG(
                 df=get_fluxiae_df(import_directory=import_directory, vue_name=view, skip_first_row=True),
                 table_name=view,
             )
+        # This file is the biggest and pandas take too much memory when handling it, which make
+        # Airflow kill the DAG in production, so we use our improved processing function.
+        for view in {"fluxIAE_EtatMensuelIndiv"}:
+            save_fluxiae_view(import_directory, view)
 
         # Process complete. Mark this run as the most recent successful import.
         logger.info(f"Populated FluxIAE. Logging {imported_file_key} to configuration")
