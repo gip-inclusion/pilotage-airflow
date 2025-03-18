@@ -196,17 +196,15 @@ models:
           - not_null
   - name: stg_accompagnement_freins
     description: >
-      Vue créée pour récupérer les salariés ayant des freins et les éventuels accompagnements effectués par annexe financière.
+      "Vue créée pour récupérer les salariés ayant des freins et les éventuels accompagnements effectués par annexe financière."
     columns:
       - name: acc_afi_id
-        description: "Identifiant unique de l'annexe financiere associée à l'accompagnement"
+        description: "Identifiant de l'annexe financiere associée à l'accompagnement"
         tests:
-          - unique
           - not_null
       - name: acc_id
         description: "Identifiant unique de l'accompagnement"
         tests:
-          - unique
           - not_null
       - name: annee_creation_accompagnement
         description: "Année de création de l'accompagnement"
@@ -236,8 +234,6 @@ models:
         description: "Nombre de salariés ayant bénéficié d'un accompagnement"
         tests:
           - not_null
-          - test_stg_accompagnement_freins
-
   - name: stg_info_per_annexe_financiere
     description: >
       Vue créée pour récupérer les informations par annexe financière avec les filtres nécessaires.

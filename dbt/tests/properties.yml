@@ -16,27 +16,31 @@ tests:
   - name: test_source_opcs
     description: >
       Permet de vérifier que le nb de structures opcs est le même que le nb de structures qui ont pour source un opcs.
-   - name: test_potentiel_structures
+  - name: test_potentiel_structures
     description: >
       Permet de vérifier que le nb de structures comptées dans le potentiel correspond bien au nombre de structures mères de la table structure
-   - name: test_candidats_recherche_active
+  - name: test_candidats_recherche_active
     description: >
       Permet de vérifier qu'il n'y a pas de doublons ou lignes absentes dans la table candidats recherche active.
-   - name: test_candidatures_candidats_recherche_active
+  - name: test_candidatures_candidats_recherche_active
     description: >
       Permet de vérifier qu'il n'y a pas de doublons ou lignes absentes dans la table candidatures candidats recherche active.
-   - name: test_etp_conventionnes
+  - name: test_etp_conventionnes
     description: >
       Permet de vérifier que l'on a le bon nombre d'ETP conventionnes
-   - name: test_fluxIAE_MarchesPublics
+  - name: test_fluxIAE_MarchesPublics
     description: >
         Test permettant de vérifier que l'on a le même montant de recettes entre le fichier fluxIAE_MarchesPublics et fluxIAE_MarchesPublics_v2
-   - name: test_etp_dgefp_pilo
+  - name: test_etp_dgefp_pilo
     description: >
         Test permettant de vérifier que nos données d'ETP sont raccord avec celle de la DGEFP.
         Les données de la DGEFP étant importées à la main, ce test doit être lancé manuellement.
         L'execution de ce test se fait, après import des données DGEGP, à l'aide d'un "all_tests" du dag data_consistency via l'interface graphique d'airflow.
-   - name: test_contrats
-     description: >
+  - name: test_contrats
+    description: >
         Test permettant de s'assurer que les contrats calculés dans stg_contrats correspondent à ceux de la table source fluxIAE_contratMission.
+  - name: test_stg_accompagnement_freins
+    description: >
+        Test permettant de vérifier qu'il n'y a pas de doublons pour acc_id, type_freins et que
+        le nombre de salariés concernés est supérieure ou égale au nombre de salariés accompagnés
 
