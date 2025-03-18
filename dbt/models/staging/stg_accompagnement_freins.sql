@@ -13,7 +13,7 @@ select
     sum(acc_dif_nb_sal_int + acc_dif_nb_sal_ext + acc_dif_nb_sal_int_ext) as acc_dif_nb_sal_acc,
     case
         when (sum(acc_dif_nb_sal_conc)) = 0 then 0
-        else cast(sum(acc_dif_nb_sal_int + acc_dif_nb_sal_ext + acc_dif_nb_sal_int_ext) as float) / cast(sum(acc_dif_nb_sal_conc::float) as float)
+        else cast(sum(acc_dif_nb_sal_int + acc_dif_nb_sal_ext + acc_dif_nb_sal_int_ext) as float) / cast(sum(acc_dif_nb_sal_conc) as float)
     end                                                                   as ratio_salaries_accompagnes,
     case
         when (sum(acc_dif_nb_sal_int + acc_dif_nb_sal_ext + acc_dif_nb_sal_int_ext)) = 0 then 0
