@@ -145,3 +145,69 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('stg_accompagnement_freins')
+    columns:
+      - name: acc_id
+        description: >
+          Identifiant unique de l'accompagnement
+        tests:
+          - not_null
+      - name: acc_afi_id
+        description: >
+          Identifiant unique de l'annexe financière auquel l'accompagnement est rattaché
+        tests:
+          - not_null
+      - name: annee_creation_accompagnement
+        description: >
+          Année de création de l'accompagnement comme déclaré dans fluxIAE_Accompagnement
+        tests:
+          - not_null
+      - name: type_frein
+        description: >
+          Type de difficulté rencontré par le salarié
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_conc
+        description: >
+          Nombre de salariés concerné par le type de frein
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_int
+        description: >
+          Nombre de salariés ayant bénéficié d'un accompagnement en interne pour ce type de frein
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_ext
+        description: >
+          Nombre de salariés ayant bénéficié d'un accompagnement externe pour ce type de frein
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_int_ext
+        description: >
+          Nombre de salariés ayant bénéficié d'un accompagnement interne et externe pour ce type de frein
+        tests:
+          - not_null
+      - name: acc_dif_nb_sal_acc
+        description: >
+          Nombre de salariés ayant bénéficié d'un accompagnement pour ce type de frein
+        tests:
+          - not_null
+      - name: ratio_salaries_accompagnes
+        description: >
+          Ratio de salariés ayant bénéficié d'un accompagnement pour ce type de frein
+        tests:
+          - not_null
+      - name: ratio_int_vs_acc
+        description: >
+          Ratio de salariés ayant bénéficié d'un accompagnement interne par rapport au nombre total de salariés ayant bénéficié d'un accompagnement pour ce type de frein
+        tests:
+          - not_null
+      - name: ratio_ext_vs_acc
+        description: >
+          Ratio de salariés ayant bénéficié d'un accompagnement externe par rapport au nombre total de salariés ayant bénéficié d'un accompagnement pour ce type de frein
+        tests:
+          - not_null
+      - name: ratio_int_ext_vs_acc
+        description: >
+          Ratio de salariés ayant bénéficié d'un accompagnement interne et externe par rapport au nombre total de salariés ayant bénéficié d'un accompagnement pour ce type de frein
+        tests:
+          - not_null
