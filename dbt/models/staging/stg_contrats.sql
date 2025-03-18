@@ -35,4 +35,4 @@ group by
     ctr.contrat_date_sortie_definitive,
     motif_sortie.rms_libelle
 -- because we consider only contracts starting in 2021
-having extract(year from ctr.contrat_date_embauche) >= 2021
+--having extract(year from ctr.contrat_date_embauche) >= 2021
