@@ -22,6 +22,9 @@ select distinct
     rcrt.id_derniere_reconduction,
     ctr.contrat_duree_contrat,
     ctr.contrat_salarie_rsa,
+    sal.tranche_age,
+    strct.zone_emploi_structure,
+    strct.nom_epci_structure,
     extract(year from to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY'))    as annee_sortie_definitive,
     extract(year from ctr.contrat_date_fin_contrat)                                 as annee_fin_contrat,
     date_trunc('year', date(extract(
@@ -32,8 +35,8 @@ select distinct
     /* 1 day = 0.0328767 months */
     (rcrt.date_sortie_definitive::DATE - rcrt.date_recrutement::DATE) * (0.0328767) as duree_en_mois,
     case
-        when ctr.contrat_salarie_rsa in ('OUI-M', 'OUI-NM') then 'OUI'
-        else 'NON'
+        when ctr.contrat_salarie_rsa in ('OUI-M', 'OUI-NM') then 'bRSA'
+        else 'Non bRSA'
     end                                                                             as salarie_brsa,
     case
         when sal.salarie_rci_libelle = 'MME' then 'Femme'
@@ -45,6 +48,8 @@ left join {{ ref("fluxIAE_ContratMission_v2" ) }} as ctr
     on emi.emi_ctr_id = ctr.contrat_id_ctr
 left join {{ ref("fluxIAE_Salarie_v2" ) }} as sal
     on emi.emi_pph_id = sal.salarie_id
+left join {{ ref("fluxIAE_Structure_v2" ) }} as strct
+    on ctr.contrat_id_structure = strct.structure_id_siae
 left join {{ ref("stg_recrutements" ) }} as rcrt
     on
         emi.emi_pph_id = rcrt.contrat_id_pph
