@@ -29,9 +29,9 @@ select
         else 'NON'
     end                                     as rqth,
     case
-        when ctr.contrat_salarie_rsa = 'OUI-M' then 'OUI'
-        when ctr.contrat_salarie_rsa = 'OUI-NM' then 'OUI'
-        else 'NON'
+        when ctr.contrat_salarie_rsa = 'OUI-M' then 'bRSA'
+        when ctr.contrat_salarie_rsa = 'OUI-NM' then 'bRSA'
+        else 'Non bRSA'
     end                                     as brsa
 from {{ ref('stg_recrutements') }} as rec
 inner join {{ ref('fluxIAE_ContratMission_v2') }} as ctr

@@ -20,4 +20,6 @@ left join {{ ref("fluxIAE_RefMotifSort_v2") }} as rms
     on emi.emi_motif_sortie_id = rms.rms_id
 left join {{ ref("fluxIAE_RefCategorieSort_v2") }} as rcs
     on rms.rcs_id = rcs.rcs_id
-where rcs.rcs_libelle is not null
+where
+    rcs.rcs_libelle is not null
+    and rcs.rcs_libelle != 'Retrait des sorties constatées'

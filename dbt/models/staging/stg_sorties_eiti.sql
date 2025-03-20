@@ -10,6 +10,7 @@ select
     contrats.date_recrutement,
     contrats.date_sortie_definitive,
     contrats.contrat_duree_contrat,
+    contrats.tranche_age,
     contrats.salarie_brsa,
     contrats.genre_salarie,
     contrats.annee_sortie_definitive,
