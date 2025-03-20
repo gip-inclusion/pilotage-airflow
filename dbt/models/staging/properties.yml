@@ -246,3 +246,31 @@ models:
       - name: af_id_structure
       - name: af_date_debut_effet_v2
       - name: af_date_fin_effet_v2
+  - name: stg_accompagnement_pro
+    description: "Vue créer pour récuperer les accompagnement professionels effectués"
+    columns:
+      - name: acc_id
+        tests:
+          - not_null
+      - name: acc_afi_id
+        tests:
+          - not_null
+      - name: annee_creation_accompagnement
+        tests:
+          - not_null
+      - name: type_acc_pro
+        tests:
+          - not_null
+      - name: acc_det_nb_sal_int
+        tests:
+          - not_null
+      - name: acc_det_nb_sal_ext
+        tests:
+          - not_null
+      - name: acc_det_nb_sal_int_ext
+        tests:
+          - not_null
+      - name: acc_det_nb_sal_acc
+        tests:
+          - not_null
+

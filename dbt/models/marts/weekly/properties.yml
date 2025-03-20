@@ -211,3 +211,9 @@ models:
           Ratio de salariés ayant bénéficié d'un accompagnement interne et externe par rapport au nombre total de salariés ayant bénéficié d'un accompagnement pour ce type de frein
         tests:
           - not_null
+  - name: accompagnement_pro
+    description: >
+      Table permettant de suivre les accompagnements professionels proposés
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_accompagnement_pro')
