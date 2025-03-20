@@ -214,23 +214,23 @@ models:
         description: "nom de la difficulté du salarié"
         tests:
           - not_null
-      - name: acc_dif_nb_sal_conc
+      - name: acc_nb_sal_conc
         description: "Nombre de salariés concernés par la difficulté"
         tests:
           - not_null
-      - name: acc_dif_nb_sal_int
+      - name: acc_nb_sal_int
         description: "Nombre de salariés ayant bénéficié d'un accompagnement en interne"
         tests:
           - not_null
-      - name: acc_dif_nb_sal_ext
+      - name: acc_nb_sal_ext
         description: "Nombre de salariés ayant bénéficié d'un accompagnement en externe"
         tests:
           - not_null
-      - name: acc_dif_nb_sal_int_ext
+      - name: acc_nb_sal_int_ext
         description: "Nombre de salariés ayant bénéficié d'un accompagnement en interne et externe"
         tests:
           - not_null
-      - name: acc_dif_nb_sal_acc
+      - name: acc_nb_sal_acc
         description: "Nombre de salariés ayant bénéficié d'un accompagnement"
         tests:
           - not_null
@@ -243,6 +243,38 @@ models:
         tests:
           - unique
           - not_null
+      - name: af_numero_annexe_financiere
+        tests:
+          - unique
+          - not_null
       - name: af_id_structure
       - name: af_date_debut_effet_v2
       - name: af_date_fin_effet_v2
+  - name: stg_accompagnement_pro
+    description: "Vue créer pour récuperer les accompagnement professionels effectués"
+    columns:
+      - name: acc_id
+        tests:
+          - not_null
+      - name: acc_afi_id
+        tests:
+          - not_null
+      - name: annee_creation_accompagnement
+        tests:
+          - not_null
+      - name: type_acc_pro
+        tests:
+          - not_null
+      - name: acc_nb_sal_int
+        tests:
+          - not_null
+      - name: acc_nb_sal_ext
+        tests:
+          - not_null
+      - name: acc_nb_sal_int_ext
+        tests:
+          - not_null
+      - name: acc_nb_sal_acc
+        tests:
+          - not_null
+
