@@ -38,4 +38,3 @@ group by
     ctr.contrat_date_sortie_definitive,
     motif_sortie.rms_libelle,
     categorie_sortie.rcs_libelle
-

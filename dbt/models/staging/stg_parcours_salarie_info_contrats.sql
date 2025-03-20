@@ -13,10 +13,10 @@ select
     sum(ctr.duree_contrat_asp_mois)                                                            as "durée_tous_contrats_asp_mois",
     min(ctr.contrat_date_embauche)                                                             as date_embauche_premier_contrat,
     max(ctr.contrat_date_fin_contrat)                                                          as date_fin_dernier_contrat,
-    (array_agg(ctr.motif_sortie order by ctr.contrat_date_embauche desc))[1] as motif_sortie_dernier_contrat,
-    (array_agg(ctr.categorie_sortie order by ctr.contrat_date_embauche desc))[1] as categorie_sortie_dernier_contrat,
+    (array_agg(ctr.motif_sortie order by ctr.contrat_date_embauche desc))[1]                   as motif_sortie_dernier_contrat,
+    (array_agg(ctr.categorie_sortie order by ctr.contrat_date_embauche desc))[1]               as categorie_sortie_dernier_contrat,
     (array_agg(ctr.contrat_date_sortie_definitive order by ctr.contrat_date_embauche desc))[1] as date_sortie_definitive_dernier_contrat,
-    (array_agg(ctr.salarie_sorti order by ctr.contrat_date_embauche desc))[1] as salarie_sortie_dernier_contrat
+    (array_agg(ctr.salarie_sorti order by ctr.contrat_date_embauche desc))[1]                  as salarie_sortie_dernier_contrat
 from {{ ref("stg_contrats_parent") }} as ctr
 left join {{ ref("stg_uniques_salarie_id") }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
