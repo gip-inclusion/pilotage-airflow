@@ -19,10 +19,10 @@ models:
   - name: fluxIAE_Structure_v2
     description: >
       Table introduite afin d'ajouter des données geographiques à la table structures du fluxIAE + à l'indexer.
-      columns:
-        - name: structure_id_siae
+    columns:
+      - name: structure_id_siae
         tests:
-          - unique
+        - unique
   - name: corresp_af_contrats
     description: >
       Table permettant de récupérer les annexes financières associées aux contrats.
