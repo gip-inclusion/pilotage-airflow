@@ -4,7 +4,7 @@
 # > practice; so for compatibility, you must explicitly request it
 .DELETE_ON_ERROR:
 
-PYTHON_VERSION := python3.10
+PYTHON_VERSION := python3.11
 REQUIREMENTS_PATH ?= requirements/dev.txt
 
 VIRTUAL_ENV ?= .venv
