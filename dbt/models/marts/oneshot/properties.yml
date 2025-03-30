@@ -4,7 +4,6 @@ models:
   - name: atigip_2022
     description: >
       Suivi des prescriptions des SPIP en 2022 pour l'ATIGIP.
-
   - name: ft_candidats_nord
     description: >
       Contient les informations entrées sur les emplois des candidats du Nord identifiés chez France Travail.
@@ -14,3 +13,11 @@ models:
   - name: motif_sortie_contrat_termine
     description: >
       Contient les dates et motifs de sortie pour les candidats à l'IAE. Permet de récupérer les dates de sortie des candidats de l'XP Nord pour permettre à FT de nous fournir la donnée sortie via la DSN.
+  - name: fluxIAE_BenefSorties_ASP_v2
+    description: >
+      Table créée à partir de l'extraction ponctuelle fournie par l'ASP, contenant les données de sorties et bénéficiaires pour les AF.
+      Cette table est complétée par d'autres informations que nous recevons du fluxIAE
+    tests:
+      - dbt_expectations.expect_column_pair_values_to_be_equal:
+          column_A: structure_siret_actualise
+          column_B: siret_asp
