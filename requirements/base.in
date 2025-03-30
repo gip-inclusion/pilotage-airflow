@@ -12,6 +12,7 @@ dbt-fal  # https://github.com/fal-ai/dbt-fal
 # ------------------------------------------------------------------------------
 ftputil  # https://ftputil.sschwarzer.net/
 pandas  # https://github.com/pandas-dev/pandas
+openpyxl # https://pypi.org/project/openpyxl/
 
 psycopg[binary] # https://www.psycopg.org/
 
