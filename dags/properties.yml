@@ -5,19 +5,23 @@ models:
     description: >
       Ce DAG permet de récupérer, de façon hebdomadaire, les notes de recommendation des différents TB du pilotage de l'inclusion, il est ajouté à une table déjà existante.
       A noter, la table originale récupérait des colonnes que l'on utilise plus. Afin de permettre l'ajout hebdomadaire des données il est nécessaire de créer ces colonnes et de les remplir de NaN à chaque run du DAG.
-   name: weekly_nps_pilotage
+  - name: weekly_nps_pilotage
     description: >
       Ce DAG permet de récupérer, de façon hebdomadaire, les notes de recommendation des différents groupes de TB du pilotage de l'inclusion à partir de la table nps_pilotage.
       Ainsi, il est possible de suivre l'évolution hebdomadaire du NPS de tous les TBs, les TBs FT, SIAE et DDETS.
-- name: suivi_visites_campagnes_c0
+  - name: suivi_visites_campagnes_c0
     description: >
       Ce DAG permet de récupérer (de manière hebdomadaire) pour chaque campagne matomo du c0 et chaque produit du gip les visiteurs et leurs actions.
       Mise à disposition de cette table sur metabase pour les statistiques internes du c0.
-- name: monrecap
+  - name: monrecap
     description: >
       Ce DAG permet de récupérer de manière quotidienne les données de contacts & commandes sur le airtable de monrecap.
       A travers un google sheet (tally) nous récupérons les réponses au baromètre. Ces 3 tables permettent la réalisation de la page statistiques de mon recap !
-- name: dgefp_get_etp
+  - name: dgefp_get_etp
     description: >
       Ce DAG permet de récupérer le .csv de la DGEFP contenant la part CD/Etat pour chaque annexe financiere.
       Le .csv doit être téléchargé sur POP puis déposé manuellement dans le ftp c2-bucket.
+  - name: asp_processed_data
+    description: >
+      Ce DAG permet de récupérer le .xlsx de l'ASP contenant les beneficiaires/sorties pour chaque annexe financiere.
+      Le .xlsx est fourni par mail puis déposé manuellement dans le ftp c2-bucket.
