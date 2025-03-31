@@ -46,4 +46,6 @@ tests:
   - name: test_stg_accompagnement_pro
     description: >
         Test permettant de vérifier qu'il n'y a pas de doublons pour acc_id, type_acc_pro
-
+  - name: test_doublons_structures_fluxIAE
+    description: >
+        Test permettant de vérifier qu'il n'y a pas de doublons dans les structures du fluxIAE
