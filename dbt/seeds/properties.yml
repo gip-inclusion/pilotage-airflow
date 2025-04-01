@@ -78,3 +78,9 @@ seeds:
   - name: type_parcours_xp_ft
     description: >
       Correspondance entre les sigles du type de parcours, provenant du fichier brut expérimentation FT, et le type de parcours en toutes lettres
+  - name: acc_freins_libelle
+    description: >
+      Correspondance entre les sigles des freins à l'emploi, issues des titres des colonnes fluxIAE_accompagnement, et le libellé en toutes lettres présents dans la documentation sur les tables
+  - name: acc_pro_libelle
+    description: >
+      Correspondance entre les sigles des accompagnments professionels, issues des titres des colonnes fluxIAE_accompagnement, et le libellé en toutes lettres présents dans la documentation sur les tables
