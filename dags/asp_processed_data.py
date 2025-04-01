@@ -58,10 +58,6 @@ with DAG(
                         "0 - Prestataires externes en charge de l'encadrement technique et de l'accompagnement socioprofessionnel - Nombre d'ETP réalisés au cours de la période conventionnée": "presta_externe_etp_realises",  # noqa: E501
                     }
                 )
-                # the last columns are nammed Unnamed : xx
-                columns_to_drop = [f"Unnamed: {i}" for i in range(65, 72)]
-
-                df.drop(columns=columns_to_drop, inplace=True)
 
                 # Getting the af format that we use in our data
                 # we remove all the spaces then everything after "A0" (0 can be another digit)
