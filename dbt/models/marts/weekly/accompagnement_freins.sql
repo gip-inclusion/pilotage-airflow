@@ -1,5 +1,6 @@
 select
     {{ pilo_star(ref('stg_accompagnement_freins'), relation_alias="t_acc") }},
+    acc_freins_libelle.type_frein_libelle,
     {{ pilo_star(ref('stg_info_per_annexe_financiere')) }},
     t_struct.structure_id_siae                      as structure_id,
     t_struct.structure_denomination,
@@ -11,3 +12,4 @@ select
 from {{ ref('stg_accompagnement_freins') }} as t_acc
 left join {{ ref('stg_info_per_annexe_financiere') }} as t_afi on t_acc.acc_afi_id = t_afi.af_id_annexe_financiere
 left join {{ ref('fluxIAE_Structure_v2') }} as t_struct on t_afi.af_id_structure = t_struct.structure_id_siae
+left join {{ ref('acc_freins_libelle') }} on t_acc.type_frein = acc_freins_libelle.type_frein
