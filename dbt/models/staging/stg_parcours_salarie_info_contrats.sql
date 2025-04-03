@@ -4,11 +4,11 @@ select
     (array_agg(ctr.nom_departement_structure order by ctr.contrat_date_embauche desc))[1]      as departement,
     (array_agg(ctr.code_dept_structure order by ctr.contrat_date_embauche desc))[1]            as code_departement,
     count(distinct ctr.contrat_id_structure)                                                   as nombre_structures,
-    count(distinct ctr.contrat_mesure_disp_code)                                               as nombre_dispositifs_differents,
+    count(distinct ctr.type_dispositif)                                                        as nombre_dispositifs_differents,
     count(distinct ctr.contrat_parent_id)                                                      as nombre_contrats_differents,
-    array_agg(ctr.contrat_mesure_disp_code order by ctr.contrat_date_embauche)                 as liste_tous_dispositifs,
-    array_agg(distinct ctr.contrat_mesure_disp_code)                                           as liste_dispositifs_differents,
-    (array_agg(ctr.contrat_mesure_disp_code order by ctr.contrat_date_embauche))[1]            as dispositif_premier_contrat,
+    array_agg(ctr.type_dispositif order by ctr.contrat_date_embauche)                          as liste_tous_dispositifs,
+    array_agg(distinct ctr.type_dispositif)                                                    as liste_dispositifs_differents,
+    (array_agg(ctr.type_dispositif order by ctr.contrat_date_embauche))[1]                     as dispositif_premier_contrat,
     sum(ctr.duree_contrat_jours)                                                               as "durée_tous_contrats_jours",
     sum(ctr.duree_contrat_mois)                                                                as "durée_tous_contrats_mois",
     sum(ctr.duree_contrat_asp_mois)                                                            as "durée_tous_contrats_asp_mois",
@@ -19,9 +19,9 @@ select
     (array_agg(ctr.contrat_date_sortie_definitive order by ctr.contrat_date_embauche desc))[1] as date_sortie_definitive_dernier_contrat,
     (array_agg(ctr.salarie_sorti order by ctr.contrat_date_embauche desc))[1]                  as salarie_sortie_dernier_contrat,
     case
-        when count(distinct ctr.contrat_id_structure) = 1 and count(distinct ctr.contrat_mesure_disp_code) = 1 then 'Aucun'
-        when count(distinct ctr.contrat_id_structure) = 1 and count(distinct ctr.contrat_mesure_disp_code) > 1 then 'Dispositif'
-        when count(distinct ctr.contrat_id_structure) > 1 and count(distinct ctr.contrat_mesure_disp_code) = 1 then 'Structure'
+        when count(distinct ctr.contrat_id_structure) = 1 and count(distinct ctr.type_dispositif) = 1 then 'Aucun'
+        when count(distinct ctr.contrat_id_structure) = 1 and count(distinct ctr.type_dispositif) > 1 then 'Dispositif'
+        when count(distinct ctr.contrat_id_structure) > 1 and count(distinct ctr.type_dispositif) = 1 then 'Structure'
         else 'Structure et dispositif'
     end                                                                                        as type_changement
 from {{ ref("stg_contrats_parent") }} as ctr
