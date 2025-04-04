@@ -83,10 +83,6 @@ models:
   - name: candidats_odc
     description: >
       Sous ensemble des candidats, uniquement ceux qui ont une candidature orientée par les ODC, les DEPT, et les organisations habilitées BRSA.
-  - name: suivi_tb_prive_semaine
-    description: >
-      Ce modèle python permet de calculer les visiteurs anciens et nouveaux chaque semaine à partir de la table suivi_visites_tb_prive_semaine.
-      Il permet de calculer la rétention des utilisateurs sur les tableaux de bords privés.
   - name: taux_transformation_prescripteurs
     description: >
       Contient le nombre d'acceptations par candidat et par prescripteur pour permettre le calcul du taux de transformation par prescripteur.
