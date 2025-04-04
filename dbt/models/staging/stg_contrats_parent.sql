@@ -3,29 +3,32 @@ select
     ctr.contrat_id_pph,
     ctr.contrat_id_structure,
     ctr.contrat_mesure_disp_code,
-    type_structure.type_structure_emplois                            as type_dispositif,
-    max(ctr.nom_departement_structure)                               as nom_departement_structure,
-    max(ctr.nom_region_structure)                                    as nom_region_structure,
-    max(ctr.code_dept_structure)                                     as code_dept_structure,
-    min(ctr.contrat_date_embauche)                                   as contrat_date_embauche,
-    max(ctr.contrat_date_sortie_definitive)                          as contrat_date_sortie_definitive,
-    max(ctr.contrat_date_fin_contrat)                                as contrat_date_fin_contrat,
-    max(motif_sortie)                                                as motif_sortie,
-    max(categorie_sortie)                                            as categorie_sortie,
-    array_agg(ctr.contrat_id_ctr order by ctr.contrat_date_embauche) as id_contrats,
+    type_structure.type_structure_emplois   as type_dispositif,
+    max(ctr.nom_departement_structure)      as nom_departement_structure,
+    max(ctr.nom_region_structure)           as nom_region_structure,
+    max(ctr.code_dept_structure)            as code_dept_structure,
+    min(ctr.contrat_date_embauche)          as contrat_date_embauche,
+    max(ctr.contrat_date_sortie_definitive) as contrat_date_sortie_definitive,
+    max(ctr.contrat_date_fin_contrat)       as contrat_date_fin_contrat,
+    max(motif_sortie)                       as motif_sortie,
+    max(categorie_sortie)                   as categorie_sortie,
+    array_agg(
+        ctr.contrat_id_ctr
+        order by ctr.contrat_date_embauche
+    )                                       as id_contrats,
     case
         when max(motif_sortie) is null then 'Non'
         else 'Oui'
-    end                                                              as salarie_sorti,
+    end                                     as salarie_sorti,
     case
         when max(ctr.contrat_date_sortie_definitive) is not null then {{ duration_in_days('min(ctr.contrat_date_embauche)', 'max(ctr.contrat_date_sortie_definitive)') }}
         else {{ duration_in_days('min(ctr.contrat_date_embauche)', 'CURRENT_DATE') }}
-    end                                                              as duree_contrat_jours,
+    end                                     as duree_contrat_jours,
     case
         when max(ctr.contrat_date_sortie_definitive) is not null then {{ duration_in_months('min(ctr.contrat_date_embauche)', 'max(ctr.contrat_date_sortie_definitive)') }}
         else {{ duration_in_months('min(ctr.contrat_date_embauche)', 'CURRENT_DATE') }}
-    end                                                              as duree_contrat_mois,
-    sum(ctr.contrat_duree_contrat)                                   as duree_contrat_asp_mois
+    end                                     as duree_contrat_mois,
+    sum(ctr.contrat_duree_contrat)          as duree_contrat_asp_mois
 from {{ ref("eph_stg_contrats") }} as ctr
 left join {{ ref('ref_mesure_dispositif_asp') }} as type_structure
     on ctr.contrat_mesure_disp_code = type_structure.af_mesure_dispositif_code
