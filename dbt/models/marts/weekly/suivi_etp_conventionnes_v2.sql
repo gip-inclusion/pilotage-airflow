@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(ref('stg_etp_conventionnes'), relation_alias='t_etp', except=['af_mt_cofinance']) }},
+    {{ pilo_star(ref('stg_etp_conventionnes'), except=['af_mt_cofinance']) }},
     ("effectif_mensuel_conventionné" * af_montant_unitaire_annuel_valeur / 12 * duree_annexe)                                                                                  as "Montant_total_aide",
     coalesce(case when af_montant_total_annuel = 0 then 0 else af_mt_cofinance / af_montant_total_annuel end, 0)                                                               as part_conventionnement_cd,
     ("effectif_mensuel_conventionné" * coalesce(case when af_montant_total_annuel = 0 then 0 else af_mt_cofinance / af_montant_total_annuel end, 0) * duree_annexe / 12)       as etp_conventionnes_cd,
@@ -12,4 +12,4 @@ select
     -- remplissage des null avec des 0 afin de ne pas casser les scripts
     -- dependants de cette table lors du début d'une nouvelle année
     coalesce(af_mt_cofinance, 0)                                                                                                                                               as af_mt_cofinance
-from {{ ref('stg_etp_conventionnes') }} as t_etp
+from {{ ref('stg_etp_conventionnes') }}
