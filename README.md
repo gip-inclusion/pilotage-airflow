@@ -16,6 +16,13 @@ Vous devrez réserver temporairement environ 110 Go d'espace pour l'installation
 
 ### Votre environnement virtuel Python
 
+`uv` est utilisé pour installer la bonne version de Python et les dépendances
+du projet.
+
+Pour l’installer, suivre la documentation officielle
+https://docs.astral.sh/uv/getting-started/installation/. Un paquet est
+disponible pour la plupart des distributions Linux.
+
     make venv
     source .venv/bin/activate
 

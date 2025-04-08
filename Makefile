@@ -4,7 +4,6 @@
 # > practice; so for compatibility, you must explicitly request it
 .DELETE_ON_ERROR:
 
-PYTHON_VERSION := python3.11
 REQUIREMENTS_PATH ?= requirements/dev.txt
 
 VIRTUAL_ENV ?= .venv
@@ -16,9 +15,8 @@ export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 .PHONY: venv compile-deps
 
 $(VIRTUAL_ENV): $(REQUIREMENTS_PATH)
-	$(PYTHON_VERSION) -m venv $@
-	$@/bin/pip install uv
-	$@/bin/uv pip sync --require-hashes $^
+	uv venv
+	uv pip sync --require-hashes $^
 	touch $@
 
 venv: $(VIRTUAL_ENV)

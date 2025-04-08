@@ -1,7 +1,5 @@
 -r base.in
 
-uv  # https://github.com/astral-sh/uv
-
 # Code quality
 # ------------------------------------------------------------------------------
 black  # https://github.com/psf/black
