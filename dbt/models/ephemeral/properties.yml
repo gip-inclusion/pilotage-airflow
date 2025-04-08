@@ -28,3 +28,6 @@ models:
       contrat initiale d'un salarié à partir duquel des renouvellement peuvent avoir eu lieu.
       Les colonnes nom_region_structure, nom_departement_structure, nom_commune_structure ont
       également été ajoutées
+  - name: eph_series_mois
+    description: >
+      Vue créée pour récupérer le dernier jour des mois de l'année en cours et des trois années précédentes
