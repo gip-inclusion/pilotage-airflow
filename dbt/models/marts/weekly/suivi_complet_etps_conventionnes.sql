@@ -18,5 +18,6 @@ select
         else 0
     end                               as nb_brsa_cible_annuel,
     extract('year' from date_annexe)  as "année",
-    extract('month' from date_annexe) as month
+    extract('month' from date_annexe) as month,
+    extract('month' from date_annexe) as "mois"
 from {{ ref('stg_explose_par_mois_suivi_etp') }}
