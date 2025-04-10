@@ -26,5 +26,4 @@ def fetch_airtable_data(url, headers):
             params["offset"] = data["offset"]
         else:
             break
-    df = pd.DataFrame([record["fields"] for record in records])
-    return df
+    return pd.DataFrame([record["fields"] for record in records])

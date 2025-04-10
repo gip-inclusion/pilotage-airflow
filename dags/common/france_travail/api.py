@@ -164,10 +164,10 @@ def get_stats_for_territory(access_token, territory):
     engine = db.connection_engine()
 
     for nomenclature in data:
-        df = pd.DataFrame(serialize_table_data_from_response(nomenclature))
-
         with Session(engine) as session:
-            stmt = pg_insert(JobSeekerStats).values(df.to_dict("records"))
+            stmt = pg_insert(JobSeekerStats).values(
+                pd.DataFrame(serialize_table_data_from_response(nomenclature)).to_dict("records")
+            )
             stmt = stmt.on_conflict_do_update(
                 index_elements=JobSeekerStats.primary_key_columns(),
                 set_={

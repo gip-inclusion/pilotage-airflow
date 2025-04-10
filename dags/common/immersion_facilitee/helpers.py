@@ -128,7 +128,7 @@ def get_dataframe_from_response(table_data: list[dict]) -> pd.DataFrame:
     wanted_fields = [x for x in wanted_fields if x not in ["signatories", "immersionAppellation"]]
 
     df_data = df_data[wanted_fields]
-    df_data = df_data.where(pd.notnull(df_data), None)
+    df_data = df_data.where(pd.notna(df_data), None)
     return df_data
 
 

@@ -37,7 +37,7 @@ def get_data_from_sheet(pub_sheet_url, variables) -> pd.DataFrame:
 
     # convert Nan values to nulls
     dtf = dtf.astype("object")
-    dtf = dtf.where(pd.notnull(dtf), None)
+    dtf = dtf.where(pd.notna(dtf), None)
     dtf = dtf.rename(columns=variables_dict)
     dtf = dtf[variables_dict.values()]
 
