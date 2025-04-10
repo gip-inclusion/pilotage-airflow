@@ -40,18 +40,16 @@ with DAG(
 
             # Need to do this because setting the encoding on the pd.read_csv did not work
             with host_ft.open(DGEFP_RAW_DATA, "rb") as etp_loaded_data:
-                content = etp_loaded_data.read()
-                text_content = content.decode("latin1")
-                df = pd.read_csv(StringIO(text_content), sep=";")
+                etp_data = pd.read_csv(StringIO(etp_loaded_data.read().decode("latin1")), sep=";")
 
-                for col in df.columns[9:17]:
-                    if df[col].isnull().any() or (df[col] == "").any():
+                for col in etp_data.columns[9:17]:
+                    if etp_data[col].isna().any() or (etp_data[col] == "").any():
                         print(f"Column {col} has missing or invalid values")
-                        df[col] = df[col].replace("", "NaN")
+                        etp_data[col] = etp_data[col].replace("", "NaN")
                     else:
-                        df[col] = df[col].str.replace(",", ".").astype(float)
+                        etp_data[col] = etp_data[col].str.replace(",", ".").astype(float)
 
-        df.to_sql("dgefp_donnees_etp", con=db.connection_engine(), if_exists="replace", index=False)
+        etp_data.to_sql("dgefp_donnees_etp", con=db.connection_engine(), if_exists="replace", index=False)
 
     store_etp = store_etp()
 

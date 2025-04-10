@@ -29,12 +29,12 @@ with DAG(
         import pandas as pd
 
         with db.MetabaseDBCursor() as (_, conn):
-            df = pd.read_sql_query(
+            suivi_satisfaction = pd.read_sql_query(
                 'SELECT * FROM "suivi_satisfaction" WHERE suivi_satisfaction."Recommendation"  is not null;', conn
             )
-            df.rename(columns={"Recommendation": "Recommandation"}, inplace=True)
-            df["Produit"] = "Pilotage de l'inclusion"
-            df = df[["Date", "Recommandation", "Produit"]]
+            suivi_satisfaction = suivi_satisfaction.rename(columns={"Recommendation": "Recommandation"})
+            suivi_satisfaction["Produit"] = "Pilotage de l'inclusion"
+            suivi_satisfaction = suivi_satisfaction[["Date", "Recommandation", "Produit"]]
 
         for name, pub_sheet_url in Variable.get("NPS_NAME_PUB_SHEET_URL_TUPLES", deserialize_json=True):
             print(f"reading {name=} at {pub_sheet_url=}")
@@ -52,19 +52,18 @@ with DAG(
             if nps_column not in sheet_df.columns:
                 raise Exception("Our colleagues messed up the columns :(")
 
-            sheet_df.rename(
+            sheet_df = sheet_df.rename(
                 columns={
                     "Submitted at": "Date",
                     "Dates": "Date",
                     nps_column: "Recommandation",
                 },
-                inplace=True,
             )
             sheet_df["Produit"] = name
             sheet_df = sheet_df[["Date", "Recommandation", "Produit"]]
-            df = pd.concat([df, sheet_df])
+            suivi_satisfaction = pd.concat([suivi_satisfaction, sheet_df])
 
-        db.pg_store("gip_suivi_nps", df, NPS_CREATE_TABLE_SQL)
+        db.pg_store("gip_suivi_nps", suivi_satisfaction, NPS_CREATE_TABLE_SQL)
 
     store_gsheet_task = store_gsheets()
 

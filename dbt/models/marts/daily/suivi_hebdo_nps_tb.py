@@ -26,7 +26,7 @@ def compute_simplified_nps(df, date, tb_name):
     nps[date] = nps_i
     df_nps = pd.DataFrame.from_dict(nps, orient="index")
     df_nps = df_nps.reset_index()
-    df_nps.rename(columns={"index": "Date", 0: "NPS"}, inplace=True)
+    df_nps = df_nps.rename(columns={"index": "Date", 0: "NPS"})
     df_nps["tb"] = tb_name
     return df_nps
 
@@ -35,7 +35,7 @@ def model(dbt, session):
     today = datetime.date.today()
     today = today.strftime("%Y-%m-%d")
     week_list = pd.date_range(start=START_NPS_DATE, end=today, freq="W-MON")
-    df = dbt.source("oneshot", "suivi_satisfaction")
+    suivi_satisfaction = dbt.source("oneshot", "suivi_satisfaction")
 
     tb_pe = [
         "tb 169 - Taux de transformation PE",
@@ -60,7 +60,7 @@ def model(dbt, session):
 
     for week_start in week_list:
         # NPS de tous les TBs
-        df_cur_week = df[df["Date"] <= week_start]
+        df_cur_week = suivi_satisfaction[suivi_satisfaction["Date"] <= week_start]
         df_nps.append(compute_simplified_nps(df_cur_week, week_start, "Tous les TBs"))
         # NPS TB Pôle emploi
         df_cur_week_pe = df_cur_week[df_cur_week["Nom Du Tb"].isin(tb_pe)]
@@ -72,5 +72,5 @@ def model(dbt, session):
         df_cur_week_ddets = df_cur_week[df_cur_week["Nom Du Tb"].isin(tb_ddets)]
         df_nps.append(compute_simplified_nps(df_cur_week_ddets, week_start, "TBs DDETS"))
 
-    df = pd.concat(df_nps)
-    return df
+    suivi_satisfaction = pd.concat(df_nps)
+    return suivi_satisfaction

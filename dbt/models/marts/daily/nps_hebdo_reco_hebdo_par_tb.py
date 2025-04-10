@@ -35,16 +35,16 @@ def model(dbt, session):
     df_nps["tb"] = 0
     df_nps["nps"] = 0
 
-    df = dbt.source("oneshot", "suivi_satisfaction")
-    df = df[["Recommendation", "Nom Du Tb", "Date"]]
-    df["Date"] = pd.to_datetime(df["Date"])
+    suivi_satisfaction = dbt.source("oneshot", "suivi_satisfaction")
+    suivi_satisfaction = suivi_satisfaction[["Recommendation", "Nom Du Tb", "Date"]]
+    suivi_satisfaction["Date"] = pd.to_datetime(suivi_satisfaction["Date"])
 
-    tbs = list(set(df["Nom Du Tb"]))
+    tbs = list(set(suivi_satisfaction["Nom Du Tb"]))
 
     # loop over dates
     for i in week_list:
         # recover data for current date
-        df_cur_week = df[df["Date"] <= i]
+        df_cur_week = suivi_satisfaction[suivi_satisfaction["Date"] <= i]
 
         # get global nps
         glob_nps = get_nps(df_cur_week)

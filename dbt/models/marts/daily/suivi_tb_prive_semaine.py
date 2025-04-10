@@ -51,6 +51,4 @@ def follow_visits(dtf):
 
 
 def model(dbt, session):
-    df = dbt.ref("suivi_visites_tb_prive_semaine")
-    df = follow_visits(df)
-    return df
+    return follow_visits(dbt.ref("suivi_visites_tb_prive_semaine"))

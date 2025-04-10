@@ -1,3 +1,4 @@
+# ruff: noqa: PD901
 import datetime
 
 import pandas as pd
@@ -16,8 +17,8 @@ def explode_by_month(df):
     )
 
     df = df.explode("dates_annexe")
-    df.reset_index(inplace=True)
-    df.drop(columns=["index"], inplace=True)
+    df = df.reset_index()
+    df = df.drop(columns=["index"])
     df["af_date_fin_effet_v2"] = df["dates_annexe"]
     df = df.drop(columns="dates_annexe")
     return df
@@ -116,7 +117,7 @@ def join_etp_null_and_realized(df_replicate, df_etp_null):
 def model(dbt, session):
     df = dbt.ref("suivi_etp_conventionnes_v2")
     # We don't need these columns
-    df.drop(
+    df = df.drop(
         columns=[
             "mpu_sct_mt_recet_nettoyage",
             "mpu_sct_mt_recet_serv_pers",
@@ -126,7 +127,6 @@ def model(dbt, session):
             "mpu_sct_mt_recet_transp",
             "mpu_sct_mt_recet_autres",
         ],
-        inplace=True,
     )
     df["af_date_debut_effet_v2"] = pd.to_datetime(df["af_date_debut_effet_v2"])
     df["af_date_fin_effet_v2"] = pd.to_datetime(df["af_date_fin_effet_v2"])

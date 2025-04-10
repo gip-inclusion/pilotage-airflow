@@ -40,23 +40,25 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
         for table_name in table_mapping.keys():
             url, headers = airtable.connection_airtable(table_name)
-            df = airtable.fetch_airtable_data(url, headers)
+            table_data = airtable.fetch_airtable_data(url, headers)
 
             if table_name == "Commandes":
                 # getting all the columns starting with date + Submitted at when needed.
                 # This is repeated for all imported tables
-                commandes_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
-                monrecap.convert_date_columns(df, commandes_dates)
+                commandes_dates = [
+                    col for col in table_data.columns if date_pattern.match(col) or col == "Submitted at"
+                ]
+                monrecap.convert_date_columns(table_data, commandes_dates)
 
-                df["Nom Departement"] = df["Code Postal"].apply(
+                table_data["Nom Departement"] = table_data["Code Postal"].apply(
                     lambda cp: "-".join([item for item in departments.get_department(cp) if item is not None])
                 )
             elif table_name == "Contacts":
-                contacts_dates = [col for col in df.columns if date_pattern.match(col)]
-                monrecap.convert_date_columns(df, contacts_dates)
-                df["Type de contact"] = "contact commandeur"
+                contacts_dates = [col for col in table_data.columns if date_pattern.match(col)]
+                monrecap.convert_date_columns(table_data, contacts_dates)
+                table_data["Type de contact"] = "contact commandeur"
                 # fixing Annaelle's double quotes, if you read this I'll get my revenge
-                df = df.rename(
+                table_data = table_data.rename(
                     columns={
                         'Date envoi mail "Relance" J+71': "Date envoi mail Relance J+71",
                         'Envoi mail "merci"': "Envoi mail merci",
@@ -65,13 +67,13 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
                 )
 
             elif table_name == "Contacts non commandeurs":
-                contacts_non_commandeurs_dates = [col for col in df.columns if date_pattern.match(col)]
-                monrecap.convert_date_columns(df, contacts_non_commandeurs_dates)
-                df["Type de contact"] = "contact non commandeur"
+                contacts_non_commandeurs_dates = [col for col in table_data.columns if date_pattern.match(col)]
+                monrecap.convert_date_columns(table_data, contacts_non_commandeurs_dates)
+                table_data["Type de contact"] = "contact non commandeur"
 
             db_table_name = table_mapping[table_name]
 
-            df.to_sql(
+            table_data.to_sql(
                 db_table_name,
                 con=con,
                 schema=DB_SCHEMA,
@@ -92,11 +94,13 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
         sheet_url = Variable.get("BAROMETRE_MON_RECAP")
         print(f"reading barometre mon recap at {sheet_url=}")
-        df = pd.read_csv(sheet_url)
-        df.drop_duplicates()  # if the synch of the gsheet is forced, duplicates will be created
-        baro_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
-        monrecap.convert_date_columns(df, baro_dates)
-        df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
+        sheet_data = pd.read_csv(sheet_url)
+        sheet_data.drop_duplicates()  # if the synch of the gsheet is forced, duplicates will be created
+        baro_dates = [col for col in sheet_data.columns if date_pattern.match(col) or col == "Submitted at"]
+        monrecap.convert_date_columns(sheet_data, baro_dates)
+        sheet_data.to_sql(
+            "barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False
+        )
 
     monrecap_gsheet = monrecap_gsheet()
 

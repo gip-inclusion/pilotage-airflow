@@ -29,7 +29,7 @@ with DAG(
             if host_ft.path.isfile(FT_RAW_DATA):
                 # Download the file to a local temporary file
                 with host_ft.open(FT_RAW_DATA, "rb") as ft_loaded_data:
-                    df = pd.read_csv(ft_loaded_data, sep="$")
+                    ft_data = pd.read_csv(ft_loaded_data, sep="$")
                     freins_cols = [
                         "FREIN_ENTREE_FAMILLE",
                         "FREIN_ENTREE_ADMIN",
@@ -41,13 +41,13 @@ with DAG(
                         "FREIN_ENTREE_SANTE",
                         "FREIN_ENTREE_FORMATION",
                     ]
-                    df[freins_cols] = df[freins_cols].replace("YYYY", None)
+                    ft_data[freins_cols] = ft_data[freins_cols].replace("YYYY", None)
                     for col in freins_cols:
-                        df[col] = pd.to_numeric(df[col])
+                        ft_data[col] = pd.to_numeric(ft_data[col])
             else:
                 print(f"Remote file {FT_RAW_DATA} does not exist.")
 
-        df.to_sql("FT_donnees_brutes", con=db.connection_engine(), if_exists="replace", index=False)
+        ft_data.to_sql("FT_donnees_brutes", con=db.connection_engine(), if_exists="replace", index=False)
 
     store_ft = store_ft()
 
