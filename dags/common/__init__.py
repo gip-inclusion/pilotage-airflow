@@ -1,6 +1,6 @@
 import pendulum
 
-from . import slack
+from dags.common import slack
 
 
 def default_dag_args():
