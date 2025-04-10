@@ -1,5 +1,6 @@
 import csv
 import os
+from itertools import batched
 from pathlib import Path
 
 import numpy as np
@@ -8,7 +9,6 @@ from psycopg import sql
 
 from dags.common.anonymize_sensible_data import NormalizationKind, hash_content, normalize_sensible_data
 from dags.common.db import MetabaseDatabaseCursor3
-from dags.common.python import batched
 
 
 PANDA_DATAFRAME_TO_PSQL_TYPES_MAPPING = {

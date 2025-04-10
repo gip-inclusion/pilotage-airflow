@@ -48,6 +48,7 @@ select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "I",  # isort
+    "UP",  # pyupgrade
 ]
 
 [tool.ruff.lint.isort]

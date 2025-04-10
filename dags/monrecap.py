@@ -75,7 +75,7 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
             for col in df.columns:
                 # Check if column contains dict or list values
                 sample_values = df[col].dropna().head(10)
-                if any(isinstance(val, (dict, list)) for val in sample_values):
+                if any(isinstance(val, dict | list) for val in sample_values):
                     dtype_mapping[col] = types.JSON
 
             df.to_sql(db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping)
