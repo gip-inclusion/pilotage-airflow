@@ -50,6 +50,7 @@ select = [
     "I",  # isort
     "UP",  # pyupgrade
     "TID",  # flake8-tidy-imports
+    "AIR",  # Airflow
 ]
 
 [tool.ruff.lint.isort]
