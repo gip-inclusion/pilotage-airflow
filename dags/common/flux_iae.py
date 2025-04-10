@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import os
+from itertools import batched
 from pathlib import Path
 
 import numpy as np
@@ -8,7 +9,6 @@ import pandas as pd
 from psycopg import sql
 
 from dags.common.db import MetabaseDatabaseCursor3
-from dags.common.python import batched
 
 
 PANDA_DATAFRAME_TO_PSQL_TYPES_MAPPING = {
