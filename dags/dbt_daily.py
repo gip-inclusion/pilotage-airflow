@@ -60,8 +60,8 @@ with airflow.DAG(
         append_env=True,
     )
 
-    dag_data_consistency = trigger_dagrun.TriggerDagRunOperator(
+    trigger_data_consistency = trigger_dagrun.TriggerDagRunOperator(
         trigger_dag_id="data_consistency", task_id="trigger_data_consistency"
     )
 
-    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dag_data_consistency >> end)
+    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> trigger_data_consistency >> end)
