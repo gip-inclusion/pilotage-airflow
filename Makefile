@@ -37,12 +37,12 @@ SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
 
 # if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
 fix: $(VIRTUAL_ENV)
-	black $(MONITORED_DIRS)
+	ruff format $(MONITORED_DIRS)
 	ruff check --fix $(MONITORED_DIRS)
 	sqlfluff fix $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 quality: $(VIRTUAL_ENV)
-	black --check $(MONITORED_DIRS)
+	ruff format --check $(MONITORED_DIRS)
 	ruff check $(MONITORED_DIRS)
 	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
