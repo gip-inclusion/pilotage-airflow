@@ -153,7 +153,7 @@ def get_old_table_name(table_name):
 
 
 def hash_content(content):
-    return hashlib.sha256(f'{content}{os.getenv("HASH_SALT")}'.encode()).hexdigest()
+    return hashlib.sha256(f"{content}{os.getenv('HASH_SALT')}".encode()).hexdigest()
 
 
 def anonymize_fluxiae_df(df):

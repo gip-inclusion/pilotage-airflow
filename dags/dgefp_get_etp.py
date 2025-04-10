@@ -17,7 +17,6 @@ with DAG(
 
     @task(task_id="store_etp")
     def store_etp(**kwargs):
-
         import ftputil
         import pandas as pd
 

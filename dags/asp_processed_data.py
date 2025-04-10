@@ -17,7 +17,6 @@ with DAG(
 
     @task(task_id="store_asp")
     def store_asp(**kwargs):
-
         import re
 
         import ftputil
