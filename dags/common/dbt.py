@@ -1,6 +1,6 @@
 import os
 
-from . import slack
+from dags.common import slack
 
 
 def get_default_args():
