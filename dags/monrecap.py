@@ -23,7 +23,6 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
     @task(task_id="monrecap_airtable")
     def monrecap_airtable(**kwargs):
-
         con = db.connection_engine()
         # Need to drop these tables and the views created with them in order to be able to run the df.to_sql()
         con.execute(

@@ -28,7 +28,6 @@ def create_tables():
 
 
 class Conventions(ImmersionFaciliteeBase):
-
     __tablename__ = "conventions"
     __table_args__ = {"schema": DB_SCHEMA}
 

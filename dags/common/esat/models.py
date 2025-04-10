@@ -21,7 +21,6 @@ def create_tables(variables):
 
 
 def build_esat_model(variables):
-
     var_types = {}
 
     for variable, variable_info in variables.items():
