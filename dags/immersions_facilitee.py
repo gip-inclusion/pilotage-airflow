@@ -22,8 +22,7 @@ with DAG("immersion_facilitee", schedule_interval="@weekly", **dag_args) as dag:
         if not response:
             logger.info("No new data to import.")
             return
-        df = get_dataframe_from_response(response)
-        insert_data_to_db(df)
+        insert_data_to_db(get_dataframe_from_response(response))
         logger.info("Import complete.")
 
     python.PythonOperator(task_id="create_schema", python_callable=create_tables) >> import_conventions()

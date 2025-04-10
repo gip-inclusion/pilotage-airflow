@@ -261,7 +261,7 @@ def store_df(df, table_name, max_attempts=5):
     Try up to `max_attempts` times.
     """
     # Drop unnamed columns
-    df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+    df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # noqa: PD901
 
     # Recipe from https://stackoverflow.com/questions/44729727/pandas-slice-large-dataframe-in-chunks
     rows_per_chunk = 10 * 1000
@@ -533,7 +533,7 @@ def get_fluxiae_df(
     # When guessing date formats, we are more likely to end up with European style dates than American in ASP files
     kwargs["dayfirst"] = True
 
-    df = pd.read_csv(
+    vue_data = pd.read_csv(
         extracted,
         sep="|",
         # Some rows have a single `"` in a field, for example in fluxIAE_Mission the mission_descriptif field of
@@ -547,15 +547,15 @@ def get_fluxiae_df(
         # the field data format guessed on first rows.
         low_memory=False,
     )
-    df = df.replace({np.nan: None})
+    vue_data = vue_data.replace({np.nan: None})
 
     # If there is only one column, something went wrong, let's break early.
     # Most likely an incorrect skip_first_row value.
-    assert len(df.columns.tolist()) >= 2
+    assert len(vue_data.columns.tolist()) >= 2
 
-    assert len(df) == nrows
+    assert len(vue_data) == nrows
 
     if anonymize_sensitive_data:
-        df = anonymize_fluxiae_df(df)
+        vue_data = anonymize_fluxiae_df(vue_data)
 
-    return df
+    return vue_data

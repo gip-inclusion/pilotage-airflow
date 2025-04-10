@@ -46,9 +46,9 @@ with DAG("data_inclusion", schedule_interval="@daily", **dag_args) as dag:
 
     @task(task_id="import_structures")
     def import_structures(**kwargs):
-        df = pd.DataFrame(get_all_items("/api/v0/structures"))
-        df["date_maj"] = pd.to_datetime(df["date_maj"])
-        row_created = df.to_sql(
+        structures = pd.DataFrame(get_all_items("/api/v0/structures"))
+        structures["date_maj"] = pd.to_datetime(structures["date_maj"])
+        row_created = structures.to_sql(
             "structures_v0",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
@@ -64,11 +64,11 @@ with DAG("data_inclusion", schedule_interval="@daily", **dag_args) as dag:
 
     @task(task_id="import_services")
     def import_services(**kwargs):
-        df = pd.DataFrame(get_all_items("/api/v0/services"))
-        df["date_creation"] = pd.to_datetime(df["date_creation"])
-        df["date_suspension"] = pd.to_datetime(df["date_suspension"])
-        df["date_maj"] = pd.to_datetime(df["date_maj"])
-        rows_created = df.to_sql(
+        services = pd.DataFrame(get_all_items("/api/v0/services"))
+        services["date_creation"] = pd.to_datetime(services["date_creation"])
+        services["date_suspension"] = pd.to_datetime(services["date_suspension"])
+        services["date_maj"] = pd.to_datetime(services["date_maj"])
+        rows_created = services.to_sql(
             "services_v0",
             con=db.connection_engine(),
             schema=DB_SCHEMA,

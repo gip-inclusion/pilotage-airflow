@@ -19,12 +19,12 @@ with DAG(
     def create_nps(**kwargs):
         import pandas as pd
 
-        df_int = []
+        dataframes = []
 
         for name, pub_sheet_url in Variable.get("NPS_DASHBOARD_PILOTAGE", deserialize_json=True):
             print(f"reading {name=} at {pub_sheet_url=}")
-            sheet_df = pd.read_csv(pub_sheet_url)
-            sheet_df.rename(
+            sheet_data = pd.read_csv(pub_sheet_url)
+            sheet_data = sheet_data.rename(
                 columns={
                     "Submitted at": "Date",
                     # Here the two questions are almost identicals because it's the tally question that changed.
@@ -34,16 +34,14 @@ with DAG(
                     "Quelle est la probabilité que vous recommandiez ce tableau de bord à un partenaire "
                     "ou homologue ?": "Recommendation",
                 },
-                inplace=True,
             )
-            sheet_df["Nom Du Tb"] = name
-            sheet_df = sheet_df[["Recommendation", "Nom Du Tb", "Date"]]
-            df_int.append(sheet_df)
-        df = pd.concat(df_int)
+            sheet_data["Nom Du Tb"] = name
+            sheet_data = sheet_data[["Recommendation", "Nom Du Tb", "Date"]]
+            dataframes.append(sheet_data)
 
-        df["Date"] = pd.to_datetime(df["Date"], dayfirst=True)
-
-        df.to_sql("suivi_satisfaction", con=db.connection_engine(), if_exists="replace", index=False)
+        nps_dashboard = pd.concat(dataframes)
+        nps_dashboard["Date"] = pd.to_datetime(nps_dashboard["Date"], dayfirst=True)
+        nps_dashboard.to_sql("suivi_satisfaction", con=db.connection_engine(), if_exists="replace", index=False)
 
     create_nps_task = create_nps()
 
