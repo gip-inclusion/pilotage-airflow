@@ -26,25 +26,19 @@ def _call_webhook(text):
 def task_fail_alert(context):
     ti = context.get("task_instance")
     return _call_webhook(
-        """
-    :airflow: :red_circle: Airflow task failed ! *dag*={dag} *task*={task} <{log_url}|online logs>
-    """.format(
-            dag=ti.dag_id,
-            task=ti.task_id,
-            log_url=ti.log_url,
-        )
+        f"""
+    :airflow: :red_circle: Airflow task failed ! *dag*={ti.dag_id} *task*={ti.task_id} <{ti.log_url}|online logs>
+    """
     )
 
 
 def task_success_alert(context):
     dr = context.get("dag_run")
+    duration = (timezone.utcnow() - dr.start_date).total_seconds()
     return _call_webhook(
-        """
-    :airflow: :white_check_mark: Airflow DAG success. *dag*={dag} *duration_seconds*={duration}
-    """.format(
-            dag=dr.dag_id,
-            duration=(timezone.utcnow() - dr.start_date).total_seconds(),
-        )
+        f"""
+    :airflow: :white_check_mark: Airflow DAG success. *dag*={dr.dag_id} *duration_seconds*={duration}
+    """
     )
 
 
