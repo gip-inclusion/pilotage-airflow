@@ -9,7 +9,7 @@ from airflow.models import DagBag
 # our production flows. Any added variable not listed in the dev
 # file will make the tests fail.
 def get_dag_variables():
-    with open("dag-variables.json", "r", encoding="utf-8") as json_file:
+    with open("dag-variables.json", encoding="utf-8") as json_file:
         return json.load(json_file)
 
 
