@@ -34,9 +34,11 @@ MONITORED_DIRS := dags dbt tests
 SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
 
 # if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
-fix: $(VIRTUAL_ENV)
+fast_fix: $(VIRTUAL_ENV)
 	ruff format $(MONITORED_DIRS)
 	ruff check --fix $(MONITORED_DIRS)
+
+fix: fast_fix
 	sqlfluff fix $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 quality: $(VIRTUAL_ENV)
