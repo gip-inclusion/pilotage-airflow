@@ -80,7 +80,6 @@ def get_all_items(path: str) -> list[dict]:
 
 
 def get_dataframe_from_response(table_data: list[dict]) -> pd.DataFrame:
-
     # list of wanted fiels to keep before and after normalization
     wanted_fields = [
         "id",

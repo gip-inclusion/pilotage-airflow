@@ -34,7 +34,7 @@ MONITORED_DIRS := dags dbt tests
 SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
 
 fast_fix: $(VIRTUAL_ENV)
-	black $(MONITORED_DIRS)
+	ruff format $(MONITORED_DIRS)
 	ruff check --fix $(MONITORED_DIRS)
 	find * -type f -name '*.sh' -exec shellcheck --external-sources --format=diff {} + | git apply --allow-empty
 
@@ -43,7 +43,7 @@ fix: fast_fix
 	sqlfluff fix $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 quality: $(VIRTUAL_ENV)
-	black --check $(MONITORED_DIRS)
+	ruff format --check $(MONITORED_DIRS)
 	ruff check $(MONITORED_DIRS)
 	find * -type f -name '*.sh' -exec shellcheck --external-sources {} +
 	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)

@@ -2,7 +2,6 @@
 
 # Code quality
 # ------------------------------------------------------------------------------
-black  # https://github.com/psf/black
 ruff  # https://github.com/astral-sh/ruff
 shellcheck-py  # https://github.com/shellcheck-py/shellcheck-py
 sqlfluff  # https://github.com/sqlfluff/sqlfluff

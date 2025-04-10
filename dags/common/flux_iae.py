@@ -165,7 +165,6 @@ def anonymize_fluxiae_df(df):
         df["hash_nir"] = df["salarie_nir"].apply(hash_content)
 
     if {"salarie_prenom", "salarie_nom_usage", "salarie_date_naissance"} <= set(df.columns.tolist()):
-
         df["salarie_PII_hashes"] = df.apply(
             lambda row: (
                 [
@@ -243,7 +242,6 @@ def infer_columns_from_df(df):
 
     inferred_types = []
     for col_name, value in initial_line.items():
-
         if isinstance(value.iloc[0], list):
             sql_type = "text[]"
         else:
