@@ -17,6 +17,8 @@ select
     c.type_auteur_diagnostic,
     c.sous_type_auteur_diagnostic,
     c.nom_auteur_diagnostic,
+    cd.nom_org_prescripteur,
+    cd.injection_ai,
     cd."état",
     cd.id_structure,
     cd.origine,
