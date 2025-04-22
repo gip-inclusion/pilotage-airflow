@@ -37,7 +37,7 @@ select
     end                                       as duree_contrat_mois,
     sum(ctr.contrat_duree_contrat)            as duree_contrat_asp_mois,
     max(struct_emplois.structure_convergence) as structure_convergence
-from {{ ref('stg_contrats') }} as ctr
+from {{ ref('eph_stg_contrats') }} as ctr
 left join {{ ref("fluxIAE_Structure_v2") }} as structs
     on ctr.contrat_id_structure = structs.structure_id_siae
 left join {{ ref('stg_structures') }} as struct_emplois
@@ -46,7 +46,7 @@ left join {{ ref("fluxIAE_Salarie_v2") }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
 where (contrat_mesure_disp_code = 'ACI_DC' or contrat_mesure_disp_code = 'ACI_MP') and contrat_nb_heures > 0 and extract(year from contrat_date_embauche) >= 2021
 group by
-    ctr.groupe_contrat,
+    ctr.contrat_parent_id,
     salarie.hash_nir,
     ctr.contrat_id_structure,
     ctr.contrat_id_pph

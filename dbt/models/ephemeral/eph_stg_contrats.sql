@@ -4,7 +4,7 @@ select
     structs.nom_departement_structure,
     structs.code_dept_structure,
     first_value(ctr.contrat_id_ctr) over (
-        partition by ctr.contrat_id_pph, groupe_contrat
+        partition by ctr.contrat_id_pph, groupe_contrat, contrat_mesure_disp_code
         order by ctr.contrat_date_embauche
     ) as contrat_parent_id
 from {{ ref('stg_contrats') }} as ctr
