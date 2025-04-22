@@ -325,4 +325,7 @@ models:
   - name: stg_info_structure_AnnexeFinanciere_v2
     description: >
       Vue permettant de récupérer des informations sur les structures à partir des annexes financières.
-
+  - name: stg_explose_par_mois_suivi_etp
+    description: >
+      Vue permettant d'exploser les données de la table suivi_etp_conventionnes_v2 par mois.
+      On aura plus une ligne par annexe financière mais une ligne par annexe financière et mois
