@@ -153,6 +153,9 @@ models:
         tests:
           - unique
           - not_null
+      - name: groupe_contrat
+        description: >
+          Identifiant unique (lorsqu'on groupe par contrat_id_pph, et contrat_mesure_disp_code) du groupe de contrat. Il est utilisé pour regrouper les reconductions d'un même contrat.
   - name: stg_contrats_parent
     description: >
       Permet de récupérer les contrats parents (contrats initiaux) à partir des contrats.
