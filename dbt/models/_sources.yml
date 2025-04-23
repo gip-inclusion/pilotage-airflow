@@ -27,6 +27,7 @@ sources:
         description: >
           Table générée par l'ASP et fournie via un partage de mail.
           Cette dernière contient les données de bénéficiaires et sorties, calculées par l'ASP, pour les années 2022, 2023 et 2024
+      - name: fluxIAE_RefDureePoleEmploi
 
   - name: emplois
     schema: public

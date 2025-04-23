@@ -3,7 +3,7 @@ with etp_sum as (
         (
             select sum(emi_part_etp) from (
                 select distinct on (emi.emi_dsm_id) emi.emi_part_etp
-                from {{ ref('stg_dates_etat_mensuel_individualise') }} as constantes
+                from {{ ref('eph_dates_etat_mensuel_individualise') }} as constantes
                 cross join {{ source('fluxIAE', 'fluxIAE_EtatMensuelIndiv') }} as emi
                 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
                     on emi.emi_afi_id = af.af_id_annexe_financiere
@@ -22,7 +22,7 @@ with etp_sum as (
         ) as theirs,
         (
             select sum(etp.nombre_etp_consommes_asp)
-            from {{ ref('stg_dates_etat_mensuel_individualise') }} as constantes
+            from {{ ref('eph_dates_etat_mensuel_individualise') }} as constantes
             cross join {{ ref("suivi_etp_realises_v2") }} as etp
             where
                 etp.emi_sme_annee = constantes.annee_en_cours

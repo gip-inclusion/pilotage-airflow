@@ -15,7 +15,7 @@ models:
       Table créée pour suivre le nombre d'etp conventionnés ainsi que la part de ces ETPs financée par le CD et l'état. Cette table permet d'obtenir le bon nombre d'etp conventionné en considérant la bonne durée des annexes financières
   - name: etp_par_salarie
     description: >
-      Table créée pour suivre le nombre d'etp réalisés par genre
+      Table créée pour suivre le nombre d'etp réalisés par genre. Cette table permet de suivre les informations à l'échelle de l'id_salarie. Des informations sur les caractéristiques des bénéficiaires sont présentes.
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('suivi_etp_realises_v2')
@@ -147,9 +147,16 @@ models:
       Table permettant le calcul de la retention à deux mois.
       Définition simpliste : nombre d'utilisateurs qui se sont connectés au moins une fois par mois sur une période de deux mois.
       Permier jet permettant d'aller vers une analyse temporelle plus fine et éventuellement par cas d'usage.
-  - name: beneficiaires
+  - name: int_beneficiaires_sorties
     description: >
-      Table d'identifier tous les bénéficiaires de l'IAE ainsi que les critères associés à ces derniers.
+      Table permettant de récupérer, par annexe financière, les informations de tous les bénéficiaires de l'IAE ainsi que les critères associés à ces derniers. Cette table sera, dans un futur proche, agrémentée des données de sortie.
+      Ici on calcule toutes les données de benef afin de compléter les données de l'extraction ASP (données absentes de l'extraction). De plus ces données nous serons utiles dans d'autres tables.
+      Une table a été préférée à une vue afin d'optimiser les performances.
+  - name: beneficiaires_sorties
+    description: >
+      Table permettant de récupérer, par annexe financière, les informations de tous les bénéficiaires de l'IAE ainsi que les critères associés à ces derniers. Cette table a été agrémentée des informations de sorties.
+      Une partie des données des bénéficiaires et sorties est récupérée à partir de l'extraction fournie par l'ASP.
+      Les informations restantes (= données beneficiaires pour l'année en cours + EITI pour toutes les années) proviennent du fluxIAE mis à jour de façon hebdomadaire, où les indicateurs sont calculés par le pilotage, et de l'extraction ponctuelle de l'ASP ou l'ASP a calculé les données.
   - name: accompagnement_freins
     description: >
       Table permettant de suivre les accompagnements proposés en fonction des difficultés des salariés.

@@ -20,7 +20,7 @@ select
     sum(emi.emi_nb_heures_travail) as nombre_heures_travaillees,
     count(ctr.contrat_salarie_rsa) as nombre_salaries
 from
-    {{ ref('stg_dates_etat_mensuel_individualise') }} as constantes
+    {{ ref('eph_dates_etat_mensuel_individualise') }} as constantes
 cross join {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
 left join {{ ref('fluxIAE_ContratMission_v2') }} as ctr
     on ctr.contrat_id_ctr = emi.emi_ctr_id

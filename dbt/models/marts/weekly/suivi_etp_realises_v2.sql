@@ -4,6 +4,7 @@ select distinct
     emi.emi_part_etp                                                                    as nombre_etp_consommes_asp,
     emi.emi_nb_heures_travail                                                           as nombre_heures_travaillees,
     emi.emi_afi_id                                                                      as identifiant_annexe_fin,
+    emi.emi_ctr_id,
     emi.emi_dsm_id,
     emi.emi_sme_mois,
     emi.emi_sme_annee,
@@ -45,7 +46,7 @@ select distinct
     (emi.emi_nb_heures_travail / firmi.rmi_valeur) * 12
     as nombre_etp_consommes_reels_mensuels
 from
-    {{ ref('stg_dates_etat_mensuel_individualise') }} as constantes
+    {{ ref('eph_dates_etat_mensuel_individualise') }} as constantes
 cross join
     {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
