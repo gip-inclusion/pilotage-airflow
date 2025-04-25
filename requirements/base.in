@@ -6,7 +6,6 @@ apache-airflow[amazon,sentry,slack]==2.9.3  # https://github.com/apache/airflow
 # ------------------------------------------------------------------------------
 dbt-core==1.5.*  # https://github.com/dbt-labs/dbt-core
 dbt-postgres  # https://github.com/dbt-labs/dbt-postgres
-dbt-fal  # https://github.com/fal-ai/dbt-fal
 
 # Data management (scripts, DAG, ...)
 # ------------------------------------------------------------------------------
