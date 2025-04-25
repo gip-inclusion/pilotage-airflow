@@ -55,4 +55,4 @@ with airflow.DAG(
 
     end = empty.EmptyOperator(task_id="end")
 
-    (start >> dbt_generate_docs >> cellar_sync >> end)
+    (start >> dbt_deps >> dbt_generate_docs >> cellar_sync >> end)
