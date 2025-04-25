@@ -1,9 +1,5 @@
 dbt_pilotage:
   outputs:
-    main_fal:
-      type: fal
-      db_profile: main
-
     main:
       schema: public
       threads: 1
@@ -15,4 +11,4 @@ dbt_pilotage:
       user: "{{ env_var('PGUSER') }}"
       keepalives_idle: 60
 
-  target: main_fal
+  target: main
