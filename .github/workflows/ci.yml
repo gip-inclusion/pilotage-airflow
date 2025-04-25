@@ -41,9 +41,9 @@ jobs:
           CREATE DATABASE airflow;
         SQL
         docker kill --signal=SIGHUP ${{ job.services.postgres.id }}
-    - uses: actions/checkout@v4.1.6
+    - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
     - name: ⏬ Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
       with:
         enable-cache: true
         cache-dependency-glob: "requirements/dev.txt"
