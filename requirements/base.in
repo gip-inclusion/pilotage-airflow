@@ -4,7 +4,7 @@ apache-airflow[amazon,sentry,slack]==2.10.5  # https://github.com/apache/airflow
 
 # DBT
 # ------------------------------------------------------------------------------
-dbt-core==1.5.*  # https://github.com/dbt-labs/dbt-core
+dbt-core  # https://github.com/dbt-labs/dbt-core
 dbt-postgres  # https://github.com/dbt-labs/dbt-postgres
 
 # Data management (scripts, DAG, ...)
