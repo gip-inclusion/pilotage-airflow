@@ -12,4 +12,5 @@
 !dbt_project.yml
 !dbt
 !packages.yml
+!package-lock.yml
 !profiles.yml
