@@ -7,7 +7,7 @@ logs/
 
 .env
 .envrc.local
-dbt/packages/
+.dbt/
 airflow/
 .latest.dump
 .latest.restore
