@@ -11,7 +11,7 @@ dbt-postgres  # https://github.com/dbt-labs/dbt-postgres
 # ------------------------------------------------------------------------------
 ftputil  # https://ftputil.sschwarzer.net/
 # Pandas 2.2 break DataFrame.to_sql() for SQLAlchemy<=2.0, pinning until we move to it
-pandas==1.5.*  # https://github.com/pandas-dev/pandas
+pandas<2.2  # https://github.com/pandas-dev/pandas
 openpyxl # https://pypi.org/project/openpyxl/
 
 psycopg[binary] # https://www.psycopg.org/
