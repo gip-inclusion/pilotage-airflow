@@ -62,9 +62,7 @@ services:
       - ./custom-dev-entrypoint.sh:/entrypoint.sh
       - ./dags:/opt/airflow/dags
       - ./dbt:/opt/airflow/dbt
-      - dbt_data:/opt/airflow/dbt/packages
 
 volumes:
   postgres_data:
   minio_data:
-  dbt_data:
