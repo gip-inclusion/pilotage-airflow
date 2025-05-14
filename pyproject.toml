@@ -40,15 +40,10 @@ capitalisation_policy = "lower"
 [tool.sqlfluff.rules.references.special_chars]
 additional_allowed_characters = "àéè '-"
 
-[tool.pytest.ini_options]
-addopts = "--ignore=dbt/packages"
-
-
 [tool.ruff]
 line-length = 119
 
 [tool.ruff.lint]
-exclude = ["dbt/packages/*"]
 ignore = []
 # see prefixes in https://docs.astral.sh/ruff/rules/
 select = [
