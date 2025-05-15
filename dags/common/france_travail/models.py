@@ -52,9 +52,9 @@ class JobSeekerStats(FranceTravailBase):
             f"<JobSeekerStats(codeCaract={self.codeCaract!r}, "
             f"codeNomenclature={self.codeNomenclature!r}, "
             f"codePeriode={self.codePeriode!r}, "
-            f"codeTerritoire={self.codePeriode!r}, "
-            f"codeTypeCaract={self.codePeriode!r}, "
-            f"codeTypeTerritoire={self.codePeriode!r})>"
+            f"codeTerritoire={self.codeTerritoire!r}, "
+            f"codeTypeCaract={self.codeTypeCaract!r}, "
+            f"codeTypeTerritoire={self.codeTypeTerritoire!r})>"
         )
 
     @classmethod
