@@ -9,6 +9,9 @@ sqlfluff-templater-dbt  # https://pypi.org/project/sqlfluff-templater-dbt/
 
 # Test & Mock
 # ------------------------------------------------------------------------------
+faker  # https://github.com/joke2k/faker
 freezegun  # https://github.com/spulec/freezegun
 pytest  # https://github.com/pytest-dev/pytest
+pytest-mock  # https://github.com/pytest-dev/pytest-mock/
+pytest-randomly  # https://github.com/pytest-dev/pytest-randomly
 pytest-subtests  # https://github.com/pytest-dev/pytest-subtests
