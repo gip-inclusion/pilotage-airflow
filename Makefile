@@ -56,13 +56,15 @@ clean: dbt_clean
 # =============================================================================
 .PHONY: dbt_clean dbt_docs dbt_run dbt_weekly dbt_daily
 
+DBT_DOCS_PORT ?= 8080
+
 dbt_clean: $(VIRTUAL_ENV)
 	rm -rf $(DBT_TARGET_PATH)
 	dbt clean
 
 dbt_docs: $(VIRTUAL_ENV)
 	dbt docs generate
-	python3 -m http.server --directory $(DBT_TARGET_PATH) --bind 127.0.0.1 $(DBT_DOCS_PORT)
+	dbt docs serve --host 127.0.0.1 --port $(DBT_DOCS_PORT)
 
 dbt_run: $(VIRTUAL_ENV)
 	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+
