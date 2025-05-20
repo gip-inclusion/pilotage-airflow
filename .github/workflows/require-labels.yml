@@ -7,8 +7,6 @@ on:
 
 jobs:
   require-label:
-    if: >  # The ">" is a hack to prevent the "tag suffix cannot contain flow indicator characters" error...
-        !contains(github.event.pull_request.labels.*.name, 'dependencies')
     runs-on: ubuntu-latest
     permissions: {}
     steps:
@@ -17,12 +15,12 @@ jobs:
         with:
           mode: exactly
           count: 1
-          labels: "changelog:.*"
+          labels: "changelog:.*|dependencies"
           use_regex: true
       - name: Verify datasource label
         uses: mheap/github-action-required-labels@388fd6af37b34cdfe5a23b37060e763217e58b03 # v5.5.0
         with:
           mode: exactly
           count: 1
-          labels: "datasource:.*"
+          labels: "datasource:.*|dependencies"
           use_regex: true
