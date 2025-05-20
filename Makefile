@@ -59,7 +59,6 @@ clean: dbt_clean
 DBT_DOCS_PORT ?= 8080
 
 dbt_clean: $(VIRTUAL_ENV)
-	rm -rf $(DBT_TARGET_PATH)
 	dbt clean
 
 dbt_docs: $(VIRTUAL_ENV)
