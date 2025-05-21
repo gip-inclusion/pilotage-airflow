@@ -78,12 +78,10 @@ def list_territories(access_token):
     return territories
 
 
-def get_stats_for_territory(access_token, territory, get_all_periods=False):
+def get_stats_for_territory(access_token, territory):
     """
     Makes an API request for the given territory, parses and imports the data in SQL.
     :param territory: Territory
-    :param get_all_periods: force the API request to get all periods available. Default is
-        to get just the most recent quarter
     """
     # Table configuration
     # Columns defined in the main body of the request
