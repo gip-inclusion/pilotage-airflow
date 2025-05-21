@@ -1,4 +1,5 @@
 import hashlib
+import json
 import logging
 import os
 from typing import Dict, List
@@ -44,8 +45,8 @@ def get_all_items(path: str) -> List[Dict]:
     # je trouve pas pratique de devoir jouer avec les dates. Ou oui si on fait quelques choses d'incrementale
 
     client = api_client()
-
-    response = client.get(path)
+    # le filtre ci-dessous est à changer si je pass que un status l'API n'est pas contente!
+    response = client.get(path,params={"withStatuses":["ACCEPTED_BY_VALIDATOR", "READY_TO_SIGN"]})
     response.raise_for_status()
     data = response.json()
     logger.info("Got %r items", len(data))
