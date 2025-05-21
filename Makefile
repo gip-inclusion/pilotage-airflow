@@ -28,15 +28,17 @@ compile-deps: $(VIRTUAL_ENV)
 
 # Quality
 # =============================================================================
-.PHONY: fix quality test clean
+.PHONY: fast_fix fix quality test clean
 
 MONITORED_DIRS := dags dbt tests
 SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
 
-# if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
-fix: $(VIRTUAL_ENV)
+fast_fix: $(VIRTUAL_ENV)
 	black $(MONITORED_DIRS)
 	ruff check --fix $(MONITORED_DIRS)
+
+# if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
+fix: fast_fix
 	sqlfluff fix $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 quality: $(VIRTUAL_ENV)
