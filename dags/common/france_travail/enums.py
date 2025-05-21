@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class TerritoryType(str, Enum):
+class TerritoryType(StrEnum):
     Commune = "COM"
     Department = "DEP"
     Region = "REG"
