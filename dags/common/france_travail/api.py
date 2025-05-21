@@ -52,6 +52,8 @@ def request_access_token(format_for_header=False):
             "scope": "api_stats-offres-demandes-emploiv1 offresetdemandesemploi",
         },
     )
+    if response.is_error:
+        logger.error(response.json())
     data = response.raise_for_status().json()
 
     # Return token under the form: Bearer xyz
@@ -69,6 +71,8 @@ def list_territories(access_token):
             url=f"{FT_JOBSEEKER_STATS_BASE_URL}/referentiel/territoires/{territory_type}",
             headers={"Accept": "application/json", "Authorization": access_token},
         )
+        if response.is_error:
+            logger.error(response.json())
         territories += [
             Territory(type=TerritoryType(t["codeTypeTerritoire"]), code=t["codeTerritoire"])
             for t in response.raise_for_status().json()["territoires"]
@@ -159,6 +163,8 @@ def get_stats_for_territory(access_token, territory):
             "dernierePeriode": limit_to_most_recent_quarter,
         },
     )
+    if response.is_error:
+        logger.error(response.json())
     # NOTE: the response JSON is a very large dictionary
     response_data = response.raise_for_status().json()
     data = response_data.get("listeValeursParPeriode", [])
