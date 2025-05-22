@@ -147,9 +147,15 @@ models:
       Table permettant le calcul de la retention à deux mois.
       Définition simpliste : nombre d'utilisateurs qui se sont connectés au moins une fois par mois sur une période de deux mois.
       Permier jet permettant d'aller vers une analyse temporelle plus fine et éventuellement par cas d'usage.
-  - name: beneficiaires
+  - name: beneficiaires_sorties_v0
     description: >
-      Table d'identifier tous les bénéficiaires de l'IAE ainsi que les critères associés à ces derniers.
+      Table permettant tous les bénéficiaires de l'IAE ainsi que les critères associés à ces derniers. Cette table sera, dans un futur proche, agrémentée des données de sortie.
+      Ici les indicateurs de sortie et benef de l'année en cours et des EITI sont calculés par le pilotage afin de compléter les données de l'extraction ASP (données absentes de l'extraction).
+      Une table a été préférée à une vue afin d'optimiser les performances.
+  - name: beneficiaires_sorties
+    description: >
+      Table permettant tous les bénéficiaires de l'IAE ainsi que les critères associés à ces derniers. Cette table a été agrémentée des informations de sorties.
+      Les informations proviennent du fluxIAE mis à jour de façon hebdomadaire, où les indicateurs sont calculés par le pilotage, et de l'extraction ponctuelle de l'ASP ou l'ASP a calculé les données.
   - name: accompagnement_freins
     description: >
       Table permettant de suivre les accompagnements proposés en fonction des difficultés des salariés.
