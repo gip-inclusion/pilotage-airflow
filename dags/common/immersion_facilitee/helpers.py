@@ -46,7 +46,7 @@ def get_all_items(path: str) -> List[Dict]:
 
     client = api_client()
     # le filtre ci-dessous est à changer si je pass que un status l'API n'est pas contente!
-    response = client.get(path,params={"withStatuses":["ACCEPTED_BY_VALIDATOR", "READY_TO_SIGN"]})
+    response = client.get(path,params={"withStatuses[]":["ACCEPTED_BY_VALIDATOR"]})
     response.raise_for_status()
     data = response.json()
     logger.info("Got %r items", len(data))
