@@ -95,6 +95,12 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         print(f"reading barometre mon recap at {sheet_url=}")
         df = pd.read_csv(sheet_url)
         df.drop_duplicates()  # if the synch of the gsheet is forced, duplicates will be created
+        df = df.rename(
+            columns={
+                "Avez-vous constaté que vos usagers utilisent le carnet avec leurs autres accompagnateurs ?": "Carnets utilisés avec d'autres accompagnateurs ?",
+                "Avez-vous constaté que vos usagers utilisent le carnet avec leurs autres accompagnateurs ?.1": "Carnets utilisés avec d'autres accompagnateurs ? (chiffres)",
+            }
+        )
         baro_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
         monrecap.convert_date_columns(df, baro_dates)
         df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
