@@ -1,6 +1,6 @@
 import re
 
-import sqlalchemy
+import sqlalchemy.types as types
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
@@ -72,17 +72,14 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
             db_table_name = table_mapping[table_name]
 
-            df.to_sql(
-                db_table_name,
-                con=con,
-                schema=DB_SCHEMA,
-                if_exists="replace",
-                index=False,
-                dtype={
-                    "Validation manuelle": sqlalchemy.types.JSON,
-                    "Demande de prise de RDV": sqlalchemy.types.JSON,
-                },
-            )
+            dtype_mapping = {}
+            for col in df.columns:
+                # Check if column contains dict or list values
+                sample_values = df[col].dropna().head(10)
+                if any(isinstance(val, (dict, list)) for val in sample_values):
+                    dtype_mapping[col] = types.JSON
+
+            df.to_sql(db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping)
 
     monrecap_airtable = monrecap_airtable()
 
@@ -95,6 +92,23 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         print(f"reading barometre mon recap at {sheet_url=}")
         df = pd.read_csv(sheet_url)
         df.drop_duplicates()  # if the synch of the gsheet is forced, duplicates will be created
+        df = df.rename(
+            columns={
+                "Avez-vous constaté que vos usagers utilisent le carnet avec leurs autres accompagnateurs ?": (
+                    "Carnets utilisés avec d'autres accompagnateurs ?"
+                ),
+                "Avez-vous constaté que vos usagers utilisent le carnet avec leurs autres accompagnateurs ?.1": (
+                    "Carnets utilisés avec d'autres accompagnateurs ? (chiffres)"
+                ),
+                "Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation d'illectronisme )": (
+                    "Quel(s) type(s) de public accompagnez-vous ? (illectronisme)"
+                ),
+                "Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation d'illetrisme )": (
+                    "Quel(s) type(s) de public accompagnez-vous ? (illetrisme)"
+                ),
+                "Votre adresse mail ": "Votre adresse mail ?",
+            }
+        )
         baro_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
         monrecap.convert_date_columns(df, baro_dates)
         df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
