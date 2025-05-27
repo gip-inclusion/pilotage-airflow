@@ -51,10 +51,14 @@ models:
       Table introduite pour obtenir la liste des réseaux et les structures attachées à ces derniers.
   - name: pass_agrements_valides
     description: >
-      A la demande du C1, cette table a été créée pour suivre le nombre de pass IAE valides. Ici un pass est considéré valide quand sa date de fin n'a pas expiré.
-      Afin d'informer si le pass est valide ou pas une colonne validite_pass remplie, avec les strings 'pass valide/pass non valide', a été créée.
-      L'information contenue dans cette colonne n'est pas sous forme 1/0 afin d'anticiper une potentielle demande métier où cette colonne servirait de filtre.
-      Cette colonne aurait pu être rajoutée dans {{source, pass_agréments}} mais un marts a été préféré à un ajout de colonne pour des raisons d'autonomie du côté des data analyst.
+      Table permettant de savoir si un pass agrément ou IAE est valide et/ou suspendu.
+  - name: suspensions_pass
+    description: >
+      Table permettant de connaître les pass agrément ou IAE suspendus.
+      Ajoute à la source suspensions_v0 l'état de suspension et le motif de suspension en toutes lettres.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'suspensions_v0')
   - name: candidats_derniere_embauche
     description: >
       Table créée pour récupérer la dernière embauche (si elle existe) d'un candidat.
