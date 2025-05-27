@@ -41,6 +41,7 @@ sources:
       - name: c1_private_dashboard_visits_v0
         description: >
           Propose une ligne par visite enregistrée sur un tableau de bord privé du Pilotage de l'Inclusion.
+      - name: c1_ref_motif_suspension
       - name: candidats_v0
       - name: candidatures
       - name: cap_campagnes
@@ -58,6 +59,7 @@ sources:
       - name: organisations_v0
       - name: pass_agréments
       - name: structures
+      - name: suspensions_v0
       - name: utilisateurs_v0
       - name: demandes_de_prolongation
       - name: prolongations
