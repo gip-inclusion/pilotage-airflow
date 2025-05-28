@@ -1,5 +1,4 @@
 import csv
-import hashlib
 import os
 from pathlib import Path
 
@@ -9,6 +8,7 @@ from psycopg import sql
 
 from dags.common.db import MetabaseDatabaseCursor3
 from dags.common.python import batched
+from dags.common.anonymize__sensible_data import hash_content
 
 
 PANDA_DATAFRAME_TO_PSQL_TYPES_MAPPING = {
@@ -151,9 +151,6 @@ def get_new_table_name(table_name):
 def get_old_table_name(table_name):
     return f"z_old_{table_name}"
 
-
-def hash_content(content):
-    return hashlib.sha256(f'{content}{os.getenv("HASH_SALT")}'.encode()).hexdigest()
 
 
 def anonymize_fluxiae_df(df):
