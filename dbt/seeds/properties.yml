@@ -84,3 +84,9 @@ seeds:
   - name: acc_pro_libelle
     description: >
       Correspondance entre les sigles des accompagnments professionels, issues des titres des colonnes fluxIAE_accompagnement, et le libellé en toutes lettres présents dans la documentation sur les tables
+  - name: department_asp
+    description: >
+      Correspondance entre les départements des extractions ASP et le format du pilotage.
+  - name: region_asp
+    description: >
+      Correspondance entre les régions des extractions ASP et le format du pilotage.
