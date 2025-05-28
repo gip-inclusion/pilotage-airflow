@@ -39,6 +39,6 @@ def test_with_spaces_and_dashes():
     birth_date = datetime(1990, 1, 1)
 
     result = normalize_sensible_data(first_name, last_name, birth_date)
-    expected = "jeanpierreduponsmith01011990"
+    expected = "jeanpierredupontsmith01011990"
 
     assert result == expected
