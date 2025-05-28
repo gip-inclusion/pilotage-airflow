@@ -33,5 +33,5 @@ select
     s.type                                  as profil,
     count(*)                                as potentiel
 from {{ source('emplois', 'structures') }} as s
-where s."nom_département" is not null and s.active = 1 and type in ('ACI', 'AI', 'EI', 'EITI    ', 'ETTI')
+where s."nom_département" is not null and s.active = 1 and type in ('ACI', 'AI', 'EI', 'EITI', 'ETTI')
 group by s."région", s."nom_département", s.type

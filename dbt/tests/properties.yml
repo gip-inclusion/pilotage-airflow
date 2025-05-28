@@ -49,3 +49,6 @@ tests:
   - name: test_doublons_structures_fluxIAE
     description: >
         Test permettant de vérifier qu'il n'y a pas de doublons dans les structures du fluxIAE
+  - name: test_stg_contrats_parent
+    description: >
+        Test permettant de vérifier qu'il n'y a pas plus de 10 (arbitraire) contrat_parent_id pas unique dans stg_contrats_parent

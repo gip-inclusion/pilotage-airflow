@@ -3,7 +3,7 @@ with nb_structures_meres as (
         (
             select count(*)
             from structures
-            where source != 'Utilisateur (Antenne)' and "nom_département" is not null
+            where "nom_département" is not null and active = 1 and type in ('ACI', 'AI', 'EI', 'EITI', 'ETTI')
         ) as structures_meres,
         (
             select sum(potentiel)
