@@ -2,6 +2,7 @@ from datetime import datetime
 
 from dags.common.anonymize__sensible_data import normalize_sensible_data
 
+
 def test_normal_case():
     first_name = "Jean"
     last_name = "Dupont"
@@ -11,6 +12,7 @@ def test_normal_case():
     expected = "jeandupont01011990"
 
     assert result == expected
+
 
 def test_accents():
     first_name = "Jéan"
@@ -32,6 +34,7 @@ def test_special_characters():
     expected = "jeandupont01011990"
 
     assert result == expected
+
 
 def test_with_spaces_and_dashes():
     first_name = "Jean-Pierre"

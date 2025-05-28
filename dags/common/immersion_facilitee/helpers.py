@@ -1,18 +1,18 @@
 import datetime
-import time
 import logging
 import re
+import time
 from typing import Dict, List
 
 import httpx
 import pandas as pd
 from airflow.models import Variable
+from dateutil.relativedelta import relativedelta
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
-from dateutil.relativedelta import relativedelta
-from dags.common.anonymize__sensible_data import hash_content, normalize_sensible_data
 
 from dags.common import db
+from dags.common.anonymize__sensible_data import hash_content, normalize_sensible_data
 from dags.common.immersion_facilitee.models import Conventions
 
 
@@ -20,7 +20,10 @@ logger = logging.getLogger(__name__)
 
 
 def api_client() -> httpx.Client:
-
+    """
+    Crée un client HTTP pour l'API Immersion Facilitee
+    :return: un client HTTP configuré
+    """
     return httpx.Client(
         base_url=Variable.get("API_IMMERSION_FACILITEE_BASE_URL"),
         headers={"authorization": "{}".format(Variable.get("API_IMMERSION_FACILITEE_TOKEN"))},
@@ -49,15 +52,17 @@ def get_all_items(path: str) -> List[Dict]:
     while date_temp < start_date_less_or_equal:
         str_date_g = date_temp.strftime("%Y-%m-%d")
         str_date_l = (date_temp + relativedelta(days=1)).strftime("%Y-%m-%d")
-        response = client.get(path,
-                            params={
-                                "withStatuses[]": ["ACCEPTED_BY_VALIDATOR"],
-                                "startDateLessOrEqual": str_date_l,
-                                "startDateGreater": str_date_g}
-                            )
+        response = client.get(
+            path,
+            params={
+                "withStatuses[]": ["ACCEPTED_BY_VALIDATOR"],
+                "startDateLessOrEqual": str_date_l,
+                "startDateGreater": str_date_g,
+            },
+        )
         response.raise_for_status()
 
-        if response :
+        if response:
             data_partial = response.json()
         else:
             data_partial = []
@@ -70,9 +75,7 @@ def get_all_items(path: str) -> List[Dict]:
     return data
 
 
-
-
-def get_dataframe_from_response(table_data : List[Dict]) -> pd.DataFrame:
+def get_dataframe_from_response(table_data: List[Dict]) -> pd.DataFrame:
 
     fields_to_remove = [
         "schedule",
@@ -93,13 +96,15 @@ def get_dataframe_from_response(table_data : List[Dict]) -> pd.DataFrame:
     df = pd.json_normalize(table_cleaned)
     df.columns = [dot_to_camel(col) for col in df.columns]
     df["beneficiaryId"] = df.apply(
-        lambda row: [hash_content(
-            normalize_sensible_data(
-                row["signatoriesBeneficiaryFirstName"],
-                row["signatoriesBeneficiaryLastName"],
-                pd.to_datetime(row["signatoriesBeneficiaryBirthdate"]).date(),
+        lambda row: [
+            hash_content(
+                normalize_sensible_data(
+                    row["signatoriesBeneficiaryFirstName"],
+                    row["signatoriesBeneficiaryLastName"],
+                    pd.to_datetime(row["signatoriesBeneficiaryBirthdate"]).date(),
+                )
             )
-        )],
+        ],
         axis=1,
     )
 
@@ -109,7 +114,7 @@ def get_dataframe_from_response(table_data : List[Dict]) -> pd.DataFrame:
     return df
 
 
-def dot_to_camel(name : str) -> str:
+def dot_to_camel(name: str) -> str:
     return re.sub(r"\.(\w)", lambda m: m.group(1).upper(), name)
 
 

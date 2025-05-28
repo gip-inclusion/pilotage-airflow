@@ -1,7 +1,7 @@
 from sqlalchemy import CheckConstraint, Column
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import DateTime, String
-from sqlalchemy.dialects.postgresql import ARRAY
 
 from dags.common import db
 

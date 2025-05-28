@@ -2,6 +2,8 @@ import hashlib
 import os
 import re
 import unicodedata
+
+
 def hash_content(content: str) -> str:
     return hashlib.sha256(f'{content}{os.getenv("HASH_SALT")}'.encode()).hexdigest()
 
