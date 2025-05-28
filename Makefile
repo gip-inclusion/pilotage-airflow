@@ -4,7 +4,6 @@
 # > practice; so for compatibility, you must explicitly request it
 .DELETE_ON_ERROR:
 
-PYTHON_VERSION := python3.11
 REQUIREMENTS_PATH ?= requirements/dev.txt
 
 VIRTUAL_ENV ?= .venv
@@ -16,9 +15,8 @@ export PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 .PHONY: venv compile-deps
 
 $(VIRTUAL_ENV): $(REQUIREMENTS_PATH)
-	$(PYTHON_VERSION) -m venv $@
-	$@/bin/pip install uv
-	$@/bin/uv pip sync --require-hashes $^
+	uv venv
+	uv pip sync --require-hashes $^
 	touch $@
 
 venv: $(VIRTUAL_ENV)
@@ -30,15 +28,17 @@ compile-deps: $(VIRTUAL_ENV)
 
 # Quality
 # =============================================================================
-.PHONY: fix quality test clean
+.PHONY: fast_fix fix quality test clean
 
 MONITORED_DIRS := dags dbt tests
 SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
 
-# if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
-fix: $(VIRTUAL_ENV)
+fast_fix: $(VIRTUAL_ENV)
 	black $(MONITORED_DIRS)
 	ruff check --fix $(MONITORED_DIRS)
+
+# if `sqlfluff fix` does not work, use `sqlfluff parse` to investigate.
+fix: fast_fix
 	sqlfluff fix $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 quality: $(VIRTUAL_ENV)
@@ -58,13 +58,14 @@ clean: dbt_clean
 # =============================================================================
 .PHONY: dbt_clean dbt_docs dbt_run dbt_weekly dbt_daily
 
+DBT_DOCS_PORT ?= 8080
+
 dbt_clean: $(VIRTUAL_ENV)
-	rm -rf $(DBT_TARGET_PATH)
 	dbt clean
 
 dbt_docs: $(VIRTUAL_ENV)
 	dbt docs generate
-	python3 -m http.server --directory $(DBT_TARGET_PATH) --bind 127.0.0.1 $(DBT_DOCS_PORT)
+	dbt docs serve --host 127.0.0.1 --port $(DBT_DOCS_PORT)
 
 dbt_run: $(VIRTUAL_ENV)
 	dbt run --exclude legacy.oneshot.*+ --exclude marts.oneshot+

@@ -4,10 +4,11 @@ selon l'état de la candidature, la structure, le type de structure, l'orgine de
 select
     c."état",
     c.date_candidature,
-    c.nombre_de_candidatures,
-    prop_cddr.total_candidatures,
-    ttes_ccdr.somme_candidatures,
-    ttes_ccdr_ph.somme_candidatures_ph,
+    c.nombre_de_candidatures, -- nombre de candidatures pour cette structure, état, date, origine et prescripteur donné
+    prop_cddr.total_candidatures, -- nombre total de candidatures pour cette structure et cet état
+    ttes_ccdr.somme_candidatures, -- nombre total de candidatures pour cette structure
+    ttes_ccdr_ph.somme_candidatures_ph, -- nombre de candidatures pour cette structure et ce prescripteur
+    c.nombre_autoprescription, -- nombre de candidatures en autoprescription pour cet état et cette structure
     c.nom_structure,
     c.type_structure,
     c.origine,
@@ -22,7 +23,7 @@ select
     s.siret,
     s.nom_epci_structure,
     /* calcul de la proportion de candidatures en % */
-    c.nombre_de_candidatures / prop_cddr.total_candidatures as taux_de_candidatures
+    c.nombre_de_candidatures / prop_cddr.total_candidatures as taux_de_candidatures -- taux de candidatures à l'état pour la structure
 from
     {{ ref('eph_nbr_candidatures') }} as c
 left join {{ ref('eph_prop_cddr') }} as prop_cddr

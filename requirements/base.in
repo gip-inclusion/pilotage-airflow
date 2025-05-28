@@ -1,17 +1,17 @@
 # Airflow
 # ------------------------------------------------------------------------------
-apache-airflow[amazon,sentry,slack]==2.9.3  # https://github.com/apache/airflow
+apache-airflow[amazon,sentry,slack]==2.10.5  # https://github.com/apache/airflow
 
 # DBT
 # ------------------------------------------------------------------------------
-dbt-core==1.5.*  # https://github.com/dbt-labs/dbt-core
+dbt-core  # https://github.com/dbt-labs/dbt-core
 dbt-postgres  # https://github.com/dbt-labs/dbt-postgres
-dbt-fal  # https://github.com/fal-ai/dbt-fal
 
 # Data management (scripts, DAG, ...)
 # ------------------------------------------------------------------------------
 ftputil  # https://ftputil.sschwarzer.net/
-pandas  # https://github.com/pandas-dev/pandas
+# Pandas 2.2 break DataFrame.to_sql() for SQLAlchemy<=2.0, pinning until we move to it
+pandas<2.2  # https://github.com/pandas-dev/pandas
 openpyxl # https://pypi.org/project/openpyxl/
 
 psycopg[binary] # https://www.psycopg.org/

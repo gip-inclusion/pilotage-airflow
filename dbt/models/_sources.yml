@@ -27,6 +27,7 @@ sources:
         description: >
           Table générée par l'ASP et fournie via un partage de mail.
           Cette dernière contient les données de bénéficiaires et sorties, calculées par l'ASP, pour les années 2022, 2023 et 2024
+      - name: fluxIAE_RefDureePoleEmploi
 
   - name: emplois
     schema: public
@@ -40,6 +41,7 @@ sources:
       - name: c1_private_dashboard_visits_v0
         description: >
           Propose une ligne par visite enregistrée sur un tableau de bord privé du Pilotage de l'Inclusion.
+      - name: c1_ref_motif_suspension
       - name: candidats_v0
       - name: candidatures
       - name: cap_campagnes
@@ -57,6 +59,7 @@ sources:
       - name: organisations_v0
       - name: pass_agréments
       - name: structures
+      - name: suspensions_v0
       - name: utilisateurs_v0
       - name: demandes_de_prolongation
       - name: prolongations

@@ -27,7 +27,7 @@ with airflow.DAG(
 
     dbt_generate_docs = bash.BashOperator(
         task_id="dbt_generate_docs",
-        bash_command="rm -rf /tmp/dbt-docs && DBT_TARGET_PATH=/tmp/dbt-docs dbt docs generate",
+        bash_command="dbt docs generate",
         env=env_vars,
         append_env=True,
     )
@@ -43,7 +43,7 @@ with airflow.DAG(
         "--delete-removed",
         "--guess-mime-type",
         "--acl-public",
-        "/tmp/dbt-docs/",
+        f'{os.getenv("DBT_TARGET_PATH")}/',
         "s3://${S3_DOCS_BUCKET}/",
     ]
     if os.getenv("S3_DOCS_HOST", "").startswith("http://"):
@@ -55,4 +55,4 @@ with airflow.DAG(
 
     end = empty.EmptyOperator(task_id="end")
 
-    (start >> dbt_generate_docs >> cellar_sync >> end)
+    (start >> dbt_deps >> dbt_generate_docs >> cellar_sync >> end)

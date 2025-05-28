@@ -40,15 +40,6 @@ with airflow.DAG(
             most_recent_import = max(obj["Key"] for obj in response["Contents"])
             logger.info("Most recent file is: %r", most_recent_import)
 
-            # Check that the file is new; this DAG shouldn't run on the same file twice.
-            if Variable.get("ASP_FLUX_IAE_MOST_RECENT_IMPORT", None) == most_recent_import:
-                raise RuntimeError(
-                    f"{most_recent_import} is the most recent FluxIAE import in the bucket, "
-                    "but a file with the same key was already imported! "
-                    "A new export may not have uploaded to the bucket. To re-run the DAG with the file, "
-                    "clear the value of ASP_FLUX_IAE_MOST_RECENT_IMPORT from the Airflow variables."
-                )
-
             # Retrieve the encrypted and compressed file from S3 storage.
             client.download_fileobj(bucket_name, most_recent_import, file)
 
@@ -101,7 +92,6 @@ with airflow.DAG(
 
         # Process complete. Mark this run as the most recent successful import.
         logger.info(f"Populated FluxIAE. Logging {imported_file_key} to configuration")
-        Variable.set("ASP_FLUX_IAE_MOST_RECENT_IMPORT", imported_file_key)
 
     @task(task_id="cleanup_import_directory")
     def clean_work_directory(import_directory, **kwargs):
