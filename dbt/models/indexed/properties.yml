@@ -4,6 +4,13 @@ models:
   - name: fluxIAE_ContratMission_v2
     description: >
       Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
+    columns:
+      - name: contrat_id_ctr
+        description: >
+          Identifiant unique du contrat de mission.
+        tests:
+          - unique
+          - not_null
   - name: fluxIAE_EtatMensuelIndiv_v2
     description: >
       Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.

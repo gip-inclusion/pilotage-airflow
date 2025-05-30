@@ -19,8 +19,8 @@ select distinct
         partition by ctr.contrat_id_pph, ctr.contrat_mesure_disp_code
         order by ctr.contrat_date_embauche
     )                                                         as groupe_contrat
-from {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
-left join {{ ref('fluxIAE_ContratMission_v2') }} as ctr
+from {{ ref('fluxIAE_ContratMission_v2') }} as ctr
+left join {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
     on emi.emi_ctr_id = ctr.contrat_id_ctr
 left join {{ source("fluxIAE", "fluxIAE_RefFormeContrat") }} as rfc
     on ctr.contrat_format_contrat_code = rfc.rfc_id
@@ -41,3 +41,4 @@ group by
     ctr.contrat_date_sortie_definitive,
     motif_sortie.rms_libelle,
     categorie_sortie.rcs_libelle
+having sum(emi.emi_nb_heures_travail) > 0
