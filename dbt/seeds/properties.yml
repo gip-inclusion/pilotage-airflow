@@ -90,3 +90,9 @@ seeds:
   - name: region_asp
     description: >
       Correspondance entre les régions des extractions ASP et le format du pilotage.
+  - name: ref_clpe_ft
+    description: >
+      Correspondance entre les communes et leur CLPE (comité local pour l'emploi).
+      Fichier obtenu par Denis Gorce le 02/06/2025.
+      La variable département correspond au département de rattachement car certains CLPE sont à cheval sur 2 ou 3 départements et nous en avons choisi un par défaut.
+      Certains CLPE ne sont pas encore définis et dans ce cas, c’est la notion de bassin d’emploi (de France Travail) qui est utilisée.
