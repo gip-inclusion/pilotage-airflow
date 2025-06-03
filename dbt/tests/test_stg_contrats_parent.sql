@@ -1,11 +1,12 @@
 with multiple_contrat_parent_id as (
     select
         contrat_parent_id,
-        count(*) as count
+        count(*) as count_occurences
     from {{ ref('stg_contrats_parent') }}
+    group by contrat_parent_id
     having count(*) > 1
 )
 
-select count(*)
+select *
 from multiple_contrat_parent_id
-where count(*) > 10
+where count_occurences > 10

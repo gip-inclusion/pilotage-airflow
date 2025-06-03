@@ -262,11 +262,10 @@ models:
       - name: af_mesure_dispositif_code
       - name: af_id_annexe_financiere
         tests:
-          - unique
           - not_null
+          - unique
       - name: af_numero_annexe_financiere
         tests:
-          - unique
           - not_null
       - name: af_id_structure
       - name: af_date_debut_effet_v2
