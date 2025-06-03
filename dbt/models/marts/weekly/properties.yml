@@ -1,6 +1,15 @@
 version: 2
 
 models:
+  - name : contrats
+    description: >
+     Table avec les informations détaillés sur les contrats. Seulement les contrats avec
+     un nombre d'heures travailées supérieure à zéro sont présents.
+    columns:
+      - name: contrat_id_ctr
+        tests:
+          - unique
+          - not_null
   - name: contrats_cvg_phc
     description: >
       Table créée pour que convergence puisse visualiser le nombre de contrats de type cvg phc par structure et par année.
@@ -19,6 +28,36 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('suivi_etp_realises_v2')
+  - name: formations
+    description: >
+      Table permettant de récupérer les formations des salariés à partir du fluxIAE de l'ASP.
+      Elle permet d'y ajouter les libellés de l'objectif et du type ainsi que de savoir si le bénéficiaire a travaillé plus
+      de zero heure dans le contrat qu'y est associé.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('fluxIAE', 'fluxIAE_Formations')
+    columns:
+      - name: formation_id_for
+        description: "Identifiant unique de la formation"
+        tests:
+          - not_null
+          - unique
+      - name: formation_id_ctr
+        description: "Identifiant du contrat associé à la formation"
+        tests:
+          - not_null
+      - name: formation_objectif_libelle
+        description: "Libellé de l'objectif de la formation"
+        tests:
+          - not_null
+      - name: nombre_heures_travail_non_zero
+        description: "Indique si le bénéficiaire a travaillé plus de zero heure dans le contrat associé à la formation"
+        tests:
+          - not_null
+      - name: formation_type_libelle
+        description: "Libellé du type de la formation"
+        tests:
+          - not_null
   - name: suivi_consommation_etp_V2
     description: >
       Table créée pour suivre la consommation réelle d'ETPs par structure ainsi que leur conventionnement.

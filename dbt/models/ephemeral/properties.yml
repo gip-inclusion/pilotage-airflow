@@ -31,3 +31,6 @@ models:
   - name: eph_series_mois
     description: >
       Vue créée pour récupérer le dernier jour des mois de l'année en cours et des trois années précédentes
+  - name: eph_heures_travail_contrat
+    description: >
+      Table ephemeral permettant de calculer le nombre d'heures travaillées par contrat

@@ -37,7 +37,7 @@ select
     end                                       as duree_contrat_mois,
     sum(ctr.contrat_duree_contrat)            as duree_contrat_asp_mois,
     max(struct_emplois.structure_convergence) as structure_convergence
-from {{ ref('eph_stg_contrats') }} as ctr
+from {{ ref('contrats') }} as ctr
 left join {{ ref("fluxIAE_Structure_v2") }} as structs
     on ctr.contrat_id_structure = structs.structure_id_siae
 left join {{ ref('stg_structures') }} as struct_emplois

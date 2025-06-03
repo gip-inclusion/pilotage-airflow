@@ -146,16 +146,13 @@ models:
       Permet de calculer les recrutements à partir des contrats. Une agrégation des reconductions (via groupe_contrat) permet de récupérer l'identifiant du premier/dernier contrat, ainsi que la date de début et de fin du recrutement.
   - name: stg_contrats
     description: >
-      Ajoute aux contrats un identifiant (id_recrutement) permettant de regrouper les reconductions d'un même contrat.
-      Pour une personne physique (contrat_id_pph), tous les contrats qui sont des reconductions d'un contrat initial auront le même groupe_contrat.
+      Vue permettant d'avoir des informations détaillées sur les contrats.
+      Cette table contient également les contrats avec une nombre totale d'heures travaillées = 0.
     columns:
       - name: contrat_id_ctr
         tests:
           - unique
           - not_null
-      - name: groupe_contrat
-        description: >
-          Identifiant unique (lorsqu'on groupe par contrat_id_pph, et contrat_mesure_disp_code) du groupe de contrat. Il est utilisé pour regrouper les reconductions d'un même contrat.
   - name: stg_contrats_parent
     description: >
       Permet de récupérer les contrats parents (contrats initiaux) à partir des contrats.
@@ -331,3 +328,18 @@ models:
     description: >
       Vue permettant d'exploser les données de la table suivi_etp_conventionnes_v2 par mois.
       On aura plus une ligne par annexe financière mais une ligne par annexe financière et mois
+
+  - name: stg_group_contrats
+    description: >
+      Vue associant à un contrat un champ nommé groupe_contrat. Les contrats appartenants
+      au même groupe contrat constituent le contrat initiale et ses renouvellements.
+    columns:
+      - name: groupe_contrat
+        description: "Identifiant unique du groupe de contrat"
+        tests:
+          - not_null
+      - name: contrat_id_ctr
+        description: "Identifiant du contrat"
+        tests:
+          - not_null
+          - unique
