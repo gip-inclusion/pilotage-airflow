@@ -12,7 +12,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from dags.common import db
-from dags.common.anonymize__sensible_data import hash_content, normalize_sensible_data
+from dags.common.anonymize_sensible_data import hash_content, normalize_sensible_data
 from dags.common.immersion_facilitee.models import Conventions
 
 
@@ -101,7 +101,7 @@ def get_dataframe_from_response(table_data: List[Dict]) -> pd.DataFrame:
                 normalize_sensible_data(
                     row["signatoriesBeneficiaryFirstName"],
                     row["signatoriesBeneficiaryLastName"],
-                    pd.to_datetime(row["signatoriesBeneficiaryBirthdate"]).date(),
+                    pd.to_datetime(row["signatoriesBeneficiaryBirthdate"]).date().isoformat(),
                 )
             )
         ],

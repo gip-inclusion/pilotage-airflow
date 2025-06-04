@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from psycopg import sql
 
-from dags.common.anonymize__sensible_data import hash_content
+from dags.common.anonymize_sensible_data import hash_content
 from dags.common.db import MetabaseDatabaseCursor3
 from dags.common.python import batched
 

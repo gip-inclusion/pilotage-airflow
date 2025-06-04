@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dags.common.anonymize__sensible_data import normalize_sensible_data
+from dags.common.anonymize_sensible_data import normalize_sensible_data
 
 
 def test_normal_case():
