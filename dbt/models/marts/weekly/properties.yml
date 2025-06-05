@@ -274,3 +274,12 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('stg_accompagnement_pro')
+  - name: caracteristiques_beneficiaires
+    description: >
+      Table permettant d'obtenir les caractéristiques des bénéficiaires par id d'annexe financière. Cette table reprend et reproduit les calculs fait par l'ASP.
+      La seule différence se trouve sur les tranches d'âge car nous n'avons pas la date de naissance exacte mais uniquement les années de naissance.
+      Nous ne pouvons avoir qu'un contrat par af_id, nous utilisons donc la concaténation entre les deux comme clé primaire.
+    columns:
+      - name: id_af_contrat
+        tests:
+          - unique
