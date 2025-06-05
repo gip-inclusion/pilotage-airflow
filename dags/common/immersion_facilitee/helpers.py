@@ -26,7 +26,7 @@ def api_client() -> httpx.Client:
     """
     return httpx.Client(
         base_url=Variable.get("API_IMMERSION_FACILITEE_BASE_URL"),
-        headers={"authorization": "{}".format(Variable.get("API_IMMERSION_FACILITEE_TOKEN"))},
+        headers={"authorization": str(Variable.get("API_IMMERSION_FACILITEE_TOKEN"))},
         timeout=httpx.Timeout(timeout=5, read=30),
     )
 
@@ -46,18 +46,17 @@ def get_all_items(path: str) -> List[Dict]:
 
     client = api_client()
 
-    date_temp = start_date_greater
-
     data = []
-    while date_temp < start_date_less_or_equal:
-        str_date_g = date_temp.strftime("%Y-%m-%d")
-        str_date_l = (date_temp + relativedelta(days=1)).strftime("%Y-%m-%d")
+
+    for date_temp in pd.date_range(start_date_greater, start_date_less_or_equal, freq="D"):
+        str_date_g = date_temp
+        str_date_l = date_temp + relativedelta(days=1)
         response = client.get(
             path,
             params={
                 "withStatuses[]": ["ACCEPTED_BY_VALIDATOR"],
-                "startDateLessOrEqual": str_date_l,
-                "startDateGreater": str_date_g,
+                "startDateLessOrEqual": str_date_l.strftime("%Y-%m-%d"),
+                "startDateGreater": str_date_g.strftime("%Y-%m-%d"),
             },
         )
         response.raise_for_status()
@@ -68,7 +67,6 @@ def get_all_items(path: str) -> List[Dict]:
             data_partial = []
 
         data.extend(data_partial)
-        date_temp = date_temp + relativedelta(days=1)
         time.sleep(0.5)
 
     logger.info("Got %r items", len(data))

@@ -9,7 +9,6 @@ def hash_content(content: str) -> str:
 
 
 def normalize_sensible_data(*args: str) -> str:
- #   content = f"{first_name}{last_name}{birth_date.isoformat()}"
     normalized_args = []
     for arg in args:
         if not isinstance(arg, str):
