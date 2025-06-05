@@ -1,5 +1,4 @@
 import csv
-import hashlib
 import os
 from pathlib import Path
 
@@ -7,6 +6,7 @@ import numpy as np
 import pandas as pd
 from psycopg import sql
 
+from dags.common.anonymize_sensible_data import hash_content
 from dags.common.db import MetabaseDatabaseCursor3
 from dags.common.python import batched
 
@@ -150,10 +150,6 @@ def get_new_table_name(table_name):
 
 def get_old_table_name(table_name):
     return f"z_old_{table_name}"
-
-
-def hash_content(content):
-    return hashlib.sha256(f'{content}{os.getenv("HASH_SALT")}'.encode()).hexdigest()
 
 
 def anonymize_fluxiae_df(df):
