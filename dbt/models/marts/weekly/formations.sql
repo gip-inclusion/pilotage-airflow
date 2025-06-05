@@ -10,7 +10,7 @@ select
     ctr.structure_siret_actualise,
     ctr.nom_region_structure,
     ctr.code_dept_structure,
-    ctr.nombre_heures_travail_non_zero,
+    ctr.nombre_heures_travail_zero,
     ctr.structure_denomination_unique,
     ref_obj.rof_libelle                                as formation_objectif_libelle,
     ref_type.rtf_libelle                               as formation_type_libelle,
