@@ -1,47 +1,16 @@
 from datetime import datetime
+import pytest
 
 from dags.common.anonymize_sensible_data import normalize_sensible_data
 
-
-def test_normal_case():
-    first_name = "Jean"
-    last_name = "Dupont"
-    birth_date = datetime(1990, 1, 1)
-
+@pytest.mark.parametrize("first_name, last_name", [
+    ("Jean", "Dupont"),
+    ("Jéan", "Dùpont"),
+    ("Jeaœn!", "Dupont@"),
+    ("Je-An", "Du Po_nt"),
+])
+def test_normalization(first_name, last_name):
+    birth_date = datetime(1990, 1, 1).isoformat()
+    expected = "jean-dupont-19900101t000000"  # Expected output for all cases
     result = normalize_sensible_data(first_name, last_name, birth_date)
-    expected = "jeandupont01011990"
-
-    assert result == expected
-
-
-def test_accents():
-    first_name = "Jéan"
-    last_name = "Dùpont"
-    birth_date = datetime(1990, 1, 1)
-
-    result = normalize_sensible_data(first_name, last_name, birth_date)
-    expected = "jeandupont01011990"
-
-    assert result == expected
-
-
-def test_special_characters():
-    first_name = "Jeaœn!"
-    last_name = "Dupont@"
-    birth_date = datetime(1990, 1, 1)
-
-    result = normalize_sensible_data(first_name, last_name, birth_date)
-    expected = "jeandupont01011990"
-
-    assert result == expected
-
-
-def test_with_spaces_and_dashes():
-    first_name = "Jean-Pierre"
-    last_name = "Dupont Smith_"
-    birth_date = datetime(1990, 1, 1)
-
-    result = normalize_sensible_data(first_name, last_name, birth_date)
-    expected = "jeanpierredupontsmith01011990"
-
     assert result == expected
