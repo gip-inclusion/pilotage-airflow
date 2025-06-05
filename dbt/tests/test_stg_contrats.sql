@@ -2,7 +2,7 @@ with nb_contrat as (
     select
         (
             select count(distinct contrat_id_ctr)
-            from stg_contrats
+            from {{ ref('stg_contrats') }}
             where extract(year from contrat_date_embauche) >= 2021 and num_reconduction = 0
         ) as contrats_stg,
         (

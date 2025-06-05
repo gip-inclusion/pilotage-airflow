@@ -6,7 +6,7 @@ select
     max(contrat_date_fin_contrat)       as date_fin_recrutement,
     max(contrat_date_sortie_definitive) as date_sortie_definitive,
     max(num_reconduction)               as nb_reconductions
-from {{ ref('eph_stg_contrats') }}
+from {{ ref('contrats') }}
 --because we consider only contracts starting in 2021
 where extract(year from contrat_date_embauche) >= 2021
 group by
