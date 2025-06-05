@@ -50,8 +50,8 @@ models:
         description: "Libellé de l'objectif de la formation"
         tests:
           - not_null
-      - name: nombre_heures_travail_non_zero
-        description: "Indique si le bénéficiaire a travaillé plus de zero heure dans le contrat associé à la formation"
+      - name: nombre_heures_travail_zero
+        description: "Indique si le bénéficiaire a travaillé zero heure dans le contrat associé à la formation"
         tests:
           - not_null
       - name: formation_type_libelle

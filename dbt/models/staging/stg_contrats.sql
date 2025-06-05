@@ -26,9 +26,9 @@ select
     case
         when
             emi.emi_nb_heures_travail > 0
-            then 'oui'
-        else 'non'
-    end                                                       as nombre_heures_travail_non_zero
+            then 'non'
+        else 'oui'
+    end                                                       as nombre_heures_travail_zero
 from {{ ref('fluxIAE_ContratMission_v2') }} as ctr
 left join {{ ref('eph_heures_travail_contrat') }} as emi
     on ctr.contrat_id_ctr = emi.emi_ctr_id
