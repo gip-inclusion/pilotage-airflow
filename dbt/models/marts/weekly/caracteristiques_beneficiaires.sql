@@ -39,7 +39,11 @@ select
         when ctr.niveau_de_formation = 'PERSONNES AVEC QUALIFICATIONS NON CERTIFIANTES' then 'Formation non certifiante'
         when ctr.niveau_de_formation in ('PAS DE FORMATION AU DELA DE LA SCOLARITE OBLIG.') then 'Formation inférieure au CAP'
         else ctr.niveau_de_formation
-    end                                                       as niveau_de_formation
+    end                                                       as niveau_de_formation,
+    case
+        when sum(etp.nombre_heures_travaillees) >= 1 then 'Non'
+        else 'Oui'
+    end                                                       as nombre_heures_travail_zero
 from
     {{ ref('etp_par_salarie') }} as etp
 left join {{ ref('fluxIAE_Salarie_v2') }} as salarie
@@ -72,4 +76,3 @@ group by
     tranche_age_beneficiaires,
     niveau_de_formation,
     ctr.duree_inscription_ft
-having sum(etp.nombre_heures_travaillees) >= 1

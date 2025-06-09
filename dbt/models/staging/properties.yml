@@ -59,6 +59,10 @@ models:
     description: >
       Vue créée pour calculer les ETPs réalisés à partir du fluxIAE de l'ASP.
   - name: stg_candidats_candidatures
+  - name: stg_caracteristiques_beneficiaires_ordonnees_per_hash_nir
+    description: >
+      Vue permettant d'avoir les caracteristiques des bénéficiares associées à chaque annexe_financier et contrat.
+      On y ajoute le champs rang permettant de savoir quelle est l'information associée au contrat le plus récent (rang=1) pour chaque hash_nir.
     description: >
       Vue créée pour joindre les dates d'embauche de chaque candidat. Cette vue est utilisée dans candidats_derniere_embauche.sql pour extraire la dernière date d'embauche d'un candidat.
   - name: stg_salarie
