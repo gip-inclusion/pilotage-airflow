@@ -1,5 +1,6 @@
+import sqlalchemy
 from sqlalchemy import CheckConstraint, Column
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import DateTime, String
 
@@ -13,6 +14,14 @@ DB_SCHEMA = "immersion_facilitee"
 ImmersionFaciliteeBase = declarative_base()
 
 
+def check_siret(col_name: str) -> sqlalchemy.CheckConstraint:
+    """
+    Check constraint for SIRET numbers.
+    SIRET numbers must be 14 digits long.
+    """
+    return CheckConstraint("siret ~ '^[0-9]{14}$'", name=f"check_siret_{col_name}")
+
+
 def create_tables():
     db.create_schema(DB_SCHEMA)
     ImmersionFaciliteeBase.metadata.create_all(db.connection_engine())
@@ -21,15 +30,9 @@ def create_tables():
 class Conventions(ImmersionFaciliteeBase):
 
     __tablename__ = "conventions"
-    __table_args__ = (
-        CheckConstraint("char_length(siret)=14 AND siret ~ '^[0-9]{14}$'", name="siret_check"),
-        CheckConstraint(
-            'char_length("agencySiret")=14 AND "agencySiret" ~ \'^[0-9]{14}$\'', name="agency_siret_check"
-        ),
-        {"schema": DB_SCHEMA},
-    )
+    __table_args__ = {"schema": DB_SCHEMA}
 
-    id = Column(String, primary_key=True)
+    id = Column(UUID(as_uuid=True), primary_key=True)
 
     status = Column(String)
     statusJustification = Column(String)
@@ -39,7 +42,7 @@ class Conventions(ImmersionFaciliteeBase):
     dateEnd = Column(DateTime)
     dateApproval = Column(DateTime)
     dateValidation = Column(DateTime, nullable=True)
-    siret = Column(String(length=14))
+    siret = Column(String, check_siret("siret"))
     immersionObjective = Column(String)
     immersionAppellationRomeCode = Column(String)
     immersionAppellationRomeLabel = Column(String)
@@ -52,7 +55,7 @@ class Conventions(ImmersionFaciliteeBase):
     agencyName = Column(String)
     agencyDepartment = Column(String)
     agencyKind = Column(String)
-    agencySiret = Column(String(length=14))
+    agencySiret = Column(String, check_siret("agencySiret"))
     agencyRefersToId = Column(String)
     agencyRefersToName = Column(String)
     agencyRefersToKind = Column(String)

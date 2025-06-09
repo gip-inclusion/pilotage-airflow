@@ -61,13 +61,10 @@ def get_all_items(path: str) -> List[Dict]:
         )
         response.raise_for_status()
 
-        if response:
-            data_partial = response.json()
-        else:
-            data_partial = []
+        data_partial = response.json()
 
         data.extend(data_partial)
-        time.sleep(0.5)
+        time.sleep(0.2)  # Respecter le rate limit de l'API
 
     logger.info("Got %r items", len(data))
     return data
@@ -75,7 +72,7 @@ def get_all_items(path: str) -> List[Dict]:
 
 def get_dataframe_from_response(table_data: List[Dict]) -> pd.DataFrame:
 
-    fields_to_remove = [
+    unwanted_fields = [
         "schedule",
         "establishmentTutor",
         "validators",
@@ -90,26 +87,28 @@ def get_dataframe_from_response(table_data: List[Dict]) -> pd.DataFrame:
         "businessName",
     ]
 
-    table_cleaned = [{k: v for k, v in item.items() if k not in fields_to_remove} for item in table_data]
-    df = pd.json_normalize(table_cleaned)
-    df.columns = [dot_to_camel(col) for col in df.columns]
-    df["beneficiaryId"] = df.apply(
+    table_data_without_unwanted_fields = [
+        {k: v for k, v in item.items() if k not in unwanted_fields} for item in table_data
+    ]
+    df_data = pd.json_normalize(table_data_without_unwanted_fields)
+    df_data.columns = [dot_to_camel(col) for col in df_data.columns]
+    df_data["beneficiaryId"] = df_data.apply(
         lambda row: [
             hash_content(
                 normalize_sensible_data(
                     row["signatoriesBeneficiaryFirstName"],
                     row["signatoriesBeneficiaryLastName"],
-                    pd.to_datetime(row["signatoriesBeneficiaryBirthdate"]).date().isoformat(),
+                    pd.to_datetime(row["signatoriesBeneficiaryBirthdate"]).date(),
                 )
             )
         ],
         axis=1,
     )
 
-    cols_to_remove = [col for col in df.columns if col.startswith("signatories")]
-    df = df.drop(columns=cols_to_remove)
-    df = df.where(pd.notnull(df), None)
-    return df
+    unwanted_sensible_data_cols = [col for col in df_data.columns if col.startswith("signatories")]
+    df_data = df_data.drop(columns=unwanted_sensible_data_cols)
+    df_data = df_data.where(pd.notnull(df_data), None)
+    return df_data
 
 
 def dot_to_camel(name: str) -> str:
