@@ -26,4 +26,4 @@ with DAG("immersion_facilitee", schedule_interval="@weekly", **dag_args) as dag:
         insert_data_to_db(df)
         logger.info("Import complete.")
 
-    python.PythonOperator(task_id="create_schema", python_callable=create_tables) >> [import_conventions()]
+    python.PythonOperator(task_id="create_schema", python_callable=create_tables) >> import_conventions()
