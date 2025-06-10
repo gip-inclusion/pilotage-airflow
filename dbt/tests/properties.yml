@@ -28,9 +28,6 @@ tests:
   - name: test_etp_conventionnes
     description: >
       Permet de vérifier que l'on a le bon nombre d'ETP conventionnes
-  - name: test_fluxIAE_MarchesPublics
-    description: >
-        Test permettant de vérifier que l'on a le même montant de recettes entre le fichier fluxIAE_MarchesPublics et fluxIAE_MarchesPublics_v2
   - name: test_etp_dgefp_pilo
     description: >
         Test permettant de vérifier que nos données d'ETP sont raccord avec celle de la DGEFP.
