@@ -1,0 +1,154 @@
+variable;question;type;comment;
+submission_id;Submission ID;String;;
+submitted_at;Submitted at;DateTime;;
+esat_role;Quelle est votre fonction au sein de l'ESAT?;String;;
+esat_name;Quel est le nom de votre ESAT ?;String;;
+esat_siret;Quel est le numéro SIRET de l'ESAT?;String;;
+finess_num;Quel est le numéro FINESS de l’établissement principal?;String;;
+managing_organization_name;"Quel est votre organisme gestionnaire&nbsp;?";String;;
+esat_status;Quel est le statut de l'ESAT : est-il un ESAT privé sans but lucratif ou public ?;String;;
+esat_reg;"Quels sont la région et le département d’implantation de l'ESAT&nbsp;?";String;;
+esat_dept;L'ESAT est dans le département :;String;;
+nb_places_allowed;"Au 31 décembre 2024, quel était le nombre de places autorisées par l’ARS pour l'ESAT&nbsp;?";Float;;
+nb_employee_worked;"Combien de salarié(e)s ou d’agents publics (ESAT publics)&nbsp;ont travaillé dans l'ESAT?";Float;;
+nb_employee_acc;Combien de travailleurs et travailleuses avez-vous accompagné ?;Float;;
+mean_employee_age;"Quel était l’âge moyen des travailleurs et travailleuses accompagnés&nbsp;?";Float;;
+mean_seniority;"Quelle était l’ancienneté moyenne des travailleurs et travailleuses accompagnés&nbsp;? (en mois)";Float;;
+nb_employee_half_time;"Parmi eux, combien de travailleurs et travailleuses étaient à temps partiel&nbsp;? (hors situation de temps partagé entre milieu protégé et milieu ordinaire)";Float;;
+nb_employee_ordinary_job;Quel était le nombre de travailleurs et travailleuses dans l'ESAT ayant occupé antérieurement à leur admission un emploi en milieu ordinaire y compris adapté ?;Float;;
+nb_employee_new;Quel était le nombre de travailleurs et travailleuses dans l'ESAT admis pour la première fois en milieu protégé ?;Float;;
+nb_employee_temporary;Combien de travailleurs et travailleuses ont été admis temporairement dans l'ESAT pour remplacer des travailleurs absents pour maladie, pour suivre une action formation ou pour occuper un emploi à temps partiel ? (et maintenir ainsi votre capacité d’activité en bénéficiant via l’ASP de l’annualisation de l’aide au poste);Float;;
+nb_employee_willing_ordinary;Combien de travailleurs de l'ESAT ont exprimé dans leur projet personnalisé leur volonté d’aller travailler en milieu ordinaire ?;Float;;
+nb_employee_FT_job_seekers;"Combien de travailleurs et travailleuses se sont inscrits comme demandeurs d’emploi à France Travail ?&nbsp;";Float;;
+nb_employee_MISPE_MDPH;"Combien de personnes ont été&nbsp;accueillies par l'ESAT dans le cadre d’une mise en situation professionnelle (MISPE) prescrite par une MDPH&nbsp;?";Float;;
+nb_employee_MISPE_RPE;"Combien de personnes ont été&nbsp;accueillies par l'ESAT dans le cadre d’une mise en situation professionnelle (MISPE) prescrite par le réseau pour l'emploi (RPE)&nbsp;?";Float;;
+prescription_delegate;"Êtes-vous délégataire de prescription de PMSMP&nbsp;pour les travailleurs et travailleuses que vous accompagnez&nbsp;?";String;;
+PMSMP_refused;"Avez-vous eu des refus de PMSMP par les organismes du&nbsp;réseau pour l'emploi (France Travail, Cap Emploi, Mission Locale) pour un ou plusieurs de vos travailleurs et travailleuses?";String;;
+;Combien de travailleurs et travailleuses de l'ESAT ont réalisé au moins une activité à caractère professionnel en dehors de l’établissement?;;;
+nb_employee_PMSMP;Nombre de travailleurs et travailleuses ayant effectué une PMSMP;Float;;Combien de travailleurs et travailleuses de l'ESAT ont réalisé au moins une activité à caractère professionnel en dehors de l’établissement? (Période de mise en situation en milieu professionnel (PMSMP))
+nb_employee_service;Nombre de travailleurs et travailleuses ayant réalisé une prestation de service auprès d'une entreprise, d'une collectivité publique ou de tout autre organisme, assurée avec ou un plusieurs salarié(e)s de l'ESAT;Float;;Combien de travailleurs et travailleuses de l'ESAT ont réalisé au moins une activité à caractère professionnel en dehors de l’établissement? (Prestation de service auprès d'une entreprise, d'une collectivité publique ou de tout autre organisme, assurée avec un ou plusieurs salarié(e)s de l'ESAT)
+nb_employee_dispo_indiv;Nombre de travailleurs et travailleuses ayant réalisé une mise à disposition individuelle d'un employeur public ou privé;Float;;Combien de travailleurs et travailleuses de l'ESAT ont réalisé au moins une activité à caractère professionnel en dehors de l’établissement? (Mise à disposition individuelle d'un employeur public ou privé)
+no_activity_outside;Nombre de travailleurs et travailleuses ayant réalisé une mise à disposition collective d'un employeur public ou privé;Float;;Combien de travailleurs et travailleuses de l'ESAT ont réalisé au moins une activité à caractère professionnel en dehors de l’établissement? (Aucun travailleur n'a réalisé d'activité en dehors de l’établissement)
+nb_employee_dispo_collec;Nombre de travailleurs et travailleuses ayant réalisé une activité en boutique/restaurant;Float;;Combien de travailleurs et travailleuses de l'ESAT ont réalisé au moins une activité à caractère professionnel en dehors de l’établissement? (Mise à disposition collective d'un employeur public ou privé)
+nb_employee_restau;Combien de travailleurs et travailleuses de l'ESAT ont réalisé au moins une activité à caractère professionnel en dehors de l’établissement? (Exercice d’une activité en boutique / restaurant (activité ouverte sur la cité sans être une prestation de service sur site ou mise à disposition));Boolean;;
+pct_activity_outside;Sur l’ensemble de l’activité de l’ESAT, quel est le pourcentage d’activité exercée en dehors de l’établissement?;String;;
+nb_employee_cumul_ESAT_EA;Combien de travailleurs et travailleuses ont cumulé un temps partiel dans l'ESAT et un emploi à temps partiel en Entreprise Adaptée ?;Float;;
+nb_employee_cumul_ESAT_ordi;Combien de travailleurs et travailleuses ont cumulé un temps partiel dans l'ESAT avec un emploi à temps partiel en milieu ordinaire classique, privé ou public ? (hors Entreprise Adaptée);Float;;
+nb_employee_left;En 2024, combien de travailleurs et travailleuses ont quitté l'ESAT?;Float;;
+nb_employee_left;Combien de travailleurs et travailleuses ont quitté l'ESAT pour un emploi dans le milieu ordinaire privé ou public, adapté, y compris intérim ?;String;;
+nb_employee_left_EA;Nombre de travailleurs en entreprise adaptée;Float;Combien de travailleurs et travailleuses ont quitté l'ESAT pour un emploi dans le milieu ordinaire privé ou public, adapté, y compris intérim ? (Entreprise adaptée);
+nb_employee_left_private;Nombre de travailleurs dans le public;Float;Combien de travailleurs et travailleuses ont quitté l'ESAT pour un emploi dans le milieu ordinaire privé ou public, adapté, y compris intérim ? (Public );
+nb_employee_left_public;Nombre de travailleurs dans le privé;Float;Combien de travailleurs et travailleuses ont quitté l'ESAT pour un emploi dans le milieu ordinaire privé ou public, adapté, y compris intérim ? (Privé (hors associatif et Entreprise Adaptée));
+nb_employee_left_asso;Nombre de travailleurs en association;Float;Combien de travailleurs et travailleuses ont quitté l'ESAT pour un emploi dans le milieu ordinaire privé ou public, adapté, y compris intérim ? (Association);
+;;Float;Combien de travailleurs et travailleuses ont quitté l'ESAT pour un emploi dans le milieu ordinaire privé ou public, adapté, y compris intérim ? (Aucun travailleur n'a quitté l'ESAT pour être recruté dans le milieu ordinaire privé ou public, adapté, y compris intérim);
+;Pour ces travailleurs et travailleuses ayant quitté l'ESAT pour être recrutés ailleurs, quel type de contrat ont-ils signé?;;;
+nb_employee_CDI;Nombre de travailleurs ayant signé un CDI;Float;Pour ces travailleurs et travailleuses ayant quitté l'ESAT pour être recrutés ailleurs, quel type de contrat ont-ils signé? (CDI);
+nb_employee_CDD;Nombre de travailleurs ayant signé un CDD;Float;Pour ces travailleurs et travailleuses ayant quitté l'ESAT pour être recrutés ailleurs, quel type de contrat ont-ils signé? (CDD );
+nb_employee_interim;Nombre de travailleurs en  missions Interim;Float;Pour ces travailleurs et travailleuses ayant quitté l'ESAT pour être recrutés ailleurs, quel type de contrat ont-ils signé? (Mission Intérim);
+nb_employee_prof;Nombre de travailleurs en contrat de professionnalisation;Float;Pour ces travailleurs et travailleuses ayant quitté l'ESAT pour être recrutés ailleurs, quel type de contrat ont-ils signé? (Contrat de professionnalisation);
+nb_employee_apprentice;Nombre de travailleurs en contrat d'apprentissage;Float;Pour ces travailleurs et travailleuses ayant quitté l'ESAT pour être recrutés ailleurs, quel type de contrat ont-ils signé? (Contrat d'apprentissage);
+no_employee_left;Pour ces travailleurs et travailleuses ayant quitté l'ESAT pour être recrutés ailleurs, quel type de contrat ont-ils signé? (Aucun travailleur n'a quitté l'ESAT pour être recruté dans le milieu ordinaire privé ou public, adapté, y compris intérim);Boolean;;
+return_to_work;Des travailleurs et travailleuses ont-ils exercé leur droit au retour après avoir occupé un emploi en milieu ordinaire de travail ? (entreprise classique ou adaptée ou tout autre organisme public ou privé);String;;
+nb_employee_reinteg;Nombre de travailleurs et travailleuses ayant réintégrés l'ESAT;Float;"Des travailleurs et travailleuses ont-ils exercé leur droit au retour après avoir occupé un emploi en milieu ordinaire de travail ? (entreprise classique ou adaptée ou tout autre organisme public ou privé)
+(Réintégration au sein de l'ESAT)";
+nb_employee_reinteg_other;Nombre de travailleurs et travailleuses ayant intégrés un autre ESAT;Float;"Des travailleurs et travailleuses ont-ils exercé leur droit au retour après avoir occupé un emploi en milieu ordinaire de travail ? (entreprise classique ou adaptée ou tout autre organisme public ou privé)
+(Orientation et intégration au sein d’un autre ESAT avec lequel une convention de partenariat a été signée pour garantir l’exercice du droit au retour)";
+nb_esat_conv;Avec combien d'ESAT avez-vous conventionné pour garantir l’exercice du droit au retour?;Float;;
+nb_conv_exit;Combien de conventions d'appui ont été conclues dans l'ESAT avec un employeur privé ou public pour accompagner la sortie et le parcours professionnel d’un travailleur en milieu ordinaire ?;Float;;
+nb_employee_left_ESRP;"Combien de travailleurs et travailleuses ont quitté l’ESAT pour suivre une formation en établissement et service de réadaptation professionnelle (ESRP)&nbsp;?";Float;;
+nb_support_hours;Quel était le nombre d’heures de soutien liées à l’activité professionnelle, dont en moyenne chaque travailleur a bénéficié (rémunérées et comprises dans le temps de travail) ?;Float;;
+support_themes;Sur quelles thématiques principales?;String;;
+retirement_preparation;"Quelles ont été les actions conduites par l'ESAT pour préparer les travailleurs et travailleuses au départ à la retraite (inscription dans la démarche Un Avenir Après le Travail, rendez-vous organisés avec la CARSAT, etc.)&nbsp;?";String;;
+UAAT_inscription;"Etes-vous inscrit dans la démarche Un Avenir Après le Travail (UAAT)&nbsp;?";String;;
+nb_UAAT_beneficiary;"Combien de travailleurs et travailleuses ont bénéficié d’actions de préparation à la retraite, dans le cadre ou non d’Un Avenir Après le Travail&nbsp;?";Float;;
+pct_more_than50;"Quelle proportion de travailleurs et travailleuses de plus de 50 ans cela représente&nbsp;?";Float;;
+contrib_OPCO;"Est-ce que l'ESAT a acquitté une contribution pour la formation de vos travailleurs et travailleuses auprès de l’OPCO Santé ou de l’OPCA ANFH (pour les ESAT publics)&nbsp;?";String;;
+pct_OPCO;"Quel a été le taux de votre contribution à l’OPCO Santé ou à l’ANFH&nbsp;?";Float;;
+nb_employee_formation_OPCO;En 2024, combien de travailleurs et travailleuses de l'ESAT ont suivi une formation prise en charge par l'OPCO Santé ou par l’ANFH ?;Float;;
+;"Quels ont été les types de formation dont ont bénéficié les travailleurs et travailleuses de l'ESAT&nbsp;pour reconnaitre et développer leurs compétences ?";String;;
+form_RAE;"Quels ont été les types de formation dont ont bénéficié les travailleurs et travailleuses de l'ESAT&nbsp;pour reconnaitre et développer leurs compétences ? (Reconnaissance des acquis de l’expérience (RAE))";Boolean;;
+form_RSFP;"Quels ont été les types de formation dont ont bénéficié les travailleurs et travailleuses de l'ESAT&nbsp;pour reconnaitre et développer leurs compétences ? (Reconnaissance des savoir-faire professionnels (RSFP))";Boolean;;
+form_VAE;"Quels ont été les types de formation dont ont bénéficié les travailleurs et travailleuses de l'ESAT&nbsp;pour reconnaitre et développer leurs compétences ? (Validation des acquis de l’expérience (VAE))";Boolean;;
+form_AFEST;"Quels ont été les types de formation dont ont bénéficié les travailleurs et travailleuses de l'ESAT&nbsp;pour reconnaitre et développer leurs compétences ? (Action de formation en situation de travail (AFEST))";Boolean;;
+form_other_form;"Quels ont été les types de formation dont ont bénéficié les travailleurs et travailleuses de l'ESAT&nbsp;pour reconnaitre et développer leurs compétences ? (Autres actions)";Boolean;;
+form_no_form;"Quels ont été les types de formation dont ont bénéficié les travailleurs et travailleuses de l'ESAT&nbsp;pour reconnaitre et développer leurs compétences ? (Aucune)";Boolean;;
+nb_employee_RAE;"Combien de travailleurs et travailleuses ont bénéficié d’une RAE ou d’une RSFP&nbsp;?";Float;;
+nb_employee_RSFP;"Combien de travailleurs et travailleuses ont bénéficié d’une VAE&nbsp;?";Float;;
+after_reco_situation_list;"A l’issue de cette reconnaissance ou validation, quelle a été la suite du parcours des travailleurs et travailleuses concerné(e)s&nbsp;?";String;"A l’issue de cette reconnaissance ou validation, quelle a été la suite du parcours des travailleurs et travailleuses concerné(e)s&nbsp;? (Maintien sur l’activité professionnelle initiale au sein de l'ESAT)
+A l’issue de cette reconnaissance ou validation, quelle a été la suite du parcours des travailleurs et travailleuses concerné(e)s&nbsp;? (Accès à d’autres activités professionnelles au sein de l'ESAT)
+A l’issue de cette reconnaissance ou validation, quelle a été la suite du parcours des travailleurs et travailleuses concerné(e)s&nbsp;? (Changement d’ESAT)
+A l’issue de cette reconnaissance ou validation, quelle a été la suite du parcours des travailleurs et travailleuses concerné(e)s&nbsp;? (Accès à une formation via un établissement ou service de réadaptation professionnelle (ESRP))
+A l’issue de cette reconnaissance ou validation, quelle a été la suite du parcours des travailleurs et travailleuses concerné(e)s&nbsp;? (Accès à une formation via un organisme de formation)
+A l’issue de cette reconnaissance ou validation, quelle a été la suite du parcours des travailleurs et travailleuses concerné(e)s&nbsp;? (Accès à un emploi via le temps partagé)
+A l’issue de cette reconnaissance ou validation, quelle a été la suite du parcours des travailleurs et travailleuses concerné(e)s&nbsp;? (Sortie de l'ESAT pour accéder à un emploi en milieu ordinaire ou adapté)";
+OPCO_or_ANFH_refusal;"L'ESAT a –t-il fait l’objet d’un ou plusieurs refus de financement d’une formation par l’OPCO Santé ou l’ANFH&nbsp;?";String;;
+nb_employeed_CPF_unused;"Au 31 décembre 2024, et depuis leur admission dans l'ESAT, combien de travailleurs et travailleuses n'ont pas encore utilisé leur CPF&nbsp;?";Float;;
+CPFReason;Pour quelles raisons?;String;;
+formation_CPF;"Quelle a été la formation majoritairement suivie par les travailleurs et travailleuses de l'ESAT au titre de leur CPF&nbsp;?";String;;
+nb_employee_intern_formation;"Combien de travailleurs et travailleuses ont bénéficié d'au moins une formation animée en interne par les salarié(e)s de l'ESAT&nbsp;?";Float;;
+formation_subject;"Quels ont été les sujets des formation dispensés par l’ESAT&nbsp;?";String;;
+autodetermination_formation;Avez-vous mis en place une formation à l'autodétermination pour les travailleurs et travailleuses?;String;;
+nb_employee_autodetermination;"Combien de travailleurs et travailleuses ont bénéficié d’une formation à l’autodétermination&nbsp;?";Float;"Combien de salarié(e)s de l'ESAT ont bénéficié d’une formation à l’autodétermination&nbsp;?";
+autodetermination_external_formation;La formation à l'autodétermination pour les travailleuses et travailleurs est-elle assurée par l'intermédiaire d'un organisme de formation ?;String;La formation à l'autodétermination pour les salarié(e)s de l’ESAT est-elle assurée par l'intermédiaire d'un organisme de formation ?;
+nb_employee_duoday;En 2024, combien de travailleurs et travailleuses de l'ESAT ont participé à Duoday ?;Float;;
+duoday_board;Avez-vous mis en place un carnet de parcours et de compétences ?;String;;
+duoday_software_used;"Avez-vous utilisé un logiciel spécifique pour mettre en place le carnet, et si oui lequel&nbsp;?";String;;
+;Logiciel utilisé;String;;
+duoday_software_financial_help;"L'ESAT a t-il bénéficié d’une aide financière&nbsp;pour mettre en place ce carnet et le cas échéant, acquérir un logiciel ?&nbsp;&nbsp;&nbsp;";String;;
+duoday_financial_help_type;Type d'aide;String;;
+documents_fALClist;"Au 31 décembre 2024, les principaux documents destinés aux travailleurs et travailleuses étaient-ils accessibles&nbsp;en FALC ou en communication alternative augmentée?(contrat d’accompagnement par le travail, livret d’accueil, règlement de fonctionnement, etc.)&nbsp;&nbsp;";String;"
+Au 31 décembre 2024, les principaux documents destinés aux travailleurs et travailleuses étaient-ils accessibles&nbsp;en FALC ou en communication alternative augmentée?(contrat d’accompagnement par le travail, livret d’accueil, règlement de fonctionnement, etc.)&nbsp;&nbsp; (Oui : contrat d'accompagnement par le travail)
+Au 31 décembre 2024, les principaux documents destinés aux travailleurs et travailleuses étaient-ils accessibles&nbsp;en FALC ou en communication alternative augmentée?(contrat d’accompagnement par le travail, livret d’accueil, règlement de fonctionnement, etc.)&nbsp;&nbsp; (Non)
+Au 31 décembre 2024, les principaux documents destinés aux travailleurs et travailleuses étaient-ils accessibles&nbsp;en FALC ou en communication alternative augmentée?(contrat d’accompagnement par le travail, livret d’accueil, règlement de fonctionnement, etc.)&nbsp;&nbsp; (Oui : livret d'accueil)
+Au 31 décembre 2024, les principaux documents destinés aux travailleurs et travailleuses étaient-ils accessibles&nbsp;en FALC ou en communication alternative augmentée?(contrat d’accompagnement par le travail, livret d’accueil, règlement de fonctionnement, etc.)&nbsp;&nbsp; (Oui : règlement de fonctionnement)";
+employee_delegate;"En 2024, y-a-t-il dans l'ESAT un délégué/une déléguée des travailleurs&nbsp;élu(e) ?";String;;
+employee_delegate_formation;"Est-ce que le délégué ou la déléguée a bénéficié d'une formation&nbsp;:";String;;
+employee_delegate_hours_credit;Est-ce que le délégué ou la déléguée bénéficie d'un crédit d'heures chaque mois pour remplir sa mission?;String;;
+nb_delegate_hours;Si oui, précisez le nombre d'heures;Float;;
+mix_QVT_in_place;Une instance mixte (salarié(e)s/travailleurs et travailleuses) sur la qualité de vie au travail (QVT), l’hygiène et la sécurité et l’évaluation des risques professionnels a-t-elle été mise en place?;String;;
+profit_sharing_bonus;En 2024, quel était le montant moyen de la prime d’intéressement (au sens de l’article R 243-6 du CASF) versée aux travailleurs et travailleuses?;Float;;
+mean_pct_esat_rem;Au 31 décembre 2024, quel était le montant moyen de la part rémunération garantie du travailleur prise en charge financièrement par l'ESAT (en pourcentage du SMIC)?;Float;;
+pct_employee_activity_bonus;Quel pourcentage de travailleurs et travailleuses bénéficie de la prime d'activité?;Float;;
+health_complementary;"Les travailleurs et travailleuses de l’ESAT bénéficiaient-ils en 2024 d’une complémentaire santé collective&nbsp;avec prise en charge par l’ESAT d’une partie du coût de la cotisation ?&nbsp;";String;;
+pct_health_complementary_esat;"Quel était le pourcentage de financement par l'ESAT en 2024&nbsp;?";Float;;
+annual_health_complementary_budget;"Quel était le montant annuel pour 2024 pour l'ensemble des travailleurs et travailleuses couverts de la contribution acquittée par l’ESAT&nbsp;?";Float;;
+foresight_in_place;Est-ce que l'ESAT a contribué en 2024 à un régime de prévoyance au sens de l’article R 243-9 du CASF, avec compensation par l’Etat d’une partie de la contribution?;String;;
+year_foresight_in_place;"Depuis quelle année ce régime de prévoyance est-il mis en œuvre dans l'ESAT ?&nbsp;&nbsp;";String;;
+annual_transport_budget;Quel budget annuel avez-vous alloué au transport des travailleurs et travailleuses de leur domicile à l’ESAT (transport en commun et/ou navette et/ou taxi) en euro?;Float;;
+nb_employee_transport;Combien de travailleurs et travailleuses ont bénéficié d'un transport proposé par l'ESAT? (transport en commun et/ou navette et/ou taxi);Float;;
+nb_employee_mobility_inclusion;Combien de travailleurs et travailleuses ont bénéficié de la carte mobilité inclusion?;Float;;
+nb_empoloyee_driving_licence;Combien de travailleurs et travailleuses ont leur permis de conduire?;Float;;
+nb_employee_code;Combien de travailleurs et travailleuses ont le code?;Float;;
+holiday_voucher;"L'ESAT propose-t-il des chèques vacances aux travailleurs&nbsp;et travailleuses?";String;;
+holiday_voucher_annual_budget;"Quel est le budget annuel de l'ESAT pour les chèques vacances&nbsp;? (en euro) &nbsp;";Float;;
+gift_voucher;"L'ESAT propose-t-il des chèques cadeaux aux travailleurs et travailleuses&nbsp;?";String;;
+gift_voucher_annual_budget;"Quel est le budget annuel de l'ESAT pour les chèques cadeaux&nbsp;? (en euro)&nbsp;";Float;;
+nb_employee_worked_sunday;"Combien de travailleurs et travailleuses de l'ESAT ont travaillé au moins&nbsp;un dimanche ou un jour férié en 2024 ?";Float;;
+RPE_convention_signed;"Avez-vous signé en 2024 une convention de partenariat territoriale avec le réseau pour l’emploi&nbsp;?";String;;
+PEA_convention_signed;"Avez-vous signé en 2024 une convention de partenariat avec une Plateforme Emploi Accompagné&nbsp;?";String;;
+ESAT_PEA_rattached;"Etes-vous un ESAT porteur ou rattaché à une structure qui gère une plateforme d’emploi accompagné (en tant que signataire de la convention de gestion) &nbsp;?";String;;
+;Un projet de conventions de partenariat est-il envisagé avec :;Boolean;;
+cap_emploi_convention_considered;Un projet de conventions de partenariat est-il envisagé avec : (Cap Emploi);Boolean;;
+mission_locale_convention_considered;Un projet de conventions de partenariat est-il envisagé avec : (Mission Locale);Boolean;;
+no_convention_considered;Un projet de conventions de partenariat est-il envisagé avec : (Aucune convention de partenariat);Boolean;;
+EA_convention_signed;"Avez-vous signé en 2024 une convention de partenariat avec une entreprise adaptée (EA) &nbsp;?";String;;
+nb_EA_convention_signed;Avec combien d'entreprises adaptées présentes sur votre territoire avez-vous une convention de partenariat au 31 décembre 2024 ?;Float;;
+nb_insertion_staff;Au 31 décembre, combien de postes de conseillers en parcours d'insertion ou chargé(e)s d'inclusion professionnelle sont dans vos effectifs  ?;Float;;
+nb_insertion_dispo;Au 31 décembre, combien de postes de conseillers en parcours d'insertion ou chargé(e)s d'inclusion professionnelle sont mis à disposition ou mutualisés ?;Float;;
+;Comment sont-ils financés?;String;;
+BPAS_financed;Comment sont-ils financés? (Par votre budget de fonctionnement (BPAS));Boolean;;
+BAPC_financed;Comment sont-ils financés? (Par votre budget annexe de production et de commercialisation (BAPC));Boolean;;
+annual_CA;"Quel était votre chiffre d'affaire annuel commercial tout confondu (productions propres, prestations de service, mises à disposition de travailleurs et travailleuses auprès d’utilisateurs)&nbsp;?";Float;;
+annual_CA_production;Quel était votre chiffre d'affaire annuel commercial en productions propres?;Float;;
+annual_CA_service;Quel était votre chiffre d'affaire annuel commercial en prestation de service?;Float;;
+annual_CA_dispo;Quel était votre chiffre d'affaire annuel commercial en mises à disposition de travailleurs et travailleuses auprès d’utilisateurs?;Float;;
+budget_commercial;Sur le budget commercial, étiez-vous;String;;
+budget_commercial_deficit;De quel montant est ce déficit sur le budget commercial?;String;;
+budget_commercial_excedent;De quel montant est cet excédent sur le budget commercial?;String;;
+pct_CA_public;Indiquez le pourcentage de votre chiffre d'affaires réalisé avec des clients du secteur public;Float;;
+budget_social;Sur le budget principal de l'activité sociale, étiez-vous:;String;;
+budget_social_deficit;De quel montant est ce déficit sur le budget principal de l'activité sociale?;String;;
+budget_social_excedent;De quel montant est cet excédent sur le budget principal de l'activité sociale?;String;;
+budget_accessibility;"Quel a été le montant des investissements de mise aux normes de sécurité et d’accessibilité des installations réalisés par l'ESAT en 2024&nbsp;?";Float;;
+budget_diversity;"Quel a été le montant des investissements permettant de diversifier les activités proposées aux travailleurs et travailleuses, réalisés par l'ESAT en 2024&nbsp;?";Float;;
+comments;Commentaires;String;;
