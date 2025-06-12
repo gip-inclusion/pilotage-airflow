@@ -60,7 +60,7 @@ class Conventions(ImmersionFaciliteeBase):
     agencyRefersToName = Column(String)
     agencyRefersToKind = Column(String)
     updatedAt = Column(DateTime)
-    beneficiaryId = Column(ARRAY(String))
+    beneficiaryPIIHashes = Column(ARRAY(String))
 
     def __repr__(self) -> str:
         return (

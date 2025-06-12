@@ -2,7 +2,6 @@ import datetime
 import logging
 import re
 import time
-from typing import Dict, List
 
 import httpx
 import pandas as pd
@@ -31,7 +30,7 @@ def api_client() -> httpx.Client:
     )
 
 
-def get_all_items(path: str) -> List[Dict]:
+def get_all_items(path: str) -> list[dict]:
     """
     Récupère toutes les conventions des dernières 5 ans
     :param path: chemin de l'API
@@ -59,9 +58,8 @@ def get_all_items(path: str) -> List[Dict]:
                 "startDateGreater": str_date_g.strftime("%Y-%m-%d"),
             },
         )
-        response.raise_for_status()
 
-        data_partial = response.json()
+        data_partial = response.raise_for_status().json()
 
         data.extend(data_partial)
         time.sleep(0.2)  # Respecter le rate limit de l'API
@@ -70,7 +68,7 @@ def get_all_items(path: str) -> List[Dict]:
     return data
 
 
-def get_dataframe_from_response(table_data: List[Dict]) -> pd.DataFrame:
+def get_dataframe_from_response(table_data: list[dict]) -> pd.DataFrame:
 
     unwanted_fields = [
         "schedule",
@@ -92,7 +90,7 @@ def get_dataframe_from_response(table_data: List[Dict]) -> pd.DataFrame:
     ]
     df_data = pd.json_normalize(table_data_without_unwanted_fields)
     df_data.columns = [dot_to_camel(col) for col in df_data.columns]
-    df_data["beneficiaryId"] = df_data.apply(
+    df_data["beneficiaryPIIHashes"] = df_data.apply(
         lambda row: [
             hash_content(
                 normalize_sensible_data(
