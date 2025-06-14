@@ -17,7 +17,7 @@ CREATE TABLE {table_name}(
 
 with DAG(
     "nps_gip",
-    schedule_interval="@daily",
+    schedule_interval="20 5 * * *",
     **default_dag_args(),
 ) as dag:
     start = empty.EmptyOperator(task_id="start")

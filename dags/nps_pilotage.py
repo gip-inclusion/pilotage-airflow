@@ -8,7 +8,7 @@ from dags.common import db, default_dag_args, slack
 
 with DAG(
     "nps_pilotage",
-    schedule_interval="@weekly",
+    schedule_interval="0 7 * * 1",
     **default_dag_args(),
 ) as dag:
     start = empty.EmptyOperator(task_id="start")

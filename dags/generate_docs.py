@@ -10,7 +10,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="generate_docs",
-    schedule_interval="@daily",
+    schedule_interval="0 7 * * *",
     **dag_args,
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
