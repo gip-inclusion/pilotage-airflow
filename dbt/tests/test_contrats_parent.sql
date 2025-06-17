@@ -2,7 +2,7 @@ with multiple_contrat_parent_id as (
     select
         contrat_parent_id,
         count(*) as count_occurences
-    from {{ ref('stg_contrats_parent') }}
+    from {{ ref('contrats_parent') }}
     group by contrat_parent_id
     having count(*) > 1
 )

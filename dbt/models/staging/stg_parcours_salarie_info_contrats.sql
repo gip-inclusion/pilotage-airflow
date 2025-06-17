@@ -51,7 +51,7 @@ select
         when count(distinct ctr.contrat_id_structure) > 1 and count(distinct ctr.type_dispositif) = 1 then 'Structure'
         else 'Structure et dispositif'
     end                                      as type_changement
-from {{ ref("stg_contrats_parent") }} as ctr
+from {{ ref("contrats_parent") }} as ctr
 left join {{ ref("stg_uniques_salarie_id") }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
 where ctr.contrat_nb_heures_travail > 0

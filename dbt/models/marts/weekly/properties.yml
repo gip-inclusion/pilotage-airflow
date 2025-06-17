@@ -10,6 +10,19 @@ models:
         tests:
           - unique
           - not_null
+  - name: contrats_parent
+    description: >
+      Permet de récupérer les contrats parents (contrats initiaux) à partir des contrats.
+    columns:
+      - name: contrat_parent_id
+        tests:
+          - not_null
+      - name: contrat_id_pph
+        tests:
+          - not_null
+      - name: contrat_id_structure
+        tests:
+          - not_null
   - name: contrats_cvg_phc
     description: >
       Table créée pour que convergence puisse visualiser le nombre de contrats de type cvg phc par structure et par année.

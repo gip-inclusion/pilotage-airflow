@@ -157,19 +157,6 @@ models:
         tests:
           - unique
           - not_null
-  - name: stg_contrats_parent
-    description: >
-      Permet de récupérer les contrats parents (contrats initiaux) à partir des contrats.
-    columns:
-      - name: contrat_parent_id
-        tests:
-          - not_null
-      - name: contrat_id_pph
-        tests:
-          - not_null
-      - name: contrat_id_structure
-        tests:
-          - not_null
   - name: stg_emi_date_recrutement
     description: >
       Permet d'obtenir le nombre d'heures effectuées par personne physique, contrat et id d'annexe financière.
