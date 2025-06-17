@@ -71,7 +71,7 @@ class Conventions(ImmersionFaciliteeBase):
             f"agencySiret={self.agencySiret!r}, "
             f"agencyDepartment={self.agencyDepartment!r}, "
             f"businessName={self.businessName!r}, "
-            f"siret={self.siret!r}, "
+            f"siret={self.siret!r} )>"
         )
 
     @classmethod

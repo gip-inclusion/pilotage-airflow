@@ -12,3 +12,4 @@ sqlfluff-templater-dbt  # https://pypi.org/project/sqlfluff-templater-dbt/
 freezegun  # https://github.com/spulec/freezegun
 pytest  # https://github.com/pytest-dev/pytest
 pytest-subtests  # https://github.com/pytest-dev/pytest-subtests
+faker

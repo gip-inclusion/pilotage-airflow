@@ -1,15 +1,15 @@
-from datetime import date
 import hashlib
 import os
 import re
 import unicodedata
+from datetime import date
 
 
 def hash_content(content: str) -> str:
     return hashlib.sha256(f'{content}{os.getenv("HASH_SALT")}'.encode()).hexdigest()
 
 
-def normalize_sensible_data(*args : str | date) -> str:
+def normalize_sensible_data(*args: str | date) -> str:
     normalized_args = []
     for arg in args:
         if isinstance(arg, date):
