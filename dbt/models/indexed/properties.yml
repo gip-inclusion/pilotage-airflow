@@ -46,6 +46,13 @@ models:
     description: >
       Table introduite afin d'ajouter des index à la table fluxIAE_MarchesPublics.
       On ne prend pas en compte les 10 entrées dans cette table qui sont dupliquées, et on ignore les lignes où aucune valeur de recette n'est remplie (aucune valeur différente de null ou zéro).
+      Afin d'eviter les doublons nous ne considérons que les entrées ou la date de modif est la plus récente
+    columns:
+      - name: mpu_af_id
+        description: >
+          id annexe financiere
+        tests:
+          - unique
   - name: etat_mensuel_heures_travaillees_sorties
     description: >
         Table introduite afin de recuperer le nombre d'heures travaillées par salarié, via l'état mensuel individuel, dans le cadre du calcul des sorties

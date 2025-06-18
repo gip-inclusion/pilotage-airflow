@@ -45,6 +45,7 @@ select
     cmd."declaratif quels freins",
     cmd."Votre structure appartient à une structure, un réseau ou un l",
     dpt.nom_departement,
+    dpt.region,
     null::BOOLEAN                                                       as "Commande passée",
     null::INT                                                           as "Nombre de carnets commandés Total",
     null::INT                                                           as "Nombre de commandes total",

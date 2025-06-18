@@ -45,6 +45,7 @@ select
     cmd."declaratif quels freins",
     cmd."Votre structure appartient à une structure, un réseau ou un l",
     dpt.nom_departement,
+    dpt.region,
     contacts."Commande passée",
     contacts."Nombre de carnets commandés Total",
     contacts."Nombre de commandes total",

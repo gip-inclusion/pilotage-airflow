@@ -1,6 +1,9 @@
 version: 2
 
 models:
+  - name: eph_caracteristiques_beneficiaires
+    description: >
+      Vue créée pour récupérer les caractéristiques des bénéficiaires associées au contrat le plus récent
   - name: stg_dates_etat_mensuel_individualise
     description: >
       Vue créée pour récupérer les dates permettant de filtrer les etps réalisés sur les 2 dernières années

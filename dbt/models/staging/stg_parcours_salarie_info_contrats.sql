@@ -54,4 +54,5 @@ select
 from {{ ref("stg_contrats_parent") }} as ctr
 left join {{ ref("stg_uniques_salarie_id") }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
+where ctr.contrat_nb_heures_travail > 0
 group by hash_nir

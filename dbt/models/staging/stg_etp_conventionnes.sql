@@ -18,13 +18,6 @@ select distinct
     af.af_montant_total_annuel,
     af.af_montant_unitaire_annuel_valeur,
     af.af_mt_cofinance,
-    mp.mpu_sct_mt_recet_nettoyage,
-    mp.mpu_sct_mt_recet_serv_pers,
-    mp.mpu_sct_mt_recet_btp,
-    mp.mpu_sct_mt_recet_agri,
-    mp.mpu_sct_mt_recet_recycl,
-    mp.mpu_sct_mt_recet_transp,
-    mp.mpu_sct_mt_recet_autres,
     evo_rsa.montant                                                                  as montant_rsa,
     ref_asp.type_structure,
     ref_asp.type_structure_emplois,
@@ -70,9 +63,6 @@ left join
 left join {{ ref('ref_mesure_dispositif_asp') }} as ref_asp
     on
         af.af_mesure_dispositif_code = ref_asp.af_mesure_dispositif_code
-left join {{ ref('fluxIAE_MarchesPublics_v2') }} as mp
-    on
-        af.af_id_annexe_financiere = mp.mpu_af_id
 left join
     {{ ref('evolution_rsa') }} as evo_rsa
     -- to get the rsa amount at the year of the af
