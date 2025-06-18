@@ -4,6 +4,7 @@ select
     ctr.contrat_id_structure,
     ctr.contrat_mesure_disp_code,
     ctr.type_structure_emplois              as type_dispositif,
+    ctr.structure_denomination_unique,
     max(ctr.nom_departement_structure)      as nom_departement_structure,
     max(ctr.nom_region_structure)           as nom_region_structure,
     max(ctr.code_dept_structure)            as code_dept_structure,
@@ -32,4 +33,4 @@ select
     sum(ctr.contrat_nb_heures)              as contrat_nb_heures_travail
 from {{ ref("stg_contrats") }} as ctr
 where contrat_id_pph is not null
-group by ctr.contrat_parent_id, contrat_id_pph, ctr.contrat_id_structure, ctr.contrat_mesure_disp_code, ctr.type_structure_emplois
+group by ctr.contrat_parent_id, contrat_id_pph, ctr.contrat_id_structure, ctr.structure_denomination_unique, ctr.contrat_mesure_disp_code, ctr.type_structure_emplois
