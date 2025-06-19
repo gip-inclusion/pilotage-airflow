@@ -11,7 +11,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from dags.common import db
-from dags.common.anonymize_sensible_data import hash_content, normalize_sensible_data
+from dags.common.anonymize_sensible_data import NormalizationKind, hash_content, normalize_sensible_data
 from dags.common.immersion_facilitee.models import Conventions
 
 
@@ -94,9 +94,9 @@ def get_dataframe_from_response(table_data: list[dict]) -> pd.DataFrame:
         lambda row: [
             hash_content(
                 normalize_sensible_data(
-                    row["signatoriesBeneficiaryFirstName"],
-                    row["signatoriesBeneficiaryLastName"],
-                    pd.to_datetime(row["signatoriesBeneficiaryBirthdate"]).date(),
+                    (row["signatoriesBeneficiaryFirstName"], NormalizationKind.NAME),
+                    (row["signatoriesBeneficiaryLastName"], NormalizationKind.NAME),
+                    (pd.to_datetime(row["signatoriesBeneficiaryBirthdate"]).date(), NormalizationKind.DATE),
                 )
             )
         ],
