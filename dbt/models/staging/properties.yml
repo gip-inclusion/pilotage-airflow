@@ -164,6 +164,7 @@ models:
       - name: contrat_parent_id
         tests:
           - not_null
+          - unique
       - name: contrat_id_pph
         tests:
           - not_null
