@@ -5,6 +5,8 @@ import os
 import re
 import unicodedata
 
+from unidecode import unidecode
+
 
 class NormalizationKind(enum.Enum):
     NAME = enum.auto()
@@ -20,7 +22,7 @@ def normalize_sensible_data(*args: tuple[str | datetime.date, NormalizationKind]
     for datum, normalization_kind in args:
         match normalization_kind:
             case NormalizationKind.NAME:
-                normalized_datum = re.sub(r"[^a-z]+", "", unicodedata.normalize("NFKD", str(datum)).lower())
+                normalized_datum = re.sub(r"[^a-z]+", "", unicodedata.normalize("NFKD", str(unidecode(datum))).lower())
             case NormalizationKind.DATE:
                 # Truncate to 10 characters in case a datetime.datetime() is given
                 normalized_datum = datum.isoformat()[:10]
