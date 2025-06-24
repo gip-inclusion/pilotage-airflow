@@ -32,7 +32,10 @@ select
     sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end)                                      as nb_candidatures_acceptees,
     sum(case when cc."état" != 'Candidature acceptée' then 1 else 0 end)                                     as nb_candidatures_sans_accept,
     coalesce(sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end) > 0)                        as a_eu_acceptation,
-    coalesce(max(cc.date_embauche) >= current_date - interval '6 months', max(cc.date_embauche) is not null) as a_eu_embauche
+    coalesce(max(cc.date_embauche) >= current_date - interval '6 months', max(cc.date_embauche) is not null) as a_eu_embauche,
+    coalesce(
+        min(cc.date_premiere_candidature) <= current_date - interval '30 days' and coalesce(sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end), 0) = 0
+    )                                                                                                        as file_active_30_jours
 from {{ ref('stg_candidats_candidatures') }} as cc
 left join {{ ref('organisations') }} as orga
     on cc.id_auteur_diagnostic = orga.id
