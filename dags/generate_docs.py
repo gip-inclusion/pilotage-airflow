@@ -1,9 +1,12 @@
 import os
 
 import airflow
-from airflow.operators import bash, empty
+from airflow.models import Variable
+from airflow.operators import bash
+from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
 
 from dags.common import db, dbt, default_dag_args
+from dags.common.operators import S3SyncLocalFilesystem
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -13,10 +16,7 @@ with airflow.DAG(
     schedule_interval="@daily",
     **dag_args,
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
     env_vars = db.connection_envvars()
-    S3_DOCS_HOST = os.getenv("S3_DOCS_HOST")
 
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
@@ -32,27 +32,17 @@ with airflow.DAG(
         append_env=True,
     )
 
-    # these can stay as env vars since they are considered deployment secrets, not business vars.
-    cellar_sync_cmd_parts = [
-        "s3cmd",
-        "--host=${S3_DOCS_HOST}",
-        "--host-bucket=${S3_DOCS_HOST_BUCKET}",
-        "--access_key=${S3_DOCS_ACCESS_KEY}",
-        "--secret_key=${S3_DOCS_SECRET_KEY}",
-        "sync",
-        "--delete-removed",
-        "--guess-mime-type",
-        "--acl-public",
-        f'{os.getenv("DBT_TARGET_PATH")}/',
-        "s3://${S3_DOCS_BUCKET}/",
-    ]
-    if os.getenv("S3_DOCS_HOST", "").startswith("http://"):
-        cellar_sync_cmd_parts.insert(1, "--no-ssl")
-    cellar_sync = bash.BashOperator(
-        task_id="cellar_sync",
-        bash_command=" ".join(cellar_sync_cmd_parts),
+    create_bucket = S3CreateBucketOperator(
+        task_id="create_bucket", bucket_name=Variable.get("S3_DOCS_BUCKET", "c2-dbt-docs"), aws_conn_id="s3_docs"
     )
 
-    end = empty.EmptyOperator(task_id="end")
+    copy_files = S3SyncLocalFilesystem(
+        task_id="copy_files",
+        directory=os.getenv("DBT_TARGET_PATH"),
+        dest_key_prefix="",
+        dest_bucket=Variable.get("S3_DOCS_BUCKET", "c2-dbt-docs"),
+        aws_conn_id="s3_docs",
+        replace=True,
+    )
 
-    (start >> dbt_deps >> dbt_generate_docs >> cellar_sync >> end)
+    ([dbt_deps.as_setup(), create_bucket.as_setup()] >> dbt_generate_docs >> copy_files)
