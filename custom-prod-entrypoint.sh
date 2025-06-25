@@ -19,7 +19,7 @@ if [[ "x$CELLAR_ADDON_HOST" != "x" ]]; then
     export AIRFLOW__LOGGING__ENCRYPT_S3_LOGS=False
 fi
 
-
+# shellcheck disable=SC2153
 if [[ "x$AIRFLOW__SENTRY__SENTRY_DSN" != "x" ]]; then
     export AIRFLOW__SENTRY__SENTRY_ON=True
 fi
