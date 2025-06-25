@@ -39,8 +39,8 @@ services:
     env_file: .env
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql://postgres:password@postgres:5432/airflow
-      - AIRFLOW_CONN_LOG_CONNECTION=aws://@/?endpoint_url=http%3A%2F%2Fminio:9000&region_name=eu-west-1&aws_access_key_id=minioadmin&aws_secret_access_key=minioadmin
-      - AIRFLOW_CONN_S3_DOCS=aws://@/?endpoint_url=http%3A%2F%2Fminio:9000&region_name=eu-west-1&aws_access_key_id=minioadmin&aws_secret_access_key=minioadmin
+      - AIRFLOW_CONN_LOG_CONNECTION=aws:///?__extra__=%7B%22endpoint_url%22%3A+%22http%3A%2F%2Fminio:9000%22%2C+%22aws_access_key_id%22%3A+%22minioadmin%22%2C+%22aws_secret_access_key%22%3A+%22minioadmin%22%2C+%22config_kwargs%22%3A+%7B%22request_checksum_calculation%22%3A+%22when_required%22%2C+%22response_checksum_validation%22%3A+%22when_required%22%7D%7D
+      - AIRFLOW_CONN_S3_DOCS=aws:///?__extra__=%7B%22endpoint_url%22%3A+%22http%3A%2F%2Fminio:9000%22%2C+%22aws_access_key_id%22%3A+%22minioadmin%22%2C+%22aws_secret_access_key%22%3A+%22minioadmin%22%2C+%22config_kwargs%22%3A+%7B%22request_checksum_calculation%22%3A+%22when_required%22%2C+%22response_checksum_validation%22%3A+%22when_required%22%7D%7D
       - AIRFLOW__LOGGING__REMOTE_LOGGING=True
       - AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER=s3://airflow/logs
       - AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID=log_connection
