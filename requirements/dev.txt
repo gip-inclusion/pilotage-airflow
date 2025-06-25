@@ -2723,6 +2723,13 @@ setuptools==80.7.1 \
     # via
     #   redshift-connector
     #   sagemaker-studio
+shellcheck-py==0.10.0.1 \
+    --hash=sha256:390826b340b8c19173922b0da5ef7b66ef34d4d087dc48aad3e01f7e77e164d9 \
+    --hash=sha256:48f08965cafbb3363b265c4ef40628ffced19cb6fc7c4bb5ce72d32cbcfb4bb9 \
+    --hash=sha256:8f3bf12ee6d0845dd5ac1a7bac8c4b1fec0379e115950986883c9488af40ada7 \
+    --hash=sha256:be73a16931c05f79643ff74b6519d1e1203b394583ab8c68a48a8e7f257d1090 \
+    --hash=sha256:c1c266f7f54cd286057c592ead3095f93d123acdcabf048879a7d8900c3aac7b
+    # via -r requirements/dev.in
 six==1.17.0 \
     --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
