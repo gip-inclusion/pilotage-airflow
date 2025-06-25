@@ -23,9 +23,9 @@ def build_esat_model():
     cols = get_variables_types()
 
     class_dict = {
-        "__tablename__": "esat_questionnaire_2025",
+        "__tablename__": "questionnaire_2025",
         "__table_args__": {"schema": DB_SCHEMA},
-        "__repr__": lambda self: f"<EsatTallyAnswers({', '.join(f'{k}={getattr(self, k)}' for k in cols)})>",
+        "__repr__": lambda self: "<Answers(submissionID=self.submissionID)>",
         "primary_key_columns": classmethod(lambda cls: [pk.name for pk in cls.__table__.primary_key.columns]),
     }
 
