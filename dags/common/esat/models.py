@@ -1,10 +1,11 @@
 import pandas as pd
+import sqlalchemy.types
+from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 
 from dags.common import db
-from dags.common.esat.helpers import get_variables_types
 
 
 DB_SCHEMA = "esat"
@@ -13,14 +14,19 @@ DB_SCHEMA = "esat"
 EsatBase = declarative_base()
 
 
-def create_tables():
+def create_tables(variables_types):
     db.create_schema(DB_SCHEMA)
-    build_esat_model()
+    build_esat_model(variables_types)
     EsatBase.metadata.create_all(db.connection_engine())
 
 
-def build_esat_model():
-    cols = get_variables_types()
+def build_esat_model(variables_types):
+    for variable, variable_type_str in variables_types.items():
+        variable_type = getattr(sqlalchemy.types, variable_type_str, sqlalchemy.types.String)
+        if variable == "submission_id":
+            variables_types[variable] = Column(variable_type, primary_key=True)
+        else:
+            variables_types[variable] = Column(variable_type)
 
     class_dict = {
         "__tablename__": "questionnaire_2025",
@@ -29,7 +35,7 @@ def build_esat_model():
         "primary_key_columns": classmethod(lambda cls: [pk.name for pk in cls.__table__.primary_key.columns]),
     }
 
-    class_dict.update(cols)
+    class_dict.update(variables_types)
 
     esat_model = type("EsatTallyAnswers", (EsatBase,), class_dict)
     return esat_model
