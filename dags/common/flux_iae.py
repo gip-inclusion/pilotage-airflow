@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from psycopg import sql
 
-from dags.common.anonymize_sensible_data import hash_content
+from dags.common.anonymize_sensible_data import NormalizationKind, hash_content, normalize_sensible_data
 from dags.common.db import MetabaseDatabaseCursor3
 from dags.common.python import batched
 
@@ -164,6 +164,28 @@ def anonymize_fluxiae_df(df):
     if "salarie_nir" in df.columns.tolist():
         df["hash_nir"] = df["salarie_nir"].apply(hash_content)
 
+    if {"salarie_prenom", "salarie_nom_usage", "salarie_date_naissance"} <= set(df.columns.tolist()):
+
+        df["salarie_PII_hashes"] = df.apply(
+            lambda row: (
+                [
+                    hash_content(
+                        normalize_sensible_data(
+                            (row["salarie_prenom"], NormalizationKind.NAME),
+                            (row["salarie_nom_usage"], NormalizationKind.NAME),
+                            (
+                                (pd.to_datetime(row["salarie_date_naissance"], dayfirst=True, errors="coerce").date()),
+                                NormalizationKind.DATE,
+                            ),
+                        )
+                    )
+                ]
+                if not pd.isna(pd.to_datetime(row["salarie_date_naissance"], dayfirst=True, errors="coerce"))
+                else []
+            ),
+            axis=1,
+        )
+
     # Any column having any of these keywords inside its name will be dropped.
     # E.g. if `courriel` is a deletable keyword, then columns named `referent_courriel`,
     # `representant_courriel` etc will all be dropped.
@@ -218,10 +240,17 @@ def infer_columns_from_df(df):
     initial_line = pd.DataFrame([non_null_values], columns=df.columns)
 
     # Generate table sql definition from np types
-    return [
-        (col_name, PANDA_DATAFRAME_TO_PSQL_TYPES_MAPPING[col_type.type])
-        for col_name, col_type in initial_line.dtypes.items()
-    ]
+
+    inferred_types = []
+    for col_name, value in initial_line.items():
+
+        if isinstance(value.iloc[0], list):
+            sql_type = "text[]"
+        else:
+            sql_type = PANDA_DATAFRAME_TO_PSQL_TYPES_MAPPING[value.dtype.type]
+        inferred_types.append((col_name, sql_type))
+
+    return inferred_types
 
 
 def store_df(df, table_name, max_attempts=5):
@@ -339,6 +368,24 @@ def anonymize_fluxiae_row(row):
         row["hash_numéro_pass_iae"] = hash_content(row["salarie_agrement"])
     if "salarie_nir" in row:
         row["hash_nir"] = hash_content(row["salarie_nir"])
+
+    if {"salarie_prenom", "salarie_nom_usage", "salarie_date_naissance"} <= row.keys():
+        row["salarie_PII_hashes"] = (
+            [
+                hash_content(
+                    normalize_sensible_data(
+                        (row["salarie_prenom"], NormalizationKind.NAME),
+                        (row["salarie_nom_usage"], NormalizationKind.NAME),
+                        (
+                            pd.to_datetime(row["salarie_date_naissance"], dayfirst=True, errors="coerce").date(),
+                            NormalizationKind.DATE,
+                        ),
+                    )
+                )
+            ]
+            if not pd.isna(pd.to_datetime(row["salarie_date_naissance"], dayfirst=True, errors="coerce"))
+            else []
+        )
 
     # Any column having any of these keywords inside its name will be dropped.
     # E.g. if `courriel` is a deletable keyword, then columns named `referent_courriel`,
