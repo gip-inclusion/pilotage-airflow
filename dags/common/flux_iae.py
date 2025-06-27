@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from psycopg import sql
 
-from dags.common.anonymize_sensible_data import hash_content
+from dags.common.anonymize_sensible_data import NormalizationKind, hash_content
 from dags.common.db import MetabaseDatabaseCursor3
 from dags.common.python import batched
 
@@ -163,6 +163,13 @@ def anonymize_fluxiae_df(df):
         df["hash_numéro_pass_iae"] = df["salarie_agrement"].apply(hash_content)
     if "salarie_nir" in df.columns.tolist():
         df["hash_nir"] = df["salarie_nir"].apply(hash_content)
+
+    if all(col in df.columns.tolist() for col in ["prenom", "nom_usage", "date_naissance"]):
+        df["beneficiary_PII_hash"] = hash_content(
+            (df["prenom"], NormalizationKind.NAME),
+            (df["nom_usage"], NormalizationKind.NAME),
+            (pd.to_datetime(df["date_naissance"], dayfirst=True).dt.date, NormalizationKind.DATE),
+        )
 
     # Any column having any of these keywords inside its name will be dropped.
     # E.g. if `courriel` is a deletable keyword, then columns named `referent_courriel`,
@@ -339,6 +346,13 @@ def anonymize_fluxiae_row(row):
         row["hash_numéro_pass_iae"] = hash_content(row["salarie_agrement"])
     if "salarie_nir" in row:
         row["hash_nir"] = hash_content(row["salarie_nir"])
+
+    if all(col in row for col in ["prenom", "nom_usage", "date_naissance"]):
+        row["beneficiary_PII_hash"] = hash_content(
+            (row["prenom"], NormalizationKind.NAME),
+            (row["nom_usage"], NormalizationKind.NAME),
+            (pd.to_datetime(row["date_naissance"], dayfirst=True).dt.date, NormalizationKind.DATE),
+        )
 
     # Any column having any of these keywords inside its name will be dropped.
     # E.g. if `courriel` is a deletable keyword, then columns named `referent_courriel`,
