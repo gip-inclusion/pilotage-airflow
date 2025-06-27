@@ -164,6 +164,13 @@ def anonymize_fluxiae_df(df):
     if "salarie_nir" in df.columns.tolist():
         df["hash_nir"] = df["salarie_nir"].apply(hash_content)
 
+    if all(col in df.columns.tolist() for col in ["prenom", "nom_usage", "date_naissance"]):
+        df["beneficiary_PII_hash"] = hash_content(
+            (df["prenom"], NormalizationKind.NAME),
+            (df["nom_usage"], NormalizationKind.NAME),
+            (pd.to_datetime(df["date_naissance"], dayfirst=True).dt.date, NormalizationKind.DATE),
+        )
+
     # Any column having any of these keywords inside its name will be dropped.
     # E.g. if `courriel` is a deletable keyword, then columns named `referent_courriel`,
     # `representant_courriel` etc will all be dropped.
