@@ -250,7 +250,7 @@ def store_df(df, table_name, max_attempts=5):
             columns = infer_columns_from_df(df)
             create_table(new_table_name, columns, reset=True)
             for df_chunk in df_chunks:
-                rows = df_chunk.replace({np.nan: None}).to_dict(orient="split")["data"]
+                rows = df_chunk.to_dict(orient="split")["data"]
                 with MetabaseDatabaseCursor3() as (cursor, conn):
                     with cursor.copy(
                         sql.SQL("COPY {table_name} FROM STDIN WITH (FORMAT BINARY)").format(
@@ -502,6 +502,7 @@ def get_fluxiae_df(
         # the field data format guessed on first rows.
         low_memory=False,
     )
+    df = df.replace({np.nan: None})
 
     # If there is only one column, something went wrong, let's break early.
     # Most likely an incorrect skip_first_row value.
