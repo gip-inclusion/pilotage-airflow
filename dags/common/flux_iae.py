@@ -164,7 +164,7 @@ def anonymize_fluxiae_df(df):
     if "salarie_nir" in df.columns.tolist():
         df["hash_nir"] = df["salarie_nir"].apply(hash_content)
 
-    if all(col in df.columns.tolist() for col in ["prenom", "nom_usage", "date_naissance"]):
+    if {"prenom", "nom_usage", "date_naissance"} <= set(df.columns.tolist()):
         df["beneficiary_PII_hash"] = hash_content(
             (df["prenom"], NormalizationKind.NAME),
             (df["nom_usage"], NormalizationKind.NAME),
