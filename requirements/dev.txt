@@ -116,9 +116,9 @@ anyio==4.9.0 \
     --hash=sha256:673c0c244e15788651a4ff38710fea9675823028a6f08a5eda409e0c9840a028 \
     --hash=sha256:9f76d541cad6e36af7beb62e978876f3b41e3e04f2c1fbf0884604c0a9c4d93c
     # via httpx
-apache-airflow==2.10.5 \
-    --hash=sha256:1a2b1f1082d530fee039989cdff7192fcfd98d8e909d1c5650e61e10c418e488 \
-    --hash=sha256:4c6d19159bcd85f496fbea70db72ef55d32335f80e4ffb82ae3c252782079ca0
+apache-airflow==2.11.0 \
+    --hash=sha256:252ae1a2f3d75547bb35907ac6abe6a105d02eaab265434ca587b5757940ce08 \
+    --hash=sha256:e3449d46916be2cf7e6068b86dbd958577306e22407e6493ef2ae83a0c73a424
     # via
     #   -r requirements/base.in
     #   apache-airflow-providers-amazon
