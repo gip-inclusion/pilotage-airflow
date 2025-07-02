@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from psycopg import sql
 
-from dags.common.anonymize_sensible_data import NormalizationKind, hash_content
+from dags.common.anonymize_sensible_data import NormalizationKind, hash_content, normalize_sensible_data
 from dags.common.db import MetabaseDatabaseCursor3
 from dags.common.python import batched
 
@@ -164,11 +164,13 @@ def anonymize_fluxiae_df(df):
     if "salarie_nir" in df.columns.tolist():
         df["hash_nir"] = df["salarie_nir"].apply(hash_content)
 
-    if {"prenom", "nom_usage", "date_naissance"} <= set(df.columns.tolist()):
+    if {"prenom", "nom_usage", "date_naissance"} <= df.columns:
         df["beneficiary_PII_hash"] = hash_content(
-            (df["prenom"], NormalizationKind.NAME),
-            (df["nom_usage"], NormalizationKind.NAME),
-            (pd.to_datetime(df["date_naissance"], dayfirst=True).dt.date, NormalizationKind.DATE),
+            normalize_sensible_data(
+                (df["prenom"], NormalizationKind.NAME),
+                (df["nom_usage"], NormalizationKind.NAME),
+                (pd.to_datetime(df["date_naissance"], dayfirst=True).dt.date, NormalizationKind.DATE),
+            )
         )
 
     # Any column having any of these keywords inside its name will be dropped.
@@ -347,11 +349,13 @@ def anonymize_fluxiae_row(row):
     if "salarie_nir" in row:
         row["hash_nir"] = hash_content(row["salarie_nir"])
 
-    if all(col in row for col in ["prenom", "nom_usage", "date_naissance"]):
+    if {"prenom", "nom_usage", "date_naissance"} <= row.index:
         row["beneficiary_PII_hash"] = hash_content(
-            (row["prenom"], NormalizationKind.NAME),
-            (row["nom_usage"], NormalizationKind.NAME),
-            (pd.to_datetime(row["date_naissance"], dayfirst=True).dt.date, NormalizationKind.DATE),
+            normalize_sensible_data(
+                (row["prenom"], NormalizationKind.NAME),
+                (row["nom_usage"], NormalizationKind.NAME),
+                (pd.to_datetime(row["date_naissance"], dayfirst=True).dt.date, NormalizationKind.DATE),
+            )
         )
 
     # Any column having any of these keywords inside its name will be dropped.
