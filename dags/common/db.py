@@ -119,11 +119,9 @@ def drop_view(view_name):
 
 
 def create_schema(schema_name):
-    from psycopg2 import sql
-
-    with MetabaseDBCursor() as (cursor, conn):
-        cursor.execute(sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(schema_name)))
-        conn.commit()
+    # TODO: Use an Airflow Connection
+    with connection_engine().connect() as connection:
+        connection.execute(CreateSchema(schema_name))
 
 
 @sqlalchemy.event.listens_for(sqlalchemy.Table, "before_create")
