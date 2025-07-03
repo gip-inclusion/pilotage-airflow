@@ -1,6 +1,5 @@
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators import empty
 
 from dags.common import db, default_dag_args, ftp, slack
 
@@ -10,9 +9,6 @@ with DAG(
     schedule=None,
     **default_dag_args(),
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
 
     @task(task_id="store_gsheets")
     def store_gsheets(**kwargs):
@@ -33,6 +29,4 @@ with DAG(
                     print(f"Remote file {ft_data} does not exist.")
             dtf.to_sql("ft_iae_nord", con=db.connection_engine(), index=False, if_exists="replace")
 
-    store_gsheet_task = store_gsheets()
-
-    (start >> store_gsheet_task >> end)
+    store_gsheets() >> slack.success_notifying_task()

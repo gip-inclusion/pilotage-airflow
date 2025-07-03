@@ -1,6 +1,6 @@
 import airflow
 from airflow.models.param import Param
-from airflow.operators import bash, empty, python
+from airflow.operators import bash, python
 
 from dags.common import db, dbt, default_dag_args
 
@@ -13,8 +13,6 @@ with airflow.DAG(
     params={"all_tests": Param(False, type="boolean")},
     **dag_args,
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
     env_vars = db.connection_envvars()
 
     dbt_deps = bash.BashOperator(
@@ -40,6 +38,4 @@ with airflow.DAG(
         append_env=True,
     )
 
-    end = empty.EmptyOperator(task_id="end")
-
-    (start >> dbt_deps >> dbt_test >> end)
+    dbt_deps >> dbt_test
