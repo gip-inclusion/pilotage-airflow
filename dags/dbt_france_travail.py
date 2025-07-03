@@ -1,6 +1,6 @@
 import airflow
 from airflow.models.param import Param
-from airflow.operators import bash, empty, python
+from airflow.operators import bash, python
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -15,9 +15,6 @@ with airflow.DAG(
     },
     **dag_args,
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
 
     env_vars = db.connection_envvars()
 
@@ -60,4 +57,4 @@ with airflow.DAG(
         append_env=True,
     )
 
-    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> end)
+    dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> slack.success_notifying_task()

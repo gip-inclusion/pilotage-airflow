@@ -4,7 +4,7 @@ import sqlalchemy.types as types
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
-from airflow.operators import bash, empty
+from airflow.operators import bash
 from airflow.operators.python import PythonOperator
 
 from dags.common import airtable, db, dbt, default_dag_args, departments, mon_recap, slack
@@ -14,9 +14,6 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 DB_SCHEMA = "mon_recap"
 
 with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
 
     env_vars = db.connection_envvars()
 
@@ -82,8 +79,6 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
 
             df.to_sql(db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping)
 
-    mon_recap_airtable = mon_recap_airtable()
-
     # Tally handle poorly the import to airtable, therefore we used a gsheet instead
     @task(task_id="mon_recap_gsheet")
     def mon_recap_gsheet(**kwargs):
@@ -114,8 +109,6 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
         mon_recap.convert_date_columns(df, baro_dates)
         df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
 
-    mon_recap_gsheet = mon_recap_gsheet()
-
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
         bash_command="dbt deps",
@@ -138,12 +131,11 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
     )
 
     (
-        start
-        >> PythonOperator(task_id="create_schema", python_callable=db.create_schema, op_args=[DB_SCHEMA])
-        >> mon_recap_airtable
-        >> mon_recap_gsheet
+        PythonOperator(task_id="create_schema", python_callable=db.create_schema, op_args=[DB_SCHEMA])
+        >> mon_recap_airtable()
+        >> mon_recap_gsheet()
         >> dbt_deps
         >> dbt_seed
         >> dbt_mon_recap
-        >> end
+        >> slack.success_notifying_task()
     )
