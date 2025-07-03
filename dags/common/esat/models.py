@@ -15,7 +15,6 @@ EsatBase = declarative_base()
 
 
 def create_tables(variables):
-    db.create_schema(DB_SCHEMA)
     build_esat_model(variables)
     EsatBase.metadata.create_all(db.connection_engine())
 
