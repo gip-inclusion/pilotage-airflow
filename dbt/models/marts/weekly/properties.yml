@@ -45,6 +45,38 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('suivi_etp_realises_v2')
+  - name: les_emplois_contrats
+    description: >
+      Table à destination des emplois afin qu'ils puissent remonter les infos sur les contrats pendant les passes IAE.
+      Attention! ça peut arriver que un même contrat est attaché à deux pass_iae différents (incohérence).
+    columns:
+      - name: structure_id_siae
+        tests:
+          - not_null
+      - name: structure_denomination
+        tests:
+          - not_null
+      - name: structure_siret_actualise
+        tests:
+          - not_null
+      - name: type_structure_emplois
+        tests:
+          - not_null
+      - name: salarie_id
+        tests:
+          - not_null
+      - name: contrat_id_ctr
+        tests:
+          - not_null
+      - name: type_contrat
+        tests:
+          - not_null
+      - name: hash_numéro_pass_iae
+        tests:
+        - not_null
+      - name: pass_iae_id
+        tests:
+        - not_null
   - name: formations
     description: >
       Table permettant de récupérer les formations des salariés à partir du fluxIAE de l'ASP.
