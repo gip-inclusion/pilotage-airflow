@@ -12,7 +12,7 @@ with DAG(
     **default_dag_args(),
 ) as dag:
 
-    @task(task_id="get_visits_per_campaign")
+    @task
     def get_visits_per_campaign(**kwargs):
         out_dtf = matomo.get_visits_per_campaign_from_matomo(
             Variable.get("MATOMO_BASE_URL"),

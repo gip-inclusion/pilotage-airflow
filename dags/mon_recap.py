@@ -19,7 +19,7 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
 
     date_pattern = re.compile(r"^date", re.IGNORECASE)
 
-    @task(task_id="mon_recap_airtable")
+    @task
     def mon_recap_airtable(**kwargs):
 
         con = db.connection_engine()
@@ -80,7 +80,7 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
             df.to_sql(db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping)
 
     # Tally handle poorly the import to airtable, therefore we used a gsheet instead
-    @task(task_id="mon_recap_gsheet")
+    @task
     def mon_recap_gsheet(**kwargs):
         import pandas as pd
 
