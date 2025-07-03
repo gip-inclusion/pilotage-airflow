@@ -12,7 +12,7 @@ with DAG(
     **default_dag_args(),
 ) as dag:
 
-    @task(task_id="store_ft")
+    @task
     def store_ft(**kwargs):
         import ftputil
         import pandas as pd

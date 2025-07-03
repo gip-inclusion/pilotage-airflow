@@ -44,7 +44,7 @@ def get_all_items(path):
 
 with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
 
-    @task(task_id="import_structures")
+    @task
     def import_structures(**kwargs):
         structures = pd.DataFrame(get_all_items("/api/v0/structures"))
         structures["date_maj"] = pd.to_datetime(structures["date_maj"])
@@ -62,7 +62,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         )
         logger.info("%r rows created", row_created)
 
-    @task(task_id="import_services")
+    @task
     def import_services(**kwargs):
         services = pd.DataFrame(get_all_items("/api/v0/services"))
         services["date_creation"] = pd.to_datetime(services["date_creation"])

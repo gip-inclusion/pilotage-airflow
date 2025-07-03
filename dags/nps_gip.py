@@ -20,7 +20,7 @@ with DAG(
     **default_dag_args(),
 ) as dag:
 
-    @task(task_id="store_gsheets")
+    @task
     def store_gsheets(**kwargs):
         import pandas as pd
 

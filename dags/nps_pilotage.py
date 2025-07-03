@@ -11,7 +11,7 @@ with DAG(
     **default_dag_args(),
 ) as dag:
 
-    @task(task_id="create_nps")
+    @task
     def create_nps(**kwargs):
         import pandas as pd
 

@@ -17,7 +17,7 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
 
     date_pattern = re.compile(r"^date", re.IGNORECASE)
 
-    @task(task_id="monrecap_airtable")
+    @task
     def monrecap_airtable(**kwargs):
         con = db.connection_engine()
         # Need to drop these tables and the views created with them in order to be able to run the table_data.to_sql()
@@ -81,7 +81,7 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
             )
 
     # Tally handle poorly the import to airtable, therefore we used a gsheet instead
-    @task(task_id="monrecap_gsheet")
+    @task
     def monrecap_gsheet(**kwargs):
         import pandas as pd
 

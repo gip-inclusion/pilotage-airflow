@@ -12,7 +12,7 @@ with DAG(
     **default_dag_args(),
 ) as dag:
 
-    @task(task_id="store_asp")
+    @task
     def store_asp(**kwargs):
         import re
 
