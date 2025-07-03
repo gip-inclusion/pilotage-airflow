@@ -16,7 +16,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with DAG("immersion_facilitee", schedule="@weekly", **dag_args) as dag:
 
-    @task(task_id="import_conventions")
+    @task
     def import_conventions(**kwargs):
         response = get_all_items("/v2/conventions")
         if not response:
