@@ -4,9 +4,9 @@ import os
 import pathlib
 
 import airflow
+from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import bash
-from airflow.operators.python import task
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
 
@@ -19,7 +19,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="generate_docs",
-    schedule_interval="@daily",
+    schedule="@daily",
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()

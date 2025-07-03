@@ -9,7 +9,7 @@ from dags.common.esat.models import build_esat_model, create_tables, insert_data
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-with DAG("esat", schedule_interval="@daily", **dag_args) as dag:
+with DAG("esat", schedule="@daily", **dag_args) as dag:
 
     @task(task_id="create_table")
     def create_table(variables):

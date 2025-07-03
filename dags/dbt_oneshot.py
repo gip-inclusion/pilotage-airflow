@@ -8,7 +8,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="dbt_oneshot",
-    schedule_interval=None,
+    schedule=None,
     **dag_args,
 ) as dag:
     start = empty.EmptyOperator(task_id="start")

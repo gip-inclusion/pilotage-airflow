@@ -16,7 +16,7 @@ CREATE TABLE {table_name}(
 
 with DAG(
     "reseau_iae_adherents",
-    schedule_interval="@monthly",
+    schedule="@monthly",
     **default_dag_args(),
 ) as dag:
     start = empty.EmptyOperator(task_id="start")
