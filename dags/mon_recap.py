@@ -5,9 +5,9 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import bash
-from airflow.operators.python import PythonOperator
 
 from dags.common import airtable, db, dbt, default_dag_args, departments, mon_recap, slack
+from dags.common.tasks import create_schema
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -137,7 +137,7 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
     )
 
     (
-        PythonOperator(task_id="create_schema", python_callable=db.create_schema, op_args=[DB_SCHEMA])
+        create_schema(DB_SCHEMA).as_setup()
         >> mon_recap_airtable()
         >> mon_recap_gsheet()
         >> dbt_deps

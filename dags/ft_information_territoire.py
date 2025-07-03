@@ -2,10 +2,11 @@ import logging
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators import python
 
 from dags.common import default_dag_args, slack
-from dags.common.france_travail import api as ft_api_helpers, models
+from dags.common.france_travail import api as ft_api_helpers
+from dags.common.france_travail.models import FranceTravailBase
+from dags.common.tasks import create_models
 
 
 logger = logging.getLogger(__name__)
@@ -26,7 +27,7 @@ with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule="@we
         logger.info("Import complete.")
 
     (
-        python.PythonOperator(task_id="create_schema_and_tables", python_callable=models.create_tables).as_setup()
+        create_models(FranceTravailBase).as_setup()
         >> registered_jobseeker_stats_by_territory()
         >> slack.success_notifying_task()
     )
