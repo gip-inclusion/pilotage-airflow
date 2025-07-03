@@ -66,7 +66,7 @@ select
     json_array_element_text(contacts."Source", 0)         as "Source",
     json_array_element_text(contacts."recup fonction", 0) as "recup fonction",
     json_array_element_text(contacts."Secteur", 0)        as "Secteur"
-from {{ source('monrecap', 'Contacts_v0') }} as contacts
+from {{ source('mon_recap', 'Contacts_v0') }} as contacts
 left join {{ ref('stg_departement_derniere_commandes') }} as dpt
     on contacts."EMAIL" = dpt.email_commande
 left join {{ ref('stg_commandes_max') }} as cmd

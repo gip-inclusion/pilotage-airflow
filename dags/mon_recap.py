@@ -6,7 +6,7 @@ from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import bash, empty
 
-from dags.common import airtable, db, dbt, default_dag_args, departments, monrecap, slack
+from dags.common import airtable, db, dbt, default_dag_args, departments, mon_recap, slack
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -21,8 +21,8 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
     date_pattern = re.compile(r"^date", re.IGNORECASE)
 
-    @task(task_id="monrecap_airtable")
-    def monrecap_airtable(**kwargs):
+    @task(task_id="mon_recap_airtable")
+    def mon_recap_airtable(**kwargs):
 
         con = db.connection_engine()
         # Need to drop these tables and the views created with them in order to be able to run the df.to_sql()
@@ -47,14 +47,14 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
                 # getting all the columns starting with date + Submitted at when needed.
                 # This is repeated for all imported tables
                 commandes_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
-                monrecap.convert_date_columns(df, commandes_dates)
+                mon_recap.convert_date_columns(df, commandes_dates)
 
                 df["Nom Departement"] = df["Code Postal"].apply(
                     lambda cp: "-".join([item for item in departments.get_department(cp) if item is not None])
                 )
             elif table_name == "Contacts":
                 contacts_dates = [col for col in df.columns if date_pattern.match(col)]
-                monrecap.convert_date_columns(df, contacts_dates)
+                mon_recap.convert_date_columns(df, contacts_dates)
                 df["Type de contact"] = "contact commandeur"
                 # fixing Annaelle's double quotes, if you read this I'll get my revenge
                 df = df.rename(
@@ -67,7 +67,7 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
             elif table_name == "Contacts non commandeurs":
                 contacts_non_commandeurs_dates = [col for col in df.columns if date_pattern.match(col)]
-                monrecap.convert_date_columns(df, contacts_non_commandeurs_dates)
+                mon_recap.convert_date_columns(df, contacts_non_commandeurs_dates)
                 df["Type de contact"] = "contact non commandeur"
 
             db_table_name = table_mapping[table_name]
@@ -81,11 +81,11 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
             df.to_sql(db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping)
 
-    monrecap_airtable = monrecap_airtable()
+    mon_recap_airtable = mon_recap_airtable()
 
     # Tally handle poorly the import to airtable, therefore we used a gsheet instead
-    @task(task_id="monrecap_gsheet")
-    def monrecap_gsheet(**kwargs):
+    @task(task_id="mon_recap_gsheet")
+    def mon_recap_gsheet(**kwargs):
         import pandas as pd
 
         sheet_url = Variable.get("BAROMETRE_MON_RECAP")
@@ -116,10 +116,10 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
             }
         )
         baro_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
-        monrecap.convert_date_columns(df, baro_dates)
+        mon_recap.convert_date_columns(df, baro_dates)
         df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
 
-    monrecap_gsheet = monrecap_gsheet()
+    mon_recap_gsheet = mon_recap_gsheet()
 
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
@@ -135,11 +135,11 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         append_env=True,
     )
 
-    dbt_monrecap = bash.BashOperator(
-        task_id="dbt_monrecap",
-        bash_command="dbt run --select monrecap",
+    dbt_mon_recap = bash.BashOperator(
+        task_id="dbt_mon_recap",
+        bash_command="dbt run --select mon_recap",
         env=env_vars,
         append_env=True,
     )
 
-    (start >> monrecap_airtable >> monrecap_gsheet >> dbt_deps >> dbt_seed >> dbt_monrecap >> end)
+    (start >> mon_recap_airtable >> mon_recap_gsheet >> dbt_deps >> dbt_seed >> dbt_mon_recap >> end)

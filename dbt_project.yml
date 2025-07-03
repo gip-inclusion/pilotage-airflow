@@ -39,7 +39,7 @@ models:
       +materialized: table
     staging:
       +materialized: view
-    monrecap:
+    mon_recap:
       +schema: monrecap
       marts:
         +materialized: table
@@ -51,5 +51,5 @@ seeds:
       +column_types:
         departement: varchar(3)
         code_comm: varchar(25)
-    monrecap:
+    mon_recap:
         +schema: monrecap
