@@ -16,7 +16,6 @@ FranceTravailBase = declarative_base()
 
 
 def create_tables():
-    db.create_schema(DB_SCHEMA)
     FranceTravailBase.metadata.create_all(db.connection_engine())
 
 
