@@ -7,6 +7,7 @@ from airflow.models import Variable
 from airflow.operators import bash
 
 from dags.common import airtable, db, dbt, default_dag_args, departments, monrecap, slack
+from dags.common.tasks import create_schema
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -140,7 +141,8 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
     )
 
     (
-        monrecap_airtable()
+        create_schema(DB_SCHEMA).as_setup()
+        >> monrecap_airtable()
         >> monrecap_gsheet()
         >> dbt_deps
         >> dbt_seed
