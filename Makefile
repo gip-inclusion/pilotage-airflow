@@ -49,7 +49,7 @@ quality: $(VIRTUAL_ENV)
 	sqlfluff lint $(SQLFLUFF_OPTIONS) $(MONITORED_DIRS)
 
 test: $(VIRTUAL_ENV)
-	pytest -v -W ignore::DeprecationWarning
+	pytest -v
 
 clean: dbt_clean
 	find . -depth -type d -name "__pycache__" -exec rm -rf '{}' \;
