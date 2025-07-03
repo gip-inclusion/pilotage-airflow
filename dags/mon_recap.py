@@ -5,6 +5,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import bash, empty
+from airflow.operators.python import PythonOperator
 
 from dags.common import airtable, db, dbt, default_dag_args, departments, mon_recap, slack
 
@@ -142,4 +143,13 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         append_env=True,
     )
 
-    (start >> mon_recap_airtable >> mon_recap_gsheet >> dbt_deps >> dbt_seed >> dbt_mon_recap >> end)
+    (
+        start
+        >> PythonOperator(task_id="create_schema", python_callable=db.create_schema, op_args=[DB_SCHEMA])
+        >> mon_recap_airtable
+        >> mon_recap_gsheet
+        >> dbt_deps
+        >> dbt_seed
+        >> dbt_mon_recap
+        >> end
+    )
