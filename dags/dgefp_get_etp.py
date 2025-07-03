@@ -2,7 +2,6 @@ from io import StringIO
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators import empty
 
 from dags.common import db, default_dag_args, ftp, slack
 
@@ -12,8 +11,6 @@ with DAG(
     schedule=None,
     **default_dag_args(),
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-    end = slack.success_notifying_task()
 
     @task(task_id="store_etp")
     def store_etp(**kwargs):
@@ -46,6 +43,4 @@ with DAG(
 
         etp_data.to_sql("dgefp_donnees_etp", con=db.connection_engine(), if_exists="replace", index=False)
 
-    store_etp = store_etp()
-
-    (start >> store_etp >> end)
+    store_etp() >> slack.success_notifying_task()

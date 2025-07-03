@@ -1,6 +1,6 @@
 import airflow
 from airflow.models.param import Param
-from airflow.operators import bash, empty, python, trigger_dagrun
+from airflow.operators import bash, python, trigger_dagrun
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -13,10 +13,6 @@ with airflow.DAG(
     params={"full_refresh": Param(False, type="boolean")},
     **dag_args,
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
-
     env_vars = db.connection_envvars()
 
     dbt_debug = bash.BashOperator(
@@ -62,4 +58,4 @@ with airflow.DAG(
         trigger_dag_id="data_consistency", task_id="trigger_data_consistency"
     )
 
-    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> trigger_data_consistency >> end)
+    dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> trigger_data_consistency >> slack.success_notifying_task()

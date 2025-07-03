@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
-from airflow.operators import empty
 
 from dags.common import db, default_dag_args, slack
 
@@ -20,9 +19,6 @@ with DAG(
     schedule="@daily",
     **default_dag_args(),
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
 
     @task(task_id="store_gsheets")
     def store_gsheets(**kwargs):
@@ -65,6 +61,4 @@ with DAG(
 
         db.pg_store("gip_suivi_nps", suivi_satisfaction, NPS_CREATE_TABLE_SQL)
 
-    store_gsheet_task = store_gsheets()
-
-    (start >> store_gsheet_task >> end)
+    store_gsheets() >> slack.success_notifying_task()

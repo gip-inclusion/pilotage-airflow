@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
-from airflow.operators import empty
 
 from dags.common import db, default_dag_args, slack
 
@@ -11,9 +10,6 @@ with DAG(
     schedule="@weekly",
     **default_dag_args(),
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
 
     @task(task_id="create_nps")
     def create_nps(**kwargs):
@@ -43,6 +39,4 @@ with DAG(
         nps_dashboard["Date"] = pd.to_datetime(nps_dashboard["Date"], dayfirst=True)
         nps_dashboard.to_sql("suivi_satisfaction", con=db.connection_engine(), if_exists="replace", index=False)
 
-    create_nps_task = create_nps()
-
-    (start >> create_nps_task >> end)
+    create_nps() >> slack.success_notifying_task()

@@ -1,5 +1,5 @@
 import airflow
-from airflow.operators import bash, empty, trigger_dagrun
+from airflow.operators import bash, trigger_dagrun
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -11,10 +11,6 @@ with airflow.DAG(
     schedule=None,
     **dag_args,
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
-
     env_vars = db.connection_envvars()
 
     dbt_debug = bash.BashOperator(
@@ -49,4 +45,4 @@ with airflow.DAG(
         trigger_dag_id="data_consistency", task_id="trigger_data_consistency"
     )
 
-    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> trigger_data_consistency >> end)
+    dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> trigger_data_consistency >> slack.success_notifying_task()
