@@ -8,7 +8,7 @@ from dags.common import db, default_dag_args, ftp, slack
 
 
 with DAG(
-    "asp_data",
+    "asp_processed_data",
     schedule=None,
     **default_dag_args(),
 ) as dag:

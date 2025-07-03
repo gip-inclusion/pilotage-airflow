@@ -6,7 +6,7 @@ from dags.common import db, default_dag_args, ftp, slack
 
 
 with DAG(
-    "france_travail",
+    "ft_donnees_brutes",
     schedule=None,
     **default_dag_args(),
 ) as dag:
