@@ -26,7 +26,6 @@ def check_siret(col_name: str) -> sqlalchemy.CheckConstraint:
 
 
 def create_tables():
-    db.create_schema(DB_SCHEMA)
     ImmersionFaciliteeBase.metadata.create_all(db.connection_engine())
 
 
