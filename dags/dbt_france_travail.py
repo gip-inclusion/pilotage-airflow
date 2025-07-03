@@ -9,7 +9,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="dbt_france_travail",
-    schedule_interval=None,
+    schedule=None,
     params={
         "donnees_prod": Param(False, type="boolean"),
     },
@@ -44,7 +44,7 @@ with airflow.DAG(
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
             kwargs["ti"].xcom_push("dbt_run_args", "--select stg_france_travail france_travail_donnees_recette")
 
-    params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
+    params_check = python.PythonOperator(task_id="params_check", python_callable=params_check)
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",

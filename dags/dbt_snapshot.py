@@ -9,7 +9,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="dbt_snapshot",
-    schedule_interval="@weekly",
+    schedule="@weekly",
     params={
         "full_refresh": Param(False, type="boolean"),
     },

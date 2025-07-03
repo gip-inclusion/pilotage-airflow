@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-with DAG("immersion_facilitee", schedule_interval="@weekly", **dag_args) as dag:
+with DAG("immersion_facilitee", schedule="@weekly", **dag_args) as dag:
 
     @task(task_id="import_conventions")
     def import_conventions(**kwargs):
