@@ -5,18 +5,12 @@ from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import DECIMAL, DateTime, Integer, String
 
-from dags.common import db
-
 
 DB_SCHEMA = "france_travail"
 
 
 # NOTE: when upgrading to sqlalchemy 2.0 or higher, we'll need to use the class DeclarativeBase
 FranceTravailBase = declarative_base()
-
-
-def create_tables():
-    FranceTravailBase.metadata.create_all(db.connection_engine())
 
 
 class JobSeekerStats(FranceTravailBase):

@@ -6,10 +6,10 @@ import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
-from airflow.operators import python
 from sqlalchemy.dialects import postgresql
 
 from dags.common import db, dbt, default_dag_args, slack
+from dags.common.tasks import create_schema
 
 
 DB_SCHEMA = "data_inclusion"
@@ -88,8 +88,4 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         )
         logger.info("%r rows created", rows_created)
 
-    (
-        python.PythonOperator(task_id="create_schema", python_callable=db.create_schema, op_args=[DB_SCHEMA])
-        >> [import_structures(), import_services()]
-        >> slack.success_notifying_task()
-    )
+    (create_schema(DB_SCHEMA).as_setup() >> [import_structures(), import_services()] >> slack.success_notifying_task())
