@@ -9,6 +9,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="data_consistency",
+    schedule=None,
     params={"all_tests": Param(False, type="boolean")},
     **dag_args,
 ) as dag:
@@ -30,7 +31,7 @@ with airflow.DAG(
         else:
             kwargs["ti"].xcom_push("dbt_test_args", "--exclude test_etp_dgefp_pilo")
 
-    params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
+    params_check = python.PythonOperator(task_id="params_check", python_callable=params_check)
 
     dbt_test = bash.BashOperator(
         task_id="dbt_test",

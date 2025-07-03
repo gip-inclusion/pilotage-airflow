@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 # NOTE: We recuperate the stats on a quarterly basis. Since we don't know when the stats will be updated API-side
 # we cannot reliably schedule this DAG, so we run it regularly.
-with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule_interval="@weekly") as dag:
+with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule="@weekly") as dag:
 
     @task(task_id="registered_jobseeker_stats_by_territory")
     def registered_jobseeker_stats_by_territory(**kwargs):

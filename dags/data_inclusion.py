@@ -42,7 +42,7 @@ def get_all_items(path):
             break
 
 
-with DAG("data_inclusion", schedule_interval="@daily", **dag_args) as dag:
+with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
 
     @task(task_id="import_structures")
     def import_structures(**kwargs):

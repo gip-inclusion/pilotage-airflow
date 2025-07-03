@@ -13,7 +13,7 @@ from dags.common import airtable, db, dbt, default_dag_args, departments, mon_re
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 DB_SCHEMA = "mon_recap"
 
-with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
+with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
     start = empty.EmptyOperator(task_id="start")
 
     end = slack.success_notifying_task()
