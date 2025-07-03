@@ -1,6 +1,7 @@
 import airflow
+from airflow.decorators import task
 from airflow.models.param import Param
-from airflow.operators import bash, python
+from airflow.operators import bash
 
 from dags.common import db, dbt, default_dag_args
 
@@ -22,14 +23,13 @@ with airflow.DAG(
         append_env=True,
     )
 
+    @task
     def params_check(params=None, **kwargs):
         is_all_tests = params.get("all_tests")
         if is_all_tests:
             kwargs["ti"].xcom_push("dbt_test_args", "")
         else:
             kwargs["ti"].xcom_push("dbt_test_args", "--exclude test_etp_dgefp_pilo")
-
-    params_check = python.PythonOperator(task_id="params_check", python_callable=params_check)
 
     dbt_test = bash.BashOperator(
         task_id="dbt_test",
@@ -38,4 +38,4 @@ with airflow.DAG(
         append_env=True,
     )
 
-    dbt_deps >> dbt_test
+    params_check() >> dbt_deps >> dbt_test
