@@ -1,7 +1,9 @@
 import textwrap
 
+import sqlalchemy
 from airflow.models import Variable
 from sqlalchemy import create_engine
+from sqlalchemy.sql.ddl import CreateSchema
 
 from dags.common import dataframes
 
@@ -122,3 +124,8 @@ def create_schema(schema_name):
     with MetabaseDBCursor() as (cursor, conn):
         cursor.execute(sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(schema_name)))
         conn.commit()
+
+
+@sqlalchemy.event.listens_for(sqlalchemy.Table, "before_create")
+def create_schema_if_not_exists(target, connection, **_):
+    connection.execute(CreateSchema(target.schema))
