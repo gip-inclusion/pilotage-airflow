@@ -21,12 +21,12 @@ with airflow.DAG(
     schedule="0 13 * * 1",
 ) as dag:
 
-    @task(task_id="create_work_directory")
+    @task
     def create_work_directory(*, task_instance, **kwargs):
         dag_run = task_instance.get_dagrun()
         return tempfile.mkdtemp(prefix=f"{dag_run.dag_id}_", suffix=f"_{dag_run.run_id}")
 
-    @task(task_id="import_and_decrypt")
+    @task
     def import_and_decrypt(import_directory, **kwargs):
         bucket_name = Variable.get("DATASTORE_S3_EMPLOIS_BUCKET_NAME")
         client = s3.client()
@@ -60,7 +60,7 @@ with airflow.DAG(
 
         return most_recent_import
 
-    @task(task_id="process")
+    @task
     def process(imported_file_key, import_directory, **kwargs):
         views_to_populate = [
             *get_fluxiae_referential_filenames(import_directory),
@@ -93,7 +93,7 @@ with airflow.DAG(
         # Process complete. Mark this run as the most recent successful import.
         logger.info("Populated FluxIAE. Logging %s to configuration", imported_file_key)
 
-    @task(task_id="cleanup_import_directory")
+    @task
     def clean_work_directory(import_directory, **kwargs):
         shutil.rmtree(import_directory)
 

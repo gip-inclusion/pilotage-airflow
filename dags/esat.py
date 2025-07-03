@@ -11,11 +11,11 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with DAG("esat", schedule="@daily", **dag_args) as dag:
 
-    @task(task_id="create_table")
+    @task
     def create_table(variables):
         create_tables(variables)
 
-    @task(task_id="import_esat")
+    @task
     def import_esat(variables):
         esat_model = build_esat_model(variables)
         data = get_data_from_sheet(Variable.get("ESAT_SHEET_URL"), variables)
