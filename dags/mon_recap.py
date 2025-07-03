@@ -4,33 +4,31 @@ import sqlalchemy.types as types
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
-from airflow.operators import bash, empty
+from airflow.operators import bash
 
-from dags.common import airtable, db, dbt, default_dag_args, departments, monrecap, slack
+from dags.common import airtable, db, dbt, default_dag_args, departments, mon_recap, slack
+from dags.common.tasks import create_schema
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
-DB_SCHEMA = "monrecap"
+DB_SCHEMA = "mon_recap"
 
-with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
+with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
 
     env_vars = db.connection_envvars()
 
     date_pattern = re.compile(r"^date", re.IGNORECASE)
 
-    @task(task_id="monrecap_airtable")
-    def monrecap_airtable(**kwargs):
+    @task
+    def mon_recap_airtable(**kwargs):
 
         con = db.connection_engine()
         # Need to drop these tables and the views created with them in order to be able to run the df.to_sql()
         con.execute(
-            """drop table if exists monrecap."Commandes_v0" cascade;
-                    drop table if exists monrecap.barometre cascade;
-                    drop table if exists monrecap.contacts_non_commandeurs_v0 cascade;
-                    drop table if exists monrecap.Contacts_v0 cascade"""
+            """drop table if exists mon_recap."Commandes_v0" cascade;
+                    drop table if exists mon_recap.barometre cascade;
+                    drop table if exists mon_recap.contacts_non_commandeurs_v0 cascade;
+                    drop table if exists mon_recap.Contacts_v0 cascade"""
         )
 
         table_mapping = {
@@ -47,14 +45,14 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
                 # getting all the columns starting with date + Submitted at when needed.
                 # This is repeated for all imported tables
                 commandes_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
-                monrecap.convert_date_columns(df, commandes_dates)
+                mon_recap.convert_date_columns(df, commandes_dates)
 
                 df["Nom Departement"] = df["Code Postal"].apply(
                     lambda cp: "-".join([item for item in departments.get_department(cp) if item is not None])
                 )
             elif table_name == "Contacts":
                 contacts_dates = [col for col in df.columns if date_pattern.match(col)]
-                monrecap.convert_date_columns(df, contacts_dates)
+                mon_recap.convert_date_columns(df, contacts_dates)
                 df["Type de contact"] = "contact commandeur"
                 # fixing Annaelle's double quotes, if you read this I'll get my revenge
                 df = df.rename(
@@ -67,7 +65,7 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
             elif table_name == "Contacts non commandeurs":
                 contacts_non_commandeurs_dates = [col for col in df.columns if date_pattern.match(col)]
-                monrecap.convert_date_columns(df, contacts_non_commandeurs_dates)
+                mon_recap.convert_date_columns(df, contacts_non_commandeurs_dates)
                 df["Type de contact"] = "contact non commandeur"
 
             db_table_name = table_mapping[table_name]
@@ -81,11 +79,9 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
 
             df.to_sql(db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping)
 
-    monrecap_airtable = monrecap_airtable()
-
     # Tally handle poorly the import to airtable, therefore we used a gsheet instead
-    @task(task_id="monrecap_gsheet")
-    def monrecap_gsheet(**kwargs):
+    @task
+    def mon_recap_gsheet(**kwargs):
         import pandas as pd
 
         sheet_url = Variable.get("BAROMETRE_MON_RECAP")
@@ -110,10 +106,8 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
             }
         )
         baro_dates = [col for col in df.columns if date_pattern.match(col) or col == "Submitted at"]
-        monrecap.convert_date_columns(df, baro_dates)
+        mon_recap.convert_date_columns(df, baro_dates)
         df.to_sql("barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False)
-
-    monrecap_gsheet = monrecap_gsheet()
 
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
@@ -129,11 +123,19 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
         append_env=True,
     )
 
-    dbt_monrecap = bash.BashOperator(
-        task_id="dbt_monrecap",
-        bash_command="dbt run --select monrecap",
+    dbt_mon_recap = bash.BashOperator(
+        task_id="dbt_mon_recap",
+        bash_command="dbt run --select mon_recap",
         env=env_vars,
         append_env=True,
     )
 
-    (start >> monrecap_airtable >> monrecap_gsheet >> dbt_deps >> dbt_seed >> dbt_monrecap >> end)
+    (
+        create_schema(DB_SCHEMA).as_setup()
+        >> mon_recap_airtable()
+        >> mon_recap_gsheet()
+        >> dbt_deps
+        >> dbt_seed
+        >> dbt_mon_recap
+        >> slack.success_notifying_task()
+    )

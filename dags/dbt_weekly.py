@@ -1,6 +1,7 @@
 import airflow
+from airflow.decorators import task
 from airflow.models.param import Param
-from airflow.operators import bash, empty, python, trigger_dagrun
+from airflow.operators import bash, trigger_dagrun
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -9,13 +10,10 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="dbt_weekly",
-    schedule_interval=None,
+    schedule=None,
     params={"full_refresh": Param(False, type="boolean")},
     **dag_args,
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
 
     env_vars = db.connection_envvars()
 
@@ -33,6 +31,7 @@ with airflow.DAG(
         append_env=True,
     )
 
+    @task
     def params_check(params=None, **kwargs):
         is_full_refresh = params.get("full_refresh")
         if is_full_refresh:
@@ -41,8 +40,6 @@ with airflow.DAG(
         else:
             kwargs["ti"].xcom_push("dbt_seed_args", "")
             kwargs["ti"].xcom_push("dbt_run_args", "--select marts.weekly legacy.weekly ephemeral indexed staging")
-
-    params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
@@ -62,4 +59,12 @@ with airflow.DAG(
         trigger_dag_id="data_consistency", task_id="trigger_data_consistency"
     )
 
-    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dag_data_consistency >> end)
+    (
+        params_check()
+        >> dbt_debug
+        >> dbt_deps
+        >> dbt_seed
+        >> dbt_run
+        >> dag_data_consistency
+        >> slack.success_notifying_task()
+    )
