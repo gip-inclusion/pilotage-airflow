@@ -2,7 +2,6 @@ from io import BytesIO
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators import empty
 
 from dags.common import db, default_dag_args, ftp, slack
 
@@ -12,8 +11,6 @@ with DAG(
     schedule=None,
     **default_dag_args(),
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-    end = slack.success_notifying_task()
 
     @task(task_id="store_asp")
     def store_asp(**kwargs):
@@ -58,6 +55,4 @@ with DAG(
 
         asp_data.to_sql("fluxIAE_BenefSorties_ASP", con=db.connection_engine(), if_exists="replace", index=False)
 
-    store_asp = store_asp()
-
-    (start >> store_asp >> end)
+    store_asp() >> slack.success_notifying_task()

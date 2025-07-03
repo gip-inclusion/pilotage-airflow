@@ -4,7 +4,7 @@ import sqlalchemy.types as types
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
-from airflow.operators import bash, empty
+from airflow.operators import bash
 
 from dags.common import airtable, db, dbt, default_dag_args, departments, monrecap, slack
 
@@ -13,10 +13,6 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 DB_SCHEMA = "monrecap"
 
 with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
-
     env_vars = db.connection_envvars()
 
     date_pattern = re.compile(r"^date", re.IGNORECASE)
@@ -84,8 +80,6 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
                 db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping
             )
 
-    monrecap_airtable = monrecap_airtable()
-
     # Tally handle poorly the import to airtable, therefore we used a gsheet instead
     @task(task_id="monrecap_gsheet")
     def monrecap_gsheet(**kwargs):
@@ -124,8 +118,6 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
             "barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False
         )
 
-    monrecap_gsheet = monrecap_gsheet()
-
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
         bash_command="dbt deps",
@@ -147,4 +139,11 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
         append_env=True,
     )
 
-    (start >> monrecap_airtable >> monrecap_gsheet >> dbt_deps >> dbt_seed >> dbt_monrecap >> end)
+    (
+        monrecap_airtable()
+        >> monrecap_gsheet()
+        >> dbt_deps
+        >> dbt_seed
+        >> dbt_monrecap
+        >> slack.success_notifying_task()
+    )
