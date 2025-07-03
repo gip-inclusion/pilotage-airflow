@@ -348,3 +348,13 @@ models:
         tests:
           - not_null
           - unique
+  - name: stg_montants_rsa_verses
+    description: >
+      Table contenant les montants de 88% du RSA, disponibles sur l'ASP, mois par mois (le montant du RSA change pendant l'année), jusqu'au mois en cours et cela pour tous les departements de France.
+      L'ajout des départements et des mois se fait dans cette table. Ces deux informations sont nécessaires pour effectuer une jointure qui ne créé pas de doublons dans la table suivi_complet_etps_conventionnes
+  - name: stg_eq_brsa_annuel
+    description: >
+      Pour rappel, un equivalent bRSA est le nombre de bRSA qu'une ACI peut (et doit) embaucher pour débloquer les subventions de la part du CD.
+      Le montant est débloqué dès la première heure de travail d'un bRSA dans une ACI.
+      Cette table nous permet de récupérer les équivalents brsa annuel. En effet vu que le montant du RSA change dans l'année la formule montant_cofinancé/montant_rsa n'est plus valable.
+      Il faut additionner toutes les valeurs mensuelles.
