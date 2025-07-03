@@ -7,7 +7,7 @@ from dags.common import db, default_dag_args, ftp, slack
 
 with DAG(
     "ft_expe_nord",
-    schedule_interval=None,
+    schedule=None,
     **default_dag_args(),
 ) as dag:
     start = empty.EmptyOperator(task_id="start")

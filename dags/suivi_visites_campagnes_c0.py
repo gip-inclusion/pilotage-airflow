@@ -9,7 +9,7 @@ from dags.common import db, default_dag_args, matomo, slack
 
 with DAG(
     "suivi_visites_campagnes_c0",
-    schedule_interval="@monthly",
+    schedule="@monthly",
     **default_dag_args(),
 ) as dag:
     start = empty.EmptyOperator(task_id="start")

@@ -9,7 +9,7 @@ FT_RAW_DATA = "raw_data_ft.csv"
 
 with DAG(
     "france_travail",
-    schedule_interval=None,
+    schedule=None,
     **default_dag_args(),
 ) as dag:
     start = empty.EmptyOperator(task_id="start")

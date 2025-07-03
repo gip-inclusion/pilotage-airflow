@@ -9,7 +9,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="dbt_weekly",
-    schedule_interval=None,
+    schedule=None,
     params={"full_refresh": Param(False, type="boolean")},
     **dag_args,
 ) as dag:
@@ -42,7 +42,7 @@ with airflow.DAG(
             kwargs["ti"].xcom_push("dbt_seed_args", "")
             kwargs["ti"].xcom_push("dbt_run_args", "--select marts.weekly legacy.weekly ephemeral indexed staging")
 
-    params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
+    params_check = python.PythonOperator(task_id="params_check", python_callable=params_check)
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
