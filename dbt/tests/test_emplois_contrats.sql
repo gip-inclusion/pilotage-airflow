@@ -1,6 +1,3 @@
-""" Normalement les contrat_id_ctr devrait être unique
-    or ce n'est pas le cas car certaines fois on a plusieurs
-    pass iae associables au même contrat_id_ctr """
 with nb_pass_contrats as (
     select
         "hash_numéro_pass_iae",
