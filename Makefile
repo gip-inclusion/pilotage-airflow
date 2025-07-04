@@ -114,6 +114,7 @@ pg_dump:
 		--table="institutions" \
 		--table="organisations_v0" \
 		--table="pass_agréments" \
+		--table="suspensions_v0" \
 		--table="structures" \
 		--table="utilisateurs_v0" \
 		--table="demandes_de_prolongation" \
