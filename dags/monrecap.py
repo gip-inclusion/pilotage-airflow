@@ -106,6 +106,12 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
                 "Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation d'illetrisme )": (
                     "Quel(s) type(s) de public accompagnez-vous ? (illetrisme)"
                 ),
+                "D'après vous, pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?": (
+                    "Pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?"
+                ),
+                "D'après vous, pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?.1": (
+                    "(bis) Pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?"
+                ),
                 "Votre adresse mail ": "Votre adresse mail ?",
             }
         )
