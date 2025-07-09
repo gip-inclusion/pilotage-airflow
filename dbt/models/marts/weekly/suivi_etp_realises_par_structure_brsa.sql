@@ -23,7 +23,6 @@ select
     serv.nom_region_af,
     etp_c.annee_af,
     m.mois_classe,
-    max(etp_c.nb_brsa_cible_mensuel)              as nb_brsa_cible_mensuel,
     sum(serv.nombre_etp_consommes_asp)            as nombre_etp_consommes_asp,
     sum(serv.nombre_heures_travaillees)           as nombre_heures_travaillees,
     sum(serv.nombre_etp_consommes_reels_annuels)  as nombre_etp_consommes_reels_annuels,
