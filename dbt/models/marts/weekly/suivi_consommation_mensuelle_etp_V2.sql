@@ -13,7 +13,6 @@ select
     (etp.id_annexe_financiere),
     sum(etp_c.nombre_etp_consommes_reels_mensuels) as total_etp_mensuels_realises,
     sum(etp_c.nombre_etp_consommes_reels_annuels)  as total_etp_annuels_realises,
-    max(etp.nb_brsa_cible_mensuel)                 as nb_brsa_cible_mensuel,
     case
         when etp."effectif_mensuel_conventionné" != 0
             then
