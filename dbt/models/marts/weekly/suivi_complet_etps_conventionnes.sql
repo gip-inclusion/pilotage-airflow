@@ -40,7 +40,7 @@ group by
     af.af_date_fin_effet_v2,
     af."effectif_mensuel_conventionné",
     af."effectif_annuel_conventionné",
-    af."année",
-    af.mois,
+    "année",
+    mois,
     eq.nb_brsa_cible_annuel,
     rsa.rmi_valeur
