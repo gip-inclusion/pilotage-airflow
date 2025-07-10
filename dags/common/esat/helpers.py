@@ -26,7 +26,7 @@ def get_variables() -> dict:
 
 
 def get_data_from_sheet(pub_sheet_url, variables) -> pd.DataFrame:
-    dtf = pd.read_csv(pub_sheet_url, decimal=",")
+    dtf = pd.read_csv(pub_sheet_url, decimal=",", na_values=["999", ""])
 
     # normalize columns
     dtf.columns = dtf.columns.str.replace("\n", "").str.strip()
@@ -34,6 +34,10 @@ def get_data_from_sheet(pub_sheet_url, variables) -> pd.DataFrame:
 
     # rename columns labels
     variables_dict = {variable_info["question"]: variable for variable, variable_info in variables.items()}
+
+    # convert Nan values to nulls
+    dtf = dtf.astype("object")
+    dtf = dtf.where(pd.notnull(dtf), None)
     dtf = dtf.rename(columns=variables_dict)
     dtf = dtf[variables_dict.values()]
 
