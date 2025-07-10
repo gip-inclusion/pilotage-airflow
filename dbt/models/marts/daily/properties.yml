@@ -52,6 +52,19 @@ models:
   - name: pass_agrements_valides
     description: >
       Table permettant de savoir si un pass agrément ou IAE est valide et/ou suspendu.
+    columns:
+      - name: id
+        description: >
+          Identifiant du pass agrément
+        tests:
+          - not_null
+          - unique
+      - name: hash_numéro_pass_iae
+        description: >
+          Hash du numéro de pass IAE, utile pour éviter de stocker le numéro de pass en clair.
+        tests:
+          - not_null
+          - unique
   - name: suspensions_pass
     description: >
       Table permettant de connaître les pass agrément ou IAE suspendus.
