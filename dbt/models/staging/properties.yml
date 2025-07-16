@@ -16,7 +16,10 @@ models:
       Nous parlons d'auto prescription lorsque l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
   - name: stg_structures
     description: >
-      Ce modèle permet de selectionner certaines informations (id, active, siret, ville et nom complet de la structure) de la table structures et de lever des ambiguités dans les noms de colonne, en particulier avec les départements.
+      Ce modèle permet de selectionner certaines informations (id, active, siret, ville, bassin_d_emploi, et nom complet de la structure) de la table structures et de lever des ambiguités dans les noms de colonne, en particulier avec les départements.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('structures')
   - name: stg_candidats_count
     description: >
       Ce modèle permet de compter le nombre de candidats lorsqu'une jointure est faite avec la table candidatures.
@@ -41,6 +44,11 @@ models:
   - name: stg_bassin_emploi
     description: >
       Ce modèle récupère les données des bassins d'emploi pour chaque structure.
+    columns:
+      - name: id_structure
+        description: "Identifiant unique de la structure"
+        tests:
+          - unique
   - name: stg_org_prescripteur
     description: >
       Ce modèle récupère des informations de localisation (département, région) de tous les prescripteurs.
