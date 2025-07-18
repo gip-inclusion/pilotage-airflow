@@ -1,6 +1,7 @@
 select
     {{ pilo_star(source('emplois','structures_v0'), except=['source', 'ville'], relation_alias='struct') }},
     insee.libelle_commune as ville,
+    insee.nom_zone_emploi as bassin_d_emploi,
     grp_strct.groupe      as categorie_structure,
     case
         when struct.source = 'Export ASP' then strct_asp.nom_epci_structure
@@ -15,10 +16,10 @@ from
     {{ source('emplois','structures_v0') }} as struct
 left join
     {{ ref('groupes_structures') }} as grp_strct
-    on grp_strct.structure = struct.type
+    on struct.type = grp_strct.structure
 left join
     {{ ref('stg_insee_appartenance_geo_communes') }} as insee
     on coalesce(ltrim(struct.code_commune, '0'), ltrim(struct.code_commune_c1, '0')) = insee.code_insee
 left join
     {{ ref('fluxIAE_Structure_v2') }} as strct_asp
-    on strct_asp.structure_id_siae = struct.id_asp
+    on struct.id_asp = strct_asp.structure_id_siae
