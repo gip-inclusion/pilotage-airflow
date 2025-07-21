@@ -15,6 +15,8 @@ from dags.common.anonymize_sensible_data import NormalizationKind, hash_content,
 from dags.common.immersion_facilitee.models import Conventions
 
 
+MAX_API_ITEMS_RETURNED = 100
+
 logger = logging.getLogger(__name__)
 
 
@@ -61,6 +63,15 @@ def get_all_items(path: str) -> list[dict]:
 
         data_partial = response.raise_for_status().json()
 
+        if len(data_partial) >= MAX_API_ITEMS_RETURNED:
+            logger.warning(
+                "More than %s items found for date %s: %d items. "
+                "This may indicate that we do not get all data because of the lack of pagination.",
+                MAX_API_ITEMS_RETURNED,
+                str_date_g,
+                len(data_partial),
+            )
+
         data.extend(data_partial)
         time.sleep(0.2)  # Respecter le rate limit de l'API
 
@@ -70,24 +81,36 @@ def get_all_items(path: str) -> list[dict]:
 
 def get_dataframe_from_response(table_data: list[dict]) -> pd.DataFrame:
 
-    unwanted_fields = [
-        "schedule",
-        "establishmentTutor",
-        "validators",
-        "agencyCounsellorEmails",
-        "agencyValidatorEmails",
-        "businessAdvantages",
-        "individualProtection",
-        "individualProtectionDescription",
-        "sanitaryPrevention",
-        "sanitaryPreventionDescription",
-        "immersionAddress",
-        "businessName",
+    # list of wanted fiels to keep before and after normalization
+    wanted_fields = [
+        "id",
+        "status",
+        "statusJustification",
+        "agencyId",
+        "dateSubmission",
+        "dateStart",
+        "dateEnd",
+        "dateApproval",
+        "dateValidation",
+        "siret",
+        "immersionObjective",
+        "immersionAppellation",
+        "immersionAppellationRomeCode",
+        "immersionAppellationRomeLabel",
+        "immersionAppellationAppellationCode",
+        "immersionAppellationAppellationLabel",
+        "immersionActivities",
+        "immersionSkills",
+        "establishmentNumberEmployeesRange",
+        "internshipKind",
+        "agencyName",
+        "agencyDepartment",
+        "agencyKind",
+        "agencySiret",
+        "signatories",
+        "beneficiaryPIIHashes",
     ]
-
-    table_data_without_unwanted_fields = [
-        {k: v for k, v in item.items() if k not in unwanted_fields} for item in table_data
-    ]
+    table_data_without_unwanted_fields = [{k: v for k, v in item.items() if k in wanted_fields} for item in table_data]
     df_data = pd.json_normalize(table_data_without_unwanted_fields)
     df_data.columns = [dot_to_camel(col) for col in df_data.columns]
     df_data["beneficiaryPIIHashes"] = df_data.apply(
@@ -103,8 +126,9 @@ def get_dataframe_from_response(table_data: list[dict]) -> pd.DataFrame:
         axis=1,
     )
 
-    unwanted_sensible_data_cols = [col for col in df_data.columns if col.startswith("signatories")]
-    df_data = df_data.drop(columns=unwanted_sensible_data_cols)
+    wanted_fields = [x for x in wanted_fields if x not in ["signatories", "immersionAppellation"]]
+
+    df_data = df_data[wanted_fields]
     df_data = df_data.where(pd.notnull(df_data), None)
     return df_data
 
