@@ -35,7 +35,7 @@ class Conventions(ImmersionFaciliteeBase):
     id = Column(UUID(as_uuid=True), primary_key=True)
 
     status = Column(String)
-    statusJustification = Column(String)
+    statusJustification = Column(String, nullable=True)
     agencyId = Column(String)
     dateSubmission = Column(DateTime)
     dateStart = Column(DateTime)
@@ -56,10 +56,6 @@ class Conventions(ImmersionFaciliteeBase):
     agencyDepartment = Column(String)
     agencyKind = Column(String)
     agencySiret = Column(String, check_siret("agencySiret"))
-    agencyRefersToId = Column(String)
-    agencyRefersToName = Column(String)
-    agencyRefersToKind = Column(String)
-    updatedAt = Column(DateTime)
     beneficiaryPIIHashes = Column(ARRAY(String))
 
     def __repr__(self) -> str:
