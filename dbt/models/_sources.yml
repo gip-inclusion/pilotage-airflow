@@ -140,7 +140,7 @@ sources:
         description: >
           Table générée par une tâche périodique côté Les Emplois de l'Inclusion et qui permet de remonter les
           visites sur les tableaux de bord publics du Pilotage.
-  - name: monrecap
+  - name: mon_recap
     schema: monrecap
     description: >
       Données de Mon Récap
