@@ -22,7 +22,8 @@ select
     cd.bassin_emploi_prescripteur,
     cd."nom_département_structure",
     cd.reprise_de_stock_ai,
-    cd.epci
+    cd.epci,
+    cd."département_orga"
 from {{ ref('candidats') }} as c
 left join {{ ref('candidatures_echelle_locale') }} as cd
     on c.id = cd.id_candidat
