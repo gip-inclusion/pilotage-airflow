@@ -7,6 +7,7 @@ select
     organisations."nom_département",
     organisations.siret                                                               as siret_org_prescripteur,
     organisations."nom_département"                                                   as dept_org,
+    organisations."département"                                                       as "num_département_org",
     -- les deux colonnes suivantes sont en doublons le temps de vérifier les branchements de filtre sur metabase
     organisations."région"                                                            as "région_org",
     organisations."région",
