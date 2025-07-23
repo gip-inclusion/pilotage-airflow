@@ -155,4 +155,11 @@ sources:
       Tables générées chaque semaine, manuellement via un DAG, après récupération des données auprès de la DGEFP
     tables:
       - name: dgefp_donnees_etp
+  - name: esat
+    schema: esat
+    description: >
+      Réponses aux questionnaires co-construite avec les ARS à destination des ESAT.
+      Données importées de Tally (et bientôt des emplois).
+    tables:
+      - name: src_questionnaire_2025
 
