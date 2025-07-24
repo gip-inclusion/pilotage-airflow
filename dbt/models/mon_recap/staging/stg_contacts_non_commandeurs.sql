@@ -66,7 +66,7 @@ select
     cmd."Source",
     null                                                                as "recup fonction",
     null                                                                as "Secteur"
-from {{ source('monrecap', 'contacts_non_commandeurs_v0') }} as cnm
+from {{ source('mon_recap', 'contacts_non_commandeurs_v0') }} as cnm
 left join {{ ref('stg_commandes_max') }} as cmd
     on cnm.submission_id = cmd."Submission ID"
 left join {{ ref('stg_departement_derniere_commandes') }} as dpt

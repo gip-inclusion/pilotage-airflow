@@ -1,20 +1,16 @@
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators import empty
 
 from dags.common import db, default_dag_args, ftp, slack
 
 
 with DAG(
-    "france_travail",
-    schedule_interval=None,
+    "ft_donnees_brutes",
+    schedule=None,
     **default_dag_args(),
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
 
-    end = slack.success_notifying_task()
-
-    @task(task_id="store_ft")
+    @task
     def store_ft(**kwargs):
         import ftputil
         import pandas as pd
@@ -49,6 +45,4 @@ with DAG(
 
         df.to_sql("FT_donnees_brutes", con=db.connection_engine(), if_exists="replace", index=False)
 
-    store_ft = store_ft()
-
-    (start >> store_ft >> end)
+    store_ft() >> slack.success_notifying_task()

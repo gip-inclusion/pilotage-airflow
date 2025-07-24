@@ -56,3 +56,12 @@ select = [
 [tool.ruff.lint.isort]
 combine-as-imports = true
 lines-after-imports = 2
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py"]
+filterwarnings = [
+    "error",
+]
+addopts = [
+    "--strict-markers",
+]

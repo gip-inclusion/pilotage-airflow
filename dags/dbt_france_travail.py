@@ -1,6 +1,7 @@
 import airflow
+from airflow.decorators import task
 from airflow.models.param import Param
-from airflow.operators import bash, empty, python
+from airflow.operators import bash
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -9,15 +10,12 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
     dag_id="dbt_france_travail",
-    schedule_interval=None,
+    schedule=None,
     params={
         "donnees_prod": Param(False, type="boolean"),
     },
     **dag_args,
 ) as dag:
-    start = empty.EmptyOperator(task_id="start")
-
-    end = slack.success_notifying_task()
 
     env_vars = db.connection_envvars()
 
@@ -35,6 +33,7 @@ with airflow.DAG(
         append_env=True,
     )
 
+    @task
     def params_check(params=None, **kwargs):
         is_prod = params.get("donnees_prod")
         if is_prod:
@@ -43,8 +42,6 @@ with airflow.DAG(
         else:
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
             kwargs["ti"].xcom_push("dbt_run_args", "--select stg_france_travail france_travail_donnees_recette")
-
-    params_check = python.PythonOperator(task_id="params_check", provide_context=True, python_callable=params_check)
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
@@ -60,4 +57,4 @@ with airflow.DAG(
         append_env=True,
     )
 
-    (start >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> end)
+    params_check() >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> slack.success_notifying_task()

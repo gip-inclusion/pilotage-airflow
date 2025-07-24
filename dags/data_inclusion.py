@@ -6,10 +6,10 @@ import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
-from airflow.operators import python
 from sqlalchemy.dialects import postgresql
 
 from dags.common import db, dbt, default_dag_args, slack
+from dags.common.tasks import create_schema
 
 
 DB_SCHEMA = "data_inclusion"
@@ -42,9 +42,9 @@ def get_all_items(path):
             break
 
 
-with DAG("data_inclusion", schedule_interval="@daily", **dag_args) as dag:
+with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
 
-    @task(task_id="import_structures")
+    @task
     def import_structures(**kwargs):
         df = pd.DataFrame(get_all_items("/api/v0/structures"))
         df["date_maj"] = pd.to_datetime(df["date_maj"])
@@ -62,7 +62,7 @@ with DAG("data_inclusion", schedule_interval="@daily", **dag_args) as dag:
         )
         logger.info("%r rows created", row_created)
 
-    @task(task_id="import_services")
+    @task
     def import_services(**kwargs):
         df = pd.DataFrame(get_all_items("/api/v0/services"))
         df["date_creation"] = pd.to_datetime(df["date_creation"])
@@ -88,8 +88,4 @@ with DAG("data_inclusion", schedule_interval="@daily", **dag_args) as dag:
         )
         logger.info("%r rows created", rows_created)
 
-    (
-        python.PythonOperator(task_id="create_schema", python_callable=db.create_schema, op_args=[DB_SCHEMA])
-        >> [import_structures(), import_services()]
-        >> slack.success_notifying_task()
-    )
+    (create_schema(DB_SCHEMA).as_setup() >> [import_structures(), import_services()] >> slack.success_notifying_task())

@@ -1,27 +1,29 @@
-import json
-from unittest import mock
+import pathlib
 
-from airflow.models import DagBag
-
-
-# keep track of all the necessary variables for any DAGs to run.
-# this is good to avoid losing the grip on what is necessary to
-# our production flows. Any added variable not listed in the dev
-# file will make the tests fail.
-def get_dag_variables():
-    with open("dag-variables.json", "r", encoding="utf-8") as json_file:
-        return json.load(json_file)
+import pytest
 
 
-@mock.patch.dict(
-    "os.environ",
-    {f"AIRFLOW_VAR_{var}": "dummy" for var in get_dag_variables()},
-)
-def test_dags_generic(subtests):
-    dagbag = DagBag()
-    for dag_id in dagbag.dag_ids:
-        with subtests.test(msg="DAG generic checks", dag_id=dag_id):
-            dag = dagbag.get_dag(dag_id=dag_id)
-            assert dagbag.import_errors == {}
-            assert dag is not None
-            assert len(dag.tasks) >= 1
+@pytest.fixture(name="dag_bag", scope="session")
+def dag_bag_fixture():
+    # Import here because Airflow *really* like to put side effect in their module...
+    from airflow.models import DagBag
+
+    return DagBag()
+
+
+def test_dags_can_be_imported(dag_bag):
+    assert dag_bag.import_errors == {}
+
+
+def test_dags_listing(dag_bag):
+    dags_folder = pathlib.Path(__file__).parents[1].joinpath("dags")
+    assert dags_folder.exists()
+    assert dags_folder.is_dir()
+
+    expected_dag_ids = {f.stem for f in dags_folder.glob("*.py") if f.name != "__init__.py"}
+    assert set(dag_bag.dags.keys()) == expected_dag_ids
+
+
+def test_dags_has_tasks(dag_bag):
+    for dag in dag_bag.dags.values():
+        assert len(dag.tasks) >= 1, dag

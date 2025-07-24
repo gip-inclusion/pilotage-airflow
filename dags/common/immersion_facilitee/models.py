@@ -4,8 +4,6 @@ from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import DateTime, String
 
-from dags.common import db
-
 
 DB_SCHEMA = "immersion_facilitee"
 
@@ -20,11 +18,6 @@ def check_siret(col_name: str) -> sqlalchemy.CheckConstraint:
     SIRET numbers must be 14 digits long.
     """
     return CheckConstraint("siret ~ '^[0-9]{14}$'", name=f"check_siret_{col_name}")
-
-
-def create_tables():
-    db.create_schema(DB_SCHEMA)
-    ImmersionFaciliteeBase.metadata.create_all(db.connection_engine())
 
 
 class Conventions(ImmersionFaciliteeBase):

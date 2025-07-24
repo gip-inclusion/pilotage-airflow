@@ -2,11 +2,11 @@ import logging
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators import python
 
 from dags.common import dbt, default_dag_args
 from dags.common.immersion_facilitee.helpers import get_all_items, get_dataframe_from_response, insert_data_to_db
-from dags.common.immersion_facilitee.models import create_tables
+from dags.common.immersion_facilitee.models import ImmersionFaciliteeBase
+from dags.common.tasks import create_models
 
 
 logger = logging.getLogger(__name__)
@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-with DAG("immersion_facilitee", schedule_interval="@weekly", **dag_args) as dag:
+with DAG("immersion_facilitee", schedule="@weekly", **dag_args) as dag:
 
-    @task(task_id="import_conventions")
+    @task
     def import_conventions(**kwargs):
         response = get_all_items("/v2/conventions")
         if not response:
@@ -26,4 +26,4 @@ with DAG("immersion_facilitee", schedule_interval="@weekly", **dag_args) as dag:
         insert_data_to_db(df)
         logger.info("Import complete.")
 
-    python.PythonOperator(task_id="create_schema", python_callable=create_tables) >> import_conventions()
+    create_models(ImmersionFaciliteeBase).as_setup() >> import_conventions()

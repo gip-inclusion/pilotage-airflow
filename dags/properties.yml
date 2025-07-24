@@ -13,9 +13,9 @@ models:
     description: >
       Ce DAG permet de récupérer (de manière hebdomadaire) pour chaque campagne matomo du c0 et chaque produit du gip les visiteurs et leurs actions.
       Mise à disposition de cette table sur metabase pour les statistiques internes du c0.
-  - name: monrecap
+  - name: mon_recap
     description: >
-      Ce DAG permet de récupérer de manière quotidienne les données de contacts & commandes sur le airtable de monrecap.
+      Ce DAG permet de récupérer de manière quotidienne les données de contacts & commandes sur le airtable de Mon Récap.
       A travers un google sheet (tally) nous récupérons les réponses au baromètre. Ces 3 tables permettent la réalisation de la page statistiques de mon recap !
   - name: dgefp_get_etp
     description: >
