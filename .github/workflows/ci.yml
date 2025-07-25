@@ -20,7 +20,7 @@ jobs:
       cancel-in-progress: true
     services:
       postgres:
-        image: postgis/postgis:14-master
+        image: postgres:17
         env:
           POSTGRES_PASSWORD: password
         ports:
