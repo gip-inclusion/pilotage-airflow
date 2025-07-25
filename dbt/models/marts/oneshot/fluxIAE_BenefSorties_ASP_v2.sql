@@ -11,7 +11,8 @@ select
     strct.zone_emploi_structure,
     strct.nom_epci_structure,
     reg.region_pilotage      as nom_region_af,
-    dpt.departement_pilotage as nom_departement_af
+    dpt.departement_pilotage as nom_departement_af,
+    dpt.numero_departement   as numero_departement_af
 from {{ source('fluxIAE','fluxIAE_BenefSorties_ASP') }} as asp
 left join {{ ref('fluxIAE_Structure_v2') }} as strct
     on asp."0 - SIRET  " = strct.structure_siret_actualise
