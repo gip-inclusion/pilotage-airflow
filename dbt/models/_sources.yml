@@ -101,9 +101,6 @@ sources:
 
           Les fichiers XLSX d'origine sont stockés dans notre bucket Clever Cloud `c2-private-sources`.
 
-      # TODO(lhuber): En cours de traitement et remplacement par 'appartenance_geo_communes'
-      - name: sa_zones_infradepartementales
-
       - name: suivi_complet_etps_conventionnes  # TODO(ypassa): Un autre script airflow à contribuer
       - name: suivi_satisfaction  # TODO(ypasse): Documenter cette source. Eventuellement réécrire son script sous forme de DAG.
 
