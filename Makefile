@@ -123,7 +123,6 @@ pg_dump:
 		--table="insee_communes" \
 		--table="suivi_visiteurs_tb_publics_v1" \
 		--table="sorties_v2" \
-		--table="sa_zones_infradepartementales" \
 		--file=$(DUMP_DIR)
 	@echo "\n\n### Database dumped successfully. ###\n"
 	rm -rf $(RESTORE_DIR)

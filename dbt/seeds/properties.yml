@@ -45,6 +45,8 @@ seeds:
     description: >
       établissements publics territoriaux
       (source (à vérifier avec Yannick): ?insee?)
+  - name: sa_zones_infradepartementales
+    # TODO(lhuber): En cours de traitement et remplacement par 'appartenance_geo_communes'
   - name: ref_mesure_dispositif_asp
     description: >
       dispositifs de l'IAE, identifiants et libellés
