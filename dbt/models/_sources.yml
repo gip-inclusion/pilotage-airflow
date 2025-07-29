@@ -101,8 +101,6 @@ sources:
 
           Les fichiers XLSX d'origine sont stockés dans notre bucket Clever Cloud `c2-private-sources`.
 
-          Le script d'origine qui compile les fichiers XLSX dans la table est commité dans `scripts/python/reseaux_iae_adherents.py`.
-
       # TODO(lhuber): En cours de traitement et remplacement par 'appartenance_geo_communes'
       - name: sa_zones_infradepartementales
 
