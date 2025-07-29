@@ -49,23 +49,26 @@ models:
     description: >
       Table à destination des emplois afin qu'ils puissent remonter les infos sur les contrats des candidats.
     columns:
-      - name: id_structure
+      - name: emplois_candidat_id
         tests:
           - not_null
-      - name: type_structure_emplois
+      - name: contrat_id_structure
         tests:
           - not_null
-      - name: salarie_id
+      - name: contrat_mesure_disp_code
         tests:
           - not_null
       - name: contrat_id_ctr
         tests:
           - not_null
           - unique
-      - name: type_contrat
+      - name: contrat_parent_id
         tests:
           - not_null
-      - name: candidat_id
+      - name: contrat_date_embauche
+        tests:
+          - not_null
+      - name: type_contrat
         tests:
           - not_null
   - name: formations
