@@ -120,7 +120,6 @@ pg_dump:
 		--table="demandes_de_prolongation" \
 		--table="prolongations" \
 		--table="structures_v0" \
-		--table="insee_communes" \
 		--table="suivi_visiteurs_tb_publics_v1" \
 		--table="sorties_v2" \
 		--file=$(DUMP_DIR)
