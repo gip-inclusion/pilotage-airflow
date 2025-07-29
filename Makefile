@@ -121,9 +121,6 @@ pg_dump:
 		--table="prolongations" \
 		--table="structures_v0" \
 		--table="insee_communes" \
-		--table="suivi_visiteurs_tb_prives" \
-		--table="suivi_visiteurs_tb_prives_v1" \
-		--table="suivi_utilisateurs_tb_prives" \
 		--table="suivi_visiteurs_tb_publics_v1" \
 		--table="sorties_v2" \
 		--table="sa_zones_infradepartementales" \

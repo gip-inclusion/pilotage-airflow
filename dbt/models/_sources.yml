@@ -106,25 +106,9 @@ sources:
       # TODO(lhuber): En cours de traitement et remplacement par 'appartenance_geo_communes'
       - name: sa_zones_infradepartementales
 
-      - name: suivi_visiteurs_tb_prives
-        description: >
-          Contient les statistiques de visite pour des tableaux de bord d'avant Décembre 2022,
-          pour lesquels certaines URLs ont été depuis modifiées.
-          Le script `scripts/notebooks/suivi_visiteurs_privé_C2_victor.ipynb` documente la création de cette table.
-
-      # TODO(ypassa): DAG à implémenter après discussion. Je (victor) ne suis pas du tout au clair sur ce que contient
-      # cette table et à quoi elle sert. On semble agréger à la fois des données de "l'export C2 du C1" (DDETS, DREETS)
-      # mais aussi d'autres venant de l'export CTA (SIAE, Prescripteurs). On a aussi du conseil départemental.
-      # Ca ne sert qu'à la table "tx_penetration_tb_prives" pour l'instant. Je ne vais pas plus loin.
-      - name: suivi_utilisateurs_tb_prives
-
       - name: suivi_complet_etps_conventionnes  # TODO(ypassa): Un autre script airflow à contribuer
       - name: suivi_satisfaction  # TODO(ypasse): Documenter cette source. Eventuellement réécrire son script sous forme de DAG.
 
-      - name: suivi_visiteurs_tb_prives_v1
-        description: >
-          Table historiquement générée depuis les Emplois en interrogeant Matomo. Depuis l'introduction de la table
-          emplois.c1_private_dashboard_visits, cette table n'est plus nécessaire.
       - name: FT_donnees_brutes
         description: >
           Table contenant les données brutes de l'expérimentation FT. Mise à jour manuellement, via lancement d'un DAG, environ tous les 15j.
