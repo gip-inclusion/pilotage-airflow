@@ -1,7 +1,7 @@
 select
     candidats.id as emplois_candidat_id,
     ctr.contrat_id_structure,
-    ctr.contrat_mesure_disp_code,
+    ctr.type_structure_emplois,
     ctr.contrat_id_ctr,
     ctr.contrat_parent_id,
     ctr.contrat_date_embauche,

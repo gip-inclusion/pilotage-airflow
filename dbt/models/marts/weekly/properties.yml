@@ -55,7 +55,7 @@ models:
       - name: contrat_id_structure
         tests:
           - not_null
-      - name: contrat_mesure_disp_code
+      - name: type_structure_emplois
         tests:
           - not_null
       - name: contrat_id_ctr
