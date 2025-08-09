@@ -56,6 +56,7 @@ jobs:
       run: |
         airflow db reset --yes
         airflow db migrate
+        airflow variables import dag-variables.json
       env:
         AIRFLOW__CORE__FERNET_KEY: U7sOUkZeQ6JGmwQoG6anMTdnl_nzy4f74IFkNmMeW50=
         AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@localhost:5432/airflow
