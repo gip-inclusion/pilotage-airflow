@@ -33,7 +33,7 @@ def build_esat_model(variables):
             var_types[variable] = Column(variable_type)
 
     class_dict = {
-        "__tablename__": "src_questionnaire_2025",
+        "__tablename__": "raw_questionnaire_2025",
         "__table_args__": {"schema": DB_SCHEMA},
         "__repr__": lambda self: f"<Answers(submissionID={self.submissionID})>",
         "primary_key_columns": classmethod(lambda cls: [pk.name for pk in cls.__table__.primary_key.columns]),

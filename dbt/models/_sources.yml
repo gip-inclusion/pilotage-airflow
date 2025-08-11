@@ -140,5 +140,5 @@ sources:
       Réponses aux questionnaires co-construite avec les ARS à destination des ESAT.
       Données importées de Tally (et bientôt des emplois).
     tables:
-      - name: src_questionnaire_2025
+      - name: raw_questionnaire_2025
 
