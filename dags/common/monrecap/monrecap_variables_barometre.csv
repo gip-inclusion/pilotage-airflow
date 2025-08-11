@@ -1,0 +1,76 @@
+variable;question;type
+submissionid;Submission ID;String
+respondentid;Respondent ID;String
+datesubmission;Submitted at;DateTime
+email;email;String
+cost;cost;String
+notebooksnumber;nb_carnets;String
+actiontype;type;String
+emailbis;Votre adresse mail ;String
+monrecapuse;Votre utilisation de Mon Récap;String
+notebooknotused;Pouvez-vous expliquer pourquoi vous ne l'avez pas utilisé ?;String
+dateorder;Quand avez-vous passé votre commande ? ;String
+reordercancelled;Pourquoi ne l'avez vous pas recommandé ?;String
+notebooksnumberbeginning;Combien de carnets avez-vous distribués depuis le début de votre utilisation ?;String
+notebookreturn;Les usagers reviennent-ils avec le carnet ?;String
+notebookreturnalways;Les usagers reviennent-ils avec le carnet ? (Toujours);String
+notebookreturnoften;Les usagers reviennent-ils avec le carnet ? (Souvent );String
+notebookreturnsometimes;Les usagers reviennent-ils avec le carnet ? (Régulièrement);String
+notebookreturnrarely;Les usagers reviennent-ils avec le carnet ? (Rarement);String
+notebookreturnnever;Les usagers reviennent-ils avec le carnet ? (Jamais);String
+notebookusedwithotherpro;Les usagers utilisent-ils, en général, le carnet avec d'autres professionnels ?;String
+notebooknotusedwithotherprobis;D'après vous, pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?;String
+fluidityimprovement;D'après vous, la qualité (fluidité, facilité de communication) de la relation entre vous et les usagers s'est-elle améliorée grâce à Mon Récap ?  ;String
+approvalstatement;Dans quelle mesure êtes-vous d'accord avec l'affirmation suivante : "Les usagers sont davantage organisés (oubli de rdv, meilleur suivi etc) grâce à Mon Récap" ?;String
+approachimprovement;Avez-vous constaté une amélioration dans le parcours de vos usagers avec Mon Récap ?;String
+notebookconstraintreduction;Lorsqu'un usager utilise Mon Récap, constatez-vous une meilleure compréhension des démarches ?;String
+notebookinfluence;Diriez-vous que grâce au carnet, les usagers accèdent plus facilement aux droits ou résolvent plus facilement les freins périphériques ?;String
+publictype;Quel(s) type(s) de public accompagnez-vous ?;String
+publichandi;Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation de handicap );String
+publicunemployed;Quel(s) type(s) de public accompagnez-vous ? (Personnes éloignées de l'emploi);String
+publicrsa;Quel(s) type(s) de public accompagnez-vous ? (Bénéficiaires du RSA);String
+publicasylumseeker;Quel(s) type(s) de public accompagnez-vous ? (Demandeurs d'asile, réfugiés, primo-arrivants);String
+publicjustice;Quel(s) type(s) de public accompagnez-vous ? (Personnes sous main de justice);String
+publicsenior;Quel(s) type(s) de public accompagnez-vous ? (Seniors);String
+publicyoung;Quel(s) type(s) de public accompagnez-vous ? (18 - 25 ans);String
+publichomeless;Quel(s) type(s) de public accompagnez-vous ? (Personnes sans domicile fixe);String
+publicdigitalilliteracy;Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation d'illectronisme );String
+publicilliteracy;Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation d'illetrisme );String
+publicothers;Quel(s) type(s) de public accompagnez-vous ? (Autres);String
+publicprecision;Pouvez-vous préciser ?;String
+nps;Quelles sont les chances que vous recommandiez Mon Récap à vos collègues ou à d'autres pros ?;String
+ratiopriceimpact;Que pensez-vous de l'équilibre prix / impact du produit ?;String
+ratiodetails;Pourquoi ? Pouvez-vous détailler ?;String
+suggestion;Un commentaire, une suggestion, une belle histoire ? N'hésitez pas à partager !;String
+testimony;Souhaitez-vous témoigner lors d'un prochain webinaire organisé par l'équipe ?;String
+usersaction;D'après vous,  [vos usagers expliquent bien les actions ou démarches qu'elles ont réalisées ];String
+usersorganisation;D'après vous,  [vos usagers s'organisent bien];String
+usersdiscussion;D'après vous,  [vos usagers ont de l'assurance lors des échanges avec leurs interlocuteurs];String
+userunderstanding;D'après vous,  [vous comprenez facilement le besoin d'aide];String
+userhelp;D'après vous,  [vous résolvez rapidement les demandes d'aide];String
+usertrust;D'après vous,  [vous créez facilement un lien de confiance avec l'usager];String
+trajectoryexample;Si vous en avez un en tête, racontez-nous un exemple de parcours amélioré avec Mon Récap ?;String
+notebookmanyusers;Avez-vous distribué plusieurs carnets à certains usagers ?;String
+notebookamountmanyusers;Si oui, combien de vos usagers ont reçu plusieurs carnets ?;String
+useramounthelper;D'après vous, vos usagers peuvent rencontrer combien d'accompagnateurs différents sur leur parcours en moyenne ?;String
+notebooksales;D'après vous, votre structure serait-elle prête à payer pour recevoir des carnets à l'avenir ?;String
+notebookprice;Si oui, combien par carnet ?;String
+useramountnotebookreceived;Combien d'usagers ont reçu au moins un carnet (approximativement) ?;String
+usernotebooklost;Parmi ces usagers, combien d'usagers ont perdu le carnet ou ne l'utilisent pas (approximativement) ?;String
+monrecapactions;D'après vous, Mon Récap permet aux usagers de ?  [mieux expliquer les actions ou démarches qu'elles ont réalisées ];String
+monrecaporganisation;D'après vous, Mon Récap permet aux usagers de ?  [mieux s'organiser];String
+monrecapdiscussion;D'après vous, Mon Récap permet aux usagers de ?  [avoir plus d'assurance lors des échanges avec leurs interlocuteurs ];String
+monrecapuserother;D'après vous, Mon Récap permet aux usagers de ?  [résoudre plus rapidement leur demande, leur besoin];String
+monrecapproblemsolver;D'après vous, Mon Récap permet aux usagers de ?  [Autre (à détailler ensuite)];String
+monrecapunderstanding;D'après vous, Mon Récap vous permet de ? [avoir une meilleure compréhension du besoin d'aide ];String
+monrecaprelationship;D'après vous, Mon Récap vous permet de ? [découvrir que l'usager est en lien avec des interlocuteurs que vous ne connaissiez pas ];String
+monrecaphelpseeking;D'après vous, Mon Récap vous permet de ? [Créer plus facilement un lien de confiance];String
+monrecapother;D'après vous, Mon Récap vous permet de ? [Autre (à détailler ensuite)];String
+monrecapdetailledhelp;Pouvez-vous détailler ? D'après vous, Mon Récap permet aussi aux usagers de ?;String
+monrecapdetailleduserhelp;Pouvez-vous détailler ? D'après vous, Mon Récap vous permet aussi de ?;String
+notebookdigital;Souhaiteriez-vous une version numérique (en plus de la version papier) ?;String
+notebookwriting;Les personnes écrivent-elles seules dans leur carnet ? ;String
+notebookrefusal;Avez-vous des refus d'utilisation de la part des usagers ;String
+notebookrefusalreason;Pouvez-vous expliquer les raisons du refus d'utilisation ?;String
+notebookdigitalapproval;Pourquoi pensez-vous qu'avoir une version numérique serait une bonne idée ?;String
+notebookdigitalreplacement;Seriez-vous prêt à remplacer la version numérique par la version papier ?;String
