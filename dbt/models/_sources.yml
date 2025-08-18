@@ -70,6 +70,9 @@ sources:
       - name: c1_ref_type_contrat
         description: >
           Table de correspondance entre le code d'un type de contrat et son label affiché sur les emplois.
+      - name: c1_ref_motif_refus
+        description: >
+          Table de correspondance entre le code d'un motif de refus et son label affiché sur les emplois.
       - name: c1_ref_type_prescripteur
       - name: c1_ref_motif_de_refus
         description: >

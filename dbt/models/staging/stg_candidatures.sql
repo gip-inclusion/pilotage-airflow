@@ -4,6 +4,7 @@ select
     {{ pilo_star(ref('stg_organisations'),
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
     c_type.label                                           as type_contrat_candidature,
+    motif.label                                            as motif_de_refus,
     struct.nom_epci_structure,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
@@ -15,7 +16,6 @@ select
         when candidatures."état" = 'Candidature déclinée' then 'Candidature refusée'
         else candidatures."état"
     end                                                    as "état",
-    {{ translate_motif_refus('candidatures.motif_de_refus') }},
     case
         when candidatures.origine_id_structure != candidatures.id_structure
             then 'Employeur orienteur'
@@ -37,6 +37,8 @@ from
     {{ source('emplois', 'candidatures') }} as candidatures
 left join {{ source('emplois', 'c1_ref_type_contrat') }} as c_type
     on candidatures.type_contrat = c_type.code
+left join {{ source('emplois', 'c1_ref_motif_de_refus') }} as motif
+    on candidatures.motif_de_refus = motif.code
 left join {{ ref('stg_structures') }} as struct
     on candidatures.id_structure = struct.id
 left join {{ ref('stg_organisations') }} as org_prescripteur
