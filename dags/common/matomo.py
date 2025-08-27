@@ -3,6 +3,8 @@ import logging
 import requests
 
 
+logger = logging.getLogger(__name__)
+
 PROJECTS_SITE_ID = {
     "carnet de bord": 209,
     "emplois": 117,  # ITOU
@@ -42,12 +44,12 @@ def get_visits_per_campaign_from_matomo(matomo_base_url, token):
         try:
             response.raise_for_status()
         except requests.HTTPError as e:
-            logging.error("HTTP error: %s", str(e).replace(f"&token_auth={token}", "&token_auth=[TOKEN]"))
+            logger.error("HTTP error: %s", str(e).replace(f"&token_auth={token}", "&token_auth=[TOKEN]"))
             continue
 
         data = response.json()
         if isinstance(data, dict):
-            logging.error("Matomo %s: %s", data.get("result"), data.get("message"))
+            logger.error("Matomo %s: %s", data.get("result"), data.get("message"))
             continue
 
         for result in data:

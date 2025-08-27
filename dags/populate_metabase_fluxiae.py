@@ -91,7 +91,7 @@ with airflow.DAG(
             save_fluxiae_view(import_directory, view)
 
         # Process complete. Mark this run as the most recent successful import.
-        logger.info(f"Populated FluxIAE. Logging {imported_file_key} to configuration")
+        logger.info("Populated FluxIAE. Logging %s to configuration", imported_file_key)
 
     @task(task_id="cleanup_import_directory")
     def clean_work_directory(import_directory, **kwargs):

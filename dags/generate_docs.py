@@ -46,7 +46,7 @@ with airflow.DAG(
     def copy_file():
         filename = pathlib.Path(os.getenv("DBT_TARGET_PATH")) / "static_index.html"
         s3_bucket, s3_key = Variable.get("S3_DOCS_BUCKET", "c2-dbt-docs"), "index.html"
-        logger.info(f"Copying {filename} to s3://{s3_bucket}/{s3_key}")
+        logger.info("Copying %s to s3://%s/%s", filename, s3_bucket, s3_key)
         s3_hook = S3Hook(
             aws_conn_id="s3_docs",
             extra_args={"ContentType": mimetypes.guess_type(filename)[0] or "binary/octet-stream"},
