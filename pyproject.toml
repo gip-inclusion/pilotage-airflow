@@ -58,6 +58,7 @@ select = [
     "PD",  # pandas-vet
     "NPY",  # NumPy-specific rules
     "N",  # pep8-naming
+    "PERF",  # perflint
 ]
 
 [tool.ruff.lint.isort]

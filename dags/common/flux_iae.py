@@ -77,11 +77,12 @@ def get_filename(import_directory, filename_prefix, filename_extension, descript
     if description is None:
         description = filename_prefix
 
-    filenames = []
     extensions = (filename_extension, f"{filename_extension}.gz", f"{filename_extension}.riae")
-    for filename in os.listdir(import_directory):
-        if filename.startswith(f"{filename_prefix}_") and filename.endswith(extensions):
-            filenames.append(filename)
+    filenames = [
+        filename
+        for filename in os.listdir(import_directory)
+        if filename.startswith(f"{filename_prefix}_") and filename.endswith(extensions)
+    ]
 
     if len(filenames) == 0:
         raise RuntimeError(f"No match found for {description}")
