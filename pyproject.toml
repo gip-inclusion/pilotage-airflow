@@ -59,6 +59,7 @@ select = [
     "NPY",  # NumPy-specific rules
     "N",  # pep8-naming
     "PERF",  # perflint
+    "RUF",  # Ruff-specific rules
 ]
 
 [tool.ruff.lint.isort]

@@ -296,7 +296,7 @@ def store_df(df, table_name, max_attempts=5):
         except Exception as e:
             # Catching all exceptions is a generally a code smell but we eventually reraise it so it's ok.
             attempts += 1
-            print(f"Attempt #{attempts} failed with exception {repr(e)}.")
+            print(f"Attempt #{attempts} failed with exception {e!r}.")
             if attempts == max_attempts:
                 print("No more attemps left, giving up and raising the exception.")
                 raise
