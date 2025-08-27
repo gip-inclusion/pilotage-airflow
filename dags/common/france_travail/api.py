@@ -8,7 +8,6 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from dags.common import db
-from dags.common.errors import ImproperlyConfiguredException
 from dags.common.france_travail.enums import TerritoryType
 from dags.common.france_travail.models import JobSeekerStats
 
@@ -23,7 +22,7 @@ class Territory:
     code: str
 
 
-class MissingPeriodException(Exception):
+class ImproperlyConfiguredError(Exception):
     pass
 
 
@@ -36,7 +35,7 @@ def request_access_token(format_for_header=False):
     client_secret = Variable.get("FT_API_CLIENT_SECRET")
 
     if not client_id or not client_secret:
-        raise ImproperlyConfiguredException("Variables FT_API_CLIENT_ID and FT_API_CLIENT_SECRET must be configured")
+        raise ImproperlyConfiguredError("Variables FT_API_CLIENT_ID and FT_API_CLIENT_SECRET must be configured")
 
     # Request access to the API using our credentials and required scope.
     response = httpx.post(

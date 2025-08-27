@@ -1,3 +1,5 @@
+# ruff: noqa: N815 (mixed-case-variable-in-class-scope)
+
 import sqlalchemy
 from sqlalchemy import CheckConstraint, Column
 from sqlalchemy.dialects.postgresql import ARRAY, UUID

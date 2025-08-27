@@ -5,6 +5,8 @@ from airflow.operators import empty
 from dags.common import db, default_dag_args, ftp, slack
 
 
+FT_RAW_DATA = "raw_data_ft.csv"
+
 with DAG(
     "france_travail",
     schedule_interval=None,
@@ -19,12 +21,9 @@ with DAG(
         import ftputil
         import pandas as pd
 
-        host, user, password = ftp.bucket_connection()
-        FT_RAW_DATA = "raw_data_ft.csv"
-
         db.drop_view("stg_france_travail")
 
-        with ftputil.FTPHost(host, user, password) as host_ft:
+        with ftputil.FTPHost(*ftp.bucket_connection()) as host_ft:
             # Check if the remote file exists
             if host_ft.path.isfile(FT_RAW_DATA):
                 # Download the file to a local temporary file
