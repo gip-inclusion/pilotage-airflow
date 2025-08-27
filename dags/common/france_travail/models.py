@@ -1,4 +1,5 @@
 # ruff: noqa: N815 (mixed-case-variable-in-class-scope)
+from typing import ClassVar
 
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
@@ -27,7 +28,7 @@ class JobSeekerStats(FranceTravailBase):
     """
 
     __tablename__ = "job_seeker_stats"
-    __table_args__ = {"schema": DB_SCHEMA}
+    __table_args__: ClassVar[dict[str, str]] = {"schema": DB_SCHEMA}
 
     # Primary key fields.
     codeNomenclature = Column(String, primary_key=True)

@@ -1,4 +1,5 @@
 # ruff: noqa: N815 (mixed-case-variable-in-class-scope)
+from typing import ClassVar
 
 import sqlalchemy
 from sqlalchemy import CheckConstraint, Column
@@ -31,7 +32,7 @@ def create_tables():
 
 class Conventions(ImmersionFaciliteeBase):
     __tablename__ = "conventions"
-    __table_args__ = {"schema": DB_SCHEMA}
+    __table_args__: ClassVar[dict[str, str]] = {"schema": DB_SCHEMA}
 
     id = Column(UUID(as_uuid=True), primary_key=True)
 
