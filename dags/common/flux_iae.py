@@ -304,7 +304,7 @@ def store_df(df, table_name, max_attempts=5):
 
     rename_table_atomically(new_table_name, table_name)
     print(f"Stored {table_name} in database ({len(df)} rows).")
-    print("")
+    print()
 
 
 FLUX_IAE_MODELS = {
@@ -477,7 +477,7 @@ def save_fluxiae_view(import_directory, view_name, *, chunk_size=20_000):
 
     rename_table_atomically(new_table_name, view_name)
     print(f"Stored {rows_count} rows in table {new_table_name!r}.")
-    print("")
+    print()
 
 
 def get_fluxiae_df(
