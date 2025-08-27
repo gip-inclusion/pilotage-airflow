@@ -50,6 +50,8 @@ select = [
     "I",  # isort
     "UP",  # pyupgrade
     "TID",  # flake8-tidy-imports
+    "LOG",  # flake8-logging
+    "G",  # flake8-logging-format
     "B",  # flak8-bugbear
     "A",  # flake8-builtins
     "INP",  # flake8-no-pep420
