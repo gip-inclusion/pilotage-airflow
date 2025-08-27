@@ -38,7 +38,7 @@ with DAG("mon_recap", schedule_interval="@daily", **dag_args) as dag:
             "Contacts non commandeurs": "contacts_non_commandeurs_v0",
         }
 
-        for table_name in table_mapping.keys():
+        for table_name in table_mapping:
             url, headers = airtable.connection_airtable(table_name)
             table_data = airtable.fetch_airtable_data(url, headers)
 

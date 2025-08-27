@@ -6,7 +6,7 @@ from airflow.models import DagBag
 
 def test_dags_generic(monkeypatch, subtests):
     # Keep track of all the necessary variables to parse the DAGs.
-    for var in json.load(pathlib.Path("dag-variables.json").open("r")):
+    for var in json.loads(pathlib.Path("dag-variables.json").read_text()):
         monkeypatch.setenv(f"AIRFLOW_VAR_{var}", "dummy")
 
     dagbag = DagBag()

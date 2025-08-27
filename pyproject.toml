@@ -50,6 +50,10 @@ select = [
     "I",  # isort
     "UP",  # pyupgrade
     "TID",  # flake8-tidy-imports
+    "B",  # flak8-bugbear
+    "A",  # flake8-builtins
+    "INP",  # flake8-no-pep420
+    "SIM",  # flake8-simplify
     "AIR",  # Airflow
     "PD",  # pandas-vet
     "NPY",  # NumPy-specific rules
