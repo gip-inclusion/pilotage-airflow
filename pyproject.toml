@@ -52,6 +52,7 @@ select = [
     "TID",  # flake8-tidy-imports
     "AIR",  # Airflow
     "PD",  # pandas-vet
+    "NPY",  # NumPy-specific rules
 ]
 
 [tool.ruff.lint.isort]
