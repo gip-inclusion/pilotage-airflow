@@ -6,7 +6,7 @@ select
     array_agg(candidatures.type_structure)   as type_structure,
     array_agg(candidatures.nom_structure)    as nom_structure,
     array_agg(candidatures."état")
-    as etat_candidature
+        as etat_candidature
 from {{ ref('candidats') }} as candidats
 left join {{ ref('candidatures_echelle_locale') }} as candidatures
     on candidats.id = candidatures.id_candidat

@@ -13,4 +13,4 @@ select
 from {{ ref('sa_zones_infradepartementales') }} as be
 left join {{ ref('structures') }} as s
     /* il faut rajouter le département car la France n'est pas originale en terme de noms de ville */
-    on s.ville = be.libelle_commune and s."nom_département" = be.nom_departement
+    on be.libelle_commune = s.ville and be.nom_departement = s."nom_département"

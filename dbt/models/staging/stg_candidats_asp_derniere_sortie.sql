@@ -11,7 +11,7 @@ from {{ source('fluxIAE','fluxIAE_Salarie') }} as salarie
 left join {{ ref('pass_agrements_valides') }} as pass
     on salarie."hash_numéro_pass_iae" = pass."hash_numéro_pass_iae"
 left join {{ ref('candidats') }} as c
-    on c.id = pass.id_candidat
+    on pass.id_candidat = c.id
 left join {{ ref('candidatures_echelle_locale') }} as cddr
     on c.id = cddr.id_candidat
 left join {{ ref('sorties_v2') }} as sortie

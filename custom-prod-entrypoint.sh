@@ -11,7 +11,7 @@ export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="${POSTGRESQL_ADDON_URI//\"/}"
 
 airflow db migrate
 
-if [[ "x$CELLAR_ADDON_HOST" != "x" ]]; then
+if [[ "$CELLAR_ADDON_HOST" != "" ]]; then
     export AIRFLOW_CONN_LOG_CONNECTION="aws:///?__extra__=%7B%22endpoint_url%22%3A+%22https%3A%2F%2F${CELLAR_ADDON_HOST//\"/}%22%2C+%22aws_access_key_id%22%3A+%22${CELLAR_ADDON_KEY_ID//\"/}%22%2C+%22aws_secret_access_key%22%3A+%22${CELLAR_ADDON_KEY_SECRET//\"/}%22%2C+%22config_kwargs%22%3A+%7B%22request_checksum_calculation%22%3A+%22when_required%22%2C+%22response_checksum_validation%22%3A+%22when_required%22%7D%7D"
     export AIRFLOW__LOGGING__REMOTE_LOGGING=True
     export AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER="s3://${LOG_BUCKET_NAME//\"/}/logs"
@@ -20,12 +20,12 @@ if [[ "x$CELLAR_ADDON_HOST" != "x" ]]; then
 fi
 
 # shellcheck disable=SC2153
-if [[ "x$AIRFLOW__SENTRY__SENTRY_DSN" != "x" ]]; then
+if [[ "$AIRFLOW__SENTRY__SENTRY_DSN" != "" ]]; then
     export AIRFLOW__SENTRY__SENTRY_ON=True
 fi
 
 
-if [[ "x$AIRFLOW_SUPERUSER_PASSWORD" != "x" ]]; then
+if [[ "$AIRFLOW_SUPERUSER_PASSWORD" != "" ]]; then
     airflow users create \
         --role Admin \
         --email airflow-admin@inclusion.beta.gouv.fr \

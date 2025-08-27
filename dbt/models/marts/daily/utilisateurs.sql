@@ -5,4 +5,4 @@ select
     collaborations.id_institution
 from {{ source('emplois', 'utilisateurs_v0') }} as utilisateurs
 left join {{ source('emplois', 'collaborations') }} as collaborations
-    on collaborations.id_utilisateur = utilisateurs.id
+    on utilisateurs.id = collaborations.id_utilisateur

@@ -35,6 +35,6 @@ from
     {{ ref('suivi_complet_etps_conventionnes') }} as etp_c
 left join {{ ref('suivi_etp_realises_par_structure') }} as etp_r
     on
-        etp_r.id_annexe_financiere = etp_c.id_annexe_financiere
-        and etp_r.annee = etp_c."année"
-        and etp_r.mois = etp_c.mois
+        etp_c.id_annexe_financiere = etp_r.id_annexe_financiere
+        and etp_c."année" = etp_r.annee
+        and etp_c.mois = etp_r.mois

@@ -27,4 +27,4 @@ from
     {{ ref('stg_candidats') }} as candidats
 left join
     {{ ref('stg_candidatures_candidats') }} as cdd
-    on cdd.id_candidat = candidats.id
+    on candidats.id = cdd.id_candidat

@@ -63,17 +63,17 @@ select distinct
 from
     {{ ref('fluxIAE_EtatMensuelIndiv_v2') }} as emi
 left join {{ ref('fluxIAE_AnnexeFinanciere_v2') }} as af
-    on af.af_id_annexe_financiere = emi.emi_afi_id
+    on emi.emi_afi_id = af.af_id_annexe_financiere
 left join {{ ref('fluxIAE_ContratMission_v2') }} as ctr
-    on ctr.contrat_id_ctr = emi.emi_ctr_id
+    on emi.emi_ctr_id = ctr.contrat_id_ctr
 left join {{ ref('fluxIAE_RefMotifSort_v2') }} as rms
     on emi.emi_motif_sortie_id = rms.rms_id
 left join {{ ref('fluxIAE_RefCategorieSort_v2') }} as rcs
     on rms.rcs_id = rcs.rcs_id
 left join {{ ref('fluxIAE_Salarie_v2') }} as salarie
-    on salarie.salarie_id = emi.emi_pph_id
+    on emi.emi_pph_id = salarie.salarie_id
 left join {{ ref('stg_recrutements') }} as rcrt
-    on rcrt.contrat_id_pph = emi.emi_pph_id
+    on emi.emi_pph_id = rcrt.contrat_id_pph
 where
     af.af_etat_annexe_financiere_code in ('VALIDE', 'PROVISOIRE', 'CLOTURE')
     and

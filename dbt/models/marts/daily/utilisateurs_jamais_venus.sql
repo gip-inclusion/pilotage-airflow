@@ -13,7 +13,7 @@ from
     {{ source('emplois', 'utilisateurs_v0') }} as utilisateurs_all
 left join
     {{ ref('suivi_utilisateurs_tb_prive_semaine') }} as utilisateurs_tb_prives
-    on utilisateurs_tb_prives.email_utilisateur = utilisateurs_all.email
+    on utilisateurs_all.email = utilisateurs_tb_prives.email_utilisateur
 group by
     utilisateurs_all.email,
     utilisateurs_all.type

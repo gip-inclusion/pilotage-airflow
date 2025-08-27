@@ -43,10 +43,10 @@ select
 from
     {{ ref('candidatures_echelle_locale') }} as c
 left join {{ ref('stg_organisations') }} as o
-    on o.id = c.id_org_prescripteur
+    on c.id_org_prescripteur = o.id
 inner join {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdppc
     on c.id = fdppc.id_candidature
 inner join {{ source('emplois', 'fiches_de_poste') }} as fdp
-    on fdp.id = fdppc.id_fiche_de_poste
+    on fdppc.id_fiche_de_poste = fdp.id
 inner join {{ ref('code_rome_domaine_professionnel') }} as crdp
     on fdp.code_rome = crdp.code_rome
