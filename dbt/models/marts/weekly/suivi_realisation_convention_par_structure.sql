@@ -13,13 +13,13 @@ select
     etp.nom_departement_af,
     etp.nom_region_af,
     sum(etp.nombre_etp_consommes_reels_mensuels - etp."effectif_mensuel_conventionné")
-    as delta_etp_conventionnes_realises,
+        as delta_etp_conventionnes_realises,
     sum(etp.nombre_etp_consommes_reels_annuels - etp."effectif_annuel_conventionné_mensualisé")
-    as delta_etp_conventionnes_realises_annuel,
+        as delta_etp_conventionnes_realises_annuel,
     sum(etp.nombre_etp_consommes_reels_mensuels)
-    as somme_etp_realises,
+        as somme_etp_realises,
     sum(etp.nombre_etp_consommes_reels_annuels)
-    as somme_etp_realises_annuel
+        as somme_etp_realises_annuel
 from {{ ref('suivi_realisation_convention_mensuelle') }} as etp
 group by
     etp.id_annexe_financiere,

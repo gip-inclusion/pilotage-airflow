@@ -19,7 +19,7 @@ select
                 sum(etp_c.nombre_etp_consommes_reels_mensuels) / etp."effectif_mensuel_conventionné" * 100
         else 0
     end
-    as taux_de_realisation,
+        as taux_de_realisation,
     max(date_part('month', etp_c.date_saisie))     as mois_max
 from
     {{ ref('suivi_etp_conventionnes_v2') }} as etp

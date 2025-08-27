@@ -10,5 +10,5 @@ select
 from
     {{ ref('candidatures_echelle_locale') }} as candidatures
 left join {{ ref('organisations') }} as organisations
-    on organisations.id = candidatures.id_org_prescripteur
+    on candidatures.id_org_prescripteur = organisations.id
 where candidatures.origine = 'Prescripteur habilité'

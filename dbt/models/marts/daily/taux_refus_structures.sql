@@ -24,9 +24,11 @@ left join
     {{ source('emplois', 'fiches_de_poste_par_candidature') }} as fdpc
     on cel.id = fdpc.id_candidature
 left join
-    {{ source('emplois', 'fiches_de_poste') }} as fdp on fdpc.id_fiche_de_poste = fdp.id
+    {{ source('emplois', 'fiches_de_poste') }} as fdp
+    on fdpc.id_fiche_de_poste = fdp.id
 left join
-    {{ ref('structures') }} as structures on cel.id_structure = structures.id
+    {{ ref('structures') }} as structures
+    on cel.id_structure = structures.id
 where
     cel.injection_ai = 0
     and fdp.recrutement_ouvert = 1

@@ -41,10 +41,10 @@ select distinct
     /* ETPs réalisés = Nbr heures travaillées / montant d'heures necessaires pour avoir 1 ETP */
     -- Ici le calcul nb heures * valeur nous donne de base des ETPs ANNUELS.
     (emi.emi_nb_heures_travail / firmi.rmi_valeur)
-    as nombre_etp_consommes_reels_annuels,
+        as nombre_etp_consommes_reels_annuels,
     -- multiplication par 12 pour tomber sur le mensuel
     (emi.emi_nb_heures_travail / firmi.rmi_valeur) * 12
-    as nombre_etp_consommes_reels_mensuels
+        as nombre_etp_consommes_reels_mensuels
 from
     {{ ref('eph_dates_etat_mensuel_individualise') }} as constantes
 cross join

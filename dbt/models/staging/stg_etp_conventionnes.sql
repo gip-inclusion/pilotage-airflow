@@ -32,7 +32,7 @@ select distinct
     af.nom_departement_af,
     af.nom_region_af,
     concat_ws('-', structure.structure_denomination, af.af_numero_annexe_financiere)
-    as structure_denomination_af,
+        as structure_denomination_af,
     date_part('year', af.af_date_debut_effet_v2)                                     as annee_af,
     (
         date_part('year', af.af_date_fin_effet_v2) - date_part('year', af.af_date_debut_effet_v2)

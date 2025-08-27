@@ -6,4 +6,4 @@ select
 from {{ ref('candidatures_echelle_locale') }} as cel
 inner join
     {{ ref('stg_prescripteurs_odc') }} as prescripteurs_odc
-    on prescripteurs_odc.id = cel.id_org_prescripteur
+    on cel.id_org_prescripteur = prescripteurs_odc.id

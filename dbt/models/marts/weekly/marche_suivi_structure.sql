@@ -32,7 +32,7 @@ from
 left join {{ ref('fluxIAE_Salarie_v2') }} as salarie
     on etp_r.identifiant_salarie = salarie.salarie_id
 left join {{ ref('suivi_etp_conventionnes_v2') }} as etp_c
-    on etp_c.id_annexe_financiere = etp_r.id_annexe_financiere
+    on etp_r.id_annexe_financiere = etp_c.id_annexe_financiere
 left join {{ source('fluxIAE', 'fluxIAE_Structure') }} as s
     on etp_c.structure_id_siae = s.structure_id_siae
 left join {{ ref('fluxIAE_ContratMission_v2') }} as ctr

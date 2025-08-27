@@ -6,4 +6,5 @@ select distinct
     candidatures_odc.nom_org_prescripteur
 from {{ ref('candidats') }} as cdd
 inner join
-    {{ ref('candidatures_odc') }} as candidatures_odc on cdd.id = candidatures_odc.id_candidat
+    {{ ref('candidatures_odc') }} as candidatures_odc
+    on cdd.id = candidatures_odc.id_candidat

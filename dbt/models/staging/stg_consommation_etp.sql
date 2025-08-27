@@ -103,7 +103,7 @@ avec années de conventionnement qui correspondent pas */
 left join
     {{ ref('stg_duree_annexe') }} as da
     on
-        da.id_annexe_financiere = etp.id_annexe_financiere
+        etp.id_annexe_financiere = da.id_annexe_financiere
 group by
     etp.duree_annexe,
     da.nombre_mois_saisis,

@@ -42,6 +42,6 @@ left join {{ source('emplois', 'candidatures') }} as cdd
 left join {{ ref('code_rome_domaine_professionnel') }} as crdp
     on fdp.code_rome = crdp.code_rome
 left join {{ ref('structures') }} as s
-    on s.id = fdp.id_employeur
+    on fdp.id_employeur = s.id
 left join {{ ref('groupes_structures') }} as grp_strct
-    on grp_strct.structure = fdp.type_employeur
+    on fdp.type_employeur = grp_strct.structure

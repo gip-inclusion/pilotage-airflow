@@ -15,10 +15,10 @@ from
     {{ source('emplois', 'candidats_v0') }} as candidats
 left join
     {{ ref('organisations') }} as organisations
-    on organisations.id = candidats.id_auteur_diagnostic_prescripteur
+    on candidats.id_auteur_diagnostic_prescripteur = organisations.id
 left join
     {{ ref('structures') }} as structures
-    on structures.id = candidats.id_auteur_diagnostic_employeur
+    on candidats.id_auteur_diagnostic_employeur = structures.id
 left join
     {{ ref('groupes_structures') }} as grp_strct
-    on grp_strct.structure = candidats."type_structure_dernière_embauche"
+    on candidats."type_structure_dernière_embauche" = grp_strct.structure
