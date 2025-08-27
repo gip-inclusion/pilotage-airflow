@@ -435,7 +435,7 @@ def get_fluxiae_rows(filepath, model):
             if raw_row.startswith("FIN"):
                 break
 
-            row = dict(zip(model.keys(), raw_row.split("|")))
+            row = dict(zip(model.keys(), raw_row.split("|"), strict=False))
             type_fluxiae_row(row, model)
             anonymize_fluxiae_row(row)
             yield row

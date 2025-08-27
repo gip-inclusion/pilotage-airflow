@@ -12,17 +12,14 @@ def get_variables() -> dict:
     variables = {}
 
     with VARIABLES_FILE.open() as file:
-        reader = csv.DictReader(file, delimiter=";")
+        for row in csv.DictReader(file, delimiter=";"):
+            if variable := row.get("variable", "").strip():  # ignore empty variable names (structuring lines)
+                variables[variable] = {
+                    "type": row.get("type", ""),
+                    "question": html.unescape(row.get("question", "")).strip(),
+                }
 
-        for row in reader:
-            variable = row.get("variable", "").strip()
-            type = row.get("type", "")
-            question = html.unescape(row.get("question", "")).strip()
-
-            if variable:  # ignore empty variable names (structuring lines)
-                variables[variable] = {"type": type, "question": question}
-
-        return variables
+    return variables
 
 
 def get_data_from_sheet(pub_sheet_url, variables) -> pd.DataFrame:

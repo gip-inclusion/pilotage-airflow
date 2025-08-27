@@ -2,10 +2,7 @@ def get_department(code_postal):
     code_postal = str(code_postal)
     # Corse
     if code_postal.startswith("20"):
-        if code_postal[2] == "1" or code_postal == "20000":
-            department = "2A"
-        else:
-            department = "2B"
+        department = "2A" if code_postal[2] == "1" or code_postal == "20000" else "2B"
     # DOM-TOM
     elif code_postal.startswith(("97", "98")):
         department = code_postal[:3]
