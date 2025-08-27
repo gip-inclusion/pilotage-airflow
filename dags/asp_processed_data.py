@@ -22,13 +22,10 @@ with DAG(
         import ftputil
         import pandas as pd
 
-        host, user, password = ftp.bucket_connection()
-        FILE_PREFIX = "DataON"
-
-        with ftputil.FTPHost(host, user, password) as host_ft:
+        with ftputil.FTPHost(*ftp.bucket_connection()) as host_ft:
             asp_file = None
             for filename in host_ft.listdir("donnees_asp"):
-                if filename.startswith(FILE_PREFIX) and filename.endswith(".xlsx"):
+                if filename.startswith("DataON") and filename.endswith(".xlsx"):
                     asp_file = filename
 
             if not asp_file:

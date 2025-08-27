@@ -20,13 +20,10 @@ with DAG(
         import ftputil
         import pandas as pd
 
-        host, user, password = ftp.bucket_connection()
-        FILE_PREFIX = "iae_v1_0_suivi_hebdomadaire_"
-
-        with ftputil.FTPHost(host, user, password) as host_ft:
+        with ftputil.FTPHost(*ftp.bucket_connection()) as host_ft:
             etp_file = None
             for filename in host_ft.listdir("dgefp"):
-                if filename.startswith(FILE_PREFIX) and filename.endswith(".csv"):
+                if filename.startswith("iae_v1_0_suivi_hebdomadaire_") and filename.endswith(".csv"):
                     # Get file modification time and add to list
                     etp_file = filename
 
@@ -34,12 +31,10 @@ with DAG(
                 raise Exception("No matching files found in the FTP directory")
 
             # get the most recent file
-            DGEFP_RAW_DATA = f"dgefp/{etp_file}"
-
             print(f"Loading most recent file: {etp_file}")
 
             # Need to do this because setting the encoding on the pd.read_csv did not work
-            with host_ft.open(DGEFP_RAW_DATA, "rb") as etp_loaded_data:
+            with host_ft.open(f"dgefp/{etp_file}", "rb") as etp_loaded_data:
                 etp_data = pd.read_csv(StringIO(etp_loaded_data.read().decode("latin1")), sep=";")
 
                 for col in etp_data.columns[9:17]:
