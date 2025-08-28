@@ -13,7 +13,7 @@ class NormalizationKind(enum.Enum):
 
 
 def hash_content(content: str) -> str:
-    return hashlib.sha256(f'{content}{os.getenv("HASH_SALT")}'.encode()).hexdigest()
+    return hashlib.sha256(f'{content}{os.getenv("HASH_SALT")}'.encode()).hexdigest() if content else ""
 
 
 def normalize_sensible_data(*args: tuple[str | datetime.date, NormalizationKind]) -> str:
