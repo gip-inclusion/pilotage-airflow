@@ -4,7 +4,7 @@ with departement_table as (
         max(cmd."Nom Departement")   as nom_departement,
         max(cmd."Submitted at")      as "Submitted at",
         max(cmd."Nombre de Carnets") as "Nombre de Carnets"
-    from {{ source('monrecap','Commandes_v0') }} as cmd
+    from {{ source('mon_recap','Commandes_v0') }} as cmd
     group by
         cmd."Email"
 )
