@@ -17,6 +17,7 @@ jobs:
       PGDATABASE: pilotage
       AIRFLOW__CORE__FERNET_KEY: U7sOUkZeQ6JGmwQoG6anMTdnl_nzy4f74IFkNmMeW50=
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@localhost:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: False
       VIRTUAL_ENV: .venv
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
