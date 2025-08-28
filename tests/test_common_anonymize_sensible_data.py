@@ -13,8 +13,8 @@ from dags.common.anonymize_sensible_data import NormalizationKind, hash_content,
         (None, "8e728c4578281ea0b6a7817e50a0f6d50c995c27f02dd359d67427ac3d86e019"),
     ],
 )
-def test_hash_content(mocker, value, expected):
-    mocker.patch.dict("os.environ", {"HASH_SALT": "foobar2000"})
+def test_hash_content(monkeypatch, value, expected):
+    monkeypatch.setenv("HASH_SALT", "foobar2000")
 
     assert hash_content(value) == expected
 
