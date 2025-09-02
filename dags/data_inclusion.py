@@ -58,6 +58,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
                 "labels_nationaux": postgresql.ARRAY(sqlalchemy.types.Text),
                 "labels_autres": postgresql.ARRAY(sqlalchemy.types.Text),
                 "thematiques": postgresql.ARRAY(sqlalchemy.types.Text),
+                "doublons": postgresql.ARRAY(sqlalchemy.types.JSON),
             },
         )
         logger.info("%r rows created", row_created)
