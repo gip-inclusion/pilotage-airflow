@@ -1,5 +1,6 @@
 import re
 
+import pandas as pd
 import sqlalchemy.types as types
 from airflow import DAG
 from airflow.decorators import task
@@ -73,7 +74,7 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
             dtype_mapping = {}
             for col in table_data.columns:
                 # Check if column contains dict or list values
-                sample_values = table_data[col].dropna().head(10)
+                sample_values = pd.concat([table_data[col].dropna().head(1000), table_data[col].dropna().tail(1000)])
                 if any(isinstance(val, dict | list) for val in sample_values):
                     dtype_mapping[col] = types.JSON
 
