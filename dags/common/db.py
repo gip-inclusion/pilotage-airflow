@@ -121,9 +121,11 @@ def drop_view(view_name):
 def create_schema(schema_name):
     # TODO: Use an Airflow Connection
     with connection_engine().connect() as connection:
-        connection.execute(CreateSchema(schema_name))
+        if not connection.dialect.has_schema(connection, schema_name):
+            connection.execute(CreateSchema(schema_name))
 
 
 @sqlalchemy.event.listens_for(sqlalchemy.Table, "before_create")
 def create_schema_if_not_exists(target, connection, **_):
-    connection.execute(CreateSchema(target.schema))
+    if not connection.dialect.has_schema(connection, target.schema):
+        connection.execute(CreateSchema(target.schema))
