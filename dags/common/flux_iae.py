@@ -1,5 +1,6 @@
 import csv
 import os
+from io import StringIO
 from itertools import batched
 from pathlib import Path
 
@@ -511,17 +512,21 @@ def get_fluxiae_df(
     # the rows in the CSV file beforehands instead. Always using the 'c' engine is proven to significantly reduce
     # the duration and frequency of the developer's headaches.
 
-    extracted = Path(
-        get_filename(
-            import_directory=import_directory,
-            filename_prefix=vue_name,
-            filename_extension=".csv",
-            description=description,
+    extracted = (
+        Path(
+            get_filename(
+                import_directory=import_directory,
+                filename_prefix=vue_name,
+                filename_extension=".csv",
+                description=description,
+            )
         )
+        .read_text()
+        .replace("\n|", "|")  # Circumvent improper sanitization of newline inside columns
     )
 
     # Ignore 3 rows: the `DEB*` first row, the headers row, and the `FIN*` last row.
-    nrows = len(extracted.read_text().splitlines()) - 3
+    nrows = len(extracted.splitlines()) - 3
 
     print(f"Loading {nrows} rows for {vue_name} ...")
 
@@ -535,7 +540,7 @@ def get_fluxiae_df(
     kwargs["dayfirst"] = True
 
     vue_data = pd.read_csv(
-        extracted,
+        StringIO(extracted),
         sep="|",
         # Some rows have a single `"` in a field, for example in fluxIAE_Mission the mission_descriptif field of
         # the mission id 1003399237 is `"AIEHPAD` (no closing double quote). This screws CSV parsing big time
