@@ -143,8 +143,7 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
 
     (
         create_schema(DB_SCHEMA).as_setup()
-        >> monrecap_airtable()
-        >> monrecap_gsheet()
+        >> [monrecap_airtable(), monrecap_gsheet()]
         >> dbt_deps
         >> dbt_seed
         >> dbt_monrecap
