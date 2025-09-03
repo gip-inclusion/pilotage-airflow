@@ -4,6 +4,7 @@ import hashlib
 import os
 import re
 
+from cryptography.fernet import Fernet
 from unidecode import unidecode
 
 
@@ -30,3 +31,11 @@ def normalize_sensible_data(*args: tuple[str | datetime.date, NormalizationKind]
         normalized_args.append(normalized_datum)
 
     return "|".join(normalized_args)
+
+
+def encrypt_content(content):
+    return Fernet(os.getenv("DATA_SECRET_KEY")).encrypt(str(content).encode()).decode() if content else ""
+
+
+def decrypt_content(content):
+    return Fernet(os.getenv("DATA_SECRET_KEY")).decrypt(content.encode()).decode() if content else ""
