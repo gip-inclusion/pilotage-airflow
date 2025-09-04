@@ -8,7 +8,12 @@ import numpy as np
 import pandas as pd
 from psycopg import sql
 
-from dags.common.anonymize_sensible_data import NormalizationKind, hash_content, normalize_sensible_data
+from dags.common.anonymize_sensible_data import (
+    NormalizationKind,
+    encrypt_content,
+    hash_content,
+    normalize_sensible_data,
+)
 from dags.common.db import MetabaseDatabaseCursor3
 
 
@@ -165,6 +170,7 @@ def anonymize_fluxiae_df(df):
         df["hash_numéro_pass_iae"] = df["salarie_agrement"].apply(hash_content)
     if "salarie_nir" in df.columns.tolist():
         df["hash_nir"] = df["salarie_nir"].apply(hash_content)
+        df["nir_chiffré"] = df["salarie_nir"].apply(encrypt_content)
 
     if {"salarie_prenom", "salarie_nom_usage", "salarie_date_naissance"} <= set(df.columns.tolist()):
         df["salarie_PII_hashes"] = df.apply(
@@ -368,6 +374,7 @@ def anonymize_fluxiae_row(row):
         row["hash_numéro_pass_iae"] = hash_content(row["salarie_agrement"])
     if "salarie_nir" in row:
         row["hash_nir"] = hash_content(row["salarie_nir"])
+        row["nir_chiffré"] = encrypt_content(row["salarie_nir"])
 
     if {"salarie_prenom", "salarie_nom_usage", "salarie_date_naissance"} <= row.keys():
         row["salarie_PII_hashes"] = (

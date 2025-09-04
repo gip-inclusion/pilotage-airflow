@@ -10,12 +10,12 @@ dbt-postgres  # https://github.com/dbt-labs/dbt-postgres
 # Data management (scripts, DAG, ...)
 # ------------------------------------------------------------------------------
 ftputil  # https://ftputil.sschwarzer.net/
+openpyxl # https://pypi.org/project/openpyxl/
 # Pandas 2.2 break DataFrame.to_sql() for SQLAlchemy<=2.0, pinning until we move to it
 pandas<2.2  # https://github.com/pandas-dev/pandas
-openpyxl # https://pypi.org/project/openpyxl/
-
+paramiko  # https://github.com/paramiko/paramiko
 psycopg[binary] # https://www.psycopg.org/
-
+py7zr # https://github.com/miurahr/py7zr
 unidecode  # https://pypi.org/project/Unidecode/
 
 # Transitional pinning
