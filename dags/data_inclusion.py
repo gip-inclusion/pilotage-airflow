@@ -9,6 +9,7 @@ from airflow.models import Variable
 from sqlalchemy.dialects import postgresql
 
 from dags.common import db, dbt, default_dag_args, slack
+from dags.common.dates import to_date
 from dags.common.tasks import create_schema
 
 
@@ -47,7 +48,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     @task
     def import_structures(**kwargs):
         structures = pd.DataFrame(get_all_items("/api/v0/structures"))
-        structures["date_maj"] = pd.to_datetime(structures["date_maj"])
+        structures["date_maj"] = structures["date_maj"].apply(to_date)
         row_created = structures.to_sql(
             "structures_v0",
             con=db.connection_engine(),
@@ -66,9 +67,9 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     @task
     def import_services(**kwargs):
         services = pd.DataFrame(get_all_items("/api/v0/services"))
-        services["date_creation"] = pd.to_datetime(services["date_creation"])
-        services["date_suspension"] = pd.to_datetime(services["date_suspension"])
-        services["date_maj"] = pd.to_datetime(services["date_maj"])
+        services["date_creation"] = services["date_creation"].apply(to_date)
+        services["date_suspension"] = services["date_suspension"].apply(to_date)
+        services["date_maj"] = services["date_maj"].apply(to_date)
         rows_created = services.to_sql(
             "services_v0",
             con=db.connection_engine(),
