@@ -127,5 +127,5 @@ def create_schema(schema_name):
 
 @sqlalchemy.event.listens_for(sqlalchemy.Table, "before_create")
 def create_schema_if_not_exists(target, connection, **_):
-    if not connection.dialect.has_schema(connection, target.schema):
+    if target.schema and not connection.dialect.has_schema(connection, target.schema):
         connection.execute(CreateSchema(target.schema))
