@@ -49,7 +49,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     def import_structures(**kwargs):
         structures = pd.DataFrame(get_all_items("/api/v0/structures"))
         structures["date_maj"] = structures["date_maj"].apply(to_date)
-        row_created = structures.to_sql(
+        structures.to_sql(
             "structures_v0",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
@@ -62,7 +62,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
                 "doublons": postgresql.ARRAY(sqlalchemy.types.JSON),
             },
         )
-        logger.info("%r rows created", row_created)
+        logger.info("%r rows created", len(structures.index))
 
     @task
     def import_services(**kwargs):
@@ -70,7 +70,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         services["date_creation"] = services["date_creation"].apply(to_date)
         services["date_suspension"] = services["date_suspension"].apply(to_date)
         services["date_maj"] = services["date_maj"].apply(to_date)
-        rows_created = services.to_sql(
+        services.to_sql(
             "services_v0",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
@@ -88,6 +88,6 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
                 "modes_orientation_accompagnateur": postgresql.ARRAY(sqlalchemy.types.Text),
             },
         )
-        logger.info("%r rows created", rows_created)
+        logger.info("%r rows created", len(services.index))
 
     (create_schema(DB_SCHEMA).as_setup() >> [import_structures(), import_services()] >> slack.success_notifying_task())
