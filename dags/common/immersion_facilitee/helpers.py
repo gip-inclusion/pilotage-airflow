@@ -73,7 +73,7 @@ def get_all_items(path: str) -> list[dict]:
             )
 
         data.extend(data_partial)
-        time.sleep(0.2)  # Respecter le rate limit de l'API
+        time.sleep(0.21)  # Respecter le rate limit de l'API, 5/s avec une petite marge
 
     logger.info("Got %r items", len(data))
     return data
