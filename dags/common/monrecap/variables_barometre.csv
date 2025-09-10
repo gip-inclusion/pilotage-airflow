@@ -25,6 +25,13 @@ approvalstatement;Dans quelle mesure êtes-vous d'accord avec l'affirmation suiv
 approachimprovement;Avez-vous constaté une amélioration dans le parcours de vos usagers avec Mon Récap ?;String
 notebookconstraintreduction;Lorsqu'un usager utilise Mon Récap, constatez-vous une meilleure compréhension des démarches ?;String
 notebookinfluence;Diriez-vous que grâce au carnet, les usagers accèdent plus facilement aux droits ou résolvent plus facilement les freins périphériques ?;String
+timesaved;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ?;String
+timesavednone;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ? (Je ne gagne pas de temps);String
+timesavedlessfivemin;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ? (Moins de 5min );String
+timesavedfivetenmin;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ? (Entre 5 et 10min );String
+timesavetenfifteennmin;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ? (Entre 10 et 15min );String
+timesavefifteenthirtymin;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ? (Entre 15 et 30min );String
+timesavemorethirtymin;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ? (Plus de 30min);String
 publictype;Quel(s) type(s) de public accompagnez-vous ?;String
 publichandi;Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation de handicap );String
 publicunemployed;Quel(s) type(s) de public accompagnez-vous ? (Personnes éloignées de l'emploi);String

@@ -1,29 +1,48 @@
 import json
 import re
+from pathlib import Path
 
 import sqlalchemy.types as types
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators import bash, empty
+from airflow.models import Variable
+from airflow.operators import bash
 
-from dags.common import airtable, db, dbt, default_dag_args, departments, slack
+from dags.common import airtable, db, dbt, default_dag_args, departments, gsheet
 from dags.common.monrecap.helpers import convert_date_columns
+from dags.common.monrecap.models import DB_SCHEMA, MonRecap, create_tables
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
-DB_SCHEMA = "monrecap"
 
-with DAG("mon_recap_airtable", schedule_interval="10 0 * * *", **dag_args) as dag:
-    start = empty.EmptyOperator(task_id="start")
+VARIABLES_FILE = Path("/opt/airflow/dags/common/monrecap/variables_barometre.csv")
+delimiter_type = ";"
+primary_key = "submissionid"
+tablename = "raw_barometre"
+classname = "MonRecapBaro"
 
-    end = slack.success_notifying_task()
+with DAG("mon_recap", schedule_interval="10 0 * * *", **dag_args) as dag:
 
     env_vars = db.connection_envvars()
 
     date_pattern = re.compile(r"^date", re.IGNORECASE)
 
-    @task(task_id="monrecap_airtable")
-    def monrecap_airtable(**kwargs):
+    @task(task_id="create_table")
+    def create_table(variables):
+        create_tables(variables)
+
+    @task(task_id="import_mon_recap_baro")
+    def import_monrecap_baro(variables):
+        monrecap_baro_model = gsheet.build_data_model(
+            variables, primary_key, tablename, DB_SCHEMA, classname, MonRecap
+        )
+        data = gsheet.get_data_from_sheet(Variable.get("BAROMETRE_MON_RECAP"), variables)
+        gsheet.insert_data_to_db(monrecap_baro_model, data)
+
+    variables = gsheet.get_variables(VARIABLES_FILE, delimiter_type)
+
+    @task(task_id="import_mon_recap_airtable")
+    def import_monrecap_airtable(**kwargs):
 
         con = db.connection_engine()
         # Need to drop these tables and the views created with them in order to be able to run the df.to_sql()
@@ -84,7 +103,7 @@ with DAG("mon_recap_airtable", schedule_interval="10 0 * * *", **dag_args) as da
 
             df.to_sql(db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping)
 
-    monrecap_airtable = monrecap_airtable()
+    import_monrecap_airtable = import_monrecap_airtable()
 
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
@@ -107,4 +126,10 @@ with DAG("mon_recap_airtable", schedule_interval="10 0 * * *", **dag_args) as da
         append_env=True,
     )
 
-    (start >> monrecap_airtable >> dbt_deps >> dbt_seed >> dbt_monrecap >> end)
+    (
+        create_table(variables).as_setup()
+        >> [import_monrecap_airtable, import_monrecap_baro(variables)]
+        >> dbt_deps
+        >> dbt_seed
+        >> dbt_monrecap
+    )
