@@ -248,6 +248,9 @@ with DAG(
     params={
         "period_start": Param(title="Date de début", type="string", format="date"),
         "period_end": Param(title="Date de fin", type="string", format="date"),
+        "7zip": Param(
+            title="Archive 7zip", type="boolean", default=True, description="Send the file inside a 7zip archive"
+        ),
     },
     **dag_args,
 ) as dag:
@@ -269,17 +272,24 @@ with DAG(
 
         base_name = f"GIPP3242.PIQDISB3.P{datetime.date.today():%y0%m%d}.MESUREIMPACT.INCLUSION"
         archive_name, file_name = f"{base_name}.7z", f"{base_name}.txt"
-        logger.info("Generate archive %r", archive_name)
-        archive_buffer = io.BytesIO()
-        with py7zr.SevenZipFile(archive_buffer, "w") as archive:
-            archive.writestr(
-                get_file_content(
-                    processed_df, file_name, reference=f"{datetime.date.fromisoformat(params['period_end']):01%m%Y}"
-                ),
-                file_name,
-            )
-        logger.info("Archive %r is %d bytes", archive_name, len(archive_buffer.getvalue()))
 
-        upload_to_sftp(archive_buffer, archive_name)
+        file_content = get_file_content(
+            processed_df, file_name, reference=f"{datetime.date.fromisoformat(params['period_end']):01%m%Y}"
+        )
+
+        if params["7zip"]:
+            logger.info("Generate archive %r", archive_name)
+            archive_buffer = io.BytesIO()
+            with py7zr.SevenZipFile(archive_buffer, "w") as archive:
+                archive.writestr(
+                    file_content,
+                    file_name,
+                )
+            logger.info("Archive %r is %d bytes", archive_name, len(archive_buffer.getvalue()))
+            remote_fo, remote_name = archive_buffer, archive_name
+        else:
+            remote_fo, remote_name = io.BytesIO(file_content.encode()), file_name
+
+        upload_to_sftp(remote_fo, remote_name)
 
     process() >> slack.success_notifying_task()
