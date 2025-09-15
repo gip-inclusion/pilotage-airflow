@@ -87,6 +87,9 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
     def monrecap_gsheet(**kwargs):
         import pandas as pd
 
+        question_time = (
+            "En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ?"  # noqa: RUF001
+        )
         sheet_url = Variable.get("BAROMETRE_MON_RECAP")
         print(f"reading barometre mon recap at {sheet_url=}")
         sheet_data = pd.read_csv(sheet_url)
@@ -111,6 +114,14 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
                 "D'après vous, pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?.1": (
                     "(bis) Pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?"
                 ),
+                f"{question_time} (Je ne gagne pas de temps)": (
+                    "Temps gagné sur une heure (Je ne gagne pas de temps)"
+                ),
+                f"{question_time} (Moins de 5min )": ("Temps gagné sur une heure (Moins de 5min)"),
+                f"{question_time} (Entre 5 et 10min )": ("Temps gagné sur une heure (Entre 5 et 10min)"),
+                f"{question_time} (Entre 10 et 15min )": ("Temps gagné sur une heure (Entre 10 et 15min)"),
+                f"{question_time} (Entre 15 et 30min )": ("Temps gagné sur une heure (Entre 15 et 30min)"),
+                f"{question_time} (Plus de 30min)": ("Temps gagné sur une heure (Plus de 30min)"),
                 "Votre adresse mail ": "Votre adresse mail ?",
             }
         )
