@@ -105,7 +105,7 @@ def pg_store(table_name, df, create_table_sql):
 def create_df_from_db(sql_query):
     import pandas as pd
 
-    with MetabaseDBCursor() as (cursor, conn):
+    with MetabaseDBCursor() as (_, conn):
         return pd.read_sql_query(sql_query, conn)
 
 
