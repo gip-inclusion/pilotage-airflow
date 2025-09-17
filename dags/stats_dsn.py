@@ -1,6 +1,7 @@
 import datetime
 import io
 import logging
+import math
 import pathlib
 import string
 
@@ -61,6 +62,10 @@ def format_value(value):
     return str(value)
 
 
+def datetime_to_quarter(dt):
+    return f"{dt.year}Q{math.ceil(dt.month / 3)}"
+
+
 def check_dataframe_columns_exists(df, expected_columns):
     if missing_columns := set(expected_columns) - set(df.columns):
         raise RuntimeError(f"Columns {missing_columns!r} are missing from {list(df.columns)!r}")
@@ -118,8 +123,8 @@ def regrouper_cohortes(df, *, threshold):
         if _cohort_key(row) in cohorts_to_regroup:
             return pd.Series(
                 {
-                    "ZE2020_finale": f"ZE_NEUTRE_T{int(row['trimestre'])}_{row['sexe']}",
-                    "type_structure_finale": f"SIAE_NEUTRE_T{int(row['trimestre'])}_{row['sexe']}",
+                    "ZE2020_finale": f"ZE_NEUTRE_{row['trimestre']}_{row['sexe']}",
+                    "type_structure_finale": f"SIAE_NEUTRE_{row['trimestre']}_{row['sexe']}",
                     "regroupee": True,
                 }
             )
@@ -263,6 +268,7 @@ with DAG(
         base_df = create_df_from_db(
             query_template.substitute(period_start=params["period_start"], period_end=params["period_end"])
         )
+        base_df["trimestre"] = base_df["trimestre"].apply(datetime_to_quarter)
         base_df["ZE2020"] = pd.to_numeric(base_df["ZE2020"], errors="coerce").astype("Int64")
 
         processed_df = traitement_complet(base_df, threshold=5)
