@@ -7,7 +7,7 @@ with base_data as (
 		end as sexe,
 		strct.structure_siret_actualise as siret,
 		replace(ctr.contrat_date_sortie_definitive::TEXT, '/','')::TEXT as mois_sortie,
-		extract(QUARTER from to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')) as trimestre,
+        date_trunc('quarter', to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')) as trimestre,
 		asp.type_structure_emplois,
 		insee."ZE2020"
 	from "fluxIAE_Salarie_v2" as sal
