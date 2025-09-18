@@ -24,11 +24,10 @@ with base_data as (
 	left join "fluxIAE_RefCategorieSort_v2" as rcs
 		on rms.rcs_id = rcs.rcs_id
 	where ctr.contrat_motif_sortie_id is not null
-	and rcs.rcs_libelle != 'Retrait des sorties constatées'
+	and rcs.rcs_code != 5 --matches : Retrait des sorties constatées
     -- we want to remove the persons staying in the IAE
-    and rms.rms_libelle != 'Embauche en CDI Inclusion'
-    and rms.rms_libelle != 'Embauche pour une durée déterminée dans une autre structure IAE'
-	and rms.rms_libelle != 'Pour une durée déterminée dans une autre structure IAE hors détention'
+    and rms.rms_code != 2  --matches : Embauche pour une durée déterminée dans une autre structure IAE & Pour une durée déterminée dans une autre structure IAE hors détention
+	and rms.rms_code != 96 --matches : Embauche en CDI Inclusion
 	and to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')
 		between to_date('${period_start}', 'YYYY/MM/DD') and to_date('${period_end}', 'YYYY/MM/DD')
 ),
