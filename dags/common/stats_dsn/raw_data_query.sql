@@ -25,6 +25,10 @@ with base_data as (
 		on rms.rcs_id = rcs.rcs_id
 	where ctr.contrat_motif_sortie_id is not null
 	and rcs.rcs_libelle != 'Retrait des sorties constatées'
+    -- we want to remove the persons staying in the IAE
+    and rms.rms_libelle != 'Embauche en CDI Inclusion'
+    and rms.rms_libelle != 'Embauche pour une durée déterminée dans une autre structure IAE'
+	and rms.rms_libelle != 'Pour une durée déterminée dans une autre structure IAE hors détention'
 	and to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')
 		between to_date('${period_start}', 'YYYY/MM/DD') and to_date('${period_end}', 'YYYY/MM/DD')
 ),
