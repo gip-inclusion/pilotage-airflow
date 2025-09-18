@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 import pandas as pd
 import sqlalchemy.types as types
@@ -6,18 +7,41 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import bash
+from airflow.utils.trigger_rule import TriggerRule
+from sqlalchemy.ext.declarative import declarative_base
 
-from dags.common import airtable, db, dbt, default_dag_args, departments, monrecap, slack
-from dags.common.tasks import create_schema
+from dags.common import airtable, db, dbt, default_dag_args, departments, gsheet, slack
+from dags.common.monrecap.helpers import convert_date_columns
+from dags.common.tasks import create_models
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
+
 DB_SCHEMA = "monrecap"
+variables_files = Path(__file__).parent / "common" / "monrecap" / "variables_barometre.csv"
+
+# NOTE: when upgrading to sqlalchemy 2.0 or higher, we'll need to use the class DeclarativeBase
+MonrecapBase = declarative_base()
 
 with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
     env_vars = db.connection_envvars()
 
     date_pattern = re.compile(r"^date", re.IGNORECASE)
+
+    variables = gsheet.get_variables(variables_files, delimiter_type=";")
+    barometre_model = gsheet.build_data_model(  # Needs to be build before `create_models(MonrecapBase)`
+        variables,
+        DB_SCHEMA,
+        MonrecapBase,
+        primary_key="submission_id",
+        tablename="raw_barometre",
+        classname="MonRecapBaro",
+    )
+
+    @task
+    def import_barometre(model, data_spec):
+        data = gsheet.get_data_from_sheet(Variable.get("BAROMETRE_MON_RECAP"), data_spec)
+        gsheet.insert_data_to_db(model, data)
 
     @task
     def monrecap_airtable(**kwargs):
@@ -46,14 +70,14 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
                 commandes_dates = [
                     col for col in table_data.columns if date_pattern.match(col) or col == "Submitted at"
                 ]
-                monrecap.convert_date_columns(table_data, commandes_dates)
+                convert_date_columns(table_data, commandes_dates)
 
                 table_data["Nom Departement"] = table_data["Code Postal"].apply(
                     lambda cp: "-".join([item for item in departments.get_department(cp) if item is not None])
                 )
             elif table_name == "Contacts":
                 contacts_dates = [col for col in table_data.columns if date_pattern.match(col)]
-                monrecap.convert_date_columns(table_data, contacts_dates)
+                convert_date_columns(table_data, contacts_dates)
                 table_data["Type de contact"] = "contact commandeur"
                 # fixing Annaelle's double quotes, if you read this I'll get my revenge
                 table_data = table_data.rename(
@@ -66,7 +90,7 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
 
             elif table_name == "Contacts non commandeurs":
                 contacts_non_commandeurs_dates = [col for col in table_data.columns if date_pattern.match(col)]
-                monrecap.convert_date_columns(table_data, contacts_non_commandeurs_dates)
+                convert_date_columns(table_data, contacts_non_commandeurs_dates)
                 table_data["Type de contact"] = "contact non commandeur"
 
             db_table_name = table_mapping[table_name]
@@ -82,58 +106,10 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
                 db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping
             )
 
-    # Tally handle poorly the import to airtable, therefore we used a gsheet instead
-    @task
-    def monrecap_gsheet(**kwargs):
-        import pandas as pd
-
-        question_time = (
-            "En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ?"  # noqa: RUF001
-        )
-        sheet_url = Variable.get("BAROMETRE_MON_RECAP")
-        print(f"reading barometre mon recap at {sheet_url=}")
-        sheet_data = pd.read_csv(sheet_url)
-        sheet_data.drop_duplicates()  # if the synch of the gsheet is forced, duplicates will be created
-        sheet_data = sheet_data.rename(
-            columns={
-                "Avez-vous constaté que vos usagers utilisent le carnet avec leurs autres accompagnateurs ?": (
-                    "Carnets utilisés avec d'autres accompagnateurs ?"
-                ),
-                "Avez-vous constaté que vos usagers utilisent le carnet avec leurs autres accompagnateurs ?.1": (
-                    "Carnets utilisés avec d'autres accompagnateurs ? (chiffres)"
-                ),
-                "Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation d'illectronisme )": (
-                    "Quel(s) type(s) de public accompagnez-vous ? (illectronisme)"
-                ),
-                "Quel(s) type(s) de public accompagnez-vous ? (Personnes en situation d'illetrisme )": (
-                    "Quel(s) type(s) de public accompagnez-vous ? (illetrisme)"
-                ),
-                "D'après vous, pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?": (
-                    "Pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?"
-                ),
-                "D'après vous, pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?.1": (
-                    "(bis) Pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?"
-                ),
-                f"{question_time} (Je ne gagne pas de temps)": (
-                    "Temps gagné sur une heure (Je ne gagne pas de temps)"
-                ),
-                f"{question_time} (Moins de 5min )": ("Temps gagné sur une heure (Moins de 5min)"),
-                f"{question_time} (Entre 5 et 10min )": ("Temps gagné sur une heure (Entre 5 et 10min)"),
-                f"{question_time} (Entre 10 et 15min )": ("Temps gagné sur une heure (Entre 10 et 15min)"),
-                f"{question_time} (Entre 15 et 30min )": ("Temps gagné sur une heure (Entre 15 et 30min)"),
-                f"{question_time} (Plus de 30min)": ("Temps gagné sur une heure (Plus de 30min)"),
-                "Votre adresse mail ": "Votre adresse mail ?",
-            }
-        )
-        baro_dates = [col for col in sheet_data.columns if date_pattern.match(col) or col == "Submitted at"]
-        monrecap.convert_date_columns(sheet_data, baro_dates)
-        sheet_data.to_sql(
-            "barometre_v0", con=db.connection_engine(), schema=DB_SCHEMA, if_exists="replace", index=False
-        )
-
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
         bash_command="dbt deps",
+        trigger_rule=TriggerRule.ALL_DONE,
         env=env_vars,
         append_env=True,
     )
@@ -153,8 +129,8 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
     )
 
     (
-        create_schema(DB_SCHEMA).as_setup()
-        >> [monrecap_airtable(), monrecap_gsheet()]
+        create_models(MonrecapBase).as_setup()
+        >> [monrecap_airtable(), import_barometre(barometre_model, variables)]
         >> dbt_deps
         >> dbt_seed
         >> dbt_monrecap
