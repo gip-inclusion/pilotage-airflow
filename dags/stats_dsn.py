@@ -276,7 +276,7 @@ with DAG(
         processed_df = processed_df[FILE_BASE_COLUMNS + FILE_EXTRA_COLUMNS]
         check_dataframe_columns_exists(processed_df, FILE_BASE_COLUMNS + FILE_EXTRA_COLUMNS)
 
-        base_name = f"GIPP3242.PIQDISB3.P{datetime.date.today():%y0%m%d}.MESUREIMPACT.INCLUSION"
+        base_name = f"GIPP3242.PIQDISB3.P{datetime.date.today():%y0%m%d}"
         archive_name, file_name = f"{base_name}.7z", f"{base_name}.txt"
 
         file_content = get_file_content(
