@@ -13,7 +13,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Param, Variable
 
-from dags.common import dbt, default_dag_args, slack
+from dags.common import dbt, default_dag_args, s3, slack
 from dags.common.anonymize_sensible_data import decrypt_content
 from dags.common.db import create_df_from_db
 
@@ -253,6 +253,12 @@ with DAG(
     params={
         "period_start": Param(title="Date de début", type="string", format="date"),
         "period_end": Param(title="Date de fin", type="string", format="date"),
+        "s3_datastore": Param(
+            title="Copie datastore S3",
+            type="boolean",
+            default=False,
+            description="Make a copy of the uploaded file to our S3 datastore",
+        ),
         "7zip": Param(
             title="Archive 7zip", type="boolean", default=True, description="Send the file inside a 7zip archive"
         ),
@@ -291,11 +297,16 @@ with DAG(
                     file_content,
                     file_name,
                 )
-            logger.info("Archive %r is %d bytes", archive_name, len(archive_buffer.getvalue()))
-            remote_fo, remote_name = archive_buffer, archive_name
+            remote_content, remote_name = archive_buffer.getvalue(), archive_name
+            logger.info("Archive %r is %d bytes", archive_name, len(remote_content))
         else:
-            remote_fo, remote_name = io.BytesIO(file_content.encode()), file_name
+            remote_content, remote_name = file_content.encode(), file_name
 
-        upload_to_sftp(remote_fo, remote_name)
+        if params["s3_datastore"]:
+            bucket = Variable.get("DATASTORE_S3_PILOTAGE_BUCKET_NAME")
+            logger.info("Uploading a copy to %r:%r", bucket, remote_name)
+            s3.client().upload_fileobj(io.BytesIO(remote_content), Bucket=bucket, Key=remote_name)
+
+        upload_to_sftp(io.BytesIO(remote_content), remote_name)
 
     process() >> slack.success_notifying_task()
