@@ -5,7 +5,7 @@ import pandas as pd
 import sqlalchemy.types as types
 from airflow import DAG
 from airflow.decorators import task
-from airflow.models import Variable
+from airflow.models import Param, Variable
 from airflow.operators import bash
 from airflow.utils.trigger_rule import TriggerRule
 from sqlalchemy.ext.declarative import declarative_base
@@ -23,9 +23,20 @@ variables_files = Path(__file__).parent / "common" / "monrecap" / "variables_bar
 # NOTE: when upgrading to sqlalchemy 2.0 or higher, we'll need to use the class DeclarativeBase
 MonrecapBase = declarative_base()
 
-with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
+with DAG(
+    "mon_recap",
+    schedule="@daily",
+    params={
+        "drop_baro": Param(
+            title="drop table raw_barometre",
+            type="boolean",
+            default=False,
+            description="Drops the raw_barometre table. Use it when new columns are added to the file",
+        ),
+    },
+    **dag_args,
+) as dag:
     env_vars = db.connection_envvars()
-
     date_pattern = re.compile(r"^date", re.IGNORECASE)
 
     variables = gsheet.get_variables(variables_files, delimiter_type=";")
@@ -37,6 +48,12 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
         tablename="raw_barometre",
         classname="MonRecapBaro",
     )
+
+    @task.skip_if(lambda context: not context["params"]["drop_baro"])
+    @task
+    def drop_barometre_table():
+        con = db.connection_engine()
+        con.execute("""drop table if exists monrecap.raw_barometre cascade;""")
 
     @task
     def import_barometre(model, data_spec):
@@ -129,7 +146,8 @@ with DAG("mon_recap", schedule="@daily", **dag_args) as dag:
     )
 
     (
-        create_models(MonrecapBase).as_setup()
+        drop_barometre_table()
+        >> create_models(MonrecapBase)
         >> [monrecap_airtable(), import_barometre(barometre_model, variables)]
         >> dbt_deps
         >> dbt_seed
