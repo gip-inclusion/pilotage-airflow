@@ -51,4 +51,6 @@ id_tb,nom_tb,public,type
 545,tb 545 - PH/FT/CD - Suivi des bénéficiaires taux d’encadrement et présence en emploi,PH,TB privé
 550,tb 550 - SIAE - Suivi des bénéficiaires taux d’encadrement et présence en emploi,SIAE,TB privé
 566,tb 440 - SIAE - Données conventionnement - Maille structure,SIAE,TB privé
+573,tb 160 - Facilitation de l'embauche DREETS/DDETS,DREETS/DDETS,TB privé
+577,tb 289 - Suivi des prescriptions des PH DDETS/DREETS,DDETS/DREETS, TB privé
 578,tb 485 - DDETS/DREETS/CD - Données conventionnement - Maille structure,DDETS/DREETS/CD, TB privé
