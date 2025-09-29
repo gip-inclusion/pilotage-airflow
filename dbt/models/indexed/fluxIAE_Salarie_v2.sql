@@ -6,7 +6,7 @@
  ) }}
 
 select distinct
-    {{ pilo_star(source('fluxIAE', 'fluxIAE_Salarie'), except=["hash_numéro_pass_iae"]) }},
+    {{ pilo_star(source('fluxIAE', 'fluxIAE_Salarie'), except=["hash_numéro_pass_iae", "nir_chiffré"]) }},
     case
         when date_part('year', current_date) - date_part('year', to_date(salarie_annee_naissance::TEXT, 'YYYY')) <= 26 then 'Jeune (- de 26 ans)'
         when
