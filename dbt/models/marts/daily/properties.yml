@@ -233,3 +233,14 @@ models:
   - name: fdp_tension_56
     description: >
       Sous-table des étapes 5 et 6 pour la table fiches de postes en tension.
+  - name: parcours_salarie
+    description: >
+      Table resumant le parcours de chaque salarié dans les SIAE
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_parcours_salarie_info_pass')
+    columns:
+      - name: hash_nir
+        tests:
+          - unique
+          - not_null
