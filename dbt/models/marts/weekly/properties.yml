@@ -138,17 +138,6 @@ models:
   - name: recrutements
     description: >
       Table permettant de suivre les recrutements réalisés et déclarés à l'ASP.
-  - name: parcours_salarie
-    description: >
-      Table resumant le parcours de chaque salarié dans les SIAE
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: ref('stg_parcours_salarie_info_pass')
-    columns:
-      - name: hash_nir
-        tests:
-          - unique
-          - not_null
   - name: suivi_realisation_convention_par_structure
     description: >
       Table permettant de suivre par id d'annexe financiere (i.e. par structure et par an) les etps conventionnés, réalisés et la différence entre ces derniers.
