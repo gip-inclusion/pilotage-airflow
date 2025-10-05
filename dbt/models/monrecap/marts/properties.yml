@@ -18,4 +18,4 @@ models:
       Table du barometre de mon recap. Nous créons cette table à partir d'une version v0 afin de faire des modifications eventuelle en sql et non en python
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('monrecap','barometre_v0')
+          compare_model: source('monrecap','raw_barometre')
