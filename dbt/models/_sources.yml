@@ -127,7 +127,6 @@ sources:
     description: >
       Données de Mon Récap
     tables:
-      - name: barometre_v0
       - name: Contacts_v0
       - name: Commandes_v0
       - name: contacts_non_commandeurs_v0
