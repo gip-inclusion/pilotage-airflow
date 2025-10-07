@@ -25,3 +25,7 @@ models:
     description: >
       Ce DAG permet de récupérer le .xlsx de l'ASP contenant les beneficiaires/sorties pour chaque annexe financiere.
       Le .xlsx est fourni par mail puis déposé manuellement dans le ftp c2-bucket.
+  - name: dbt_manual
+    description: >
+      Ce DAG permet de choisir manuellement les arguments du dbt run et ainsi de mettre à jour que les tables qui ont vu leurs scripts modifiés.
+
