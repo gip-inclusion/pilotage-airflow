@@ -9,7 +9,7 @@ select
     potentiel.potentiel,
     visites.nb_organisations / potentiel.potentiel as taux_couv,
     case
-        when potentiel.type_utilisateur = 'institution' then (select count from stg_nombre_orga)
+        when potentiel.type_utilisateur = 'institution' then (select count from {{ ref('stg_nombre_orga') }})
     end                                            as potentiel_orga_national
 from {{ ref('nb_utilisateurs_potentiels') }} as potentiel
 left join {{ ref('suivi_visites_tb_prive_mois') }} as visites
