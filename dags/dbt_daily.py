@@ -40,7 +40,9 @@ with airflow.DAG(
             kwargs["ti"].xcom_push("dbt_run_args", "--full-refresh --exclude marts.weekly marts.manual marts.oneshot")
         else:
             kwargs["ti"].xcom_push("dbt_seed_args", "")
-            kwargs["ti"].xcom_push("dbt_run_args", "--select +marts.daily+ +legacy.daily+")
+            kwargs["ti"].xcom_push(
+                "dbt_run_args", "--select +stg_info_per_annexe_financiere+ +marts.daily+ +legacy.daily+"
+            )
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
