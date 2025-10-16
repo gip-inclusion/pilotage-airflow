@@ -46,6 +46,21 @@ def get_data_from_sheet(pub_sheet_url, variables) -> pd.DataFrame:
     return df_ghseet
 
 
+def get_data_from_xls(pub_sheet_url, variables) -> pd.DataFrame:
+    df_ghseet = pd.read_excel(pub_sheet_url)
+
+    # rename columns labels
+    variables_dict = {variable_info["question"]: variable for variable, variable_info in variables.items()}
+
+    # convert Nan values to nulls
+    df_ghseet = df_ghseet.astype("object")
+    df_ghseet = df_ghseet.where(pd.notna(df_ghseet), None)
+    df_ghseet = df_ghseet.rename(columns=variables_dict)
+    df_ghseet = df_ghseet[variables_dict.values()]
+
+    return df_ghseet
+
+
 def build_data_model(variables, db_schema, db_base, primary_key, tablename, classname):
     var_types = {}
 

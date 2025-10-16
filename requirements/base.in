@@ -16,6 +16,7 @@ pandas<2.2  # https://github.com/pandas-dev/pandas
 paramiko  # https://github.com/paramiko/paramiko
 psycopg[binary] # https://www.psycopg.org/
 py7zr # https://github.com/miurahr/py7zr
+pyairtable # https://pyairtable.readthedocs.io/en/stable/
 unidecode  # https://pypi.org/project/Unidecode/
 
 # Transitional pinning

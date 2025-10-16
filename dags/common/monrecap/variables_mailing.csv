@@ -1,0 +1,7 @@
+variable;question;type
+submission_id;Submission ID;String
+respondentid;Respondent ID;String
+datesubmission;Submitted at;DateTime
+email_structure;Votre adresse mail;String
+structure;Votre structure;String
+email_pro;Liste des adresse mails des professionnels qui vont utiliser le carnet (séparé par une virgule);String
