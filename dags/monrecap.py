@@ -57,7 +57,7 @@ with DAG(
 
     @task
     def import_barometre(model, data_spec):
-        data = gsheet.get_data_from_sheet(Variable.get("BAROMETRE_MON_RECAP"), data_spec)
+        data = gsheet.get_data_from_sheet(Variable.get("MON_RECAP_BAROMETRE"), data_spec)
         gsheet.insert_data_to_db(model, data)
 
     @task
