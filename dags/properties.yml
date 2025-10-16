@@ -28,4 +28,7 @@ models:
   - name: dbt_manual
     description: >
       Ce DAG permet de choisir manuellement les arguments du dbt run et ainsi de mettre à jour que les tables qui ont vu leurs scripts modifiés.
+  - name: monrecap_mailing_list
+    description: >
+      Ce DAG permet de récupérer des mails à partir d'un tally synchronisé avec gsheet. Les informations sont ensuite poussées sur metabase & airtable
 
