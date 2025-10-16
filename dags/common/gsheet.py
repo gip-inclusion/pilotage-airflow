@@ -28,37 +28,37 @@ def get_variables(variable_files, delimiter_type) -> dict:
 
 
 def get_data_from_sheet(pub_sheet_url, variables) -> pd.DataFrame:
-    df_ghseet = pd.read_csv(pub_sheet_url, decimal=",", na_values=["999", ""])
+    df_gsheet = pd.read_csv(pub_sheet_url, decimal=",", na_values=["999", ""])
 
     # normalize columns
-    df_ghseet.columns = df_ghseet.columns.str.replace("\n", "").str.strip()
-    df_ghseet.columns = df_ghseet.columns.map(html.unescape).str.strip()
+    df_gsheet.columns = df_gsheet.columns.str.replace("\n", "").str.strip()
+    df_gsheet.columns = df_gsheet.columns.map(html.unescape).str.strip()
 
     # rename columns labels
     variables_dict = {variable_info["question"]: variable for variable, variable_info in variables.items()}
 
     # convert Nan values to nulls
-    df_ghseet = df_ghseet.astype("object")
-    df_ghseet = df_ghseet.where(pd.notna(df_ghseet), None)
-    df_ghseet = df_ghseet.rename(columns=variables_dict)
-    df_ghseet = df_ghseet[variables_dict.values()]
+    df_gsheet = df_gsheet.astype("object")
+    df_gsheet = df_gsheet.where(pd.notna(df_gsheet), None)
+    df_gsheet = df_gsheet.rename(columns=variables_dict)
+    df_gsheet = df_gsheet[variables_dict.values()]
 
-    return df_ghseet
+    return df_gsheet
 
 
 def get_data_from_xls(pub_sheet_url, variables) -> pd.DataFrame:
-    df_ghseet = pd.read_excel(pub_sheet_url)
+    df_gsheet = pd.read_excel(pub_sheet_url)
 
     # rename columns labels
     variables_dict = {variable_info["question"]: variable for variable, variable_info in variables.items()}
 
     # convert Nan values to nulls
-    df_ghseet = df_ghseet.astype("object")
-    df_ghseet = df_ghseet.where(pd.notna(df_ghseet), None)
-    df_ghseet = df_ghseet.rename(columns=variables_dict)
-    df_ghseet = df_ghseet[variables_dict.values()]
+    df_gsheet = df_gsheet.astype("object")
+    df_gsheet = df_gsheet.where(pd.notna(df_gsheet), None)
+    df_gsheet = df_gsheet.rename(columns=variables_dict)
+    df_gsheet = df_gsheet[variables_dict.values()]
 
-    return df_ghseet
+    return df_gsheet
 
 
 def build_data_model(variables, db_schema, db_base, primary_key, tablename, classname):
