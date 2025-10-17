@@ -30,7 +30,7 @@ select
     null                                                                as "Réticences",
     null                                                                as "Estimation par la structure",
     null                                                                as "Infos complémentaires",
-    null                                                                as "Suivi appels",
+    null                                                                as "Suivi contact",
     null                                                                as "Mail CC",
     cnm."Type de contact",
     null                                                                as "Organisation",
