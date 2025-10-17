@@ -1254,6 +1254,7 @@ inflection==0.5.1 \
     # via
     #   apache-airflow-providers-amazon
     #   connexion
+    #   pyairtable
 invoke==2.2.0 \
     --hash=sha256:6ea924cc53d4f78e3d98bc436b08069a03077e6f85ad1ddaa8a116d7dad15820 \
     --hash=sha256:ee6cbb101af1a859c7fe84f2a264c059020b0cb7fe3535f9424300ab568f6bd5
@@ -2348,6 +2349,10 @@ py7zr==1.0.0 \
     --hash=sha256:6f42d2ff34c808e9026ad11b721c13b41b0673cf2b4e8f8fb34f9d65ae143dd1 \
     --hash=sha256:f6bfee81637c9032f6a9f0eb045a4bfc7a7ff4138becfc42d7cb89b54ffbfef1
     # via -r requirements/base.in
+pyairtable==3.2.0 \
+    --hash=sha256:2deb6f48dcc065078a2a76047c0bf2ff0ca4d7074664fbd3964b1bf24d789eff \
+    --hash=sha256:f6fd1e3abdc28014dbecde8591c826560c5cb5a2d389e518647c2e5ecb88478d
+    # via -r requirements/base.in
 pyathena==3.18.0 \
     --hash=sha256:5d6c9c70c1abcc49fdb33c9470d520f470cace1f04e5249c7b92e06ffc328326 \
     --hash=sha256:acf3b975bfb09f854c94ac8a152d34469a4dc27ff4e2f6ce23e1e27838d1ab96
@@ -2453,6 +2458,7 @@ pydantic==2.11.9 \
     # via
     #   dbt-core
     #   dbt-semantic-interfaces
+    #   pyairtable
 pydantic-core==2.33.2 \
     --hash=sha256:0069c9acc3f3981b9ff4cdfaf088e98d83440a4c7ea1bc07460af3d4dc22e72d \
     --hash=sha256:031c57d67ca86902726e0fae2214ce6770bbe2f710dc33063187a68744a5ecac \
@@ -2892,6 +2898,7 @@ requests==2.32.5 \
     #   dbt-common
     #   dbt-core
     #   opentelemetry-exporter-otlp-proto-http
+    #   pyairtable
     #   redshift-connector
     #   requests-toolbelt
     #   sagemaker-studio
@@ -3333,6 +3340,7 @@ typing-extensions==4.15.0 \
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
     #   psycopg
+    #   pyairtable
     #   pydantic
     #   pydantic-core
     #   pyzstd
@@ -3366,6 +3374,7 @@ urllib3==2.5.0 \
     --hash=sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc
     # via
     #   botocore
+    #   pyairtable
     #   requests
     #   sagemaker-studio
     #   sentry-sdk
