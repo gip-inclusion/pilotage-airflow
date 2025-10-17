@@ -30,7 +30,7 @@ select
     contacts."Réticences",
     contacts."Estimation par la structure",
     contacts."Infos complémentaires",
-    contacts."Suivi appels",
+    contacts."Suivi contact",
     contacts."Mail CC",
     contacts."Type de contact",
     contacts."Organisation",
