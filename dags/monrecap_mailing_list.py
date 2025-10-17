@@ -1,129 +1,152 @@
 import re
 import time
-from pathlib import Path
 
-from airflow import DAG
-from airflow.decorators import task
-from airflow.exceptions import AirflowFailException
-from airflow.models import Param, Variable
-from pyairtable import Table
+import pandas as pd
+import sqlalchemy as sqla
+from pyairtable import Table as AirtableTable
 from sqlalchemy.ext.declarative import declarative_base
+
+from airflow.decorators import dag, task
+from airflow.models import Param
 
 from dags.common import db, dbt, default_dag_args, gsheet, slack
 from dags.common.tasks import create_models
 
-
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-DB_SCHEMA = "monrecap"
-variables_files = Path(__file__).parent / "common" / "monrecap" / "variables_mailing.csv"
+Base = declarative_base()
 
-# NOTE: when upgrading to sqlalchemy 2.0 or higher, we'll need to use the class DeclarativeBase
-MonrecapBase = declarative_base()
 
-with DAG(
-    "mon_recap_mailing_autres_pro_aap",
+def match_emails(string):
+    return re.findall(
+        r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
+        string,
+        flags=re.IGNORECASE,
+    )
+
+
+class MonRecapMailing(Base):
+    __tablename__ = "mailing_list_others_aap"
+    __table_args__ = {"schema": "monrecap"}
+
+    submission_id = sqla.Column(sqla.String, primary_key=True)
+    respondentid = sqla.Column(sqla.String)
+    datesubmission = sqla.Column(sqla.Date)
+    email_structure = sqla.Column(sqla.String)
+    structure = sqla.Column(sqla.String)
+    email_pro = sqla.Column(sqla.String)
+
+
+@task
+def group_by_submission_ids():
+    df_gsheet = pd.read_excel(Variable.get("MAILING_MON_RECAP"))  # is Excel really necessary ?
+
+    column_question_mapping = {
+        "Submission ID": "submission_id",
+        "Submitted at": "datesubmission",
+        "Respondent ID": "respondentid",
+        "Votre adresse mail": "email_structure",
+        "Votre structure": "structure",
+        "Liste des adresse mails des professionnels qui vont utiliser le carnet (séparé par une virgule)": "email_pro",
+    }
+
+    df_gsheet = df_gsheet.astype("object")
+    df_gsheet = df_gsheet.where(pd.notna(df_gsheet), None)
+    df_gsheet = df_gsheet.rename(columns=column_question_mapping)
+    df_gsheet = df_gsheet[column_question_mapping.values()]
+
+    df_gsheet["email_pro"] = df_gsheet["email_pro"].astype(str).apply(match_emails)
+    df_exploded = df_gsheet.explode("email_pro")
+    df_exploded["email_pro"] = df_exploded["email_pro"].fillna("")
+
+    df_result = df_exploded.copy()  # really necessary ?
+
+    df_result["submission_id"] = (
+        (df_result.groupby("submission_id").cumcount() + 1).astype(str)
+        + "_"
+        + df_result["submission_id"]
+    )
+    print(df_result.columns)
+    return df_result
+
+
+@task
+def export_data_to_airtable(df):
+    df["datesubmission"] = df["datesubmission"].dt.strftime(
+        "%Y-%m-%d"
+    )  # match airtable date format
+    print(df.columns)
+
+    airtable_table = AirtableTable(
+        Variable.get("TOKEN_API_AIRTABLE_MON_RECAP"),
+        Variable.get("BASE_ID_AIRTABLE_MON_RECAP"),
+        "Mailing autres pros AAP",
+    )
+
+    existing_records = airtable_table.all(fields=["submission_id"])
+    existing_ids = {
+        r["fields"].get("submission_id")
+        for r in existing_records
+        if r["fields"].get("submission_id")
+    }
+    print(f"{len(existing_ids)} rows are already present in airtable")
+
+    # Upload in batches (max 10 records per request)
+    batch_size = 10
+    uploaded = 0
+
+    df_append = df[~df["submission_id"].isin(existing_ids)]
+    print(f"{len(df_append)} new rows are added to airtable ")
+
+    records = df_append.to_dict("records")
+
+    for i in range(0, len(records), batch_size):
+        batch = records[i : i + batch_size]
+        airtable_table.batch_create(batch)
+        uploaded += len(batch)
+
+        # Respect rate limits
+        if i + batch_size < len(records):
+            time.sleep(0.2)
+
+
+@task.skip_if(lambda context: not context["params"]["with_reset"])
+@task
+def drop_mailing_table():
+    with db.connection_engine().connect() as connection:
+        connection.execute("""
+            DROP TABLE IF EXISTS monrecap.mailing_list_others_aap CASCADE;
+        """)
+
+
+@task
+def import_mailing(model, df):
+    print(df.columns)
+    gsheet.insert_data_to_db(model, df)
+
+
+@dag(
     schedule="@daily",
+    tags=["source"],
     params={
-        "drop_mailing": Param(
-            title="drop table mailing_list_others_aap",
+        "with_reset": Param(
+            title="reset tables beforehand",
             type="boolean",
             default=False,
-            description="Drops the mailing_list_others_aap table. Use it when new columns are added to the file",
+            description="Use it when the file columns changed",
         ),
     },
-    **dag_args,
-) as dag:
-    env_vars = db.connection_envvars()
-    email_regex = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+    **default_dag_args(),
+)
+def monrecap_mailing_autres_pro_aap():
+    df = group_by_submission_ids()
 
-    airtable_table_name = "Mailing autres pros AAP"
-
-    variables = gsheet.get_variables(variables_files, delimiter_type=";")
-    barometre_model = gsheet.build_data_model(
-        variables,
-        DB_SCHEMA,
-        MonrecapBase,
-        primary_key="submission_id",
-        tablename="mailing_list_others_aap",
-        classname="MonRecapMailing",
-    )
-
-    @task
-    def explode_gsheet(data_spec):
-        # needed to use the xls because there are commas in the file
-        df = gsheet.get_data_from_xls(Variable.get("MAILING_MON_RECAP"), data_spec)
-        df["email_pro"] = df["email_pro"].astype(str).apply(lambda x: re.findall(email_regex, x))
-        df_exploded = df.explode("email_pro")
-        df_exploded["email_pro"] = df_exploded["email_pro"].fillna("")
-
-        df_result = df_exploded[
-            ["submission_id", "respondentid", "datesubmission", "email_structure", "structure", "email_pro"]
-        ].copy()
-
-        df_result["submission_id"] = (
-            (df_result.groupby("submission_id").cumcount() + 1).astype(str) + "_" + df_result["submission_id"]
-        )
-        print(df_result.columns)
-        return df_result
-
-    @task.skip_if(lambda context: not context["params"]["drop_mailing"])
-    @task
-    def drop_mailing_table():
-        con = db.connection_engine()
-        con.execute("""drop table if exists monrecap.mailing_list_others_aap cascade;""")
-
-    @task
-    def import_mailing(model, df):
-        print(df.columns)
-        gsheet.insert_data_to_db(model, df)
-
-    @task
-    def export_data_to_airtable(df):
-        df["datesubmission"] = df["datesubmission"].dt.strftime("%Y-%m-%d")  # match airtable date format
-        print(df.columns)
-
-        # connect to airtable
-        table = Table(
-            Variable.get("TOKEN_API_AIRTABLE_MON_RECAP"),
-            Variable.get("BASE_ID_AIRTABLE_MON_RECAP"),
-            airtable_table_name,
-        )
-
-        try:
-            existing_records = table.all(fields=["submission_id"])
-            existing_ids = {
-                r["fields"].get("submission_id") for r in existing_records if r["fields"].get("submission_id")
-            }
-            print(f"{len(existing_ids)} rows are already present in airtable")
-        except Exception as e:
-            raise AirflowFailException(f"Failed to gather airtable data : {e}") from e
-
-        # Upload in batches (max 10 records per request)
-        batch_size = 10
-        uploaded = 0
-
-        df_append = df[~df["submission_id"].isin(existing_ids)]
-        print(f"{len(df_append)} new rows are added to airtable ")
-
-        records = df_append.to_dict("records")
-
-        for i in range(0, len(records), batch_size):
-            batch = records[i : i + batch_size]
-            try:
-                table.batch_create(batch)
-                uploaded += len(batch)
-
-                # Respect rate limits
-                if i + batch_size < len(records):
-                    time.sleep(0.2)
-            except Exception as e:
-                raise AirflowFailException(f"Error uploading batch: {e}") from e
-
-    df = explode_gsheet(variables)
     (
         drop_mailing_table()
-        >> create_models(MonrecapBase)
-        >> [import_mailing(barometre_model, df), export_data_to_airtable(df)]
+        >> create_models(MonRecapMailing)
+        >> [import_mailing(MonRecapMailing, df), export_data_to_airtable(df)]
         >> slack.success_notifying_task()
     )
+
+
+monrecap_mailing_autres_pro_aap()
