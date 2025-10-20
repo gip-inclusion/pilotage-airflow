@@ -1,0 +1,5 @@
+prefect
+psycopg2
+pyairtable
+pandas
+openpyxl

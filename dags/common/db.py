@@ -1,29 +1,36 @@
+import os
 import textwrap
 
 import sqlalchemy
-from airflow.models import Variable
 from sqlalchemy import create_engine
 from sqlalchemy.sql.ddl import CreateSchema
 
 from dags.common import dataframes
 
 
+PGHOST = os.environ.get("PGHOST", "localhost")
+PGPORT = os.environ.get("PGPORT", "5432")
+PGDATABASE = os.environ.get("PGDATABASE", "mydatabase")
+PGUSER = os.environ.get("PGUSER", "myuser")
+PGPASSWORD = os.environ.get("PGPASSWORD", "mypassword")
+
+
 def connection_envvars():
     return {
-        "PGHOST": Variable.get("PGHOST"),
-        "PGPORT": Variable.get("PGPORT"),
-        "PGDATABASE": Variable.get("PGDATABASE"),
-        "PGUSER": Variable.get("PGUSER"),
-        "PGPASSWORD": Variable.get("PGPASSWORD"),
+        "PGHOST": PGHOST,
+        "PGPORT": PGPORT,
+        "PGDATABASE": PGDATABASE,
+        "PGUSER": PGUSER,
+        "PGPASSWORD": PGPASSWORD,
     }
 
 
 def connection_engine():
-    database = Variable.get("PGDATABASE")
-    host = Variable.get("PGHOST")
-    password = Variable.get("PGPASSWORD")
-    port = Variable.get("PGPORT")
-    user = Variable.get("PGUSER")
+    database = PGDATABASE
+    host = PGHOST
+    password = PGPASSWORD
+    port = PGPORT
+    user = PGUSER
     url = f"postgresql://{user}:{password}@{host}:{port}/{database}"
     return create_engine(url)
 
@@ -37,11 +44,11 @@ class MetabaseDBCursor:
         import psycopg2
 
         self.connection = psycopg2.connect(
-            host=Variable.get("PGHOST"),
-            port=Variable.get("PGPORT"),
-            dbname=Variable.get("PGDATABASE"),
-            user=Variable.get("PGUSER"),
-            password=Variable.get("PGPASSWORD"),
+            host=PGHOST,
+            port=PGPORT,
+            dbname=PGDATABASE,
+            user=PGUSER,
+            password=PGPASSWORD,
         )
         self.cursor = self.connection.cursor()
         return self.cursor, self.connection
@@ -72,11 +79,11 @@ class MetabaseDatabaseCursor3:
         import psycopg
 
         self.connection = psycopg.connect(
-            host=Variable.get("PGHOST"),
-            port=Variable.get("PGPORT"),
-            dbname=Variable.get("PGDATABASE"),
-            user=Variable.get("PGUSER"),
-            password=Variable.get("PGPASSWORD"),
+            host=PGHOST,
+            port=PGPORT,
+            dbname=PGDATABASE,
+            user=PGUSER,
+            password=PGPASSWORD,
             keepalives=1,
             keepalives_idle=30,
             keepalives_interval=5,
