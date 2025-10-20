@@ -47,18 +47,16 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
 
     @task
     def import_structures(**kwargs):
-        structures = pd.DataFrame(get_all_items("/api/v0/structures"))
+        structures = pd.DataFrame(get_all_items("/api/v1/structures"))
         structures["date_maj"] = structures["date_maj"].apply(to_date)
         structures.to_sql(
-            "structures_v0",
+            "structures_v1",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
             if_exists="replace",
             index=False,
             dtype={
-                "labels_nationaux": postgresql.ARRAY(sqlalchemy.types.Text),
-                "labels_autres": postgresql.ARRAY(sqlalchemy.types.Text),
-                "thematiques": postgresql.ARRAY(sqlalchemy.types.Text),
+                "reseaux_porteurs": postgresql.ARRAY(sqlalchemy.types.Text),
                 "doublons": postgresql.ARRAY(sqlalchemy.types.JSON),
             },
         )
@@ -66,26 +64,21 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
 
     @task
     def import_services(**kwargs):
-        services = pd.DataFrame(get_all_items("/api/v0/services"))
-        services["date_creation"] = services["date_creation"].apply(to_date)
-        services["date_suspension"] = services["date_suspension"].apply(to_date)
+        services = pd.DataFrame(get_all_items("/api/v1/services"))
         services["date_maj"] = services["date_maj"].apply(to_date)
         services.to_sql(
-            "services_v0",
+            "services_v1",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
             if_exists="replace",
             index=False,
             dtype={
-                "types": postgresql.ARRAY(sqlalchemy.types.Text),
                 "thematiques": postgresql.ARRAY(sqlalchemy.types.Text),
-                "frais": postgresql.ARRAY(sqlalchemy.types.Text),
-                "profils": postgresql.ARRAY(sqlalchemy.types.Text),
-                "pre_requis": postgresql.ARRAY(sqlalchemy.types.Text),
-                "justificatifs": postgresql.ARRAY(sqlalchemy.types.Text),
+                "publics": postgresql.ARRAY(sqlalchemy.types.Text),
                 "modes_accueil": postgresql.ARRAY(sqlalchemy.types.Text),
-                "modes_orientation_beneficiaire": postgresql.ARRAY(sqlalchemy.types.Text),
-                "modes_orientation_accompagnateur": postgresql.ARRAY(sqlalchemy.types.Text),
+                "zone_eligibilite": postgresql.ARRAY(sqlalchemy.types.Text),
+                "modes_mobilisation": postgresql.ARRAY(sqlalchemy.types.Text),
+                "mobilisable_par": postgresql.ARRAY(sqlalchemy.types.Text),
             },
         )
         logger.info("%r rows created", len(services.index))
