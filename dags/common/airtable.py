@@ -4,8 +4,8 @@ from airflow.models import Variable
 
 
 def connection_airtable(table_name):
-    api_token = Variable.get("MON_RECAP_TOKEN_API_AIRTABLE")
-    base_id = Variable.get("MON_RECAP_BASE_ID_AIRTABLE")
+    api_token = Variable.get("MON_RECAP_AIRTABLE_TOKEN_API")
+    base_id = Variable.get("MON_RECAP_AIRTABLE_BASE_ID")
     url = f"https://api.airtable.com/v0/{base_id}/{table_name}"
     headers = {"Authorization": f"Bearer {api_token}"}
     return url, headers
