@@ -6,6 +6,8 @@ import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
+from airflow.operators import bash
+from airflow.utils.trigger_rule import TriggerRule
 from sqlalchemy.dialects import postgresql
 
 from dags.common import db, dbt, default_dag_args, slack
@@ -44,6 +46,13 @@ def get_all_items(path):
 
 
 with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
+    env_vars = db.connection_envvars()
+
+    @task
+    def drop_tables():
+        con = db.connection_engine()
+        con.execute("""drop table if exists data_inclusion.services_v1 cascade;
+                       drop table if exists data_inclusion.structures_v1 cascade;""")
 
     @task
     def import_structures(**kwargs):
@@ -83,4 +92,34 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         )
         logger.info("%r rows created", len(services.index))
 
-    (create_schema(DB_SCHEMA).as_setup() >> [import_structures(), import_services()] >> slack.success_notifying_task())
+    dbt_deps = bash.BashOperator(
+        task_id="dbt_deps",
+        bash_command="dbt deps",
+        trigger_rule=TriggerRule.ALL_DONE,
+        env=env_vars,
+        append_env=True,
+    )
+
+    dbt_seed = bash.BashOperator(
+        task_id="dbt_seed",
+        bash_command="dbt seed",
+        env=env_vars,
+        append_env=True,
+    )
+
+    dbt_run = bash.BashOperator(
+        task_id="dbt_run",
+        bash_command="dbt run --select data_inclusion",
+        env=env_vars,
+        append_env=True,
+    )
+
+    (
+        create_schema(DB_SCHEMA).as_setup()
+        >> drop_tables()
+        >> [import_structures(), import_services()]
+        >> dbt_deps
+        >> dbt_seed
+        >> dbt_run
+        >> slack.success_notifying_task()
+    )

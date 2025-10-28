@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: structures_thematiques_public_accueil_v1
+    description: >
+      Table créée à partir des données sources de l'API data inclusion. Les listes ont été eclatées afin de permettre de filtrer les indicateurs crées a partir de cette table.
+      Si nous avons une ligne qui contient 3 listes de 2 entrées nous allons alors nous retrouver, pour l'entrée unique, avec 2x2x2 lignes.
+  - name: services_thematiques_public_accueil_v1
+    description: >
+      Table créée à partir des données sources de l'API data inclusion. Les listes ont été eclatées afin de permettre de filtrer les indicateurs crées a partir de cette table
+      Si nous avons une ligne qui contient 3 listes de 2 entrées nous allons alors nous retrouver, pour l'entrée unique, avec 2x2x2 lignes.
