@@ -144,4 +144,14 @@ sources:
       Données importées de Tally (et bientôt des emplois).
     tables:
       - name: raw_questionnaire_2025
+  - name: data_inclusion
+    schema: data_inclusion
+    description: >
+      Données de data inclusion récupérées via leur API. xxx_v0 fait référence aux données de la v0 de l'API; xxx_v1 fait référence aux données de la v1 de l'API.
+      Les données v0 ne sont plus mises à jour depuis mi-octobre 2025
+    tables:
+      - name: structures_v0
+      - name: services_v0
+      - name: structures_v1
+      - name: services_v1
 

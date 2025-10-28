@@ -29,6 +29,12 @@ models:
     # We will settle for option 2 which is the easiest and quickest by far.
     +meta:
       owner: Equipe Pilotage
+    data_inclusion:
+      +schema: data_inclusion
+      marts:
+        +materialized: table
+      staging:
+        +materialized: view
     ephemeral:
       +materialized: ephemeral
     indexed:
