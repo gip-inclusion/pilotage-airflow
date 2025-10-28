@@ -279,6 +279,7 @@ with DAG(
 
         processed_df = traitement_complet(base_df, threshold=5)
         processed_df["nir"] = processed_df["nir_chiffré"].apply(decrypt_content)
+        processed_df["nir"] = processed_df["nir"].str[:13]
         processed_df = processed_df[FILE_BASE_COLUMNS + FILE_EXTRA_COLUMNS]
         check_dataframe_columns_exists(processed_df, FILE_BASE_COLUMNS + FILE_EXTRA_COLUMNS)
 
