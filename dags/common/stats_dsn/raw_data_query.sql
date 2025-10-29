@@ -1,6 +1,6 @@
 with base_data as (
 	select distinct
-		sal."nir_chiffré",
+		raw_sal."nir_chiffré",
 		case
 			when sal.salarie_rci_libelle = 'MME' then 'F'
 			else 'M'
@@ -11,6 +11,8 @@ with base_data as (
 		asp.type_structure_emplois,
 		insee."ZE2020"
 	from "fluxIAE_Salarie_v2" as sal
+    inner join "fluxIAE_Salarie" as raw_sal
+        on sal.salarie_id = raw_sal.salarie_id
 	left join "fluxIAE_ContratMission_v2" as ctr
 		on sal.salarie_id = ctr.contrat_id_pph
 	left join "fluxIAE_Structure_v2" as strct
