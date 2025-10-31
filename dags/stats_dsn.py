@@ -213,7 +213,7 @@ def traitement_complet(df, *, threshold):
 
 def get_file_content(df, name, reference):
     logger.info("Generate file %r", name)
-    buffer = io.StringIO()
+    buffer = io.StringIO(newline="\n")  # the lines break need to match the LF format
     # Write the header.
     buffer.write(f"000|{name}|INCLUSION|MESUREIMPACT|{datetime.date.today():%d%m%Y}|{reference}|{len(df)}\n")
     for _, row in df.iterrows():
@@ -301,6 +301,7 @@ with DAG(
             remote_content, remote_name = archive_buffer.getvalue(), archive_name
             logger.info("Archive %r is %d bytes", archive_name, len(remote_content))
         else:
+            # the encoding must be utf-8, it's encode() default parameter.
             remote_content, remote_name = file_content.encode(), file_name
 
         if params["s3_datastore"]:
