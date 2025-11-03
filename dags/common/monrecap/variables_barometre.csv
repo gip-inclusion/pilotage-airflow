@@ -19,12 +19,15 @@ notebookreturnsometimes;Les usagers reviennent-ils avec le carnet ? (Régulière
 notebookreturnrarely;Les usagers reviennent-ils avec le carnet ? (Rarement);String
 notebookreturnnever;Les usagers reviennent-ils avec le carnet ? (Jamais);String
 notebookusedwithotherpro;Les usagers utilisent-ils, en général, le carnet avec d'autres professionnels ?;String
+notebookknowledgewithotherpro;Le carnet vous-a t'il permis d'apprendre des choses grâce aux pages rendez-vous remplies avec d'autres professionnels ? (ex : connaître un nouveau professionnel, compléter l'accompagnement d'un autre professionnel, éviter un cumul d'accompagnement, etc.);String
 notebooknotusedwithotherprobis;D'après vous, pourquoi les usagers ne l'utilisent pas avec d'autres professionnels ?;String
 fluidityimprovement;D'après vous, la qualité (fluidité, facilité de communication) de la relation entre vous et les usagers s'est-elle améliorée grâce à Mon Récap ?  ;Float
 approvalstatement;Dans quelle mesure êtes-vous d'accord avec l'affirmation suivante : "Les usagers sont davantage organisés (oubli de rdv, meilleur suivi etc) grâce à Mon Récap" ?;Float
 approachimprovement;Avez-vous constaté une amélioration dans le parcours de vos usagers avec Mon Récap ?;String
 notebookconstraintreduction;Lorsqu'un usager utilise Mon Récap, constatez-vous une meilleure compréhension des démarches ?;String
+notebookusefulinfo;Vous avez répondu "@Diriez-vous que grâce au ca..." à la question précédente. Avez-vous un exemple ? Quelles informations vous ont été utiles pour aider vos usagers dans ce cas ?;String
 notebookinfluence;Diriez-vous que grâce au carnet, les usagers accèdent plus facilement aux droits ou résolvent plus facilement les freins périphériques ?;String
+notenookmissingknowledge;Quelle(s) information(s) vous manque t'il encore pour mieux  accompagner vos usagers ?;String
 timesaved;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ?;String
 timesavednone;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ? (Je ne gagne pas de temps);String
 timesavedlessfivemin;En moyenne, sur un rendez-vous d’une heure, combien de minutes le carnet vous fait-il gagner ? (Moins de 5min );String
