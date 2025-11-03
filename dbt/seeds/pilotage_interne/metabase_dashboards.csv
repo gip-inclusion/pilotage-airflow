@@ -54,3 +54,7 @@ id_tb,nom_tb,public,type
 573,tb 160 - Facilitation de l'embauche DREETS/DDETS,DREETS/DDETS,TB privé
 577,tb 289 - Suivi des prescriptions des PH DDETS/DREETS,DDETS/DREETS, TB privé
 578,tb 485 - DDETS/DREETS/CD - Données conventionnement - Maille structure,DDETS/DREETS/CD, TB privé
+643,tb-643 - SIAE - Mes données brutes,SIAE,TB privé
+646,tb-646 - SIAE - Données brutes candidatures,SIAE,TB privé
+647,tb-647 - SIAE - Données brutes auto prescription,SIAE,TB privé
+648,tb-648 - SIAE - Données brutes suivi des bénéficiaires taux d’encadrement et présence en emploi,SIAE,TB privé
