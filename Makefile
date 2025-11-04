@@ -102,6 +102,7 @@ pg_dump:
 		--table='"fluxIAE_"*' \
 		--table='"c1_"*' \
 		--table='"cap_"*' \
+		--table='"gps_"*' \
 		--table='candidats_v0' \
 		--table='candidatures' \
 		--table="codes_rome" \

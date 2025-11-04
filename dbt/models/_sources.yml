@@ -154,4 +154,18 @@ sources:
       - name: services_v0
       - name: structures_v1
       - name: services_v1
+  - name: gps
+    schema: public
+    description: >
+      Tables GPS créées par les emplois.
+    tables:
+      - name: gps_log_data
+        description: >
+          Table permettant de suivre les actions des membres de GPS sur le sites des emplois.
+      - name: gps_group_v1
+        description: >
+          Table permettant d'identifier des groupes GPS sur le sites des emplois.
+      - name: gps_members_v1
+        description: >
+          Table permettant d'identifier les membres de GPS sur le sites des emplois.
 
