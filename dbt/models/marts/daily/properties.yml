@@ -244,3 +244,9 @@ models:
         tests:
           - unique
           - not_null
+  - name: gps_logs_users
+    description: >
+      Table créée a partir de la table gps_log_data, on y ajoute les informations de structure/organisation/institution associées à chaque utilisateur.
+      Des doublons sont ajoutés à la table car un même id de structure/organisation/institution peut avoir plusieurs membres.
+      C'est une demande métier d'avoir tous les membres d'une structure car ces membres sont recoupés avec mon recap.
+      Un post traitement pour gérer ces doubles sera envisagé si évalué comme pertinent par le métier.
