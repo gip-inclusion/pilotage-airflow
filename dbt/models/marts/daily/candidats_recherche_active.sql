@@ -1,5 +1,6 @@
 select
     cc.id,
+    cc.hash_nir,
     cc.tranche_age,
     cc.genre_candidat,
     cc.type_inscription,
@@ -32,13 +33,15 @@ select
     sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end)                                      as nb_candidatures_acceptees,
     sum(case when cc."état" != 'Candidature acceptée' then 1 else 0 end)                                     as nb_candidatures_sans_accept,
     coalesce(sum(case when cc."état" = 'Candidature acceptée' then 1 else 0 end) > 0)                        as a_eu_acceptation,
-    coalesce(max(cc.date_embauche) >= current_date - interval '6 months', max(cc.date_embauche) is not null) as a_eu_embauche
+    coalesce(max(cc.date_embauche) >= current_date - interval '6 months', max(cc.date_embauche) is not null) as a_eu_embauche,
+    (array_agg(cc."total_critères_niveau_1" order by cc.date_candidature desc))[1]                           as total_criteres_niveau_1
 from {{ ref('stg_candidats_candidatures') }} as cc
 left join {{ ref('organisations') }} as orga
     on cc.id_auteur_diagnostic = orga.id
 where cc.date_candidature >= current_date - interval '6 months'
 group by
     cc.id,
+    cc.hash_nir,
     cc.tranche_age,
     cc.genre_candidat,
     cc.total_diagnostics,

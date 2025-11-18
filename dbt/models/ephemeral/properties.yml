@@ -1,6 +1,9 @@
 version: 2
 
 models:
+  - name: eph_candidats_sans_contrat_pass_valide
+    description: >
+      Vue créée pour récupérer les candidats sans contrat ayant un pass valide
   - name: eph_caracteristiques_beneficiaires
     description: >
       Vue créée pour récupérer les caractéristiques des bénéficiaires associées au contrat le plus récent

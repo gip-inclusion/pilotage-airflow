@@ -33,6 +33,12 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'candidatures')
+    columns:
+      - name: hash_nir
+        description: "Hash du numéro d'inscription au répertoire (NIR) du candidat"
+        tests:
+          - not_null
+          - unique
   - name: stg_organisations
     description: >
       Ce modèle récupère les données de la table c1 organisations et y ajoute des colonnes pour faciliter le déploiement de tableaux metabase liés aux prescripteurs.
@@ -307,6 +313,18 @@ models:
       - name: acc_nb_sal_acc
         tests:
           - not_null
+  - name: stg_candidats_file_active_critere_1
+    description: >
+      Vue créée pour récupérer les candidats de la file active ayant au moins en critère de type 1
+    columns:
+      - name: hash_nir
+        tests:
+          - unique
+          - not_null
+      - name: code_departement_candidat
+        description: "Code département du candidat issu des Emplois"
+      - name: commune_candidat
+        description: "Commune du candidat issu de l'ASP"
   - name: stg_parcours_salarie_info_contrats
     description: >
       Vue permettant de récupérer les informations agregées sur les contrats des salariés aux cours de leurs parcours.
