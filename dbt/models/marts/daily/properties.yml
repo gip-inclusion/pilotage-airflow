@@ -46,12 +46,40 @@ models:
     description: >
       Table introduite pour le suivi des candidatures des réseaux. Nous sommes obligés de créer une table séparée pour le suivi des candidatures des réseaux car une même structure peut appartenir à plusieurs réseaux.
       Cela a pour effet de générer donc des doublons. Ces derniers ne sont pas visibles via les TBs privés car nous sommes sur une vue filtrée, mais le chiffre total des candidatures est faussé.
+  - name: lemarche_candidats_potentiels_clause_sociale
+    description: >
+      Table introduite pour identifier les candidats qui pourraient être intéressés par des appels à projets contenant une clause sociale.
+      Cela corresponds aux candidats de la file active ayant au moins un critère de niveau 1 et aux candidats sans contrat avec un pass valide.
+    columns:
+      - name: hash_nir
+        description: >
+          Hash du NIR du candidat.
+        tests:
+          - unique
+          - not_null
+      - name: code_departement_candidat
+        description: >
+          Code du département du candidat.
+      - name: candidat_sans_contrat_pass_candidat
+        description: >
+          Indique si 'Oui' ou 'Non' le candidat est sans contrat avec un pass valide.
+      - name: candidat_recherche_active
+        description: >
+          Indique si 'Oui' ou 'Non' le candidat est dans la file active ayant au moins un critère de niveau 1.
+      - name: statut
+        description: >
+          Statut du candidat parmi 'file_active_et_pass_valide', 'file_active_critere_niveau_1' et 'pass_valide_sans_contrat'.
+        tests:
+          - not_null
   - name: reseaux
     description: >
       Table introduite pour obtenir la liste des réseaux et les structures attachées à ces derniers.
   - name: pass_agrements_valides
     description: >
       Table permettant de savoir si un pass agrément ou IAE est valide et/ou suspendu.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('emplois', 'pass_agréments')
     columns:
       - name: id
         description: >
@@ -65,6 +93,11 @@ models:
         tests:
           - not_null
           - unique
+      - name: date_fin
+        description: >
+          Date de fin de validité du pass agrément ou IAE.
+        tests:
+          - not_null
   - name: suspensions_pass
     description: >
       Table permettant de connaître les pass agrément ou IAE suspendus.
@@ -179,6 +212,21 @@ models:
     description: >
       Table contenant les candidats actifs les 6 derniers mois et permettant de savoir s'ils ont eu des candidatures acceptées ainsi que le délai depuis la dernière candidature émise.
       Utile pour le calcul des candidats sans solution selon la définition simplifiée 'candidat actif les 6 derniers mois n'ayant eu aucune candidature acceptée'.
+    columns:
+      - name: id
+        description: >
+          Identifiant du candidat.
+        tests:
+          - not_null
+          - unique
+      - name: hash_nir
+        description: >
+          Hash du NIR du candidat.
+        tests:
+          - unique
+      - name: code_postal
+        description: >
+          Code postal du candidat.
   - name: visites_ft
     description: >
       Table permettant le suivi des visites et visiteurs uniques sur le TB 406 - Requetage FT.
