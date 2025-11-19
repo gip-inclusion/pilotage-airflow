@@ -7,7 +7,7 @@ select
     geo.nom_region,
     geo.code_region,
     geo.nom_departement,
-    geo.code_dept
+    lpad(geo.code_dept, 2, '0') as code_dept
 from {{ source('data_inclusion', 'structures_v1') }} as structures
 left join lateral unnest(reseaux_porteurs) as reseau_porteur on true
 left join {{ ref('services_thematiques_public_accueil_v1') }} as services
