@@ -58,3 +58,7 @@ id_tb,nom_tb,public,type
 646,tb-646 - SIAE - Données brutes candidatures,SIAE,TB privé
 647,tb-647 - SIAE - Données brutes auto prescription,SIAE,TB privé
 648,tb-648 - SIAE - Données brutes suivi des bénéficiaires taux d’encadrement et présence en emploi,SIAE,TB privé
+654,tb 654 - PH - Mes données brutes,PH,TB privé
+656,tb-656 - PH - Données brutes candidatures,PH,TB privé
+663,tb-663 - SIAE - Données brutes accompagnements freins,SIAE,TB privé
+664,tb-664 - SIAE - Données brutes employeurs orienteurs,SIAE,TB privé
