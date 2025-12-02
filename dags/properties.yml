@@ -31,4 +31,11 @@ models:
   - name: monrecap_mailing_list
     description: >
       Ce DAG permet de récupérer des mails à partir d'un tally synchronisé avec gsheet. Les informations sont ensuite poussées sur metabase & airtable
+  - name: ft_iop_data
+    description: >
+      Ce DAG permet de récupérer les données iop obtenues suite à une extraction manuelle. Les xlsx sont toujours les mêmes car c'est une extraction standardisée chez FT.
+      Les 4 extractions sont concatenées puis les création de colonnes sont faites dans le DAG pour plus de simplicité.
+      La table contenant les nouvelles et les anciennes colonnes est ensuite exportée dans le schéma france travail.
+      Même si ce ne sont pas des données brutes en tant que tel car des transformations ont eu lieu, pour plus de clarté la table est appelée "raw_xxx"
+      Ce DAG sera ré ecrit lorsque nous obtiendrons les données de la part de FT de façon + officielle (via une API je crois ?)
 
