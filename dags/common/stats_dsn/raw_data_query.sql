@@ -1,52 +1,68 @@
 with base_data as (
-	select distinct
-		raw_sal."nir_chiffré",
-		case
-			when sal.salarie_rci_libelle = 'MME' then 'F'
-			else 'M'
-		end as sexe,
-		strct.structure_siret_actualise as siret,
-		replace(ctr.contrat_date_sortie_definitive::TEXT, '/','')::TEXT as mois_sortie,
+    select distinct
+        raw_sal.hash_nir,
+        raw_sal.nir_chiffré,
+        case
+            when sal.salarie_rci_libelle = 'MME' then 'F'
+            else 'M'
+        end as sexe,
+        strct.structure_siret_actualise as siret,
+        replace(ctr.contrat_date_sortie_definitive::text, '/', '')::text as mois_sortie,
         date_trunc('quarter', to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')) as trimestre,
-		asp.type_structure_emplois,
-		insee."ZE2020"
-	from "fluxIAE_Salarie_v2" as sal
+        asp.type_structure_emplois,
+        insee."ZE2020",
+        to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY') as date_sortie_definitive
+    from "fluxIAE_Salarie_v2" as sal
     inner join "fluxIAE_Salarie" as raw_sal
         on sal.salarie_id = raw_sal.salarie_id
-	left join "fluxIAE_ContratMission_v2" as ctr
-		on sal.salarie_id = ctr.contrat_id_pph
-	left join "fluxIAE_Structure_v2" as strct
-		on ctr.contrat_id_structure = strct.structure_id_siae
-	left join "ref_mesure_dispositif_asp" as asp
-		on ctr.contrat_mesure_disp_code = asp.af_mesure_dispositif_code
-	left join "insee_zones_emploi" as insee
-		on strct.zone_emploi_structure = insee."LIBZE2020"
-	left join "fluxIAE_RefMotifSort_v2" as rms
-		on ctr.contrat_motif_sortie_id = rms.rms_id
-	left join "fluxIAE_RefCategorieSort_v2" as rcs
-		on rms.rcs_id = rcs.rcs_id
-	where ctr.contrat_motif_sortie_id is not null
-	and rcs.rcs_code != 5 --matches : Retrait des sorties constatées
-    -- we want to remove the persons staying in the IAE
-    and rms.rms_code != 2  --matches : Embauche pour une durée déterminée dans une autre structure IAE & Pour une durée déterminée dans une autre structure IAE hors détention
-	and rms.rms_code != 96 --matches : Embauche en CDI Inclusion
-	and to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')
-		between to_date('${period_start}', 'YYYY/MM/DD') and to_date('${period_end}', 'YYYY/MM/DD')
+    left join "fluxIAE_ContratMission_v2" as ctr
+        on sal.salarie_id = ctr.contrat_id_pph
+    left join "fluxIAE_Structure_v2" as strct
+        on ctr.contrat_id_structure = strct.structure_id_siae
+    left join "ref_mesure_dispositif_asp" as asp
+        on ctr.contrat_mesure_disp_code = asp.af_mesure_dispositif_code
+    left join "insee_zones_emploi" as insee
+        on strct.zone_emploi_structure = insee."LIBZE2020"
+    left join "fluxIAE_RefMotifSort_v2" as rms
+        on ctr.contrat_motif_sortie_id = rms.rms_id
+    left join "fluxIAE_RefCategorieSort_v2" as rcs
+        on rms.rcs_id = rcs.rcs_id
+    where ctr.contrat_motif_sortie_id is not null
+      and rcs.rcs_code != 5
+      and rms.rms_code != 2
+      and rms.rms_code != 96
+      and to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY')
+            between to_date('${period_start}', 'YYYY/MM/DD')
+                and to_date('${period_end}',   'YYYY/MM/DD')
+),
+
+base_data_dedup as (
+    select *
+    from (
+        select
+            b.*,
+            row_number() over (
+                partition by hash_nir
+                order by date_sortie_definitive desc
+            ) as rn
+        from base_data b
+    ) t
+    where rn = 1
 ),
 
 counted_data as (
-	SELECT *,
-        COUNT(*) OVER (
-            PARTITION BY
-                sexe, trimestre, type_structure_emplois, "ZE2020"
-        ) AS nombre_lignes_similaires
-    FROM base_data
+    select
+        *,
+        count(*) over (
+            partition by sexe, trimestre, type_structure_emplois, "ZE2020"
+        ) as nombre_lignes_similaires
+    from base_data_dedup
 )
 
 select
     100 as code_ligne,
     null as code_struct,
-    "nir_chiffré",
+    nir_chiffré,
     null as nom,
     null as prenom,
     null as date_naissance,
@@ -75,4 +91,4 @@ select
     null as donnee_partenaire_19,
     null as donnee_partenaire_20,
     nombre_lignes_similaires
-from counted_data
+from counted_data;
