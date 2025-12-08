@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name : offre_demande_clpe
+    description: >
+     Table contenant les indicateurs d'offre et demande, ainsi que l'indicateur de tension par CLPE
+    columns:
+      - name: territoire_id
+        description: >
+          id du CLPE
+      - name: territoire_libelle
+        description: >
+          nom du CLPE
+      - name: frein
+        description: >
+          Freins par CLPE.
+      - name: nbr_demandeurs_emplois
+        description: >
+          Nombre de demandeurs d'emploi par CLPE. Les demandeurs d'emploi ont été calculés a partir du fichier IOP (1 ligne = 1 DE)
+      - name: nombre_de_freins
+        description: >
+          Nombre de freins déclarés, par frein, pour les demandeurs d'emploi du CLPE.
+      - name: nombre_de_services
+        description: >
+          Nombre de thematiques répondant aux freins, par clpe
+      - name: part_de_besoins
+        description: >
+          part du nombre de freins par rapport à tous les freins déclarés, par CLPE.
+      - name: part_de_services
+        description: >
+          part du nombre d'offres par rapport à toutes les offres déclarées, par CLPE.
+      - name: tension
+        description: >
+          indicateur de tension, qui correspond à la : part_de_besoins - part_de_services, par CLPE

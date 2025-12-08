@@ -13,6 +13,11 @@ with DAG(
 ) as dag:
 
     @task
+    def drop_tables():
+        con = db.connection_engine()
+        con.execute("""drop table if exists france_travail.raw_ft_iop_data cascade;""")
+
+    @task
     def get_iop(**kwargs):
         import ftputil
         import pandas as pd
@@ -57,4 +62,4 @@ with DAG(
             "raw_ft_iop_data", con=db.connection_engine(), schema="france_travail", if_exists="replace", index=True
         )
 
-    get_iop() >> slack.success_notifying_task()
+    drop_tables() >> get_iop() >> slack.success_notifying_task()

@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name : stg_thematiques_per_id
+    description: >
+     Table permettant de récupérer le nombre de thematiques par id et code_insee. Un id peut avoir plusieurs sous thématiques pour la même thématique.
+     Par ex : numérique-xx, numérique-xy, numérique-xz. On ne comptera la thématique "numérique" qu'une seule fois.

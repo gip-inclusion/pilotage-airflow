@@ -168,4 +168,9 @@ sources:
       - name: gps_members_v1
         description: >
           Table permettant d'identifier les membres de GPS sur le sites des emplois.
-
+  - name: france_travail
+    schema: france_travail
+    description: >
+      Données de France Travail récupérées via différentes sources (API, extractions, etc)
+    tables:
+      - name: raw_ft_iop_data
