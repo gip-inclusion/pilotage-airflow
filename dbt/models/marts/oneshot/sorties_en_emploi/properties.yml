@@ -1,0 +1,259 @@
+version: 2
+
+models:
+  - name: fct_sortie_emploi_geographie_nature_contrat
+    description: >
+      Table de faits contenant les indicateurs de retour à l’emploi après un parcours IAE,
+      décomposés par zone d’emploi, nature de contrat et délai après la sortie.
+    columns:
+      - name: sortie_en_iae
+        description: "Trimestre de sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: code_zone_emploi
+        description: "Code de la zone d’emploi. Foreign Key vers dim_insee_zones_emploi."
+        tests:
+          - not_null
+
+      - name: nature_contrat
+        description: "Nature du contrat: CDI, CDD, etc."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi."
+
+  - name: fct_sorties_emploi_geographie_secteur_activite
+    description: >
+      Table de faits contenant les indicateurs de retour à l’emploi après un parcours IAE,
+      décomposés par zone d’emploi, secteur d’activité et délai après la sortie.
+    columns:
+      - name: sortie_en_iae
+        description: "Trimestre de sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: code_zone_emploi
+        description: "Code de la zone d’emploi. Foreign Key vers dim_insee_zones_emploi."
+        tests:
+          - not_null
+
+      - name: code_secteur_activite
+        description: "Code du secteur d’activité (NAF). Foreign Key vers dim_naf_secteur_activite."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi."
+
+  - name: fct_sorties_emploi_geographie_sexe
+    description: >
+      Table de faits contenant les indicateurs de retour à l’emploi après un parcours IAE,
+      décomposés par zone d’emploi, sexe et délai après la sortie.
+    columns:
+      - name: sortie_en_iae
+        description: "Trimestre de sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: code_zone_emploi
+        description: "Code de la zone d’emploi. Foreign Key vers dim_insee_zones_emploi."
+        tests:
+          - not_null
+
+      - name: sexe
+        description: "Sexe."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi."
+
+      - name: nombre_jours_median_travailles
+        description: "Nombre médian de jours travaillés."
+
+      - name: nombre_contrats_median
+        description: "Nombre médian de contrats."
+
+  - name: fct_sorties_emploi_siae_geographie
+    description: >
+      Table de faits contenant les indicateurs de retour à l’emploi après un parcours IAE,
+      décomposés par type de SIAE, zone d’emploi et délai après la sortie.
+    columns:
+      - name: sortie_en_iae
+        description: "Trimestre de sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: type_siae
+        description: "Type de SIAE."
+        tests:
+          - not_null
+
+      - name: code_zone_emploi
+        description: "Code de la zone d’emploi. Foreign Key vers dim_insee_zones_emploi."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi."
+
+      - name: nombre_jours_median_travailles
+        description: "Nombre médian de jours travaillés."
+
+      - name: nombre_contrats_median
+        description: "Nombre médian de contrats."
+
+  - name: fct_sorties_emploi_siae_nature_contrat
+    description: >
+      Table de faits contenant les indicateurs de retour à l’emploi après un parcours IAE,
+      décomposés par type de SIAE, nature de contrat et délai après la sortie.
+    columns:
+      - name: sortie_en_iae
+        description: "Trimestre de sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: type_siae
+        description: "Type de SIAE."
+        tests:
+          - not_null
+
+      - name: nature_contrat
+        description: "Nature du contrat: CDI, CDD, etc."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi."
+
+  - name: fct_sorties_emploi_siae_secteur_activite
+    description: >
+      Table de faits contenant les indicateurs de retour à l’emploi après un parcours IAE,
+      décomposés par type de SIAE, secteur d’activité et délai après la sortie.
+    columns:
+      - name: sortie_en_iae
+        description: "Trimestre de sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: type_siae
+        description: "Type de SIAE."
+        tests:
+          - not_null
+
+      - name: code_secteur_activite
+        description: "Code du secteur d’activité (NAF). Foreign Key vers dim_naf_secteur_activite."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi."
+
+  - name: fct_sorties_emploi_siae_sexe
+    description: >
+      Table de faits contenant les indicateurs de retour à l’emploi après un parcours IAE,
+      décomposés par type de SIAE, sexe et délai après la sortie.
+    columns:
+      - name: sortie_en_iae
+        description: "Trimestre de sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie du parcours IAE."
+        tests:
+          - not_null
+
+      - name: type_siae
+        description: "Type de SIAE."
+        tests:
+          - not_null
+
+      - name: sexe
+        description: "Sexe"
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi."
+
+      - name: nombre_jours_median_travailles
+        description: "Nombre médian de jours travaillés."
+
+      - name: nombre_contrats_median
+        description: "Nombre médian de contrats."
+
