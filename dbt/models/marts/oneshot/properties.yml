@@ -21,3 +21,32 @@ models:
       - dbt_expectations.expect_column_pair_values_to_be_equal:
           column_A: structure_siret_actualise
           column_B: siret_asp
+
+  - name: dim_secteur_activite_naf
+    description: >
+      Table de dimension contenant les secteurs d’activité issus des divisions de la NAF 2025.
+    columns:
+        - name: code_secteur_activite
+          description: "Identifiant unique du secteur d’activité"
+          tests:
+            - not_null
+            - unique
+        - name: secteur_activite
+          description: "Intitulé du secteur d’activité. Divisions définies dans le document NAF 2025"
+          tests:
+            - not_null
+
+  - name: dim_insee_zones_emploi
+    description: >
+      Table de dimension contenant contenant une vue des zones d'emploi issus de l'INSEE.
+    columns:
+      - name: code_zone_emploi
+        description: "Identifiant unique de la zone d'emploi"
+        tests:
+        - not_null
+        - unique
+      - name: zone_emploi
+        description: "Intitulé de la zone d'emploi"
+        tests:
+        - not_null
+

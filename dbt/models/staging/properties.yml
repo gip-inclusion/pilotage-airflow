@@ -384,3 +384,307 @@ models:
       Le montant est débloqué dès la première heure de travail d'un bRSA dans une ACI.
       Cette table nous permet de récupérer les équivalents brsa annuel. En effet vu que le montant du RSA change dans l'année la formule montant_cofinancé/montant_rsa n'est plus valable.
       Il faut additionner toutes les valeurs mensuelles.
+
+  - name: stg_insee_secteur_activite_naf
+    description: >
+      Modèle contenant une vue des secteurs d’activité issus des divisions de la NAF 2025.
+    columns:
+      - name: code_secteur_activite
+        description: "Identifiant unique du secteur d’activité"
+        tests:
+        - not_null
+        - unique
+      - name: secteur_activite
+        description: "Intitulé du secteur d’activité. Divisions définies dans le document NAF 2025"
+        tests:
+        - not_null
+
+  - name: stg_insee_zones_emploi
+    description: >
+      Modèle contenant une vue des zones d'emploi issus de l'INSEE.
+    columns:
+      - name: code_zone_emploi
+        description: "Identifiant unique de la zone d'emploi"
+        tests:
+        - not_null
+        - unique
+      - name: zone_emploi
+        description: "Intitulé de la zone d'emploi"
+        tests:
+        - not_null
+
+  - name: stg_dsn_geographie_nature_contrat
+    description: >
+      Modèle de staging contenant une vue des données DSN sur les sorties vers l’emploi après un parcours IAE,
+      décomposées par zone d’emploi et nature de contrat.
+    columns:
+      - name: sortie_en_iae
+        description: "Indique le trimestre de sortie du parcours IAE"
+
+      - name: sorties_en_emploi
+        description: "Libellé du délai après la sortie (ex: 3 mois, 6 mois)."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie, extrait de sorties_en_emploi (ex: 3, 6)."
+        tests:
+          - not_null
+
+      - name: code_zone_emploi
+        description: "Identifiant de la zone d’emploi (code). Pourra être completé avec la table dim_insee_zones_emploi"
+        tests:
+          - not_null
+
+      - name: nature_contrat
+        description: "Nature du contrat: CDI, CDD, etc."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi pour le périmètre considéré."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi pour le périmètre considéré."
+
+  - name: stg_dsn_geographie_sexe
+    description: >
+      Modèle de staging contenant une vue des données DSN sur les sorties vers l’emploi après un parcours IAE,
+      décomposées par zone d’emploi et sexe.
+    columns:
+      - name: sortie_en_iae
+        description: "Indique le trimestre de sortie du parcours IAE"
+
+      - name: sorties_en_emploi
+        description: "Libellé du délai après la sortie (ex: 3 mois, 6 mois)."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie, extrait de sorties_en_emploi (ex: 3, 6)."
+        tests:
+          - not_null
+
+      - name: code_zone_emploi
+        description: "Identifiant de la zone d’emploi (code). Pourra être completé avec la table dim_insee_zones_emploi"
+        tests:
+          - not_null
+
+      - name: sexe
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi pour le périmètre considéré."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_jours_median_travailles
+        description: "Nombre médian de jours travaillés pour le périmètre considéré."
+
+      - name: nombre_contrats_median
+        description: "Nombre médian de contrats pour le périmètre considéré."
+
+  - name: stg_dsn_geographie_secteur_activite
+    description: >
+      Modèle de staging contenant une vue des données DSN sur les sorties vers l’emploi après un parcours IAE,
+      décomposées par zone d’emploi et secteur d’activité.
+    columns:
+      - name: sortie_en_iae
+        description: "Indique le trimestre de sortie du parcours IAE"
+
+      - name: sorties_en_emploi
+        description: "Libellé du délai après la sortie (ex: 3 mois, 6 mois)."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie, extrait de sorties_en_emploi (ex: 3, 6)."
+        tests:
+          - not_null
+
+      - name: code_zone_emploi
+        description: "Identifiant de la zone d’emploi (code). Pourra être completé avec la table dim_insee_zones_emploi"
+        tests:
+          - not_null
+
+      - name: code_secteur_activite
+        description: "Code du secteur d’activité NAF."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi pour le périmètre considéré."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi pour le périmètre considéré."
+
+  - name: stg_dsn_siae_geographie
+    description: >
+      Modèle de staging contenant une vue des données DSN sur les sorties vers l’emploi après un parcours IAE,
+      décomposées par type de SIAE et zone d’emploi.
+    columns:
+      - name: sortie_en_iae
+        description: "Indique le trimestre de sortie du parcours IAE"
+
+      - name: sorties_en_emploi
+        description: "Libellé du délai après la sortie (ex: 3 mois, 6 mois)."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie, extrait de sorties_en_emploi (ex: 3, 6)."
+        tests:
+          - not_null
+
+      - name: type_siae
+        description: "Type de SIAE."
+        tests:
+          - not_null
+
+      - name: code_zone_emploi
+        description: "Identifiant de la zone d’emploi (code). Pourra être completé avec la table dim_insee_zones_emploi"
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi pour le périmètre considéré."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_jours_median_travailles
+        description: "Nombre médian de jours travaillés pour le périmètre considéré."
+
+      - name: nombre_contrats_median
+        description: "Nombre médian de contrats pour le périmètre considéré."
+
+  - name: stg_dsn_siae_nature_contrat
+    description: >
+      Modèle de staging contenant une vue des données DSN sur les sorties vers l’emploi après un parcours IAE,
+      décomposées par type de SIAE et nature de contrat.
+    columns:
+      - name: sortie_en_iae
+        description: "Indique le trimestre de sortie du parcours IAE"
+
+      - name: sorties_en_emploi
+        description: "Libellé du délai après la sortie (ex: 3 mois, 6 mois)."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie, extrait de sorties_en_emploi (ex: 3, 6)."
+        tests:
+          - not_null
+
+      - name: type_siae
+        description: "Type de SIAE."
+        tests:
+          - not_null
+
+      - name: nature_contrat
+        description: "Nature du contrat: CDI, CDD, etc."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi pour le périmètre considéré."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi pour le périmètre considéré."
+
+  - name: stg_dsn_siae_secteur_activite
+    description: >
+      Modèle de staging contenant une vue des données DSN sur les sorties vers l’emploi après un parcours IAE,
+      décomposées par type de SIAE et secteur d’activité.
+    columns:
+      - name: sortie_en_iae
+        description: "Indique le trimestre de sortie du parcours IAE"
+
+      - name: sorties_en_emploi
+        description: "Libellé du délai après la sortie (ex: 3 mois, 6 mois)."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie, extrait de sorties_en_emploi (ex: 3, 6)."
+        tests:
+          - not_null
+
+      - name: type_siae
+        description: "Type de SIAE."
+        tests:
+          - not_null
+
+      - name: secteur_activite
+        description: "Code du secteur d’activité NAF."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi pour le périmètre considéré."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi pour le périmètre considéré."
+
+  - name: stg_dsn_siae_sexe
+    description: >
+      Modèle de staging contenant une vue des données DSN sur les sorties vers l’emploi après un parcours IAE,
+      décomposées par type de SIAE et sexe.
+    columns:
+      - name: sortie_en_iae
+        description: "Indique le trimestre de sortie du parcours IAE"
+
+      - name: sorties_en_emploi
+        description: "Libellé du délai après la sortie (ex: 3 mois, 6 mois)."
+        tests:
+          - not_null
+
+      - name: mois_apres_sortie
+        description: "Nombre de mois après la sortie, extrait de sorties_en_emploi (ex: 3, 6)."
+        tests:
+          - not_null
+
+      - name: type_siae
+        description: "Type de SIAE."
+        tests:
+          - not_null
+
+      - name: sexe
+        description: "Sexe des personnes."
+        tests:
+          - not_null
+
+      - name: nombre_personnes_en_emploi
+        description: "Nombre de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_personnes_sans_emploi
+        description: "Nombre de personnes sans emploi pour le périmètre considéré."
+
+      - name: taux_personnes_en_emploi
+        description: "Taux de personnes en emploi pour le périmètre considéré."
+
+      - name: nombre_jours_median_travailles
+        description: "Nombre médian de jours travaillés pour le périmètre considéré."
+
+      - name: nombre_contrats_median
+        description: "Nombre médian de contrats pour le périmètre considéré."

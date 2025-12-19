@@ -98,3 +98,8 @@ seeds:
       Fichier obtenu par Denis Gorce le 02/06/2025.
       La variable département correspond au département de rattachement car certains CLPE sont à cheval sur 2 ou 3 départements et nous en avons choisi un par défaut.
       Certains CLPE ne sont pas encore définis et dans ce cas, c’est la notion de bassin d’emploi (de France Travail) qui est utilisée.
+
+  - name: seed_insee_secteur_activité_naf
+    description: >
+      Document contenant les intitulés des secteurs d’activité NAF pour 2025 fournis par l’INSEE. Fichier Excel téléchargé par Diego le 22/12/2025 et sa date de publication est le 30/07/2025. Le seed
+      correspond à l’onglet 'Divisions'.

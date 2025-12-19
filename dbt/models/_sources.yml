@@ -169,3 +169,18 @@ sources:
         description: >
           Table permettant d'identifier les membres de GPS sur le sites des emplois.
 
+  - name: dsn
+    schema: raw_dsn
+    description: >
+        Tables contenant des données DSN brutes. Elles sont générées par la CNAV après notre
+        dépôt du fichier d’appel sur le SFTP de dépôt.
+
+    tables:
+        - name: dsn_geographie_et_nature_contrat
+        - name: dsn_geographie_et_secteur_activite
+        - name: dsn_geographie_et_sexe
+        - name: dsn_type_siae_et_geographie
+        - name: dsn_type_siae_et_nature_contrat
+        - name: dsn_type_siae_et_secteur_activite
+        - name: dsn_type_siae_et_sexe
+

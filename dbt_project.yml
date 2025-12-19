@@ -51,6 +51,7 @@ models:
         +materialized: table
       staging:
         +materialized: view
+
 seeds:
   dbt_pilotage:
     sa_ept:
@@ -59,3 +60,6 @@ seeds:
         code_comm: varchar(25)
     monrecap:
         +schema: monrecap
+
+    new_seeds:
+        +schema: seeds
