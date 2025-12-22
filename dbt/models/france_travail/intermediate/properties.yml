@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name : int_freins_iop_clpe
+    description: >
+     Table contenant les freins par CLPE
+  - name : int_offre_demande_clpe
+    description: >
+     Table contenant les données d'offre et demande, par CLPE

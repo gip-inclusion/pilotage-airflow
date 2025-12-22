@@ -31,6 +31,8 @@ models:
       owner: Equipe Pilotage
     data_inclusion:
       +schema: data_inclusion
+      intermediate:
+        +materialized: table
       marts:
         +materialized: table
       staging:
@@ -51,6 +53,17 @@ models:
         +materialized: table
       staging:
         +materialized: view
+    france_travail:
+      intermediate:
+        +schema: france_travail
+        +materialized: table
+      marts:
+        +schema: public
+        +materialized: table
+      staging:
+        +schema: france_travail
+        +materialized: view
+
 seeds:
   dbt_pilotage:
     sa_ept:

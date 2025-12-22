@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name : int_thematiques_clpe
+    description: >
+     Table permettant de calculer le nombre de thematiques par territoire clpe.
