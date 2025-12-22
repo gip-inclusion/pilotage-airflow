@@ -1,0 +1,12 @@
+category_type,category,Nombre ETP,Ratio ETP,Nombre beneficiaires
+adresse_qpv,False,0.6,0.6,0.25
+adresse_qpv,True,0.4,0.4,0.25
+adresse_zrr,False,0.4,0.4,0.25
+adresse_zrr,True,0.6,0.6,0.25
+contrat_salarie_rqth,False,0.6,0.6,0.25
+contrat_salarie_rqth,True,0.4,0.4,0.25
+genre_salarie,femme,0.4,0.4,0.25
+genre_salarie,homme,0.6,0.6,0.25
+is_junior,False,0.4,0.4,0.25
+is_junior,True,0.6,0.6,0.25
+is_senior,False,1.0,1.0,0.5
