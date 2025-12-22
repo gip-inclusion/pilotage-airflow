@@ -30,7 +30,7 @@ compile-deps: $(VIRTUAL_ENV)
 # =============================================================================
 .PHONY: fast_fix fix quality test clean
 
-MONITORED_DIRS := dags dbt tests
+MONITORED_DIRS := dags dbt tests streamlit_apps
 SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
 
 fast_fix: $(VIRTUAL_ENV)
