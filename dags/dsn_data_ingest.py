@@ -34,8 +34,11 @@ FILE_TABLE_MAPPING = {
 @contextlib.contextmanager
 def sftp_client():
     client = paramiko.SSHClient()
-    # client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    # for dev with the stub sftp, uncomment the line above and comment the one below
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    # ideally, we would eventually add the sftp to the list of authorized hosts and
+    # use the line below instead of the one above
+    # client.load_system_host_keys()
     client.load_system_host_keys()
 
     client.connect(
