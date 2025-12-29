@@ -11,7 +11,6 @@ from slugify import slugify
 
 from dags.common import db, default_dag_args, s3
 
-
 DAG_ID = "dsn_data_ingest"
 
 SFTP_REMOTE_DIR = "."
@@ -35,11 +34,6 @@ FILE_TABLE_MAPPING = {
 def sftp_client():
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-    # ideally, we would eventually add the sftp to the list of authorized hosts and
-    # use the line below instead of the one above
-    # client.load_system_host_keys()
-    client.load_system_host_keys()
 
     client.connect(
         hostname=Variable.get("GIP_MDS_SFTP_HOST"),
