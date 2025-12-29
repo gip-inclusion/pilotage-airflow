@@ -11,6 +11,7 @@ from slugify import slugify
 
 from dags.common import db, default_dag_args, s3
 
+
 DAG_ID = "dsn_data_ingest"
 
 SFTP_REMOTE_DIR = "."
