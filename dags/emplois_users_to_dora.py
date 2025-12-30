@@ -31,13 +31,7 @@ with DAG("emplois_users_to_dora", schedule="@weekly", **dag_args) as dag:
             }
         )
 
-        url = "postgresql://{user}:{password}@{host}:{port}/{database}".format(
-            user=Variable.get("DORA_PGUSER"),
-            password=Variable.get("DORA_PGPASSWORD"),
-            host=Variable.get("DORA_PGHOST"),
-            port=Variable.get("DORA_PGPORT"),
-            database=Variable.get("DORA_PGDATABASE"),
-        )
+        url = Variable.get("DORA_PGURL")
 
         engine = db.create_engine(url)
 
