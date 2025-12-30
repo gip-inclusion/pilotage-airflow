@@ -31,7 +31,7 @@ with DAG("emplois_users_to_dora", schedule="@weekly", **dag_args) as dag:
             }
         )
 
-        url = Variable.get("DORA_PGURL")
+        url = Variable.get("DORA_PGURL_SECRET")
 
         engine = db.create_engine(url)
 
