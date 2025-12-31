@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name : stg_france_travail_iop
+    description: >
+     Table recupérant et renommant les données brutes de l'export iop
