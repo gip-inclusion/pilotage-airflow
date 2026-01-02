@@ -4,6 +4,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.providers.ssh.hooks import ssh
+
 from dags.common import db, dbt, default_dag_args, slack
 
 
