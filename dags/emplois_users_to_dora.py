@@ -3,6 +3,7 @@ import logging
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
+from airflow.providers.ssh.hooks import ssh
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -31,17 +32,26 @@ with DAG("emplois_users_to_dora", schedule="@weekly", **dag_args) as dag:
             }
         )
 
-        url = Variable.get("DORA_PGURL")
+        user = Variable.get("DORA_PGUSER")
+        password = Variable.get("DORA_PGPASSWORD")
+        dbname = Variable.get("DORA_PGDATABASE")
 
-        engine = db.create_engine(url)
+        ssh_hook = ssh.SSHHook(ssh_conn_id="dora_scalingo_ssh")
 
-        data_to_store.to_sql(
-            name="les_emplois_utilisateurs",
-            con=engine,
-            schema="les_emplois",
-            if_exists="replace",
-            index=False,
-        )
+        logger.info("Tunnel creation...")
+        with ssh_hook.get_tunnel() as tunnel:
+            logger.info("Tunnel created")
+            local_port = tunnel.local_bind_port
+            url = f"postgresql://{user}:{password}@127.0.0.1:{local_port}/{dbname}"
+            engine = db.create_engine(url)
+
+            data_to_store.to_sql(
+                name="les_emplois_utilisateurs",
+                con=engine,
+                schema="les_emplois",
+                if_exists="replace",
+                index=False,
+            )
         logger.info("Exported %d Les-Emplois users to Dora.", len(data_to_store))
 
     export_users() >> slack.success_notifying_task()
