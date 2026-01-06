@@ -22,3 +22,4 @@ left join {{ source('fluxIAE','fluxIAE_RefObjectifFormation') }} as ref_obj
     on ctr.contrat_mesure_disp_id = ref_obj.rme_id and form.formation_objectif_for_code = ref_obj.rof_code_formation
 left join {{ source('fluxIAE','fluxIAE_RefTypeFormation') }} as ref_type
     on form.formation_type_for_code = ref_type.rtf_code_formation and ctr.contrat_mesure_disp_id = ref_type.rme_id
+where ctr.contrat_id_ctr is not null

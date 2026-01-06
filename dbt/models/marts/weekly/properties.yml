@@ -76,9 +76,6 @@ models:
       Table permettant de récupérer les formations des salariés à partir du fluxIAE de l'ASP.
       Elle permet d'y ajouter les libellés de l'objectif et du type ainsi que de savoir si le bénéficiaire a travaillé plus
       de zero heure dans le contrat qu'y est associé.
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: source('fluxIAE', 'fluxIAE_Formations')
     columns:
       - name: formation_id_for
         description: "Identifiant unique de la formation"
