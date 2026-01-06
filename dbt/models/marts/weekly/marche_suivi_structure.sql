@@ -1,5 +1,6 @@
 select
     etp_r.identifiant_salarie,
+    salarie.hash_nir,
     etp_r.id_annexe_financiere,
     etp_r.emi_sme_mois,
     etp_r.emi_sme_annee,
@@ -54,4 +55,5 @@ group by
     etp_r.id_annexe_financiere,
     etp_r.emi_sme_annee,
     etp_r.emi_sme_mois,
-    salarie.salarie_annee_naissance
+    salarie.salarie_annee_naissance,
+    salarie.hash_nir

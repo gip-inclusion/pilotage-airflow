@@ -179,10 +179,14 @@ models:
     columns:
       - name: identifiant_salarie
         description: identifiant unique du salarie PAR STRUCTURE ce dernier est répertorié dans l'ASP dès qu'un contrat est signé. Un salarié peut signer des contrats dans deux structure différentes sans que nous le sachions car l'identifiant est propre à la structure (et non au flux de l'asp). Les autres colonnes de la table indiquent si le salarié est zrr/qpv/etc. Si un salarié a été en zrr 3 mois puis non zrr 9 mois sur une année, il y aura deux entrées pour ce salarié.
+      - name: hash_nir
+        description: nir hashé du salarié
       - name: id_annexe_financiere
         description: id unique d'annexe financiere, il y a un ID par année d'annexe. Attention une structure peut avoir deux annexes sur la même année, donc nous pouvons nous retrouver avec deux ID pour la même année. Pour éviter des confusions, il a été décidé de fournir que l'ID d'annexe sans le numéro d'annexe financiere.
       - name: emi_sme_annee
         description: année où le salarie a travaillée dans le structure et donc par extension année de l'annexe;
+      - name: emi_sme_mois
+        description: mois où le salarié a travaillé dans la structure
       - name: nombre_etp_consommes_reels_annuels
         description: nombre d'ETP annuels réalisés par salarié. Si un salarié a travaillé 0h dans la structure son réalisé sera de 0
       - name: nombre_etp_consommes_reels_mensuels
@@ -190,7 +194,7 @@ models:
       - name: effectif_annuel_conventionné
         description: nombre d'ETP annuels conventionnés pour la structure. Attention ici on a les ETPs conventionnés pour toute la structure qui sont répétés pour chaque salarié. Afin d'avoir le bon effectif conventionné il faut soit prendre individuellement une valeur ou faire somme(etp_conventionnés)/identifiant_salarie uniques
       - name: effectif_mensuel_conventionné
-        description: nombre d'ETP mensuels réalisés par salarié. Attention ici on a les ETPs conventionnés pour toute la structure qui sont répétés pour chaque salarié. Afin d'avoir le bon effectif conventionné il faut soit prendre individuellement une valeur ou faire somme(etp_conventionnés)/identifiant_salarie uniques
+        description: nombre d'ETP mensuels réalisés par structure. Attention ici on a les ETPs conventionnés pour toute la structure qui sont répétés pour chaque salarié. Afin d'avoir le bon effectif conventionné il faut soit prendre individuellement une valeur ou faire somme(etp_conventionnés)/identifiant_salarie uniques
       - name: structure_siret_signature
         description: SIRET de la structure à la signature de l'annexe financiere
       - name: structure_siret_actualise
