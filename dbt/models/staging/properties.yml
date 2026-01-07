@@ -34,8 +34,8 @@ models:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'candidatures')
     columns:
-      - name: hash_nir
-        description: "Hash du numéro d'inscription au répertoire (NIR) du candidat"
+      - name: id
+        description: "UUI"
         tests:
           - not_null
           - unique
