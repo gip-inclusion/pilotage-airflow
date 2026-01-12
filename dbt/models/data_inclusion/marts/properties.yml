@@ -9,3 +9,56 @@ models:
     description: >
       Table créée à partir des données sources de l'API data inclusion. Les listes ont été eclatées afin de permettre de filtrer les indicateurs crées a partir de cette table
       Si nous avons une ligne qui contient 3 listes de 2 entrées nous allons alors nous retrouver, pour l'entrée unique, avec 2x2x2 lignes.
+  - name: services_v1_dpt
+    description: >
+      Table reprenant les données brutes des services de l'API DI, mais on y ajoute le département afin de permettre aux utilisateurs/trices de filter par département sur le TB données brutes publié sur le site de DI (https://data.inclusion.gouv.fr/acc%C3%A9der-aux-donn%C3%A9es/telechargement-de-nos-donnees/).
+      Les tests sont basés sur les colonnes obligatoires et uniques, telles que notifiées sur la doc du schéma : https://gip-inclusion.github.io/data-inclusion-schema/latest/
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('services_v1')
+    columns:
+      - name: source
+        tests:
+          - not_null
+      - name: structure_id
+        tests:
+          - not_null
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        tests:
+          - not_null
+      - name: description
+        tests:
+          - not_null
+      - name: date_maj
+        tests:
+          - not_null
+  - name: structures_v1_dpt
+    description: >
+      Table reprenant les données brutes des structures de l'API DI, mais on y ajoute le département afin de permettre aux utilisateurs/trices de filter par département sur le TB données brutes publié sur le site de DI (https://data.inclusion.gouv.fr/acc%C3%A9der-aux-donn%C3%A9es/telechargement-de-nos-donnees/).
+      Les tests sont basés sur les colonnes obligatoires et uniques, telles que notifiées sur la doc du schéma : https://gip-inclusion.github.io/data-inclusion-schema/latest/
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('structures_v1')
+    columns:
+      - name: source
+        tests:
+          - not_null
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        tests:
+          - not_null
+      - name: date_maj
+        tests:
+          - not_null
+
+
+
+
+
