@@ -632,7 +632,7 @@ models:
         tests:
           - not_null
 
-      - name: secteur_activite
+      - name: code_secteur_activite
         description: "Code du secteur d’activité NAF."
         tests:
           - not_null
