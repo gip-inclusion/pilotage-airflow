@@ -24,6 +24,44 @@ def filter_structures_data(company_data: pandas.DataFrame, year_to_filter: int) 
     return structures_filtered
 
 
+def get_found_sirens(
+    company_data: pandas.DataFrame, structures_filtered: pandas.DataFrame, year_to_filter: int
+) -> pandas.DataFrame:
+    company_data_year = company_data[company_data["Année"] == year_to_filter].copy()
+
+    company_sirens = set(company_data_year["SIREN"].astype(str))
+
+    db_sirens = set(structures_filtered["siren"].astype(str)) if not structures_filtered.empty else set()
+
+    found_sirens = company_sirens & db_sirens
+
+    if found_sirens:
+        found_data = company_data_year[company_data_year["SIREN"].astype(str).isin(found_sirens)]
+        found_summary = found_data.groupby("SIREN")["Dépense"].sum().reset_index()
+        return found_summary
+    else:
+        return pandas.DataFrame(columns=["SIREN", "Dépense"])
+
+
+def get_missing_sirens(
+    company_data: pandas.DataFrame, structures_filtered: pandas.DataFrame, year_to_filter: int
+) -> pandas.DataFrame:
+    company_data_year = company_data[company_data["Année"] == year_to_filter].copy()
+    company_sirens = set(company_data_year["SIREN"].astype(str))
+
+    db_sirens = set(structures_filtered["siren"].astype(str)) if not structures_filtered.empty else set()
+
+    missing_sirens = company_sirens - db_sirens
+
+    if missing_sirens:
+        missing_data = company_data_year[company_data_year["SIREN"].astype(str).isin(missing_sirens)]
+        missing_summary = missing_data.groupby("SIREN")["Dépense"].sum().reset_index()
+        missing_summary = missing_summary.sort_values("Dépense", ascending=False)
+        return missing_summary
+    else:
+        return pandas.DataFrame(columns=["SIREN", "Dépense"])
+
+
 def add_cols_to_structures_data(structures_filtered: pandas.DataFrame) -> pandas.DataFrame:
     df = structures_filtered.copy()
     df["is_senior"] = (df["emi_sme_annee"].iloc[0] - df["salarie_annee_naissance"]) >= 55
