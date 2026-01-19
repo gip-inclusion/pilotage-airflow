@@ -6,6 +6,8 @@ from calculs import (
     filter_company_data_by_structures,
     get_cleaned_structures_data,
     get_etp_financed_table_by_categories,
+    get_found_sirens,
+    get_missing_sirens,
     verify_uploaded_file,
 )
 from load import load_excel
@@ -52,6 +54,55 @@ def validate_file(data):
 def select_year(data):
     years = sorted(data["Année"].unique())
     return streamlit.selectbox("Sélectionnez l'année à analyser", options=years)
+
+
+def display_found_sirens(data_company, clean_structures_data, selected_year):
+    found_sirens_df = get_found_sirens(data_company, clean_structures_data, selected_year)
+
+    if not found_sirens_df.empty:
+        total_found_amount = found_sirens_df["Dépense"].sum()
+
+        streamlit.success(f"{len(found_sirens_df)} SIREN présents dans votre fichier ")
+
+        streamlit.metric(
+            label="Montant total financé par l'entreprise", value=f"{total_found_amount:,.0f}".replace(",", " ")
+        )
+
+        streamlit.subheader("Détail des SIRENs trouvés")
+        streamlit.dataframe(
+            found_sirens_df.style.format({"Dépense": "{:,.0f}".replace(",", " ")}),
+            width="stretch",
+        )
+
+        streamlit.divider()
+    else:
+        streamlit.error("Aucun SIREN présent dans votre fichier n'a été trouvé")
+
+
+def display_missing_sirens(data_company, clean_structures_data, selected_year):
+    missing_sirens_df = get_missing_sirens(data_company, clean_structures_data, selected_year)
+
+    if not missing_sirens_df.empty:
+        total_missing_amount = missing_sirens_df["Dépense"].sum()
+
+        streamlit.warning(
+            f"{len(missing_sirens_df)} SIREN présent dans votre fichier n'ont pas été retrouvés dans le fluxIAE'"
+        )
+
+        streamlit.metric(
+            label="Montant total concerné par les SIRENs manquants",
+            value=f"{total_missing_amount:,.0f} €".replace(",", " "),
+        )
+
+        streamlit.subheader("Détail des SIRENs non trouvés")
+        streamlit.dataframe(
+            missing_sirens_df.style.format({"Dépense": "{:,.0f}".replace(",", " ")}),
+            width="stretch",
+        )
+
+        streamlit.info("Ces SIRENs ne seront pas inclus dans les calculs d'ETP ci-dessous.")
+
+        streamlit.divider()
 
 
 def compute_and_display_results(clean_company_data, clean_structures_data):
@@ -106,6 +157,12 @@ validate_file(data_company)
 selected_year = select_year(data_company)
 
 clean_structures_data = get_cleaned_structures_data(data_company, selected_year)
+
+display_found_sirens(data_company, clean_structures_data, selected_year)
+
+display_missing_sirens(data_company, clean_structures_data, selected_year)
+
+
 clean_company_data = filter_company_data_by_structures(data_company, clean_structures_data, selected_year)
 
 

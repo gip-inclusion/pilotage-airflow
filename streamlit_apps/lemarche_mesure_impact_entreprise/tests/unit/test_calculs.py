@@ -10,6 +10,8 @@ from streamlit_apps.lemarche_mesure_impact_entreprise.calculs import (
     compute_etp_financed_by_category,
     filter_company_data_by_structures,
     filter_structures_data,
+    get_found_sirens,
+    get_missing_sirens,
     verify_uploaded_file,
 )
 
@@ -209,3 +211,74 @@ def test_compute_beneficiaries_financed_by_category():
     )
 
     pd.testing.assert_frame_equal(result, expected)
+
+
+# ========================================
+# Tests pour get_missing_sirens
+# ========================================
+
+
+def test_get_missing_sirens_with_missing_data():
+    """Test avec des SIRENs manquants dans la base de données"""
+    company_data = pd.DataFrame(
+        {
+            "SIREN": ["123456789", "987654321", "111111111"],
+            "Année": [2023, 2023, 2023],
+            "Dépense": [100000, 50000, 75000],
+        }
+    )
+
+    structures_filtered = pd.DataFrame(
+        {
+            "siren": ["123456789"],  # Seulement un SIREN présent
+            "structure_siret_actualise": ["12345678900000"],
+            "emi_sme_annee": [2023],
+        }
+    )
+
+    result = get_missing_sirens(company_data, structures_filtered, 2023)
+
+    # Vérifier que deux SIRENs sont manquants
+    assert len(result) == 2
+    assert set(result["SIREN"].astype(str)) == {"987654321", "111111111"}
+
+    # Vérifier les montants
+    assert result[result["SIREN"] == "987654321"]["Dépense"].to_numpy()[0] == 50000
+    assert result[result["SIREN"] == "111111111"]["Dépense"].to_numpy()[0] == 75000
+
+    # Vérifier le tri par montant décroissant
+    assert result["Dépense"].tolist() == [75000, 50000]
+
+
+# ========================================
+# Tests pour get_found_sirens
+# ========================================
+
+
+def test_get_found_sirens_with_found_data():
+    """Test avec des SIRENs trouvés dans la base de données"""
+    company_data = pd.DataFrame(
+        {
+            "SIREN": ["123456789", "987654321", "111111111"],
+            "Année": [2023, 2023, 2023],
+            "Dépense": [100000, 50000, 75000],
+        }
+    )
+
+    structures_filtered = pd.DataFrame(
+        {
+            "siren": ["123456789", "987654321"],  # Deux SIRENs présents
+            "structure_siret_actualise": ["12345678900000", "98765432100000"],
+            "emi_sme_annee": [2023, 2023],
+        }
+    )
+
+    result = get_found_sirens(company_data, structures_filtered, 2023)
+
+    # Vérifier que deux SIRENs sont trouvés
+    assert len(result) == 2
+    assert set(result["SIREN"].astype(str)) == {"123456789", "987654321"}
+
+    # Vérifier les montants
+    assert result[result["SIREN"] == "123456789"]["Dépense"].to_numpy()[0] == 100000
+    assert result[result["SIREN"] == "987654321"]["Dépense"].to_numpy()[0] == 50000
