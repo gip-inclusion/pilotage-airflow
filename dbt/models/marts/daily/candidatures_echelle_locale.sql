@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(ref('stg_candidatures'), except=['origine_détaillée'], relation_alias='candidatures') }},
+    {{ pilo_star(ref('stg_candidatures'), except=['origine_détaillée','motif_de_refus'], relation_alias='candidatures') }},
     candidats.sous_type_auteur_diagnostic               as auteur_diag_candidat_detaille,
     candidats.type_auteur_diagnostic                    as auteur_diag_candidat,
     candidats.eligibilite_dispositif,
@@ -31,9 +31,13 @@ select
         when candidatures.temps_de_reponse > 90 then 'Plus de 90 jours'
     end                                                 as temps_de_reponse_intervalle,
     coalesce(candidats.tranche_age, 'Non renseigné')    as tranche_age,
-    coalesce(candidats.sexe_selon_nir, 'Non renseigné') as genre_candidat
-from
-    {{ ref('stg_candidatures') }} as candidatures
+    coalesce(candidats.sexe_selon_nir, 'Non renseigné') as genre_candidat,
+    case
+        when candidatures.motif_de_refus = 'Autre' then 'Autre (motif de refus)'
+        else candidatures.motif_de_refus
+    end                                                 as motif_de_refus
+
+from {{ ref('stg_candidatures') }} as candidatures
 left join {{ ref('candidats') }} as candidats
     on candidatures.id_candidat = candidats.id
 left join {{ ref('organisations') }} as orga
