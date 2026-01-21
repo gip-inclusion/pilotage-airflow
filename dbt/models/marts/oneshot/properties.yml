@@ -1,9 +1,9 @@
 version: 2
 
 models:
-  - name: atigip_2022
+  - name: atigip
     description: >
-      Suivi des prescriptions des SPIP en 2022 pour l'ATIGIP.
+      Suivi des prescriptions des SPIP de la dernière année complète pour l'ATIGIP.
   - name: ft_candidats_nord
     description: >
       Contient les informations entrées sur les emplois des candidats du Nord identifiés chez France Travail.
