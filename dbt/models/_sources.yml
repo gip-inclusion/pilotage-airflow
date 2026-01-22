@@ -79,7 +79,7 @@ sources:
           Table de correspondance entre le code d'un motif de refus et son label affiché sur les emplois.
           Sert de base pour la table motif de refus qui contient le label affiché sur le pilotage.
 
-  - name: france_travail_marche_travail
+  - name: france_travail
     schema: france_travail
     description: >
       Nombre et % de demandeurs par catégories x caractéristiques, % par activités (Rome, Compétence), par territoire.
@@ -88,6 +88,85 @@ sources:
        description: >
          Table qui stocke des statistiques sur les chercheurs d'emploi du API France Travail. Les statistiques sont organisées
          par territoire, characteristique, activité et période, selon le schema du API.
+     - name: data_diag_ft
+       description: >
+         Table obtenue suite à une extraction csv fournie par France Travail. Cette table contient des informations de diagnostic des demandeurs d'emploi.
+         Ce sont des données agrégées, c'est à dire qu'une ligne peut concerner plusieurs demandeurs d'emplois.
+       columns:
+        - name: mois_statistique
+          description: mois et année de l'extraction
+        - name: c_territoire_id
+          description: id CLPE associé aux DE
+        - name: c_lblterritoire
+          description: Libellé du CLPE associé aux DE
+        - name: dptres
+          description: Numéro de département associé aux DE
+        - name: regres
+          description: Numéro de région associé aux DE
+        - name: categorie_statistique
+          description: Catégorie des DE
+        - name: tranche_anciennete
+          description: Ancienneté des DE
+        - name: top_qpv
+          description: QPV True/False
+        - name: top_zrr
+          description: ZRR True/False
+        - name: top_boe
+          description: beneficiaire de l'obligation d'emploi (BOE) True/False
+        - name: top_rsa
+          description: bRSA True/False
+        - name: tranche_age
+          description: Tranche d'age des DE
+        - name: niveau_de_formation
+          description: Niveau de formation des DE
+        - name: sexe
+          description: Sexe des DE
+        - name: situation_de_famille
+          description: Situation familiale des DE
+        - name: nombre_enfants_a_charge
+          description: Nombre d'enfants à charge des DE
+        - name: structure_accompagnement
+          description: Structude d'accompagnement des DE - que des null à date du 28/01/2026
+        - name: parcours_accompagnement
+          description: Type de parcours d'accomapgnement des DE (emploi; social, socio-pro)
+        - name: defm
+          description: Nombre de demandeurs d'emplois pour la ligne concernée.
+        - name: contrainte_numerique
+          description: Frein True/False
+        - name: c_impactcontrainte_numeriq_id
+          description: Intensité du frein, YYYY = non renseigné
+        - name: contrainte_mobilite
+          description: Frein True/False
+        - name: c_impactcontrainte_mobilite_id
+          description: Intensité du frein, YYYY = non renseigné
+        - name: contrainte_familiale
+          description: Frein True/False
+        - name: c_impactcontrainte_famille_id
+          description: Intensité du frein, YYYY = non renseigné
+        - name: contrainte_sante
+          description: Frein True/False
+        - name: c_contrainte_sante_id
+          description: Intensité du frein, YYYY = non renseigné
+        - name: contrainte_savoir
+          description: Frein True/False
+        - name: c_contrainte_savoir_id
+          description: Intensité du frein, YYYY = non renseigné
+        - name: contrainte_logement
+          description: Frein True/False
+        - name: c_contrainte_logement_id
+          description: Intensité du frein, YYYY = non renseigné
+        - name: contrainte_financiere
+          description: Frein True/False
+        - name: c_contrainte_finance_id
+          description: Intensité du frein, YYYY = non renseigné
+        - name: contrainte_admin_jurid
+          description: Frein True/False
+        - name: contrainte_admin_jurid
+          description: Intensité du frein, YYYY = non renseigné
+        - name: n_nbcontraintesactives
+          description: somme du nombre de contraintes diagnostiquées
+        - name: diag
+          description: diagnostic effectuée OUI/NON
 
   - name: oneshot
     schema: public
