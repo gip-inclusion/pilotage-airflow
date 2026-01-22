@@ -38,4 +38,11 @@ models:
       La table contenant les nouvelles et les anciennes colonnes est ensuite exportée dans le schéma france travail.
       Même si ce ne sont pas des données brutes en tant que tel car des transformations ont eu lieu, pour plus de clarté la table est appelée "raw_xxx"
       Ce DAG sera ré ecrit lorsque nous obtiendrons les données de la part de FT de façon + officielle (via une API je crois ?)
-
+  - name: ft_diag_data
+    description: >
+      Ce DAG permet de récupérer les données de diagnostic des bénéficiaires France Travail. Le fichier a été partagé via un lien de téléchargement fournit par FT.
+      Le csv a été hebergé sur le S3 du pilotage. Une automisation du dépôt est en cours de discussion. Le DAG sera modifié en fonction.
+      On definera aussi si le fichier le plus récent remplace le dernier ou si c'est un nouveau fichier.
+      Si un nouveau fichier = 1 table, on peut imagienr que le nom du fichier sera défini par les paramètres du DAG.
+      Le nom du fichier dans le S3 pourrait aussi etre défini dans les params du DAG
+      
