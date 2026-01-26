@@ -78,6 +78,7 @@ lines-after-imports = 2
 ban-relative-imports = "all"
 
 [tool.pytest.ini_options]
+testpaths = ["dags", "tests"]
 python_files = ["test_*.py"]
 filterwarnings = [
     "error",

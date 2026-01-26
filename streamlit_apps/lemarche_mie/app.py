@@ -1,7 +1,8 @@
 import os
 
 import streamlit
-from calculs import (
+
+from lemarche_mie.calculs import (
     compute_etp_financed,
     filter_company_data_by_structures,
     get_cleaned_structures_data,
@@ -10,15 +11,16 @@ from calculs import (
     get_missing_sirens,
     verify_uploaded_file,
 )
-from load import load_excel
+from lemarche_mie.load import load_excel
 
-
-COUNT_UN_ETP = int(os.getenv("COUNT_UN_ETP"))
+COUNT_UN_ETP = int(os.getenv("COUNT_UN_ETP", 1000))
 
 
 def upload_file_section():
     streamlit.subheader("Importer votre fichier Excel ici")
-    uploaded_file = streamlit.file_uploader("Sélectionnez un fichier Excel à importer", type=["xlsx", "xls"])
+    uploaded_file = streamlit.file_uploader(
+        "Sélectionnez un fichier Excel à importer", type=["xlsx", "xls"]
+    )
     if uploaded_file is None:
         streamlit.stop()
     return uploaded_file
@@ -37,16 +39,22 @@ def validate_file(data):
             streamlit.write(f"• {e}")
         streamlit.stop()
 
-    streamlit.text("L'aperçu ci-dessus correspond-il aux premières trois lignes du fichier uploadé ?")
+    streamlit.text(
+        "L'aperçu ci-dessus correspond-il aux premières trois lignes du "
+        "fichier uploadé ?"
+    )
 
-    user_confirmation = streamlit.radio("Sélectionnez une option", options=["Oui", "Non"])
+    user_confirmation = streamlit.radio(
+        "Sélectionnez une option", options=["Oui", "Non"]
+    )
 
     if user_confirmation == "Oui":
         streamlit.success("Fichier validé par l'utilisateur ✅")
     elif user_confirmation == "Non":
         streamlit.error(
-            "Veuillez réimporter le fichier en vérifiant le format des données en amont :"
-            " SIREN format text et dépense et année format nombre."
+            "Veuillez réimporter le fichier en vérifiant le format des "
+            "données en amont : SIREN format text et dépense et année "
+            "format nombre."
         )
         streamlit.stop()
 
@@ -57,7 +65,9 @@ def select_year(data):
 
 
 def display_found_sirens(data_company, clean_structures_data, selected_year):
-    found_sirens_df = get_found_sirens(data_company, clean_structures_data, selected_year)
+    found_sirens_df = get_found_sirens(
+        data_company, clean_structures_data, selected_year
+    )
 
     if not found_sirens_df.empty:
         total_found_amount = found_sirens_df["Dépense"].sum()
@@ -65,7 +75,8 @@ def display_found_sirens(data_company, clean_structures_data, selected_year):
         streamlit.success(f"{len(found_sirens_df)} SIREN présents dans votre fichier ")
 
         streamlit.metric(
-            label="Montant total financé par l'entreprise", value=f"{total_found_amount:,.0f}".replace(",", " ")
+            label="Montant total financé par l'entreprise",
+            value=f"{total_found_amount:,.0f}".replace(",", " "),
         )
 
         streamlit.subheader("Détail des SIRENs trouvés")
@@ -80,13 +91,16 @@ def display_found_sirens(data_company, clean_structures_data, selected_year):
 
 
 def display_missing_sirens(data_company, clean_structures_data, selected_year):
-    missing_sirens_df = get_missing_sirens(data_company, clean_structures_data, selected_year)
+    missing_sirens_df = get_missing_sirens(
+        data_company, clean_structures_data, selected_year
+    )
 
     if not missing_sirens_df.empty:
         total_missing_amount = missing_sirens_df["Dépense"].sum()
 
         streamlit.warning(
-            f"{len(missing_sirens_df)} SIREN présent dans votre fichier n'ont pas été retrouvés dans le fluxIAE'"
+            f"{len(missing_sirens_df)} SIREN présent dans votre fichier "
+            "n'ont pas été retrouvés dans le fluxIAE'"
         )
 
         streamlit.metric(
@@ -100,15 +114,20 @@ def display_missing_sirens(data_company, clean_structures_data, selected_year):
             width="stretch",
         )
 
-        streamlit.info("Ces SIRENs ne seront pas inclus dans les calculs d'ETP ci-dessous.")
+        streamlit.info(
+            "Ces SIRENs ne seront pas inclus dans les calculs d'ETP ci-dessous."
+        )
 
         streamlit.divider()
 
 
 def compute_and_display_results(clean_company_data, clean_structures_data):
-    montant_financed_by_company, etp_financed_by_company, total_etp_realised, percentage_etp_financed = (
-        compute_etp_financed(clean_company_data, clean_structures_data, COUNT_UN_ETP)
-    )
+    (
+        montant_financed_by_company,
+        etp_financed_by_company,
+        total_etp_realised,
+        percentage_etp_financed,
+    ) = compute_etp_financed(clean_company_data, clean_structures_data, COUNT_UN_ETP)
     table_etp_financed = get_etp_financed_table_by_categories(
         total_etp_realised, etp_financed_by_company, clean_structures_data
     )
@@ -116,17 +135,25 @@ def compute_and_display_results(clean_company_data, clean_structures_data):
     streamlit.subheader("Résultats pour votre entreprise")
 
     streamlit.metric(
-        label="Montant financé par l'entreprise (€)", value=f"{montant_financed_by_company:,.0f}".replace(",", " ")
+        label="Montant financé par l'entreprise (€)",
+        value=f"{montant_financed_by_company:,.0f}".replace(",", " "),
     )
 
     streamlit.metric(
-        label="Structures d'insertions ayant été cofinancées", value=f"{clean_structures_data['siren'].nunique()}"
+        label="Structures d'insertions ayant été cofinancées",
+        value=f"{clean_structures_data['siren'].nunique()}",
     )
 
-    streamlit.metric(label="ETPs financés par votre entreprise", value=f"{etp_financed_by_company:.2f}")
+    streamlit.metric(
+        label="ETPs financés par votre entreprise",
+        value=f"{etp_financed_by_company:.2f}",
+    )
 
     streamlit.metric(
-        label="Correspondant au pourcentage d'ETPs réalisés par les structures que vous avez cofinancés suivant:",
+        label=(
+            "Correspondant au pourcentage d'ETPs réalisés par les "
+            "structures que vous avez cofinancés suivant:"
+        ),
         value=f"{percentage_etp_financed:.2f}%",
     )
 
@@ -136,13 +163,17 @@ def compute_and_display_results(clean_company_data, clean_structures_data):
     femmes = table_etp_financed.loc[table_etp_financed["category"] == "Femme"]
     nombre_etp_femmes = femmes["Nombre ETP"].values[0] if not femmes.empty else 0
     ratio_femmes = femmes["Ratio ETP"].values[0] if not femmes.empty else 0
-    nombre_beneficiaires_femmes = femmes["Nombre beneficiaires"].values[0] if not femmes.empty else 0
-    streamlit.markdown(f"""
-                Parmi les {etp_financed_by_company:.2f} ETPs financés par l'entreprise,
-                {nombre_etp_femmes:.2f}
-                ETPs (correspondant au {100 * ratio_femmes:.2f}%) sont des femmes.
-                Cela represents environs {nombre_beneficiaires_femmes:.2f} femmes salariées.
-                """)
+    nombre_beneficiaires_femmes = (
+        femmes["Nombre beneficiaires"].values[0] if not femmes.empty else 0
+    )
+    streamlit.markdown(
+        f"""
+                Parmi les {etp_financed_by_company:.2f} ETPs financés par
+                l'entreprise, {nombre_etp_femmes:.2f} ETPs (correspondant au
+                {100 * ratio_femmes:.2f}%) sont des femmes. Cela represents
+                environs {nombre_beneficiaires_femmes:.2f} femmes salariées.
+                """
+    )
     streamlit.dataframe(table_etp_financed)
 
 
@@ -163,7 +194,10 @@ display_found_sirens(data_company, clean_structures_data, selected_year)
 display_missing_sirens(data_company, clean_structures_data, selected_year)
 
 
-clean_company_data = filter_company_data_by_structures(data_company, clean_structures_data, selected_year)
+clean_company_data = filter_company_data_by_structures(
+    data_company, clean_structures_data, selected_year
+)
 
 
+compute_and_display_results(clean_company_data, clean_structures_data)
 compute_and_display_results(clean_company_data, clean_structures_data)

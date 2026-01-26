@@ -11,14 +11,7 @@ class MetabaseDatabaseConnection:
 
     def __enter__(self):
         try:
-            host = os.getenv("PROD_PGHOST")
-            port = os.getenv("PROD_PGPORT")
-            dbname = os.getenv("PROD_PGDATABASE")
-            user = os.getenv("PROD_PGUSER")
-            password = os.getenv("PROD_PGPASSWORD")
-            db_url = f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
-
-            self.engine = create_engine(db_url)
+            self.engine = create_engine(os.getenv("PG_URL"))
             self.connection = self.engine.connect()
             print("Successfully connected to the database.")
         except Exception as e:

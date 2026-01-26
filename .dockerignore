@@ -1,4 +1,4 @@
-# Ignore everythings by default
+# Ignore everything by default
 *
 # Dependencies
 !requirements/base.txt
@@ -14,3 +14,5 @@
 !packages.yml
 !package-lock.yml
 !profiles.yml
+# Streamlit
+!streamlit_apps/**
