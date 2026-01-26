@@ -62,17 +62,15 @@ services:
   streamlit:
     build:
       context: .
-      dockerfile: Dockerfile.streamlit
+      dockerfile: streamlit_apps/lemarche_mesure_impact_entreprise/Dockerfile
     env_file:
-      - .env-base
-    environment:
-      COUNT_UN_ETP: "15000"
-      PGHOST: postgres
+      - streamlit_apps/lemarche_mesure_impact_entreprise/.env
     depends_on:
       - postgres
     ports:
       - "127.0.0.1:8501:8501"
     restart: unless-stopped
+
 
 
 volumes:

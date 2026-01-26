@@ -1,4 +1,4 @@
-# Ignore everythings by default
+# Ignore everything by default
 *
 # Dependencies
 !requirements/base.txt
@@ -17,4 +17,3 @@
 # Streamlit
 !streamlit_apps
 !streamlit_apps/**
-!Dockerfile.streamlit
