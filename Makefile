@@ -28,7 +28,7 @@ compile-deps: $(VIRTUAL_ENV)
 
 # Quality
 # =============================================================================
-.PHONY: fast_fix fix quality test clean
+.PHONY: fast_fix fix quality test test-streamlit clean
 
 MONITORED_DIRS := dags dbt tests streamlit_apps
 SQLFLUFF_OPTIONS := --disable-progress-bar --nocolor
@@ -50,6 +50,9 @@ quality: $(VIRTUAL_ENV)
 
 test: $(VIRTUAL_ENV)
 	pytest -v
+
+test-streamlit: $(VIRTUAL_ENV)
+	cd streamlit_apps/lemarche_mie && pip install -e ".[test]" && pytest
 
 clean: dbt_clean
 	find . -depth -type d -name "__pycache__" -exec rm -rf '{}' \;

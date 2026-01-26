@@ -2,7 +2,7 @@ import pandas
 import streamlit
 from sqlalchemy import bindparam, text
 
-from streamlit_apps.commun import db
+from . import db
 
 
 @streamlit.cache_data
@@ -20,4 +20,6 @@ def get_marche_suivi_structure_df(siren_list, year_selected) -> pandas.DataFrame
         WHERE LEFT(structure_siret_actualise::text, 9) IN :sirens
           AND emi_sme_annee = :year
     """).bindparams(bindparam("sirens", expanding=True), bindparam("year"))
-    return db.create_df_from_db(query, params={"sirens": siren_list, "year": int(year_selected)})
+    return db.create_df_from_db(
+        query, params={"sirens": siren_list, "year": int(year_selected)}
+    )

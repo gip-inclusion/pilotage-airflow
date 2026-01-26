@@ -1,0 +1,39 @@
+[project]
+name = "lemarche-mie"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "openpyxl",
+    "pandas",
+    "psycopg2-binary",
+    "sqlalchemy",
+    "streamlit",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+dev = ["pytest", "ruff"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "UP"]
+
+[tool.ruff.lint.isort]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+combine-as-imports = true
+known-first-party = ["lemarche_mie"]

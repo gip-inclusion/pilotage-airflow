@@ -68,5 +68,7 @@ jobs:
       run: make quality
     - name: 🧪 Run airflow tests
       run: make test
+    - name: 🧪 Run streamlit tests
+      run: make test-streamlit
     - name: 📓 Generate dbt documentation
       run: dbt docs generate

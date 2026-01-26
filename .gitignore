@@ -16,3 +16,11 @@ venv/
 .venv/
 .DS_Store
 target/
+dbt_internal_packages/
+
+# Python package metadata
+*.egg-info/
+*.egg
+dist/
+build/
+uv.lock
