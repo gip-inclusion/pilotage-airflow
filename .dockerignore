@@ -14,3 +14,7 @@
 !packages.yml
 !package-lock.yml
 !profiles.yml
+# Streamlit
+!streamlit_apps
+!streamlit_apps/**
+!Dockerfile.streamlit

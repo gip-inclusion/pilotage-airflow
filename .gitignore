@@ -16,3 +16,4 @@ venv/
 .venv/
 .DS_Store
 target/
+dbt_internal_packages/

@@ -59,6 +59,22 @@ services:
       - ./dags:/opt/airflow/dags
       - ./dbt:/opt/airflow/dbt
 
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    env_file:
+      - .env-base
+    environment:
+      COUNT_UN_ETP: "15000"
+      PGHOST: postgres
+    depends_on:
+      - postgres
+    ports:
+      - "127.0.0.1:8501:8501"
+    restart: unless-stopped
+
+
 volumes:
   postgres_data:
   minio_data:
