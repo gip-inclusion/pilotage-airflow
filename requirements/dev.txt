@@ -196,7 +196,7 @@ apache-airflow-providers-sqlite==4.1.2 \
 apache-airflow-providers-ssh==4.2.1 \
     --hash=sha256:96aaf866323dd59ce901627fd18602603dc1bdd9742581c63058e47cc68edd98 \
     --hash=sha256:d944658ad06f82e3b4d4c059f58af92d74354c2cfa281a0c6a21606b0793121c
-    # via -r requirements/dev.in
+    # via apache-airflow
 apispec==6.8.4 \
     --hash=sha256:18d6cfaf6a9742d4f9a8f364bfabb7e8884983e10b155ad13616e084f47164ef \
     --hash=sha256:fd0ed14af71a2949d9aeb96b72ce1517cb4a48a5c55667cd0483b7ed33156a2a

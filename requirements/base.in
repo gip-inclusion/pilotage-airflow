@@ -1,6 +1,6 @@
 # Airflow
 # ------------------------------------------------------------------------------
-apache-airflow[amazon,sentry,slack]==2.11.0  # https://github.com/apache/airflow
+apache-airflow[amazon,sentry,slack,ssh]==2.11.0  # https://github.com/apache/airflow
 
 # DBT
 # ------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ ftputil  # https://ftputil.sschwarzer.net/
 openpyxl # https://pypi.org/project/openpyxl/
 # Pandas 2.2 break DataFrame.to_sql() for SQLAlchemy<=2.0, pinning until we move to it
 pandas<2.2  # https://github.com/pandas-dev/pandas
-paramiko  # https://github.com/paramiko/paramiko
+paramiko<4.0.0  # https://github.com/paramiko/paramiko
 psycopg[binary] # https://www.psycopg.org/
 py7zr # https://github.com/miurahr/py7zr
 pyairtable # https://pyairtable.readthedocs.io/en/stable/

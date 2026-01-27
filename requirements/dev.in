@@ -15,7 +15,3 @@ pytest  # https://github.com/pytest-dev/pytest
 pytest-mock  # https://github.com/pytest-dev/pytest-mock/
 pytest-randomly  # https://github.com/pytest-dev/pytest-randomly
 pytest-subtests  # https://github.com/pytest-dev/pytest-subtests
-
-# SSH airflow provider
-# -------------------------------------------------------------------------------
-apache-airflow-providers-ssh #https://pypi.org/project/apache-airflow-providers-ssh/

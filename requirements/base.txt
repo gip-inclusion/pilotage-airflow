@@ -136,6 +136,7 @@ apache-airflow==2.11.0 \
     #   apache-airflow-providers-slack
     #   apache-airflow-providers-smtp
     #   apache-airflow-providers-sqlite
+    #   apache-airflow-providers-ssh
 apache-airflow-providers-amazon==9.14.0 \
     --hash=sha256:1cf07ad04d64dcfe5b7af53debc314841028ce66b2201ea404ce70a1dd3df301 \
     --hash=sha256:79b82f2d0eabfb65d7027e17bcb933d659ade1e766058611c27722ce01fc210b
@@ -190,6 +191,10 @@ apache-airflow-providers-smtp==2.3.1 \
 apache-airflow-providers-sqlite==4.1.2 \
     --hash=sha256:277580a9b1261b90254044a45d27981b0e8e2c558bfe96b193c9e6a3a30a9e4d \
     --hash=sha256:7ee6fd5212218217ae189d280d41713ecd8b5af1d058e26e0ba4a23fa1a76f3b
+    # via apache-airflow
+apache-airflow-providers-ssh==4.1.2 \
+    --hash=sha256:2db28c1abe68db51178c3db40364a953205a31aec7db641058229dddbcd9a385 \
+    --hash=sha256:fac0b8472782b1e11f0bfcd98bbacf9b904983ed813a528c2609ba8475f9b5e6
     # via apache-airflow
 apispec==6.8.4 \
     --hash=sha256:18d6cfaf6a9742d4f9a8f364bfabb7e8884983e10b155ad13616e084f47164ef \
@@ -1255,10 +1260,6 @@ inflection==0.5.1 \
     #   apache-airflow-providers-amazon
     #   connexion
     #   pyairtable
-invoke==2.2.0 \
-    --hash=sha256:6ea924cc53d4f78e3d98bc436b08069a03077e6f85ad1ddaa8a116d7dad15820 \
-    --hash=sha256:ee6cbb101af1a859c7fe84f2a264c059020b0cb7fe3535f9424300ab568f6bd5
-    # via paramiko
 isodate==0.6.1 \
     --hash=sha256:0751eece944162659049d35f4f549ed815792b38793f07cf73381c1c87cbed96 \
     --hash=sha256:48c5881de7e8b0a0d648cb024c8062dc84e7b840ed81e864c7614fd3c127bde9
@@ -1977,10 +1978,13 @@ pandas==2.1.4 \
     --hash=sha256:f69b0c9bb174a2342818d3e2778584e18c740d56857fc5cdb944ec8bbe4082cf \
     --hash=sha256:fcb68203c833cc735321512e13861358079a96c174a61f5116a1de89c58c0ef7
     # via -r requirements/base.in
-paramiko==4.0.0 \
-    --hash=sha256:0e20e00ac666503bf0b4eda3b6d833465a2b7aff2e2b3d79a8bba5ef144ee3b9 \
-    --hash=sha256:6a25f07b380cc9c9a88d2b920ad37167ac4667f8d9886ccebd8f90f654b5d69f
-    # via -r requirements/base.in
+paramiko==3.5.1 \
+    --hash=sha256:43b9a0501fc2b5e70680388d9346cf252cfb7d00b0667c39e80eb43a408b8f61 \
+    --hash=sha256:b2c665bc45b2b215bd7d7f039901b14b067da00f3a11e6640995fd58f2664822
+    # via
+    #   -r requirements/base.in
+    #   apache-airflow-providers-ssh
+    #   sshtunnel
 parsedatetime==2.6 \
     --hash=sha256:4cb368fbb18a0b7231f4d76119165451c8d2e35951455dfee97c62a87b04d455 \
     --hash=sha256:cb96edd7016872f58479e35879294258c71437195760746faffedb692aef000b
@@ -3296,6 +3300,10 @@ sqlparse==0.5.3 \
     # via
     #   apache-airflow-providers-common-sql
     #   dbt-core
+sshtunnel==0.4.0 \
+    --hash=sha256:98e54c26f726ab8bd42b47a3a21fca5c3e60f58956f0f70de2fb8ab0046d0606 \
+    --hash=sha256:e7cb0ea774db81bf91844db22de72a40aae8f7b0f9bb9ba0f666d474ef6bf9fc
+    # via apache-airflow-providers-ssh
 tabulate==0.9.0 \
     --hash=sha256:0095b12bf5966de529c0feb1fa08671671b3368eec77d7ef7ab114be2c068b3c \
     --hash=sha256:024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f
