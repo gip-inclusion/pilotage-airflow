@@ -49,7 +49,9 @@ models:
   - name: lemarche_candidats_potentiels_clause_sociale
     description: >
       Table introduite pour identifier les candidats qui pourraient être intéressés par des appels à projets contenant une clause sociale.
-      Cela corresponds aux candidats de la file active ayant au moins un critère de niveau 1 et aux candidats sans contrat avec un pass valide.
+      Cela corresponds aux candidats de la file active ayant au moins un critère de niveau 1 et aux candidats sans contrat avec un pass valide.^
+      Dans la table on y ajoute les informations sur l'origine et la date de la dernière candidature pour savoir s'ils ont eu un accompagnement et par qui.
+      On prends que l'accompagnementle plus récent.
     columns:
       - name: hash_nir
         description: >
@@ -71,6 +73,21 @@ models:
           Statut du candidat parmi 'file_active_et_pass_valide', 'file_active_critere_niveau_1' et 'pass_valide_sans_contrat'.
         tests:
           - not_null
+      - name: id_org_prescripteur
+        description: >
+          Identifiant de l'organisme ayant prescrit la dernière candidature
+      - name: nom_org_prescripteur
+        description: >
+          Nom de l'organisme ayant prescrit la dernière candidature
+      - name: origine_detaillee
+        description: >
+          Origine détaillée de la dernière candidature
+      - name: origine
+        description: >
+          Origine de la dernière candidature
+      - name: date_derniere_candidature
+        description: >
+          Date de la dernière candidature émise par le candidat ayant l'hash_nir donné
   - name: reseaux
     description: >
       Table introduite pour obtenir la liste des réseaux et les structures attachées à ces derniers.
@@ -139,6 +156,21 @@ models:
   - name: delai_1ere_candidature_embauche
     description : >
       Contient pour chaque candidat le délai entre sa première candidature et l'embauche.
+  - name: int_origine_derniere_candidature_par_candidat
+    description: >
+      Table contenant les origines et la date de la dernière candidature émise par chaque candidat. Cela nous donne une information sur l'éventuel dernier accompagnement reçu.
+    columns:
+      - name: hash_nir
+        tests:
+          - not_null
+          - unique
+      - name: date_derniere_candidature
+        tests:
+          - not_null
+      - name: id_org_prescripteur
+      - name: nom_org_prescripteur
+      - name: origine_detaillee
+      - name: origine
   - name: suivi_demandes_prolongations
     description: >
       Cette table permet de suivre toutes les demandes de prolongation (passant ou pas par les prescipteurs habilités).
