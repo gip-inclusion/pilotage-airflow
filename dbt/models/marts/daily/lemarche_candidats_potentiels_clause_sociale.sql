@@ -8,7 +8,13 @@ select
         when c_p_sc.hash_nir is not null and c_ra.hash_nir is not null then 'file_active_et_pass_valide'
         when c_ra.hash_nir is not null then 'file_active_critere_niveau_1'
         when c_p_sc.hash_nir is not null then 'pass_valide_sans_contrat'
-    end                                                                        as statut
+    end                                                                        as statut,
+    orientation.id_org_prescripteur,
+    orientation.nom_org_prescripteur,
+    orientation.origine_detaillee,
+    orientation.origine
 from {{ ref('eph_candidats_sans_contrat_pass_valide') }} as c_p_sc
 full outer join {{ ref('stg_candidats_file_active_critere_1') }} as c_ra
     on c_p_sc.hash_nir = c_ra.hash_nir
+left join {{ ref('int_orientation_derniere_candidature')}} as orientation
+    on coalesce(c_p_sc.hash_nir, c_ra.hash_nir) = orientation.hash_nir
