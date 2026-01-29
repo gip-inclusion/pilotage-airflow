@@ -26,7 +26,7 @@ def api_client() -> httpx.Client:
     return httpx.Client(
         base_url=Variable.get("API_DATA_INCLUSION_BASE_URL"),
         headers={"Authorization": "Bearer {}".format(Variable.get("API_DATA_INCLUSION_TOKEN"))},
-        timeout=httpx.Timeout(timeout=5, read=30),
+        timeout=httpx.Timeout(timeout=5, read=60),
     )
 
 
@@ -35,7 +35,7 @@ def get_all_items(path):
 
     page_to_fetch = 1
     while True:
-        response = client.get(path, params={"size": 1000, "page": page_to_fetch})
+        response = client.get(path, params={"size": 10000, "page": page_to_fetch})
         response.raise_for_status()
         data = response.json()
         logger.info("Got %r items, metadata=%r", len(data["items"]), {k: v for k, v in data.items() if k != "items"})
@@ -53,51 +53,6 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         con = db.connection_engine()
         con.execute("""drop table if exists data_inclusion.services_v1 cascade;
                        drop table if exists data_inclusion.structures_v1 cascade;""")
-
-    @task
-    def import_structures_v0(**kwargs):
-        structures = pd.DataFrame(get_all_items("/api/v0/structures"))
-        structures["date_maj"] = structures["date_maj"].apply(to_date)
-        structures.to_sql(
-            "structures_v0",
-            con=db.connection_engine(),
-            schema=DB_SCHEMA,
-            if_exists="replace",
-            index=False,
-            dtype={
-                "labels_nationaux": postgresql.ARRAY(sqlalchemy.types.Text),
-                "labels_autres": postgresql.ARRAY(sqlalchemy.types.Text),
-                "thematiques": postgresql.ARRAY(sqlalchemy.types.Text),
-                "doublons": postgresql.ARRAY(sqlalchemy.types.JSON),
-            },
-        )
-        logger.info("%r rows created", len(structures.index))
-
-    @task
-    def import_services_v0(**kwargs):
-        services = pd.DataFrame(get_all_items("/api/v0/services"))
-        services["date_creation"] = services["date_creation"].apply(to_date)
-        services["date_suspension"] = services["date_suspension"].apply(to_date)
-        services["date_maj"] = services["date_maj"].apply(to_date)
-        services.to_sql(
-            "services_v0",
-            con=db.connection_engine(),
-            schema=DB_SCHEMA,
-            if_exists="replace",
-            index=False,
-            dtype={
-                "types": postgresql.ARRAY(sqlalchemy.types.Text),
-                "thematiques": postgresql.ARRAY(sqlalchemy.types.Text),
-                "frais": postgresql.ARRAY(sqlalchemy.types.Text),
-                "profils": postgresql.ARRAY(sqlalchemy.types.Text),
-                "pre_requis": postgresql.ARRAY(sqlalchemy.types.Text),
-                "justificatifs": postgresql.ARRAY(sqlalchemy.types.Text),
-                "modes_accueil": postgresql.ARRAY(sqlalchemy.types.Text),
-                "modes_orientation_beneficiaire": postgresql.ARRAY(sqlalchemy.types.Text),
-                "modes_orientation_accompagnateur": postgresql.ARRAY(sqlalchemy.types.Text),
-            },
-        )
-        logger.info("%r rows created", len(services.index))
 
     @task
     def import_structures_v1(**kwargs):
@@ -162,7 +117,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     (
         create_schema(DB_SCHEMA).as_setup()
         >> drop_tables()
-        >> [import_structures_v0(), import_services_v0(), import_structures_v1(), import_services_v1()]
+        >> [import_structures_v1(), import_services_v1()]
         >> dbt_deps
         >> dbt_seed
         >> dbt_run
