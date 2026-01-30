@@ -59,19 +59,12 @@ services:
       - ./dags:/opt/airflow/dags
       - ./dbt:/opt/airflow/dbt
 
-  streamlit:
-    build:
-      context: .
-      dockerfile: streamlit_apps/lemarche_mesure_impact_entreprise/Dockerfile
+  lemarche_mie:
+    build: streamlit_apps/lemarche_mesure_impact_entreprise
     env_file:
       - streamlit_apps/lemarche_mesure_impact_entreprise/.env
-    depends_on:
-      - postgres
     ports:
       - "127.0.0.1:8501:8501"
-    restart: unless-stopped
-
-
 
 volumes:
   postgres_data:

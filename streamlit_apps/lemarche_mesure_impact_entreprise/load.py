@@ -1,8 +1,7 @@
+import db
 import pandas
 import streamlit
 from sqlalchemy import bindparam, text
-
-from streamlit_apps.commun import db
 
 
 @streamlit.cache_data

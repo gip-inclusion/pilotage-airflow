@@ -2,8 +2,7 @@ from unittest.mock import patch
 
 import pandas as pd
 import pytest
-
-from streamlit_apps.lemarche_mesure_impact_entreprise.calculs import (
+from calculs import (
     add_cols_to_structures_data,
     compute_beneficiaries_financed_by_category,
     compute_etp_financed,
@@ -14,7 +13,6 @@ from streamlit_apps.lemarche_mesure_impact_entreprise.calculs import (
     get_missing_sirens,
     verify_uploaded_file,
 )
-
 
 COMPANY_BASE = pd.DataFrame({"SIREN": ["123456789", "111111111"], "Année": [2023, 2023], "Dépense": [100000, 200000]})
 

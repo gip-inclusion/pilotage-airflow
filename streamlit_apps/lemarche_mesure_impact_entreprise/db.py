@@ -11,11 +11,11 @@ class MetabaseDatabaseConnection:
 
     def __enter__(self):
         try:
-            host = os.getenv("PROD_PGHOST")
-            port = os.getenv("PROD_PGPORT")
-            dbname = os.getenv("PROD_PGDATABASE")
-            user = os.getenv("PROD_PGUSER")
-            password = os.getenv("PROD_PGPASSWORD")
+            host = os.getenv("PGHOST")
+            port = os.getenv("PGPORT")
+            dbname = os.getenv("PGDATABASE")
+            user = os.getenv("PGUSER")
+            password = os.getenv("PGPASSWORD")
             db_url = f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 
             self.engine = create_engine(db_url)
