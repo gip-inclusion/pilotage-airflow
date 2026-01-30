@@ -2,8 +2,7 @@ from unittest.mock import patch
 
 import pandas as pd
 import pytest
-
-from streamlit_apps.lemarche_mesure_impact_entreprise.calculs import (
+from calculs import (
     add_cols_to_structures_data,
     compute_beneficiaries_financed_by_category,
     compute_etp_financed,

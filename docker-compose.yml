@@ -59,6 +59,13 @@ services:
       - ./dags:/opt/airflow/dags
       - ./dbt:/opt/airflow/dbt
 
+  lemarche_mie:
+    build: streamlit_apps/lemarche_mesure_impact_entreprise
+    env_file:
+      - streamlit_apps/lemarche_mesure_impact_entreprise/.env
+    ports:
+      - "127.0.0.1:8501:8501"
+
 volumes:
   postgres_data:
   minio_data:

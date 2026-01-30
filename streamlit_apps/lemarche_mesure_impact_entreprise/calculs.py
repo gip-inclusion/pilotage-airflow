@@ -1,6 +1,5 @@
 import pandas
-
-from streamlit_apps.lemarche_mesure_impact_entreprise.load import get_marche_suivi_structure_df
+from load import get_marche_suivi_structure_df
 
 
 CATEGORY_TYPE_LIST = ["genre_salarie", "contrat_salarie_rqth", "adresse_qpv", "adresse_zrr", "is_senior", "is_junior"]
