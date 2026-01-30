@@ -10,6 +10,7 @@ from calculs import (
     get_etp_financed_table_by_categories,
 )
 
+
 SNAPSHOT_FILE = Path(__file__).resolve().parent / "snapshots" / "snapshot_table_etp_financed.csv"
 
 

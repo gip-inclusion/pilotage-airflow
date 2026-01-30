@@ -14,6 +14,7 @@ from calculs import (
     verify_uploaded_file,
 )
 
+
 COMPANY_BASE = pd.DataFrame({"SIREN": ["123456789", "111111111"], "Année": [2023, 2023], "Dépense": [100000, 200000]})
 
 MOCK_STRUCTURES = pd.DataFrame(
