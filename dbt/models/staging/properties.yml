@@ -73,12 +73,12 @@ models:
     description: >
       Vue créée pour calculer les ETPs réalisés à partir du fluxIAE de l'ASP.
   - name: stg_candidats_candidatures
+    description: >
+      Vue créée pour joindre les dates d'embauche de chaque candidat. Cette vue est utilisée dans candidats_derniere_embauche.sql pour extraire la dernière date d'embauche d'un candidat.
   - name: stg_caracteristiques_beneficiaires_ordonnees_per_hash_nir
     description: >
       Vue permettant d'avoir les caracteristiques des bénéficiares associées à chaque annexe_financier et contrat.
       On y ajoute le champs rang permettant de savoir quelle est l'information associée au contrat le plus récent (rang=1) pour chaque hash_nir.
-    description: >
-      Vue créée pour joindre les dates d'embauche de chaque candidat. Cette vue est utilisée dans candidats_derniere_embauche.sql pour extraire la dernière date d'embauche d'un candidat.
   - name: stg_salarie
     description: >
       Vue créée pour récupérer les id uniques des salarié(e)s ainsi que leur caractéristiques (p.exp genre), car le modele fluxIAE_Salarie contient des `salarie_id` en doublon (car un salarie peut avoir plusieurs `hash_numero_pass_IAE`).
@@ -688,3 +688,69 @@ models:
 
       - name: nombre_contrats_median
         description: "Nombre médian de contrats pour le périmètre considéré."
+
+  - name: stg_ft_data_diag
+    description: vue reprenant le fichier brut obtenu par FT mais en renommant les colonnes afin de plus de clarté.
+    columns:
+      - name: id_clpe
+        description: Identifiant unique du territoire CLPE
+        tests:
+          - not_null
+
+      - name: intensite_frein_numerique
+        description: Intensité du frein numérique
+        tests:
+          - accepted_values:
+              values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
+
+      - name: intensite_frein_mobilite
+        description: Intensité du frein mobilité
+        tests:
+          - accepted_values:
+              values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
+
+      - name: intensite_frein_familiale
+        description: Intensité du frein familial
+        tests:
+          - accepted_values:
+              values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
+
+      - name: intensite_frein_sante
+        description: Intensité du frein santé
+        tests:
+          - accepted_values:
+              values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
+
+      - name: intensite_frein_savoir
+        description: Intensité du frein lecture/écriture/calcul
+        tests:
+          - accepted_values:
+              values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
+
+      - name: intensite_frein_logement
+        description: Intensité du frein logement
+        tests:
+          - accepted_values:
+              values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
+
+      - name: intensite_frein_financiere
+        description: Intensité du frein financier
+        tests:
+          - accepted_values:
+              values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
+
+      - name: intensite_frein_admin_jur
+        description: Intensité du frein administratif/juridique
+        tests:
+          - accepted_values:
+              values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
+  - name: stg_di_services
+    description: >
+      Modèle de staging contenant la liste des services récupérés via l'API data inclusion
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('data_inclusion', 'services_v1')
+
+
+
+

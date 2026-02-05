@@ -1,0 +1,38 @@
+version: 2
+
+models:
+
+  - name : dim_thematiques_clpe
+    description: >
+     Table de dimension contenant les données de thematiques CLPE. Est basée sur int_thematiques_clpe.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('int_thematiques_clpe')
+
+  - name : fct_nombre_freins
+    description: >
+     Table de dimension contenant les données de thematiques CLPE. Est basée sur fct_nombre_freins.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('int_thematiques_clpe')
+
+  - name: dim_clpe_ft
+    description: >
+      Table contenant les infos de clpe sans les codes communes, afin d'avoir une ligne par territoire.
+
+    columns:
+      - name: territoire_id
+        description: Identifiant unique du territoire (CLPE)
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_offre_insertion
+    description: >
+        Table passthrough contenant les métriques offre/demande avec les indicateurs de couverture par type de frein.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('int_offre_insertion')
+
+
+

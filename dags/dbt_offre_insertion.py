@@ -1,5 +1,5 @@
 import airflow
-from airflow.operators import bash, trigger_dagrun
+from airflow.operators import bash
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -7,7 +7,7 @@ from dags.common import db, dbt, default_dag_args, slack
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with airflow.DAG(
-    dag_id="dbt_oneshot",
+    dag_id="dbt_offre_insertion",
     schedule=None,
     **dag_args,
 ) as dag:
@@ -36,13 +36,16 @@ with airflow.DAG(
 
     dbt_run = bash.BashOperator(
         task_id="dbt_run",
-        bash_command="dbt run --select staging +intermediate.oneshot+ +marts.oneshot",
+        bash_command="dbt run --select +offre_insertion_couverture +offre_insertion_nombre_freins_de",
         env=env_vars,
         append_env=True,
     )
 
-    trigger_data_consistency = trigger_dagrun.TriggerDagRunOperator(
-        trigger_dag_id="data_consistency", task_id="trigger_data_consistency"
+    dbt_test = bash.BashOperator(
+        task_id="dbt_test",
+        bash_command="dbt test --select +offre_insertion_couverture +offre_insertion_nombre_freins_de",
+        env=env_vars,
+        append_env=True,
     )
 
-    dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> trigger_data_consistency >> slack.success_notifying_task()
+    dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_test >> slack.success_notifying_task()
