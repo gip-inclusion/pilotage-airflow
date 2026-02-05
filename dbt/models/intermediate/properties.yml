@@ -1,0 +1,103 @@
+version: 2
+
+models:
+
+  - name : int_thematiques_clpe
+    description: >
+     Table permettant de sommer le nombre de thematiques (tous services confondus) et de les agréger par clpe. Ainsi nous aurons une vue territoriale (partielle) sur l'offre proposée
+
+    columns:
+      - name: territoire_id
+        description: Identifiant unique du territoire (CLPE)
+        tests:
+          - not_null
+          - unique
+
+  - name: int_nombre_freins_par_groupe
+    description: >
+      Enrichissement de la table staging France Travail avec le nombre total de freins déclarés
+      et le nombre de demandeurs d'emploi ayant au moins un frein, par groupe démographique.
+
+    columns:
+      - name: total_freins_declares
+        description: Nombre total de contraintes actives (issu de n_nbcontraintesactives, 0 si null)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: demandeurs_emploi_avec_freins
+        description: Nombre de demandeurs d'emploi ayant au moins un frein déclaré
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+  - name: int_nombre_freins_agg
+    description: >
+      Agrégation des freins par territoire et dimensions démographiques, puis dépivotage
+      en lignes par type de frein (unpivot via CROSS JOIN LATERAL).
+      Chaque ligne représente un type de frein pour une combinaison territoire/public donnée.
+
+    columns:
+      - name: territoire_id
+        description: Identifiant unique du territoire (CLPE)
+        tests:
+          - not_null
+
+      - name: type_frein
+        description: Type de frein à l'insertion
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 'Numérique'
+                - 'Mobilité'
+                - 'Lecture/Écriture/Calcul'
+                - 'Famille'
+                - 'Difficultés Administratives/Juridiques'
+                - 'Logement/Hébergement'
+                - 'Difficultés Financières'
+                - 'Santé'
+
+      - name: nbr_freins_declares
+        description: Nombre de demandeurs d'emploi déclarant ce type de frein
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - territoire_id
+            - beneficiaire_rsa
+            - beneficiaire_obligation_emploi
+            - resident_zrr
+            - resident_qpv
+            - sexe
+            - tranche_age
+            - categorie_demandeurs_emploi
+            - diagnostic_effectue
+            - type_frein
+
+  - name: int_metriques_offre_insertion
+    description: >
+      Calcul des métriques intermédiaires pour l'analyse offre/demande par territoire (CLPE).
+      Croise les freins France Travail avec les thématiques Data Inclusion pour calculer
+      les parts de besoin et d'offre par type de frein.
+
+    columns:
+      - name: id_clpe
+        description: Identifiant unique du territoire (CLPE)
+        tests:
+          - not_null
+          - unique
+
+  - name: int_offre_insertion
+    description: >
+      Enrichissement des métriques offre/demande avec les indicateurs de couverture par type de frein.
+      Formule couverture : offre / (besoin + offre).

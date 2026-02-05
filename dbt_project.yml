@@ -29,21 +29,25 @@ models:
     # We will settle for option 2 which is the easiest and quickest by far.
     +meta:
       owner: Equipe Pilotage
-    data_inclusion:
-      +schema: data_inclusion
-      marts:
-        +materialized: table
-      staging:
-        +materialized: view
     ephemeral:
       +materialized: ephemeral
     indexed:
       +materialized: table
     legacy:
       +materialized: table
+    marts_core:
+      +schema: marts_core
+      +materialized: table
     marts:
+      +schema: public
+      +materialized: table
+      data_inclusion:
+        +schema: data_inclusion
+    intermediate:
+      +schema: intermediate
       +materialized: table
     staging:
+      +schema: staging
       +materialized: view
     monrecap:
       +schema: monrecap
@@ -53,6 +57,7 @@ models:
         +materialized: view
 
 seeds:
+  +schema: seeds
   dbt_pilotage:
     sa_ept:
       +column_types:
@@ -60,6 +65,3 @@ seeds:
         code_comm: varchar(25)
     monrecap:
         +schema: monrecap
-
-    new_seeds:
-        +schema: seeds
