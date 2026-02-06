@@ -4,7 +4,6 @@ select
     {{ pilo_star(ref('stg_organisations'),
         except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
     c_type.label                                           as type_contrat_candidature,
-    motif.label                                            as motif_de_refus,
     struct.nom_epci_structure,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
@@ -32,7 +31,13 @@ select
     end                                                    as candidature_archivee,
     extract(day from candidatures."délai_de_réponse")      as temps_de_reponse,
     extract(day from candidatures."délai_prise_en_compte") as temps_de_prise_en_compte,
-    extract(year from candidatures.date_candidature)       as annee_candidature
+    extract(year from candidatures.date_candidature)       as annee_candidature,
+    case
+        when motif.label = 'Autre'
+            then 'Autre (la SIAE a saisi le motif "autre")'
+        else motif.label
+    end                                                    as motif_de_refus
+
 from
     {{ source('emplois', 'candidatures') }} as candidatures
 left join {{ source('emplois', 'c1_ref_type_contrat') }} as c_type
