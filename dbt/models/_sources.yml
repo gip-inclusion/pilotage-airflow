@@ -70,9 +70,6 @@ sources:
       - name: c1_ref_type_contrat
         description: >
           Table de correspondance entre le code d'un type de contrat et son label affiché sur les emplois.
-      - name: c1_ref_motif_refus
-        description: >
-          Table de correspondance entre le code d'un motif de refus et son label affiché sur les emplois.
       - name: c1_ref_type_prescripteur
       - name: c1_ref_motif_de_refus
         description: >
@@ -145,19 +142,19 @@ sources:
           description: Intensité du frein, YYYY = non renseigné
         - name: contrainte_sante
           description: Frein True/False
-        - name: c_contrainte_sante_id
+        - name: c_impactcontrainte_sante_id
           description: Intensité du frein, YYYY = non renseigné
         - name: contrainte_savoir
           description: Frein True/False
-        - name: c_contrainte_savoir_id
+        - name: c_impactcontrainte_savoir_id
           description: Intensité du frein, YYYY = non renseigné
         - name: contrainte_logement
           description: Frein True/False
-        - name: c_contrainte_logement_id
+        - name: c_impactcontrainte_logement_id
           description: Intensité du frein, YYYY = non renseigné
         - name: contrainte_financiere
           description: Frein True/False
-        - name: c_contrainte_finance_id
+        - name: c_impactcontrainte_finance_id
           description: Intensité du frein, YYYY = non renseigné
         - name: contrainte_admin_jurid
           description: Frein True/False
@@ -241,10 +238,10 @@ sources:
       - name: gps_log_data
         description: >
           Table permettant de suivre les actions des membres de GPS sur le sites des emplois.
-      - name: gps_group_v1
+      - name: gps_groups_v1
         description: >
           Table permettant d'identifier des groupes GPS sur le sites des emplois.
-      - name: gps_members_v1
+      - name: gps_membres_v1
         description: >
           Table permettant d'identifier les membres de GPS sur le sites des emplois.
 

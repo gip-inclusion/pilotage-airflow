@@ -649,6 +649,7 @@ click==8.3.0 \
     # via
     #   clickclick
     #   dbt-core
+    #   dbt-metabase
     #   dbt-semantic-interfaces
     #   flask
     #   flask-appbuilder
@@ -785,6 +786,10 @@ dbt-extractor==0.6.0 \
     --hash=sha256:d6cf08ec793b8bc2bd6e260ef818230ae68a4f71436fa489f08d7db1a52e2ffe \
     --hash=sha256:dcf14ed245de8df269815ff4c4f555fa72d2621f4fff37c023b8c99d0e421b4f
     # via dbt-core
+dbt-metabase==1.7.0 \
+    --hash=sha256:16043c14834b106a494038f3b2103a500074a45948b9e70bddc436727b6e1b56 \
+    --hash=sha256:1751bf925786ac49ebc1c5d408bef5b0ca0a1a2668d0c7cab3611644628cd67c
+    # via -r requirements/dev.in
 dbt-postgres==1.9.1 \
     --hash=sha256:114890c53b8dff20284cf432d8130f2bbec86ce156b3a16ce6defa0b68c68d7f \
     --hash=sha256:cf78b06c190f6fea5e8c182f3376b1ba7cd8eb0368d7c75bdac9bf8cfcd71e31
@@ -3031,6 +3036,7 @@ pyyaml==6.0.3 \
     #   clickclick
     #   connexion
     #   dbt-core
+    #   dbt-metabase
     #   dbt-semantic-interfaces
     #   sqlfluff
 pyzstd==0.17.0 \
@@ -3264,6 +3270,7 @@ requests==2.32.5 \
     #   connexion
     #   dbt-common
     #   dbt-core
+    #   dbt-metabase
     #   opentelemetry-exporter-otlp-proto-http
     #   pyairtable
     #   redshift-connector
@@ -3286,6 +3293,7 @@ rich==13.9.4 \
     --hash=sha256:6049d5e6ec054bf2779ab3358186963bac2ea89175919d699e378b99738c2a90
     # via
     #   apache-airflow
+    #   dbt-metabase
     #   flask-limiter
     #   rich-argparse
 rich-argparse==1.7.1 \

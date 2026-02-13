@@ -1,0 +1,74 @@
+name: 🔁 Sync dbt metadata to Metabase
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions: {}
+    env:
+      CI: 1
+      PYTHONPATH: .
+      PGPASSWORD: password
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPORT: 5432
+      PGDATABASE: pilotage
+      VIRTUAL_ENV: .venv
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 🐘 Non-durable PostgreSQL
+        run: |
+          psql <<SQL
+            ALTER SYSTEM SET fsync=off;
+            ALTER SYSTEM SET synchronous_commit=off;
+            ALTER SYSTEM SET full_page_writes=off;
+            CREATE DATABASE pilotage;
+          SQL
+          docker kill --signal=SIGHUP ${{ job.services.postgres.id }}
+        env:
+          PGDATABASE: postgres
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: ⏬ Install uv
+        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b # v7.2.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: "requirements/dev.txt"
+
+      - name: 📥 Install Python dependencies
+        run: |
+          make venv
+          echo "$VIRTUAL_ENV/bin" >> $GITHUB_PATH
+
+      - name: Install dbt packages
+        run: dbt deps
+
+      - name: 📓 Generate dbt documentation
+        run: dbt docs generate
+
+      - name: 🔁 Sync dbt metadata to Metabase
+        env:
+          METABASE_API_KEY: ${{ secrets.METABASE_API_KEY }}
+        run: |
+          dbt-metabase models \
+            --manifest-path target/manifest.json \
+            --metabase-url "https://stats.inclusion.beta.gouv.fr" \
+            --metabase-api-key "$METABASE_API_KEY" \
+            --metabase-database "c2-itou-metabase-db" \
+            --sync-timeout 0
