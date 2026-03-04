@@ -37,10 +37,12 @@ with airflow.DAG(
         is_full_refresh = params.get("full_refresh")
         if is_full_refresh:
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
-            kwargs["ti"].xcom_push("dbt_run_args", "--full-refresh --exclude marts.weekly marts.manual marts.oneshot")
+            kwargs["ti"].xcom_push(
+                "dbt_run_args", "--full-refresh --select +marts.daily+ +legacy.daily+ +marts_core.daily+"
+            )
         else:
             kwargs["ti"].xcom_push("dbt_seed_args", "")
-            kwargs["ti"].xcom_push("dbt_run_args", "--select +staging +marts.daily+ +legacy.daily+")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select +marts.daily+ +legacy.daily+ +marts_core.daily+")
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
