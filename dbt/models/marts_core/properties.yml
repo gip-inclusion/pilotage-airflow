@@ -33,6 +33,22 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('int_offre_insertion')
-
-
-
+  - name: fct_logins_utilisateurs_emplois
+    description: >
+      Table contenant les last logins des utilisateurs des Emplois récuperés via la table utilisateurs_v0, en utilisant un modèle incrémentale.
+    columns:
+      - name: user_id
+        description: "Identifiant de l'utilisateur"
+        tests:
+          - not_null
+      - name: last_login
+        description: "Date de dernière connexion"
+        tests:
+          - not_null
+      - name: loaded_at
+        description: "Timestamp de chargement"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - 'user_id'
+            - 'last_login'
