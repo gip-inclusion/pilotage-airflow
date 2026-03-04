@@ -19,6 +19,7 @@ psycopg[binary] # https://www.psycopg.org/
 py7zr # https://github.com/miurahr/py7zr
 pyairtable # https://pyairtable.readthedocs.io/en/stable/
 unidecode  # https://pypi.org/project/Unidecode/
+furl #https://github.com/gruns/furl
 
 
 # Transitional pinning

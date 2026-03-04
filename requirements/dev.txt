@@ -1026,6 +1026,10 @@ fsspec==2025.9.0 \
 ftputil==5.1.0 \
     --hash=sha256:e9e62d3fd307ef9c52e43b33fd92759fc94c04d8b5178f85f641b183906d4353
     # via -r requirements/base.in
+furl==2.1.4 \
+    --hash=sha256:877657501266c929269739fb5f5980534a41abd6bbabcb367c136d1d3b2a6015 \
+    --hash=sha256:da34d0b34e53ffe2d2e6851a7085a05d96922b5b578620a37377ff1dbeeb11c8
+    # via -r requirements/base.in
 gitdb==4.0.12 \
     --hash=sha256:5ef71f855d191a3326fcfbc0d5da835f26b13fbcba60c32c21091c349ffdb571 \
     --hash=sha256:67073e15955400952c6565cc3e707c554a4eea2e428946f7a4c162fab9bd9bcf
@@ -2002,6 +2006,10 @@ ordered-set==4.1.0 \
     --hash=sha256:046e1132c71fcf3330438a539928932caf51ddbc582496833e23de611de14562 \
     --hash=sha256:694a8e44c87657c59292ede72891eb91d34131f6531463aab3009191c77364a8
     # via flask-limiter
+orderedmultidict==1.0.2 \
+    --hash=sha256:16a7ae8432e02cc987d2d6d5af2df5938258f87c870675c73ee77a0920e6f4a6 \
+    --hash=sha256:ab5044c1dca4226ae4c28524cfc5cc4c939f0b49e978efa46a6ad6468049f79b
+    # via furl
 orderly-set==5.5.0 \
     --hash=sha256:46f0b801948e98f427b412fcabb831677194c05c3b699b80de260374baa0b1e7 \
     --hash=sha256:e87185c8e4d8afa64e7f8160ee2c542a475b738bc891dc3f58102e654125e6ce
@@ -3618,7 +3626,9 @@ six==1.17.0 \
     --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
     # via
+    #   furl
     #   isodate
+    #   orderedmultidict
     #   prison
     #   python-dateutil
     #   rfc3339-validator
@@ -3781,10 +3791,8 @@ typing-extensions==4.15.0 \
     --hash=sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466 \
     --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
     # via
-    #   aiosignal
     #   alembic
     #   altair
-    #   anyio
     #   beautifulsoup4
     #   cron-descriptor
     #   dbt-adapters
@@ -3799,12 +3807,9 @@ typing-extensions==4.15.0 \
     #   opentelemetry-exporter-otlp-proto-http
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
-    #   psycopg
     #   pyairtable
     #   pydantic
     #   pydantic-core
-    #   pyzstd
-    #   referencing
     #   snowplow-tracker
     #   streamlit
     #   typing-inspection

@@ -2,6 +2,8 @@ import textwrap
 
 import sqlalchemy
 from airflow.models import Variable
+from airflow.providers.ssh.hooks import ssh
+from furl import furl
 from sqlalchemy import create_engine
 from sqlalchemy.sql.ddl import CreateSchema
 
@@ -92,6 +94,32 @@ class MetabaseDatabaseCursor3:
             self.connection.close()
 
 
+class SSHTunnelDBEngine:
+    def __init__(self, db_url_variable, ssh_conn_id):
+        self.db_url_variable = db_url_variable
+        self.ssh_conn_id = ssh_conn_id
+        self.tunnel = None
+        self.engine = None
+
+    def __enter__(self):
+        db_url = furl(Variable.get(self.db_url_variable))
+
+        ssh_hook = ssh.SSHHook(ssh_conn_id=self.ssh_conn_id)
+        self.tunnel = ssh_hook.get_tunnel(remote_port=db_url.port, remote_host=db_url.host)
+        self.tunnel.start()
+
+        db_url.host = "127.0.0.1"
+        db_url.port = self.tunnel.local_bind_port
+        self.engine = create_engine(db_url.url)
+        return self.engine
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.engine:
+            self.engine.dispose()
+        if self.tunnel:
+            self.tunnel.stop()
+
+
 def pg_store(table_name, df, create_table_sql):
     from psycopg2 import sql
 
@@ -107,6 +135,13 @@ def create_df_from_db(sql_query):
 
     with MetabaseDBCursor() as (_, conn):
         return pd.read_sql_query(sql_query, conn)
+
+
+def create_df_from_ssh_tunnel_db(sql_query, db_url_variable, ssh_conn_id):
+    import pandas as pd
+
+    with SSHTunnelDBEngine(db_url_variable=db_url_variable, ssh_conn_id=ssh_conn_id) as engine:
+        return pd.read_sql_query(sql_query, engine)
 
 
 def drop_view(view_name):
