@@ -45,4 +45,9 @@ models:
       On definera aussi si le fichier le plus récent remplace le dernier ou si c'est un nouveau fichier.
       Si un nouveau fichier = 1 table, on peut imagienr que le nom du fichier sera défini par les paramètres du DAG.
       Le nom du fichier dans le S3 pourrait aussi etre défini dans les params du DAG
-      
+  - name: populate_matometa_database
+    description: >
+      Ce DAG permet de copier (et enventuellement modifier) les tables présentes dans diverses bdd de la PDI, vers une bdd unique.
+      Le but est de brancher matometa sur cette unique DB.
+
+
