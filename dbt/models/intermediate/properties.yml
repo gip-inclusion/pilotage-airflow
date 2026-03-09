@@ -124,3 +124,93 @@ models:
     description: >
       Enrichissement des métriques offre/demande avec les indicateurs de couverture par type de frein.
       Formule couverture : offre / (besoin + offre).
+
+  - name: int_communes_base
+    description: >
+      Cette table part du staging des communes et corrige certaines incohérences de la source. En particulier,
+      les codes région et département peuvent être absents pour certaines communes associées ou déléguées (COMA,
+      COMD). Dans ces cas, ils sont complétés à partir de la commune parente.
+      Le grain reste identique à celui du staging (une ligne par enregistrement source), sans déduplication à ce
+      stade.
+
+    columns:
+      - name: code_commune_insee
+        description: "Code commune INSEE"
+        tests:
+          - not_null
+
+      - name: type_commune
+        description: "Type de commune (COM, COMD, COMA, ARM)"
+
+      - name: type_commune_label
+        description: "Type de commune en clair"
+
+      - name: code_region_insee
+        description: >
+          Code région.
+          Complété à partir de la commune parente si absent dans la source.
+        tests:
+          - not_null
+
+      - name: code_departement_insee
+        description: >
+          Code département.
+          Complété à partir de la commune parente si absent dans la source.
+        tests:
+          - not_null
+
+      - name: code_arrondissement_insee
+        description: "Code arrondissement"
+
+      - name: libelle
+        description: "Nom en clair (typographie riche) avec article"
+        tests:
+          - not_null
+
+      - name: code_commune_parente
+        description: >
+          Code de la commune parente.
+          Utilisé pour compléter les informations géographiques manquantes.
+
+      - name: has_parent_commune
+        description: "Indique si la commune possède une commune parente"
+
+      - name: same_code_as_parent
+        description: >
+          Indique si la commune partage le même code INSEE que sa commune parente.
+          Cas fréquent pour certaines communes déléguées.
+
+      - name: is_arrondissement_municipal
+        description: "Indique si la commune est un arrondissement municipal (Paris, Lyon, Marseille)"
+
+      - name: region_or_departement_filled_from_parent
+        description: >
+          Indique si le code région ou département a été complété à partir de la commune parente
+
+      - name: parent_libelle
+        description: "Libellé de la commune parente (utilisé principalement pour debug)"
+
+  - name: int_communes_code_postal
+    description: >
+      Modèle intermédiaire qui agrège les codes postaux au niveau de la commune.Ce modèle est construit
+      à partir de la table de correspondance entre communes et codes postaux et retourne une seule ligne
+      par code_commune_insee.
+      Il fournit un code postal principal ainsi que le nombre total de codes postaux associés à chaque
+      commune.
+
+    columns:
+      - name: code_commune_insee
+        description: "Code commune INSEE"
+        tests:
+          - not_null
+          - unique
+
+      - name: code_postal_principal
+        description: >
+          Code postal principal de la commune.
+          Il correspond au plus petit code postal observé pour cette commune. Peut être nul si aucun code
+          postal n'est disponible.
+
+      - name: nb_codes_postaux
+        description: >
+          Nombre de codes postaux distincts associés à la commune.

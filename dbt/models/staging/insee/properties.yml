@@ -1,0 +1,327 @@
+version: 2
+
+models:
+    - name: stg_insee_secteur_activite_naf
+      description: >
+        Modèle contenant une vue des secteurs d’activité issus des divisions de la NAF 2025.
+      columns:
+        - name: code_secteur_activite
+          description: "Identifiant unique du secteur d’activité"
+          tests:
+            - not_null
+            - unique
+        - name: secteur_activite
+          description: "Intitulé du secteur d’activité. Divisions définies dans le document NAF 2025"
+          tests:
+            - not_null
+
+    - name: stg_insee_zones_emploi
+      description: >
+        Modèle contenant une vue des zones d'emploi issus de l'INSEE.
+      columns:
+        - name: code_zone_emploi
+          description: "Identifiant unique de la zone d'emploi"
+          tests:
+            - not_null
+            - unique
+        - name: zone_emploi
+          description: "Intitulé de la zone d'emploi"
+          tests:
+            - not_null
+
+    - name: stg_insee_communes
+      description: >
+        Staging des communes INSEE.
+        Cette table reflète la source INSEE au plus près.
+        Le code_commune_insee n'est pas toujours unique dans la source.
+        Certains enregistrements de type COMD partagent le même code_commune_insee que leur commune parente.
+        L'unicité doit donc être évaluée sur une combinaison de colonnes, et la résolution du grain analytique
+        est reportée à un modèle intermédiaire ou à la dimension finale.
+
+      tests:
+        - dbt_utils.unique_combination_of_columns:
+            arguments:
+                combination_of_columns:
+                - code_commune_insee
+                - type_commune
+                - code_commune_parente
+
+      columns:
+        - name: type_commune
+          description: "Type de commune"
+          tests:
+            - not_null
+            - accepted_values:
+                arguments:
+                    values: ['COM', 'COMD', 'COMA', 'ARM']
+
+        - name: type_commune_label
+          description: >
+            Type de commune en clair (commune, commune déléguée, commune associée, arrondissement municipal)
+
+        - name: code_commune_insee
+          description: >
+            Code commune.
+            Ce champ n'est pas strictement unique dans la source. Certains enregistrements de type COMD peuvent
+            partager le même code que leur commune parente.
+
+        - name: code_region_insee
+          description: >
+            Code région.
+            Peut être nul dans la source pour certaines communes associées ou déléguées.
+
+        - name: code_departement_insee
+          description: >
+            Code département.
+            Peut être nul dans la source pour certaines communes associées ou déléguées.
+
+        - name: code_collectivite_territoriale_insee
+          description: "Code de la collectivité territoriale ayant les compétences départementales"
+
+        - name: code_arrondissement_insee
+          description: "Code arrondissement"
+
+        - name: type_nom_en_clair
+          description: "Type de nom en clair"
+
+        - name: nom_en_clair_majuscule
+          description: "Nom en clair (majuscules)"
+
+        - name: nom_en_clair_majuscule_riche
+          description: "Nom en clair (typographie riche)"
+
+        - name: libelle
+          description: "Nom en clair (typographie riche) avec article"
+          tests:
+            - not_null
+
+        - name: code_canton_insee
+          description: >
+            Code canton. Pour les communes « multi-cantonales », code décliné de 99 à 90 (pseudo-canton) ou de
+            89 à 80 (communes nouvelles)
+
+        - name: code_commune_parente
+          description: >
+            Code de la commune parente pour les arrondissements municipaux et les communes associées ou déléguées.
+            Ce champ permet notamment d'identifier certains cas où une commune déléguée partage le même code
+            que sa commune parente dans la source.
+
+    - name: stg_insee_zone_emploi_commune
+      description: >
+        Mapping entre les communes et les zones d’emploi fourni par l’INSEE. La table correspond a l'onglet
+        "Composition_communale" que l’on peut trouver dans l’Excel à cette URL :
+        https://www.insee.fr/fr/information/4652957
+        Dernière actualisation: 16/03/2026
+
+      columns:
+        - name: code_commune_insee
+          description: "Code géographique communal"
+          tests:
+            - not_null
+            - unique
+
+        - name: code_zone_emploi
+          description: "Zone d'emploi 2020"
+          tests:
+            - not_null
+
+        - name: zone_emploi_partie_regionale
+          description: "Partie régionale de la zone d’emploi trans-régionale"
+
+    - name: stg_insee_zone_emploi
+      description: >
+        Découpage des zones d’emploi fourni par l’INSEE en 2020. La table correspond à l’onglet “ZE2020” que l’on
+        peut trouver dans l’Excel à cette URL : https://www.insee.fr/fr/information/4652957
+        Dernière actualisation: 16/03/2026
+
+      columns:
+        - name: code_zone_emploi
+          description: "Zone d'emploi 2020"
+          tests:
+            - not_null
+            - unique
+
+        - name: zone_emploi_2020
+          description: "Libellé zone d'emploi 2020"
+          tests:
+            - not_null
+
+
+    - name: stg_insee_codes_postaux_commune
+      description: >
+        Mapping entre les communes et les code postaux fourni par data.gouv.fr que l’on peut trouver dans l’Excel à cette
+        URL : https://www.data.gouv.fr/datasets/base-officielle-des-codes-postaux
+        Dernière actualisation: 16/03/2026
+
+      columns:
+        - name: code_commune_insee
+          description: "Code géographique communal"
+          tests:
+            - not_null
+
+        - name: code_postal
+          description: "Code postal"
+          tests:
+            - not_null
+
+    - name: stg_insee_departements
+      description: >
+        Staging des départements INSEE. Ce modèle renomme et normalise les colonnes du fichier source des départements.
+        La source provient du Code officiel géographique (COG) publié par l'Insee, millésime au 1er janvier 2025.
+        URL : https://www.insee.fr/fr/information/8377162
+        Dernière actualisation: 23/03/2026
+
+      columns:
+        - name: code_departement_insee
+          description: "Code département."
+          tests:
+            - not_null
+            - unique
+
+        - name: code_region_insee
+          description: "Code région."
+          tests:
+            - not_null
+
+        - name: code_commune_insee_cheflieu
+          description: "Code de la commune chef-lieu."
+
+        - name: type_nom_en_clair
+          description: "Type de nom en clair."
+
+        - name: nom_en_clair_majuscule
+          description: "Nom en clair (majuscules)."
+
+        - name: nom_en_clair_majuscule_riche
+          description: "Nom en clair (typographie riche)."
+
+        - name: libelle
+          description: "Nom en clair (typographie riche) avec article."
+          tests:
+            - not_null
+
+    - name: stg_insee_regions
+      description: >
+        Staging des régions INSEE. Ce modèle renomme et normalise les colonnes du fichier source des régions.
+        La source provient du Code officiel géographique (COG) publié par l'Insee, millésime au 1er janvier 2025.
+        URL : https://www.insee.fr/fr/information/8377162
+        Dernière actualisation: 23/03/2026
+
+      columns:
+        - name: code_region_insee
+          description: "Code région."
+          tests:
+            - not_null
+            - unique
+
+        - name: code_commune_insee_cheflieu
+          description: "Code de la commune chef-lieu."
+
+        - name: type_nom_en_clair
+          description: "Type de nom en clair."
+
+        - name: nom_en_clair_majuscule
+          description: "Nom en clair (majuscules)."
+
+        - name: nom_en_clair_majuscule_riche
+          description: "Nom en clair (typographie riche)."
+
+        - name: libelle
+          description: "Nom en clair (typographie riche) avec article."
+          tests:
+            - not_null
+
+    - name: stg_insee_arrondissements
+      description: >
+        Staging des arrondissements INSEE. Ce modèle renomme et normalise les colonnes du fichier source des arrondissements.
+        La source provient du Code officiel géographique (COG) publié par l'Insee, millésime au 1er janvier 2025.
+        URL : https://www.insee.fr/fr/information/8377162
+        Dernière actualisation: 23/03/2026
+
+      columns:
+        - name: code_arrondissement_insee
+          description: "Code arrondissement."
+          tests:
+            - not_null
+            - unique
+
+        - name: code_departement_insee
+          description: "Code département."
+          tests:
+            - not_null
+
+        - name: code_region_insee
+          description: "Code région."
+          tests:
+            - not_null
+
+        - name: code_commune_insee_cheflieu
+          description: "Code de la commune chef-lieu."
+
+        - name: type_nom_en_clair
+          description: "Type de nom en clair."
+
+        - name: nom_en_clair_majuscule
+          description: "Nom en clair (majuscules)."
+
+        - name: nom_en_clair_majuscule_riche
+          description: "Nom en clair (typographie riche)."
+
+        - name: libelle
+          description: "Nom en clair (typographie riche) avec article."
+          tests:
+            - not_null
+
+    - name: stg_insee_epci
+      description: >
+        Staging des EPCI INSEE. Ce modèle renomme et normalise les colonnes du fichier source des EPCI.
+        Il contient l'identifiant de l'EPCI, son libellé et sa nature.
+        URL : https://www.insee.fr/fr/information/2510634 - Base des EPCI à fiscalité propre au 1ᵉʳ janvier 2026
+        Dernière actualisation: 23/03/2026
+
+      columns:
+        - name: code_insee_epci
+          description: "Code INSEE de l'EPCI."
+          tests:
+            - not_null
+            - unique
+
+        - name: nom_epci
+          description: "Libellé de l'EPCI."
+          tests:
+            - not_null
+
+        - name: nature_epci
+          description: "Nature de l'EPCI."
+          tests:
+            - not_null
+
+    - name: stg_insee_epci_commune
+      description: >
+        Staging de la table de correspondance entre communes et EPCI.Ce modèle associe chaque commune à son EPCI de
+        rattachement.
+        URL : https://www.insee.fr/fr/information/2510634 - Base des EPCI à fiscalité propre au 1ᵉʳ janvier 2026
+        Dernière actualisation: 23/03/2026
+
+      tests:
+        - dbt_utils.unique_combination_of_columns:
+            arguments:
+                combination_of_columns:
+                - code_commune_insee
+                - code_insee_epci
+
+      columns:
+        - name: code_commune_insee
+          description: "Code INSEE de la commune."
+          tests:
+            - not_null
+
+        - name: code_insee_epci
+          description: "Code INSEE de l'EPCI de rattachement."
+          tests:
+            - not_null
+            - relationships:
+                arguments:
+                    to: ref('stg_insee_epci')
+                    field: code_insee_epci
+
