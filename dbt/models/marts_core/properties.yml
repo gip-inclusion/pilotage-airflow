@@ -1,7 +1,6 @@
 version: 2
 
 models:
-
   - name : dim_thematiques_clpe
     description: >
      Table de dimension contenant les données de thematiques CLPE. Est basée sur int_thematiques_clpe.
@@ -33,6 +32,7 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('int_offre_insertion')
+
   - name: fct_logins_utilisateurs_emplois
     description: >
       Table contenant les last logins des utilisateurs des Emplois récuperés via la table utilisateurs_v0, en utilisant un modèle incrémentale.
@@ -53,3 +53,192 @@ models:
           combination_of_columns:
             - 'user_id'
             - 'last_login'
+
+  - name: bridge_commune_code_postal
+    description: >
+      Table de correspondance entre les communes et les codes postaux.
+      Ce modèle est nécessaire car la relation entre une commune et un code postal n'est pas 1:1. Une
+      commune peut être associée à plusieurs codes postaux, et un même code postal peut couvrir
+      plusieurs communes.
+      Cette table permet donc de préserver cette relation sans dégrader le grain de dim_commune, qui
+      reste à une ligne par commune.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - code_commune_insee
+              - code_postal
+
+    columns:
+      - name: code_commune_insee
+        description: "Code INSEE de la commune."
+        tests:
+          - not_null
+
+      - name: code_postal
+        description: "Code postal associé à la commune."
+        tests:
+          - not_null
+
+  - name: dim_commune
+    description: >
+      Dimension des communes enrichie à partir des référentiels INSEE et d'autres sources géographiques.
+      Cette table contient une ligne par code_commune_insee.
+      Lorsqu'il existe plusieurs enregistrements pour un même code_commune_insee dans la source,
+      une seule ligne est conservée dans cette dimension selon une règle de priorité :
+      priorité aux communes sans commune parente, puis aux types de commune selon l'ordre
+      COM, COMD, COMA, ARM.
+      La table regroupe les principales informations administratives et territoriales de la commune,
+      ainsi que des informations sur les codes postaux, l'EPCI, la zone d'emploi et la CLPE.
+      Lorsque certaines informations sont absentes pour une commune mais disponibles pour sa commune parente,
+      elles sont complétées à partir de cette dernière.
+
+    columns:
+      - name: code_commune_insee
+        description: "Code commune INSEE"
+        tests:
+          - not_null
+          - unique
+
+      - name: nom_commune
+        description: "Nom de la commune"
+        tests:
+          - not_null
+
+      - name: type_commune
+        description: "Type de commune (COM, COMD, COMA, ARM)"
+
+      - name: type_commune_label
+        description: "Type de commune en clair"
+
+      - name: code_region_insee
+        description: "Code région INSEE"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_insee_regions')
+                field: code_region_insee
+
+      - name: nom_region
+        description: "Nom de la région"
+
+      - name: code_departement_insee
+        description: "Code département INSEE"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_insee_departements')
+                field: code_departement_insee
+
+      - name: nom_departement
+        description: "Nom du département"
+
+      - name: nom_departement_complet
+        description: "Code et nom du département concaténés"
+
+      - name: code_arrondissement_insee
+        description: >
+          Code arrondissement INSEE.
+          Complété à partir de la commune parente si absent pour la commune.
+
+      - name: nom_arrondissement
+        description: >
+          Nom de l'arrondissement.
+          Complété à partir de la commune parente si absent pour la commune.
+
+      - name: code_insee_epci
+        description: >
+          Code INSEE de l'EPCI.
+          Complété à partir de la commune parente si absent pour la commune.
+
+      - name: nom_epci
+        description: >
+          Nom de l'EPCI.
+          Complété à partir de la commune parente si absent pour la commune.
+
+      - name: code_zone_emploi
+        description: >
+          Code de la zone d'emploi.
+          Complété à partir de la commune parente si absent pour la commune.
+
+      - name: nom_zone_emploi
+        description: >
+          Nom de la zone d'emploi.
+          Complété à partir de la commune parente si absent pour la commune.
+
+      - name: zone_emploi_partie_regionale
+        description: >
+          Indique la partie régionale de la zone d'emploi.
+          Complétée à partir de la commune parente si absente pour la commune.
+
+      - name: code_ft_clpe
+        description: >
+          Code FT de la CLPE.
+          Complété à partir de la commune parente si absent pour la commune.
+
+      - name: nom_clpe
+        description: >
+          Nom de la CLPE.
+          Complété à partir de la commune parente si absent pour la commune.
+
+      - name: code_postal_principal
+        description: >
+          Code postal principal de la commune.
+          Il correspond au plus petit code postal observé pour cette commune.
+          Lorsqu'il est absent pour la commune mais disponible pour la commune parente,
+          il est complété à partir de cette dernière.
+
+      - name: nb_codes_postaux
+        description: >
+          Nombre de codes postaux distincts associés à la commune.
+          Lorsqu'il est absent pour la commune mais disponible pour la commune parente,
+          il est complété à partir de cette dernière.
+
+      - name: code_postal_filled_from_parent
+        description: >
+          Indique si le code postal principal et le nombre de codes postaux
+          ont été complétés à partir de la commune parente
+
+      - name: arrondissement_filled_from_parent
+        description: >
+          Indique si le code et le nom de l'arrondissement
+          ont été complétés à partir de la commune parente
+
+      - name: epci_filled_from_parent
+        description: >
+          Indique si le code et le nom de l'EPCI
+          ont été complétés à partir de la commune parente
+
+      - name: zone_emploi_filled_from_parent
+        description: >
+          Indique si les informations de zone d'emploi
+          ont été complétées à partir de la commune parente
+
+      - name: clpe_filled_from_parent
+        description: >
+          Indique si le code et le nom de la CLPE
+          ont été complétés à partir de la commune parente
+
+      - name: code_commune_parente
+        description: "Code de la commune parente"
+
+      - name: nom_commune_parente
+        description: "Nom de la commune parente"
+
+      - name: has_parent_commune
+        description: "Indique si la commune possède une commune parente"
+
+      - name: same_code_as_parent
+        description: >
+          Indique si la commune partage le même code INSEE que sa commune parente
+
+      - name: is_arrondissement_municipal
+        description: "Indique si la commune est un arrondissement municipal"
+
+      - name: region_or_departement_filled_from_parent
+        description: >
+          Indique si le code région ou le code département a été complété
+          à partir de la commune parente

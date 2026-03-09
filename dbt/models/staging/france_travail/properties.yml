@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: stg_ft_clpe_commune
+    description: >
+        Ce modèle associe chaque commune à une CLPE. La source peut contenir des doublons exacts sur la combinaison
+        (commune_id, territoire_id). Ces doublons ne portent pas d'information supplémentaire et sont donc supprimés
+        via un SELECT DISTINCT dans ce modèle.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - code_commune_insee
+              - code_ft_clpe
+
+    columns:
+      - name: code_commune_insee
+        description: "Code INSEE de la commune."
+        tests:
+          - not_null
+
+      - name: code_ft_clpe
+        description: "Identifiant de la CLPE."
+        tests:
+          - not_null
+
+      - name: nom_clpe
+        description: "Libellé de la CLPE."
+        tests:
+          - not_null

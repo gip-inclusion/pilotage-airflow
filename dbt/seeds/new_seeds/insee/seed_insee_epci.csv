@@ -1,0 +1,1255 @@
+epci,libepci,nature_epci,nb_com
+200000172,Communauté de communes Faucigny-Glières,CC,7
+200000438,Communauté de communes du Pays de Pontchâteau Saint-Gildas-des-Bois,CC,9
+200000545,Communauté de communes des Portes de Romilly-sur-Seine,CC,6
+200000628,Communauté de communes Rhône Lez Provence,CC,5
+200000800,Communauté de communes Cœur de Sologne,CC,6
+200000925,Communauté de communes de la Plaine Dijonnaise,CC,22
+200000933,Communauté de communes Sauldre et Sologne,CC,14
+200004802,Communauté de communes du Pays de Fayence,CC,9
+200005932,Communauté de communes des Portes de Sologne,CC,7
+200005957,Communauté de communes de la Région de Rambervillers,CC,30
+200006682,"Communauté d'agglomération Beaune, Côte et Sud - Communauté Beaune-Chagny-Nolay",CA,53
+200006716,Communauté de communes du Nogentais,CC,23
+200006930,Communauté de communes du Haut Allier Margeride,CC,10
+200006971,Communauté de communes du Perche,CC,20
+200007052,Communauté de communes de la Marche Berrichonne,CC,9
+200007177,Communauté de communes Pays de Nérondes,CC,12
+200010650,Communauté d'agglomération du Grand Dole,CA,47
+200010700,Communauté d'agglomération Caux Seine Agglo,CA,50
+200011773,Communauté d'agglomération Annemasse-Les Voirons-Agglomération,CA,12
+200011781,Communauté de communes Portes du Berry entre Loire et Val d'Aubois,CC,12
+200013050,Communauté de communes Sauer-Pechelbronn,CC,24
+200015162,Communauté de communes de l'Oriente,CC,22
+200016905,Communauté de communes du Pays de Lamastre,CC,11
+200017341,Communauté de communes Lodévois et Larzac,CC,28
+200017846,Communauté d'agglomération Étampois Sud Essonne,CA,37
+200018083,Communauté de communes de Desvres-Samer,CC,31
+200018166,Communauté de communes Le Grésivaudan,CC,43
+200018406,Communauté de communes du Romorantinais et du Monestois,CC,16
+200018521,Communauté de communes du Val de Bouzanne,CC,12
+200018653,Communauté d'agglomération Cap Excellence,CA,3
+200022986,Communauté de communes du Grand Pic Saint-Loup,CC,36
+200023075,Communauté de communes du Pays de Maîche,CC,42
+200023125,Communauté de communes Les Portes Briardes entre Villes et Forêts,CC,5
+200023240,Communauté de communes Pays de Nemours,CC,21
+200023299,Communauté de communes Cœur de Tarentaise,CC,6
+200023307,Communauté d'agglomération du Grand Villeneuvois,CA,19
+200023372,Communauté de communes de la Vallée de Chamonix-Mont-Blanc,CC,4
+200023414,Métropole Rouen Normandie,METRO,71
+200023620,Communauté de communes de la Gascogne Toulousaine,CC,13
+200023737,Communauté d'agglomération du Grand Cahors,CA,36
+200023778,Communauté d'agglomération du Pays de Saint-Gilles-Croix-de-Vie,CA,14
+200023794,Communauté de communes de Blaye,CC,20
+200023919,Communauté de communes Gâtinais Val de Loing,CC,20
+200026573,Communauté de communes Haut-Jura Saint-Claude,CC,22
+200027027,Communauté de communes Arc Sud Bretagne,CC,12
+200027076,Communauté de communes Arnon Boischaut Cher,CC,18
+200027100,Communauté de communes Méditerranée Porte des Maures,CC,6
+200027183,Communauté urbaine Perpignan Méditerranée Métropole,CU,37
+200027217,Communauté de communes Sarlat-Périgord Noir,CC,13
+200027308,Communauté de communes d'Auberive Vingeanne et Montsaugeonnais,CC,51
+200027548,Communauté de communes des Savanes,CC,4
+200029734,Communauté de communes des 4B Sud Charente,CC,40
+200029999,Communauté de communes Rives de l'Ain - Pays du Cerdon,CC,14
+200030195,Métropole Nice Côte d'Azur,METRO,51
+200030385,Communauté d'agglomération de Blois «Agglopolys»,CA,43
+200030435,Communauté de communes d'Aire-sur-l'Adour,CC,22
+200030526,Communauté de communes du Ried de Marckolsheim,CC,18
+200030633,Communauté d'agglomération du Caudrésis et du Catésis,CA,46
+200030658,Communauté de communes du Trièves,CC,27
+200030674,Communauté d'agglomération Val de Garonne Agglomération,CA,43
+200032514,Communauté de communes Berry-Loire-Vauvise,CC,14
+200033025,Communauté d'agglomération de Bar-le-Duc - Sud Meuse,CA,33
+200033090,Communauté de communes Plaines et Monts de France,CC,20
+200033116,Communauté de communes Cluses-Arve et Montagnes,CC,10
+200033173,Communauté de communes de la Haute Vallée de Chevreuse,CC,10
+200033181,Communauté d'agglomération Chartres Métropole,CA,66
+200033298,Communauté de communes des Coëvrons,CC,29
+200033579,Communauté urbaine d'Arras,CU,46
+200033827,Communauté de communes de Fium'Orbu Castellu,CC,13
+200033868,Communauté de communes des Ballons des Hautes-Vosges,CC,8
+200034023,Communauté de communes Tarn-Agout,CC,21
+200034031,Communauté de communes des Monts d'Alban et du Villefranchois,CC,14
+200034049,Communauté de communes Centre Tarn,CC,11
+200034056,Communauté de communes du Lautrécois et du Pays d'Agout,CC,28
+200034064,Communauté de communes du Cordais et du Causse (4 C),CC,25
+200034098,Communauté de communes des Montagnes du Giffre,CC,8
+200034130,Communauté de communes Gally Mauldre,CC,11
+200034197,Communauté de communes de Montaigne Montravel et Gurson,CC,18
+200034205,Communauté de communes de la Costa Verde,CC,23
+200034270,Communauté de communes du Pays de Barr,CC,20
+200034379,Communauté de communes Pays d'Uzès,CC,35
+200034411,Communauté de communes du Piémont Cévenol,CC,34
+200034601,Communauté de communes Causses Aigoual Cévennes,CC,15
+200034635,Communauté de communes du Kochersberg,CC,23
+200034692,Communauté d'agglomération du Gard Rhodanien,CA,44
+200034700,Communauté d'agglomération Durance-Lubéron-Verdon Agglomération,CA,25
+200034718,"Communauté de communes de Vitry, Champagne et Der",CC,35
+200034726,Communauté de communes Bastides de Lomagne,CC,41
+200034825,Communauté d'agglomération du Grand Guéret,CA,25
+200034833,Communauté de communes des Bastides Dordogne-Périgord,CC,47
+200034874,Communauté de communes Côtes de Meuse Woëvre,CC,25
+200034882,Communauté de communes Pays du Mont-Blanc,CC,10
+200034957,Communauté de communes du Frontonnais,CC,10
+200035087,Communauté d'agglomération Terre de Provence,CA,13
+200035103,Communauté de communes de la Vallée de la Haute Sarthe,CC,31
+200035111,Communauté de communes des Sources de l'Orne,CC,23
+200035129,Communauté de communes de Cèze Cévennes,CC,23
+200035137,Communauté de communes Marche Occitane - Val d'Anglin,CC,17
+200035202,Communauté de communes Charlieu-Belmont,CC,25
+200035319,Communauté d'agglomération Estérel Côte d'Azur Agglomération,CA,5
+200035327,Communauté de communes Cazals-Salviac,CC,15
+200035442,Communauté de communes du Sud-Artois,CC,64
+200035533,Communauté de communes du Grand Saint-Émilionnais,CC,22
+200035541,Communauté de communes des Landes d'Armagnac,CC,27
+200035632,Communauté de communes Armagnac Adour,CC,24
+200035707,Communauté de communes Piège Lauragais Malepère,CC,38
+200035715,Communauté d'agglomération Carcassonne Agglo,CA,83
+200035723,Communauté de communes Ventoux Sud,CC,11
+200035731,Communauté d'agglomération Roannais Agglomération,CA,40
+200035756,Communauté de communes Astarac Arros en Gascogne,CC,37
+200035764,Communauté de communes de la Beauce Loirétaine,CC,23
+200035772,Communauté de communes du Pays du Saintois,CC,55
+200035814,Communauté d'agglomération Flers Agglo,CA,42
+200035848,Communauté de communes du Châtillonnais en Berry,CC,10
+200035855,Communauté de communes Castelnaudary Lauragais Audois,CC,43
+200035863,"Communauté de communes Région Lézignanaise, Corbières et Minervois",CC,54
+200035970,Communauté de communes Vexin Centre,CC,33
+200036069,Communauté de communes du Pays de Mortagne au Perche,CC,33
+200036077,Communauté de communes du Golfe de Saint-Tropez,CC,12
+200036135,Communauté de communes Cœur de France,CC,19
+200036150,Communauté de communes des Hauts du Val de Saône,CC,48
+200036465,Communauté de communes de Thann-Cernay,CC,16
+200036473,Communauté d'agglomération de Saintes - Grandes Rives - L'Agglo,CA,36
+200036499,Communauté de communes de Marana-Golo,CC,10
+200036523,Communauté de communes des Bastides en Haut Agenais Périgord,CC,43
+200036549,Communauté de communes Val de Gray,CC,48
+200037059,Communauté de communes de la Haute Somme (Combles - Péronne - Roisel),CC,60
+200037133,Communauté de communes du Provinois,CC,39
+200038958,Communauté de communes de la Pieve de l'Ornano et du Taravo,CC,28
+200038990,Communauté de communes de Saint-Méen Montauban,CC,17
+200039022,Communauté d'agglomération Vitré Communauté,CA,46
+200039055,Communauté de communes Ouche et Montagne,CC,32
+200039063,"Communauté de communes Forêts, Seine et Suzon",CC,25
+200039204,Communauté de communes de Lacq-Orthez,CC,60
+200039519,Communauté de communes du Quercy Blanc,CC,9
+200039642,Communauté de communes Le Tonnerrois en Bourgogne,CC,52
+200039709,Communauté de communes du Serein,CC,35
+200039758,"Communauté de communes Avallon, Vézelay, Morvan",CC,48
+200039808,Communauté de communes des Gorges de l'Ardèche,CC,20
+200039824,Communauté de communes Ardèche des Sources et Volcans,CC,16
+200039832,Communauté de communes Pays des Vans en Cévennes,CC,15
+200039857,Communauté d'agglomération du Pays de Grasse,CA,23
+200039865,Metz Métropole,METRO,46
+200039907,Communauté de communes du Sud Messin,CC,34
+200039915,Communauté d'agglomération Cannes Pays de Lérins,CA,5
+200039931,Communauté de communes Alpes d'Azur,CC,34
+200039949,Communauté de communes Rives de Moselle,CC,20
+200040038,Communauté de communes Saône Doubs Bresse,CC,26
+200040095,Communauté de communes Isle Vern Salembre en Périgord,CC,16
+200040111,Communauté de communes Cœur de Chartreuse,CC,17
+200040137,Communauté de communes des Lacs de Champagne,CC,43
+200040178,Communauté de communes de l'Outre-Forêt,CC,13
+200040202,Communauté de communes Provence Verdon,CC,15
+200040210,Communauté de communes Lacs et Gorges du Verdon,CC,16
+200040244,Communauté d'agglomération du Bocage Bressuirais,CA,33
+200040251,Communauté de communes Bassée-Montois,CC,42
+200040277,Communauté d'agglomération Agglo du Pays de Dreux,CA,81
+200040293,Communauté de communes du Clunisois,CC,41
+200040350,Communauté de communes Bugey Sud,CC,41
+200040384,Communauté de communes Isle Double Landais,CC,9
+200040392,Communauté d'agglomération Le Grand Périgueux,CA,43
+200040400,Communauté de communes du Périgord Ribéracois,CC,44
+200040418,Communauté de communes du Pays de Serres en Quercy,CC,22
+200040426,Communauté de communes du Val de l'Oise,CC,32
+200040442,Communauté d'agglomération Luberon Monts de Vaucluse,CA,16
+200040459,Communauté d'agglomération Montélimar Agglomération,CA,27
+200040475,LBN Communauté,CC,29
+200040491,Communauté de communes Porte de DrômArdèche,CC,34
+200040509,Communauté de communes du Crestois et de Pays de Saillans Cœur de Drôme,CC,14
+200040558,Communauté de communes Écueillé-Valençay,CC,18
+200040566,Communauté d'agglomération de l'Ouest Rhodanien,CA,31
+200040574,Communauté de communes Beaujolais Pierres Dorées,CC,32
+200040590,Communauté d'agglomération Villefranche Beaujolais Saône,CA,18
+200040624,Communauté de communes Pays d'Apt-Luberon,CC,25
+200040657,Communauté de communes de la Matheysine,CC,43
+200040681,Communauté de communes Enclave des Papes-Pays de Grignan,CC,19
+200040715,Grenoble-Alpes-Métropole,METRO,49
+200040764,Communauté de communes du Sud Corse,CC,7
+200040772,Communauté de communes du Perche et Haut Vendômois,CC,23
+200040798,Communauté de communes Val Vanoise,CC,9
+200040814,Communauté de communes Briance Sud Haute Vienne,CC,11
+200040830,Communauté de communes du Pays de Fénelon,CC,17
+200040889,Communauté de communes de Portes Sud Périgord,CC,25
+200040905,Communauté de communes Carmausin-Ségala,CC,31
+200040947,Communauté d'agglomération Cœur de Flandre,CA,50
+200040954,Communauté de communes des Hauts de Flandre,CC,40
+200041010,Communauté de communes Cœur de Savoie,CC,41
+200041051,Communauté de communes Vallée de la Dordogne et Forêt Bessède,CC,20
+200041150,Communauté de communes Terrassonnais Haut Périgord Noir,CC,37
+200041168,Communauté de communes de la Vallée de l'Homme,CC,26
+200041283,Communauté de communes de la Plaine du Rhin,CC,19
+200041317,Communauté d'agglomération du Niortais,CA,40
+200041325,Communauté de communes du Pays Rhénan,CC,17
+200041333,Communauté de communes de Parthenay-Gâtine,CC,38
+200041366,Communauté de communes Rhône Crussol,CC,13
+200041416,Communauté de communes Airvaudais-Val du Thouet,CC,9
+200041440,Communauté de communes de Domme-Villefranche du Périgord,CC,23
+200041465,Communauté de communes Val Eyrieux,CC,29
+200041499,Communauté de communes Aunis Atlantique,CC,20
+200041507,Communauté d'agglomération La Riviera du Levant,CA,4
+200041515,Communauté de communes du Bassin de Pont-à-Mousson,CC,31
+200041523,Communauté de communes de la Haute Saintonge,CC,129
+200041556,Communauté de communes Portes de la Creuse en Marche,CC,16
+200041572,Communauté de communes Dronne et Belle,CC,16
+200041614,Communauté de communes Aunis Sud,CC,24
+200041622,Communauté de communes Ardennes Thiérache,CC,37
+200041630,Ardenne Métropole,CA,57
+200041689,Communauté de communes Vals de Saintonge Communauté,CC,109
+200041721,Communauté de communes de la Haute Comté,CC,37
+200041762,Communauté d'agglomération Rochefort Océan,CA,25
+200041788,Communauté d'agglomération du Pays Nord Martinique,CA,18
+200041853,Communauté de communes du Pays de Montbozon et du Chanois,CC,27
+200041861,Communauté de communes du Triangle Vert,CC,42
+200041879,Communauté de communes Terres de Saône,CC,39
+200041887,Communauté de communes du Val Marnaysien,CC,45
+200041960,Communauté de communes Pévèle-Carembault,CC,38
+200041994,Communauté de communes Haut Val de Sèvre,CC,19
+200042000,Communauté de communes Bruyères-Vallons des Vosges,CC,34
+200042174,Communauté d'agglomération Lorient Agglomération,CA,25
+200042182,Communauté de communes du Mont des Avaloirs,CC,26
+200042190,Communauté d'agglomération de la Porte du Hainaut,CA,47
+200042372,Communauté de communes des Coteaux Arrats Gimone,CC,30
+200042414,Communauté de communes Bresse Revermont 71,CC,17
+200042463,Communauté de communes de la Montagne Noire,CC,22
+200042497,Communauté de communes Dombes Saône Vallée,CC,19
+200042604,"Communauté de communes de Granville, Terre et Mer",CC,32
+200042620,Communauté de communes de la Région de Suippes,CC,16
+200042646,Communauté de communes Grand Orb communauté de communes en Languedoc,CC,23
+200042653,Communauté de communes Sud-Hérault,CC,17
+200042703,Communauté de communes de l'Argonne Champenoise,CC,60
+200042729,Communauté de communes de la Baie du Cotentin,CC,23
+200042901,Communauté de communes Drôme Sud Provence,CC,14
+200042935,Communauté d'agglomération Haut - Bugey Agglomération,CA,42
+200042943,Communauté de communes du Cap Corse,CC,18
+200042992,Communauté de communes Perthois-Bocage et Der,CC,25
+200043016,Communauté de communes Val de Charente,CC,32
+200043065,Communauté de communes du Val d'Amboise,CC,14
+200043081,"Communauté de communes Chinon, Vienne et Loire",CC,19
+200043123,Communauté de communes Auray Quiberon Terre Atlantique,CC,24
+200043156,Communauté de communes du Pays Rethélois,CC,65
+200043172,Communauté d'agglomération du Bassin de Brive,CA,48
+200043263,Communauté de communes Cœur de l'Avesnois,CC,43
+200043321,Communauté de communes du Pays de Mormal,CC,52
+200043354,Communauté de communes de Villedieu Intercom,CC,27
+200043396,Communauté d'agglomération Maubeuge Val de Sambre,CA,43
+200043404,Communauté de communes du Sud Avesnois,CC,12
+200043438,Communauté de communes de la Moivre à la Coole,CC,28
+200043495,Communauté d'agglomération du Pays de Laon,CA,38
+200043602,"Communauté de communes des Albères, de la Côte Vermeille et de l'Illibéris",CC,15
+200043628,Communauté de communes des Vallées du Clain,CC,16
+200043693,Communauté de communes Terre Lorraine du Longuyonnais,CC,27
+200043776,Communauté de communes Pyrénées Audoises,CC,61
+200043974,Communauté de communes du Sud Gironde,CC,37
+200043982,Communauté de communes du Bazadais,CC,31
+200043990,Communauté de communes Vallons de Haute-Bretagne Communauté,CC,18
+200044014,Communauté de communes Creuse Grand Sud,CC,26
+200044030,Communauté de communes des 7 Vallées,CC,66
+200044048,Communauté de communes Osartis Marquion,CC,49
+200044253,Communauté de communes du Bassin de Joinville en Champagne,CC,59
+200044394,Communauté de communes du Réolais en Sud Gironde,CC,41
+200044469,Communauté de communes du Pays de Mirepoix,CC,33
+200044618,Communauté d'agglomération Douaisis Agglo,CA,35
+200044691,Communauté d'agglomération du Nord Grande Terre,CA,5
+200046977,Métropole de Lyon,METRO,58
+200048551,Communauté de communes du Pays de Craon,CC,37
+200049187,Communauté d'agglomération du Grand Verdun,CA,25
+200049211,Communauté de communes Conflent-Canigó,CC,45
+200049484,Communauté de communes Berry Grand Sud,CC,32
+200050532,Communauté de communes de Petite-Terre,CC,2
+200054781,Métropole du Grand Paris,METRO,130
+200054807,Métropole d'Aix-Marseille-Provence,METRO,92
+200055481,Communauté de communes Beauce Val de Loire,CC,30
+200055655,Communauté d'agglomération Roissy Pays de France,CA,42
+200055887,Communauté de communes Mayenne Communauté,CC,33
+200056232,Communauté d'agglomération Communauté Paris-Saclay,CA,27
+200056380,Communauté d'agglomération Plaine Vallée,CA,18
+200057859,Communauté d'agglomération Cœur d'Essonne Agglomération,CA,21
+200057958,Communauté d'agglomération Paris - Vallée de la Marne,CA,12
+200058360,Communauté de communes entre Beauce et Perche,CC,33
+200058477,Communauté d'agglomération Val d'Yerres Val de Seine,CA,9
+200058485,Communauté d'agglomération Val Parisis,CA,15
+200058519,Communauté d'agglomération Saint Germain Boucles de Seine,CA,19
+200058782,Communauté d'agglomération de Saint-Quentin-en-Yvelines,CA,12
+200059228,Communauté d'agglomération Grand Paris Sud Seine Essonne Sénart,CA,23
+200059392,Communauté de communes Bièvre Isère,CC,50
+200059400,Communauté de communes Porte Océane du Limousin,CC,13
+200059871,Communauté de communes du Centre-Ouest,CC,5
+200059889,Communauté urbaine Grand Paris Seine et Oise,CU,73
+200060010,Communauté d'agglomération Mauges Communauté,CA,6
+200060457,Communauté d'agglomération de Dembeni / Mamoudzou,CA,2
+200060465,Communauté d'agglomération du Grand Nord de Mayotte,CA,4
+200060473,Communauté de communes du Sud,CC,4
+200065563,Communauté de communes Normandie-Cabourg-Pays d'Auge,CC,38
+200065589,Communauté de communes Val ès Dunes,CC,19
+200065597,Communauté urbaine Caen la Mer,CU,48
+200065647,Communauté d'agglomération Pays de Montbéliard Agglomération,CA,73
+200065787,Communauté de communes de Pont-Audemer / Val de Risle,CC,32
+200065886,Communauté d'agglomération Loire Forez Agglomération,CA,84
+200065894,Communauté de communes de Forez-Est,CC,42
+200065928,Communauté d'agglomération Lannion-Trégor Communauté,CA,57
+200066009,Communauté d'agglomération Mulhouse Alsace Agglomération,CA,39
+200066017,Communauté de communes Lieuvin Pays d'Auge,CC,51
+200066025,Communauté de communes Alsace Rhin Brisach,CC,29
+200066033,Communauté de communes Sud Alsace Largue,CC,44
+200066041,Communauté de communes Sundgau,CC,64
+200066058,Communauté d'agglomération Saint-Louis Agglomération,CA,40
+200066108,Communauté de communes des Portes de Meuse,CC,51
+200066116,Communauté de communes Argonne-Meuse,CC,38
+200066124,Communauté d'agglomération Gaillac-Graulhet,CA,56
+200066132,Communauté de communes du Pays de Stenay et du Val Dunois,CC,41
+200066140,Communauté de communes de l'Aire à l'Argonne,CC,47
+200066157,Communauté de communes de Commercy - Void - Vaucouleurs,CC,54
+200066165,Communauté de communes Val de Meuse - Voie Sacrée,CC,25
+200066173,Communauté de communes de Damvillers Spincourt,CC,41
+200066223,Communauté de communes Arize Lèze,CC,27
+200066231,Communauté de communes des Portes d'Ariège Pyrénées,CC,34
+200066280,Communauté de communes du Pithiverais,CC,31
+200066322,Communauté de communes Terres des Confluences,CC,22
+200066330,Communauté de communes Terres du Haut Berry,CC,30
+200066348,Communauté de communes du Minervois au Caroux,CC,36
+200066355,Communauté d'agglomération Sète Agglopôle Méditerranée,CA,14
+200066363,Communauté de communes de la Haute Ariège,CC,51
+200066371,Communauté de communes Causses et Vallée de la Dordogne,CC,77
+200066389,Communauté d'agglomération Saint-Lô Agglo,CA,61
+200066405,Communauté de communes Roumois Seine,CC,40
+200066413,Communauté de communes Intercom Bernay Terres de Normandie,CC,75
+200066462,Communauté de communes Interco Normandie Sud Eure,CC,41
+200066512,Communauté de communes Élan Limousin Avenir Nature,CC,24
+200066520,Communauté de communes Ouest Limousin,CC,16
+200066553,Communauté de communes du Haut-Languedoc,CC,20
+200066561,Communauté de communes Sidobre Vals et Plateaux,CC,16
+200066587,Communauté de communes des Monts du Lyonnais,CC,32
+200066603,Communauté de communes du Pays de Lubersac-Pompadour,CC,10
+200066637,Communauté de communes Hautes Terres Communauté,CC,39
+200066645,Communauté de communes Vézère-Monédières-Millesources,CC,20
+200066652,Communauté de communes Grand Sud Tarn et Garonne,CC,25
+200066660,Saint-Flour Communauté,CC,53
+200066678,Communauté de communes de la Châtaigneraie Cantalienne,CC,50
+200066710,Communauté de communes Cingal-Suisse Normande,CC,41
+200066728,Communauté de communes Vallées de l'Orne et de l'Odon,CC,22
+200066744,Communauté de communes Haute-Corrèze Communauté,CC,70
+200066751,Communauté de communes Xaintrie Val'Dordogne,CC,30
+200066769,Communauté de communes Midi Corrézien,CC,34
+200066777,Ploërmel Communauté,CC,30
+200066785,Communauté de communes de l'Oust à Brocéliande,CC,26
+200066793,Communauté d'agglomération du Grand Annecy,CA,34
+200066801,Communauté de communes Isigny-Omaha Intercom,CC,59
+200066819,Communauté de communes du Volvestre,CC,32
+200066827,Communauté de communes du Pays de Honfleur-Beuzeville,CC,23
+200066835,Communauté de communes de Sézanne-Sud Ouest Marnais,CC,62
+200066850,Communauté de communes des Paysages de la Champagne,CC,51
+200066868,Communauté de communes Presqu'île de Crozon-Aulne maritime,CC,10
+200066876,Communauté d'agglomération de Châlons-en-Champagne,CA,45
+200066884,Communauté de communes Quercy Vert-Aveyron,CC,12
+200066892,Communauté de communes de Vendeuvre-Soulaines,CC,38
+200066918,Communauté d'agglomération Alès Agglomération,CA,71
+200066926,Communauté d'agglomération Grand Auch Cœur de Gascogne,CA,34
+200066975,Communauté de communes Senlis Sud Oise,CC,17
+200067023,Communauté de communes Coutances Mer et Bocage,CC,48
+200067031,Communauté de communes Côte Ouest Centre Manche,CC,30
+200067049,Communauté de communes Spelunca-Liamone,CC,33
+200067064,Communauté de communes Decazeville Communauté,CC,12
+200067072,Communauté de communes Haut-Léon Communauté,CC,14
+200067080,Communauté de communes Chablis Villages et Terroirs,CC,36
+200067106,Communauté d'agglomération du Pays Basque,CA,158
+200067114,Communauté d'agglomération de l'Auxerrois,CA,29
+200067122,Communauté de communes du Pays de Lafrançaise,CC,11
+200067130,Communauté de communes de Puisaye-Forterre,CC,57
+200067155,"Communauté de communes Saint Affricain, Roquefort, Sept Vallons",CC,14
+200067163,"Communauté de communes Monts, Rance et Rougier",CC,23
+200067171,Communauté de communes Aubrac Carladez Viadène,CC,21
+200067189,Creuse Sud Ouest,CC,43
+200067197,Communauté de communes Monts d'Arrée Communauté,CC,12
+200067205,Communauté d'agglomération du Cotentin,CA,129
+200067213,Communauté urbaine du Grand Reims,CU,143
+200067239,Communauté de communes des Luys en Béarn,CC,66
+200067247,Communauté de communes Pleyben-Châteaulin-Porzay,CC,17
+200067254,Communauté d'agglomération Pau Béarn Pyrénées,CA,31
+200067262,Communauté de communes du Haut Béarn,CC,48
+200067288,Communauté de communes du Béarn des Gaves,CC,53
+200067296,Communauté de communes du Nord Est Béarn,CC,73
+200067304,Communauté de communes Serein et Armance,CC,29
+200067320,Communauté de communes Serre-Ponçon Val d'Avance,CC,16
+200067346,Communauté d'agglomération Pornic Agglo Pays de Retz,CA,15
+200067361,Communauté de communes Grand-Figeac,CC,92
+200067379,Communauté de communes Côtes de Champagne et Val de Saulx,CC,40
+200067429,Communauté de communes Haut Nivernais-Val d'Yonne,CC,30
+200067437,Communauté d'agglomération Provence-Alpes-Agglomération,CA,46
+200067445,Communauté de communes Buëch-Dévoluy,CC,20
+200067452,Communauté de communes du Guillestrois et du Queyras,CC,15
+200067460,Communauté de communes Loudéac Communauté - Bretagne Centre,CC,38
+200067478,Communauté de communes Comtal Lot et Truyère,CC,21
+200067486,Communauté de communes Bouzonvillois-Trois Frontières,CC,40
+200067502,Communauté d'agglomération Saint-Avold Synergie,CA,41
+200067544,Creuse Confluence,CC,41
+200067551,Communauté d'agglomération Thonon Agglomération,CA,25
+200067593,Communauté de communes Marche et Combraille en Aquitaine,CC,50
+200067627,Communauté de communes Billom Communauté,CC,25
+200067635,Communauté d'agglomération Clisson Sèvre et Maine Agglo,CA,16
+200067643,Communauté de communes Meurthe Mortagne Moselle,CC,37
+200067650,Communauté de communes Houve-Pays Boulageois,CC,37
+200067668,"Communauté de communes de la Cléry, du Betz et de l'Ouanne",CC,23
+200067676,Communauté de communes Canaux et Forêts en Gâtinais,CC,38
+200067684,"Communauté d'agglomération Épernay, Coteaux et Plaine de Champagne",CA,47
+200067692,Communauté de communes Tannay-Brinon-Corbigny,CC,58
+200067700,Communauté de communes Sud Nivernais,CC,20
+200067742,Communauté de communes Serre-Ponçon,CC,17
+200067759,Communauté de communes Vallées et Plateau d'Ardenne,CC,31
+200067767,Communauté de communes du Royans-Vercors,CC,18
+200067783,Communauté de communes de Hanau-La Petite Pierre,CC,38
+200067791,Communauté d'agglomération L'agglo Foix-Varilhes,CA,42
+200067817,Communauté de communes Saône-Beaujolais,CC,35
+200067825,Communauté d'agglomération Gap-Tallard-Durance,CA,17
+200067841,Communauté de communes de l'Alsace Bossue,CC,45
+200067866,Communauté de communes Sèvre et Loire,CC,11
+200067874,Communauté d'agglomération de Haguenau,CA,36
+200067882,Communauté de communes Bazois Loire Morvan,CC,46
+200067890,Communauté de communes Morvan Sommets et Grands Lacs,CC,34
+200067908,Communauté de communes Amognes Cœur du Nivernais,CC,28
+200067916,Communauté de communes Cœur de Loire,CC,30
+200067924,Communauté de communes du Canton d'Erstein,CC,28
+200067932,Communauté d'agglomération Golfe du Morbihan - Vannes Agglomération,CA,34
+200067940,Communauté de communes Couserans-Pyrénées,CC,94
+200067957,Communauté de communes Haut Chemin-Pays de Pange,CC,28
+200067965,Communauté d'agglomération de la Région de Compiègne et de la Basse Automne,CA,22
+200067973,Communauté de communes Thelloise,CC,41
+200067981,Communauté d'agglomération Guingamp-Paimpol Agglomération de l'Armor à l'Argoat,CA,57
+200067999,Communauté d'agglomération du Beauvaisis,CA,53
+200068005,Communauté de communes de l'Oise Picarde,CC,52
+200068047,Communauté d'agglomération Creil Sud Oise,CA,11
+200068070,Communauté de communes Loue-Lison,CC,71
+200068088,Communauté de communes Les Bertranges,CC,32
+200068096,Communauté de communes Champsaur-Valgaudemar,CC,25
+200068104,Communauté d'agglomération de la Provence Verte,CA,28
+200068112,Communauté de communes du Pays de Saverne,CC,35
+200068120,Communauté d'agglomération Quimper Bretagne Occidentale,CA,14
+200068146,Communauté de communes Sarrebourg Moselle Sud,CC,76
+200068229,Communauté de communes des Baronnies en Drôme Provençale,CC,67
+200068278,Communauté de communes Berry Loire Puisaye,CC,20
+200068294,Communauté de communes des Deux Vallées Vertes,CC,54
+200068369,Communauté de communes de Mirecourt Dompaire,CC,76
+200068377,Communauté de communes de la Porte des Vosges Méridionales,CC,10
+200068435,Communauté de communes Cœur du Perche,CC,12
+200068443,Communauté de communes Andaine - Passais,CC,12
+200068450,Communauté de communes Terres d'Argentan Interco,CC,49
+200068468,Communauté de communes des Pays de L'Aigle,CC,32
+200068484,Communauté de communes des Causses à l'Aubrac,CC,17
+200068500,Communauté d'agglomération de Cambrai,CA,55
+200068534,Communauté de communes Terroir de Caux,CC,79
+200068542,Communauté de communes Les Balcons du Dauphiné,CC,47
+200068559,Communauté de communes de l'Ouest Vosgien,CC,69
+200068567,Communauté de communes Les Vals du Dauphiné,CC,36
+200068625,Communauté de communes Alpes-Provence-Verdon - Sources de Lumière,CC,41
+200068641,Communauté d'agglomération Le Muretain Agglo,CA,25
+200068658,Communauté d'agglomération de Chaumont,CA,63
+200068666,"Communauté d'agglomération Grand Saint-Dizier, Der et Vallées",CA,60
+200068674,Communauté d'agglomération Grand Lac,CA,28
+200068682,Communauté de communes Terre d'Eau,CC,45
+200068757,Communauté d'agglomération d'Épinal,CA,78
+200068765,Communauté de communes du Sisteronais-Buëch,CC,60
+200068773,Communauté de communes des Vosges côté Sud Ouest,CC,60
+200068781,Communauté d'agglomération Valence Romans Agglo,CA,54
+200068799,Communauté de communes Intercom de la Vire au Noireau,CC,17
+200068807,Communauté de communes du Bassin Auterivain Haut-Garonnais,CC,19
+200068815,Communauté de communes Cœur de Garonne,CC,48
+200068831,Communauté de communes Pays Ségali Communauté,CC,23
+200068856,Communauté de communes des Hauts du Perche,CC,10
+200068864,Communauté de communes de la Mossig et du Vignoble,CC,24
+200068872,Communauté de communes Éguzon - Argenton - Vallée de la Creuse,CC,21
+200068880,Communauté de communes Champagne Boischauts,CC,30
+200068914,Communauté de communes La Rochefoucauld porte du Périgord,CC,27
+200068922,Communauté de communes du Confluent et des Coteaux de Prayssas,CC,29
+200068930,Communauté de communes Fumel Vallée du Lot,CC,27
+200068948,Communauté de communes Albret Communauté,CC,33
+200068955,Communauté de communes Anjou Loir et Sarthe,CC,17
+200068963,Communauté de communes Maine Cœur de Sarthe,CC,13
+200068989,Communauté d'agglomération Dinan Agglomération,CA,64
+200068997,Communauté d'agglomération Arlysère,CA,39
+200069003,Communauté de communes du Barséquanais en Champagne,CC,53
+200069029,Communauté d'agglomération des Deux Baies en Montreuillois,CA,46
+200069037,Communauté d'agglomération du Pays de Saint-Omer,CA,53
+200069052,Communauté d'agglomération Grand Belfort,CA,52
+200069060,Communauté de communes des Vosges du Sud,CC,22
+200069086,Communauté de communes Leff Armor Communauté,CC,27
+200069094,Communauté de communes Isle et Crempse en Périgord,CC,25
+200069102,Communauté de communes Randon - Margeride,CC,15
+200069110,Communauté d'agglomération du Grand Chambéry,CA,38
+200069128,Communauté de communes Mont Lozère,CC,21
+200069136,Communauté de communes des Cévennes au Mont Lozère,CC,19
+200069144,Communauté de communes des Hautes Terres de l'Aubrac,CC,17
+200069151,Communauté de communes Gorges Causses Cévennes,CC,17
+200069169,Communauté de communes Dômes Sancy Artense,CC,27
+200069177,Communauté de communes Mond'Arverne Communauté,CC,27
+200069185,Communauté de communes des Terres d'Apcher-Margeride-Aubrac,CC,20
+200069193,Communauté de communes de la Dombes,CC,36
+200069227,Communauté de communes Pays Fort Sancerrois Val de Loire,CC,36
+200069235,Communauté de communes du Haut Pays du Montreuillois,CC,49
+200069250,Communauté d'agglomération Troyes Champagne Métropole,CA,81
+200069268,Aubrac Lot Causses Tarn,CC,15
+200069300,Communauté d'agglomération Tarbes-Lourdes-Pyrénées,CA,87
+200069383,Communauté de communes Ouest Aveyron Communauté,CC,29
+200069391,Communauté d'agglomération Lamballe Terre et Mer,CA,38
+200069409,Communauté d'agglomération Saint-Brieuc Armor Agglomération,CA,32
+200069417,Communauté de communes Pays d'Orthe et Arrigans,CC,24
+200069425,Communauté d'agglomération Mont-Saint-Michel-Normandie,CA,95
+200069433,Communauté de communes de Vezouze en Piémont,CC,51
+200069441,Communauté de communes du Pays de Bitche,CC,46
+200069458,Communauté de communes des Vallées d'Auge et du Merlerault,CC,42
+200069482,Communauté de communes des Campagnes de l'Artois,CC,96
+200069516,Communauté de communes Seulles Terre et Mer,CC,27
+200069524,Communauté de communes Pré-Bocage Intercom,CC,27
+200069532,Communauté d'agglomération Lisieux Normandie,CA,53
+200069540,Communauté de communes Norge et Tille,CC,14
+200069565,Communauté de communes des Lacs et Montagnes du Haut-Doubs,CC,32
+200069581,Communauté de communes Convergence Garonne,CC,27
+200069599,Communauté de communes rurales de l'Entre-Deux-Mers,CC,49
+200069615,Communauté de communes Bresse Haute Seille,CC,54
+200069623,Communauté de communes Champagnole Nozeroy Jura,CC,66
+200069631,Communauté de communes Terres de Chalosse,CC,34
+200069649,Communauté de communes Chalosse Tursan,CC,50
+200069656,Communauté de communes Cœur Haute Lande,CC,26
+200069664,Communauté de communes Meuse Rognon,CC,59
+200069672,Communauté de communes du Ternois,CC,103
+200069698,Communauté de communes Mâconnais - Tournugeois,CC,24
+200069722,Communauté de communes interrégionale Aumale - Blangy-sur-Bresle,CC,44
+200069730,Communauté de communes des Quatre Rivières en Bray,CC,52
+200069748,Communauté de communes Val de Gâtine,CC,31
+200069755,Communauté de communes Mellois en Poitou,CC,58
+200069763,Communauté de communes du Haut-Poitou,CC,27
+200069821,Communauté d'agglomération Fécamp Caux Littoral Agglomération,CA,33
+200069839,Communauté de communes de la Côte d'Albâtre,CC,63
+200069847,Communauté de communes Plateau de Caux,CC,40
+200069854,Communauté urbaine du Grand Poitiers,CU,40
+200069912,Communauté de communes des Forêts du Perche,CC,15
+200069953,Communauté de communes des Portes Euréliennes d'Île-de-France,CC,39
+200069961,Communauté de communes du Grand Châteaudun,CC,23
+200069995,Communauté de communes Médoc Cœur de Presqu'île,CC,18
+200070035,Communauté de communes du Civraisien en Poitou,CC,35
+200070043,Communauté de communes Vienne et Gartempe,CC,55
+200070068,Communauté de communes Communauté Bray-Eawy,CC,46
+200070092,Communauté d'agglomération du Libournais,CA,45
+200070100,Communauté de communes du Val de Sully,CC,19
+200070118,Communauté de communes Val de Saône Centre,CC,15
+200070126,Communauté de communes Seine et Aube,CC,25
+200070142,Communauté de communes Lyons Andelle,CC,30
+200070159,Communauté de communes Cœur de Beauce,CC,46
+200070167,Communauté de communes Terres de Perche,CC,22
+200070183,Communauté de communes des Terres du Val de Loire,CC,25
+200070233,Communauté d'agglomération Terres de Montaigu,CA,9
+200070282,Communauté de communes Lavalette Tude Dronne,CC,49
+200070290,Communauté de communes Coeur du Pays Haut,CC,25
+200070308,Communauté d'agglomération Mâconnais Beaujolais Agglomération,CA,39
+200070316,"Communauté de communes Entre Arroux, Loire et Somme",CC,30
+200070324,Communauté de communes du Territoire de Lunéville à Baccarat,CC,43
+200070332,Communauté de communes des Savoir-Faire,CC,63
+200070340,Communauté de communes Haute Maurienne Vanoise,CC,10
+200070365,Communauté de communes Corbières Salanque Méditerranée,CC,21
+200070373,Communauté de communes Loir-Lucé-Bercé,CC,24
+200070407,Communauté d'agglomération Agglo Pays d'Issoire,CA,87
+200070431,Communauté de communes Saint-Marcellin Vercors Isère Communauté,CC,47
+200070449,Communauté de communes Inter-Caux-Vexin,CC,64
+200070464,Communauté de communes Cœur de Maurienne Arvan,CC,14
+200070506,Communauté de communes Pays de Nexon Monts de Chalus,CC,15
+200070514,Communauté d'agglomération du Grand Cognac,CA,54
+200070530,Communauté de communes du Grand Autunois Morvan,CC,55
+200070548,Communauté de communes Brionnais Sud Bourgogne,CC,29
+200070555,Communauté de communes de la Veyle,CC,18
+200070563,Communauté de communes Terres Touloises,CC,41
+200070571,Communauté de communes Cœur de Berry,CC,11
+200070589,Communauté de communes de Seille et Grand Couronné,CC,42
+200070647,Communauté d'agglomération Bergeracoise,CA,38
+200070662,Communauté de communes Bretagne porte de Loire Communauté,CC,20
+200070670,Communauté de communes du Pays de Dol et de la Baie du Mont Saint-Michel,CC,19
+200070688,Communauté de communes Couesnon Marches de Bretagne,CC,15
+200070712,Communauté de communes Thiers Dore et Montagne,CC,30
+200070720,Communauté de communes Médoc Atlantique,CC,14
+200070738,Communauté de communes Mad et Moselle,CC,47
+200070746,Communauté d'agglomération Sarreguemines Confluences,CA,38
+200070753,Communauté d'agglomération Riom Limagne et Volcans,CA,31
+200070761,Communauté de communes Ambert Livradois Forez,CC,58
+200070779,Communauté de communes Brie des Rivières et Châteaux,CC,31
+200070787,Communauté de communes du Plateau de Lannemezan,CC,57
+200070795,Communauté de communes du Pays de Trie et du Magnoac,CC,50
+200070803,Communauté de communes des Coteaux du Val d'Arros,CC,52
+200070811,Communauté de communes Pyrénées Vallées des Gaves,CC,46
+200070829,Communauté de communes Neste Barousse,CC,43
+200070845,Communauté de communes Orne Lorraine Confluences,CC,41
+200070852,Communauté de communes Usses et Rhône,CC,26
+200070894,Communauté de communes de Gevrey-Chambertin et de Nuits-Saint-Georges,CC,55
+200070902,Communauté de communes Auxonne Pontailler Val de Saône,CC,35
+200070910,Communauté de communes Tille et Venelle,CC,18
+200070928,Communauté de communes Terre de Picardie,CC,43
+200070936,Communauté de communes Ponthieu-Marquenterre,CC,70
+200070944,Communauté de communes du Vimeu,CC,25
+200070951,Communauté de communes du Territoire Nord Picardie,CC,65
+200070969,Communauté de communes Avre Luce Noye,CC,47
+200070977,Communauté de communes du Grand Roye,CC,62
+200070985,Communauté de communes de l'Est de la Somme,CC,41
+200070993,Communauté d'agglomération de la Baie de Somme,CA,43
+200071017,Communauté de communes des Terres d'Auxois,CC,76
+200071025,Communauté de communes Haute-Provence-Pays de Banon,CC,21
+200071033,Communauté de communes Jabron-Lure-Vançon-Durance,CC,14
+200071041,Communauté de communes du Chaourçois et du Val d'Armance,CC,42
+200071058,Communauté de communes Les Avant-Monts,CC,25
+200071066,Communauté d'agglomération de Saint-Dié-des-Vosges,CA,77
+200071074,Communauté de communes Les Portes de l'Ile de France,CC,18
+200071082,Communauté d'agglomération Montluçon Communauté,CA,21
+200071116,Communauté d'agglomération ECLA  (Espace Communautaire Lons Agglomération),CA,32
+200071140,Communauté d'agglomération Moulins Communauté,CA,44
+200071165,Communauté d'agglomération Les Sables d'Olonne Agglomération,CA,5
+200071173,Communauté de communes du Pays Arnay Liernais,CC,34
+200071181,Communauté de communes Somme Sud-Ouest,CC,119
+200071199,Communauté de communes Plaine Limagne,CC,25
+200071207,Communauté de communes de Pouilly-en-Auxois/Bligny-sur-Ouche,CC,47
+200071215,Communauté de communes Chavanon Combrailles et Volcans,CC,36
+200071223,Communauté de communes Nièvre et Somme,CC,36
+200071298,Communauté de communes des Terres du Lauragais,CC,58
+200071314,Communauté de communes des Hauts-Tolosans,CC,29
+200071363,Communauté d'agglomération Vichy Communauté,CA,39
+200071371,Communauté de communes Bresse et Saône,CC,20
+200071389,Communauté de communes Saint-Pourçain Sioule Limagne,CC,60
+200071405,Communauté de communes Ardèche Rhône Coiron,CC,15
+200071413,Communauté d'agglomération Privas Centre Ardèche,CA,42
+200071454,Communauté d'agglomération Evreux Portes de Normandie,CA,74
+200071470,Communauté de communes Entr'Allier Besbre et Loire,CC,44
+200071496,Communauté de communes du Bocage Bourbonnais,CC,25
+200071504,Communauté de communes des Collines du Perche Normand,CC,16
+200071512,Communauté de communes Commentry Montmarault Néris Communauté,CC,33
+200071520,Communauté de communes Domfront Tinchebray Interco,CC,15
+200071538,Communauté de communes Terres de Bresse,CC,25
+200071546,Communauté de communes Sud Retz Atlantique,CC,8
+200071553,Communauté de communes Loire Layon Aubance,CC,19
+200071579,Communauté de communes Bresse Louhannaise Intercom',CC,30
+200071587,Communauté de communes Loches Sud Touraine,CC,67
+200071595,"Communauté de communes Arbois, Poligny, Salins, Cœur du Jura",CC,65
+200071629,Communauté de communes Challans-Gois Communauté,CC,11
+200071645,Communauté de communes Saint Cyr Mère Boitier entre Charolais et Mâconnais,CC,16
+200071652,Communauté de communes du Pays Fertois et du Bocage Carrougien,CC,19
+200071678,Communauté d'agglomération Cholet Agglomération,CA,26
+200071751,Communauté d'agglomération du Bassin de Bourg-en-Bresse,CA,74
+200071769,Communauté de communes Picardie des Châteaux,CC,36
+200071777,"Communauté de communes d'Arcis, Mailly, Ramerupt",CC,39
+200071785,Communauté d'agglomération Chauny-Tergnier-La Fère,CA,48
+200071819,Communauté de communes du Périgord Nontronnais,CC,28
+200071827,Communauté d'agglomération du Grand Angoulême,CA,38
+200071843,Communauté de communes du Vexin Normand,CC,39
+200071850,Communauté de communes du Pithiverais-Gâtinais,CC,31
+200071868,Communauté de communes des Vallées du Haut-Anjou,CC,15
+200071876,Communauté d'agglomération Saumur Val de Loire,CA,45
+200071884,Communauté de communes Le Grand Charolais,CC,44
+200071892,Communauté d'agglomération du Saint-Quentinois,CA,39
+200071900,Communauté de communes Vendée Grand Littoral,CC,20
+200071918,Communauté de communes du Pays de Saint-Fulgent - Les Essarts,CC,12
+200071926,Communauté de communes du Limouxin,CC,76
+200071934,Communauté de communes Pays de Fontenay-Vendée,CC,25
+200071942,Communauté de communes Haut Limousin en Marche,CC,40
+200071967,Communauté de communes Pays d'Évian Vallée d'Abondance,CC,22
+200071983,Communauté de communes Thiérache Sambre et Oise,CC,36
+200071991,Communauté de communes Retz-en-Valois,CC,54
+200072007,Communauté de communes de la Montagne d'Ardèche,CC,28
+200072015,Communauté d'agglomération Annonay Rhône Agglo,CA,29
+200072023,Communauté de communes Cœur de Charente,CC,48
+200072031,Communauté d'agglomération de la Région de Château-Thierry,CA,87
+200072049,Communauté de communes de Charente Limousine,CC,58
+200072056,Communauté de communes Porte du Jura,CC,21
+200072064,Communauté de communes Val-de-Cher-Controis,CC,33
+200072072,Communauté d'agglomération Territoires Vendômois,CA,65
+200072080,Communauté de communes du Pays de Saint-Éloy,CC,34
+200072098,Communauté de communes Combrailles Sioule et Morge,CC,29
+200072106,Communauté de communes Adour Madiran,CC,72
+200072130,Communauté d'agglomération du Pays de Meaux,CA,26
+200072304,Communauté de communes Vallée de l'Ubaye - Serre-Ponçon,CC,13
+200072312,Communauté d'agglomération Seine Normandie Agglomération,CA,61
+200072320,Communauté de communes Val de Gers,CC,42
+200072346,Communauté d'agglomération du Pays de Fontainebleau,CA,26
+200072452,Communauté d'agglomération Fougères Agglomération,CA,28
+200072460,"Communauté d'agglomération de Béthune-Bruay, Artois-Lys Romane",CA,100
+200072478,Communauté de communes Pays d'Opale,CC,23
+200072544,Communauté de communes des Deux Morin,CC,31
+200072635,Communauté de communes Pyrénées Haut Garonnaises,CC,76
+200072643,Communauté de communes Cœur et Coteaux du Comminges,CC,104
+200072650,Communauté de communes Touraine Vallée de l'Indre,CC,22
+200072668,Communauté de communes Touraine Val de Vienne,CC,40
+200072676,Communauté de communes Maine Saosnois,CC,51
+200072684,Communauté de communes Le Gesnois Bilurien,CC,21
+200072692,Communauté de communes des Vallées de la Braye et de l'Anille,CC,19
+200072700,Communauté de communes Haute Sarthe Alpes Mancelles,CC,38
+200072718,Communauté de communes de la Champagne Conlinoise et du Pays de Sillé,CC,24
+200072726,Communauté de communes Châteaubriant-Derval,CC,26
+200072734,Communauté de communes Estuaire et Sillon,CC,11
+200072825,Communauté de communes Mirebellois et Fontenois,CC,32
+200072874,Communauté de communes Val Briard,CC,21
+200072882,Communauté de communes de Vie et Boulogne,CC,15
+200072981,Communauté de communes Touraine Ouest Val de Loire,CC,28
+200072999,Communauté de communes du Grand Langres,CC,54
+200073013,Communauté de communes Carnelle Pays-de-France,CC,19
+200073096,Communauté d'agglomération Arche Agglo,CA,41
+200073104,Communauté de communes de l'Île-Rousse - Balagne,CC,22
+200073112,Communauté de communes Sud Sarthe,CC,19
+200073120,Communauté de communes Nebbiu - Conca d'Oro,CC,15
+200073138,Communauté de communes Pasquale Paoli,CC,42
+200073146,Communauté de communes Cagire Garonne Salat,CC,55
+200073161,Communauté de communes Touraine-Est Vallées,CC,10
+200073237,Communauté de communes de Gâtine-Racan,CC,19
+200073245,Communauté de communes du Bassin d'Aubenas,CC,28
+200073252,Communauté de communes de la Castagniccia-Casinca,CC,42
+200073260,Communauté de communes Sud Vendée Littoral,CC,42
+200073344,Communauté d'agglomération Rambouillet Territoires,CA,36
+200073393,Communauté de communes des Rives du Haut Allier,CC,60
+200073401,Communauté de communes Mézenc-Loire-Meygal,CC,22
+200073419,Communauté d'agglomération du Puy-en-Velay,CA,72
+200073427,Communauté de communes Marches du Velay-Rochebaron,CC,14
+200077014,Communauté d'agglomération Vienne Condrieu,CA,30
+200083392,Communauté d'agglomération Laval Agglomération,CA,34
+200084952,Communauté urbaine Le Havre Seine Métropole,CU,54
+200085728,Communauté de communes Brioude Sud Auvergne,CC,27
+200085751,Communauté de communes Entre Bièvre et Rhône,CC,37
+200089456,Communauté d'agglomération Seine-Eure,CA,60
+200090504,Communauté d'agglomération Coulommiers Pays de Brie,CA,54
+200090561,Communauté de communes Vierzon-Sologne-Berry,CC,16
+200090579,Communauté de communes Terre d'Émeraude Communauté,CC,92
+200090751,Communauté d'agglomération Grand Calais Terres et Mers,CA,14
+200093201,Métropole Européenne de Lille,METRO,95
+200096634,Communauté de communes des Hautes Vosges,CC,14
+200096642,Communauté de communes Gérardmer Hautes Vosges,CC,8
+200096675,Communauté de communes Baud Communauté,CC,6
+200096683,Communauté de communes Centre Morbihan Communauté,CC,12
+200096956,Communauté d'agglomération Agglomération d'Agen,CA,44
+240100610,Communauté de communes de la Côtière à Montluel,CC,9
+240100750,Communauté d'agglomération du Pays de Gex,CA,27
+240100800,Communauté de communes de Miribel et du Plateau,CC,6
+240100883,Communauté de communes de la Plaine de l'Ain,CC,53
+240100891,Communauté de communes Terre Valserhône,CC,12
+240200444,Communauté de communes de la Thiérache du Centre,CC,68
+240200469,Communauté de communes du Pays de la Serre,CC,42
+240200477,Communauté d'agglomération GrandSoissons Agglomération,CA,27
+240200493,Communauté de communes du Pays du Vermandois,CC,54
+240200501,Communauté de communes du Val de l'Aisne,CC,56
+240200519,Communauté de communes du Canton d'Oulchy-le-Château,CC,26
+240200576,Communauté de communes de la Champagne Picarde,CC,46
+240200584,Communauté de communes du Canton de Charly-sur-Marne,CC,21
+240200592,Communauté de communes du Chemin des Dames,CC,30
+240200600,Communauté de communes des Trois Rivières,CC,26
+240200634,Communauté de communes des Portes de la Thiérache,CC,30
+240300491,Communauté de communes du Pays de Lapalisse,CC,14
+240300558,Communauté de communes du Pays de Tronçais,CC,15
+240300566,Communauté de communes du Val de Cher,CC,7
+240300657,Communauté de communes du Pays d'Huriel,CC,14
+240400440,Communauté de communes Pays Forcalquier et Montagne de Lure,CC,13
+240500439,Communauté de communes du Briançonnais,CC,13
+240500462,Communauté de communes du Pays des Ecrins,CC,8
+240600551,Communauté d'agglomération de la Riviera Française,CA,15
+240600585,Communauté d'agglomération de Sophia Antipolis,CA,24
+240600593,Communauté de communes du Pays des Paillons,CC,11
+240700302,Communauté de communes du Pays Beaume-Drobie,CC,19
+240700617,Communauté de communes Val de Ligne,CC,11
+240700716,Communauté de communes du Val d'Ay,CC,8
+240700815,Communauté de communes Berg et Coiron,CC,13
+240700864,Communauté de communes du Rhône aux Gorges de l'Ardèche,CC,9
+240800821,"Communauté de communes Ardenne, Rives de Meuse",CC,19
+240800847,Communauté de communes des Portes du Luxembourg,CC,49
+240800862,Communauté de communes des Crêtes Préardennaises,CC,94
+240800920,Communauté de communes de l'Argonne Ardennaise,CC,95
+240900431,Communauté de communes du Pays de Tarascon,CC,20
+240900464,Communauté de communes du Pays d'Olmes,CC,24
+241000223,"Communauté de communes Forêts, Lacs, Terres en Champagne",CC,15
+241000405,Communauté de communes de la Région de Bar-sur-Aube,CC,27
+241000447,Communauté de communes du Pays d'Othe,CC,14
+241000488,Communauté de communes de l'Orvin et de l'Ardusson,CC,25
+241100593,Communauté d'agglomération Le Grand Narbonne,CA,37
+241200187,Communauté d'agglomération Rodez Agglomération,CA,8
+241200542,Communauté de communes du Réquistanais,CC,11
+241200567,Communauté de communes de Millau Grands Causses,CC,15
+241200625,Communauté de communes du Pays Rignacois,CC,8
+241200641,Communauté de communes Conques-Marcillac,CC,12
+241200674,Communauté de communes du Plateau de Montbazens,CC,13
+241200807,Communauté de communes Aveyron Bas Ségala Viaur,CC,7
+241200906,Communauté de communes Larzac et Vallées,CC,16
+241200914,Communauté de communes de la Muse et des Raspes du Tarn,CC,13
+241300375,Communauté de communes Vallée des Baux-Alpilles (CC VBA),CC,10
+241300417,Communauté d'agglomération d'Arles-Crau-Camargue-Montagnette,CA,6
+241400415,Communauté de communes Cœur Côte Fleurie,CC,12
+241400514,Communauté de communes du Pays de Falaise,CC,58
+241400555,Communauté de communes de Bayeux Intercom,CC,36
+241400860,Communauté de communes Cœur de Nacre,CC,13
+241400878,Communauté de communes Terre d'Auge,CC,44
+241500230,Communauté d'agglomération Aurillac Agglomération,CA,25
+241500255,Communauté de communes du Pays Gentiane,CC,17
+241500271,Communauté de communes du Pays de Mauriac,CC,11
+241501055,Communauté de communes Sumène - Artense,CC,16
+241501089,Communauté de communes Cère et Goul en Carladès,CC,11
+241501139,Communauté de communes du Pays de Salers,CC,27
+241600303,Communauté de communes du Rouillacais,CC,13
+241700434,Communauté d'agglomération de La Rochelle,CA,28
+241700459,Communauté de communes de l'Île de Ré,CC,10
+241700517,Communauté de communes Cœur de Saintonge,CC,18
+241700624,Communauté de communes de l'Île d'Oléron,CC,8
+241700632,Communauté de communes de Gémozac et de la Saintonge Viticole,CC,16
+241700640,Communauté d'agglomération Royan Atlantique,CA,33
+241700699,Communauté de communes du Bassin de Marennes,CC,6
+241800374,Communauté de communes La Septaine,CC,15
+241800424,Communauté de communes du Dunois,CC,16
+241800432,Communauté de communes Les Trois Provinces,CC,11
+241800457,Communauté de communes FerCher,CC,9
+241800507,Communauté d'agglomération Bourges Plus,CA,17
+241900133,Communauté de communes de Ventadour - Egletons - Monédières,CC,19
+241927201,Communauté d'agglomération Tulle Agglo,CA,43
+241927243,Communauté de communes du Pays d'Uzerche,CC,12
+242000354,Communauté d'agglomération de Bastia,CA,5
+242000495,Communauté de communes de l'Alta Rocca,CC,18
+242000503,Communauté de communes Celavu-Prunelli,CC,10
+242010056,Communauté d'agglomération du Pays Ajaccien,CA,10
+242010130,Communauté de communes du Sartenais Valinco Taravo,CC,18
+242020071,Communauté de communes du Centre Corse,CC,10
+242020105,Communauté de communes de Calvi Balagne,CC,14
+242100154,Communauté de communes des Vallées de la Tille et de l'Ignon,CC,23
+242100410,Dijon Métropole,METRO,23
+242101434,Communauté de communes du Pays Châtillonnais,CC,107
+242101442,Communauté de communes Saulieu-Morvan,CC,12
+242101459,Communauté de communes du Pays d'Alésia et de la Seine,CC,24
+242101491,Communauté de communes du Montbardois,CC,33
+242101509,Communauté de communes Rives de Saône,CC,38
+242200715,Communauté de communes du Kreiz-Breizh (CCKB),CC,23
+242300135,Communauté de communes du Pays Sostranien,CC,10
+242320000,Communauté de communes de Bénévent Grand Bourg,CC,16
+242320109,Communauté de communes du Pays Dunois,CC,17
+242400752,Communauté de communes Périgord-Limousin,CC,22
+242400935,Communauté de communes du Pays de Saint-Aulaye,CC,6
+242401024,Communauté de communes Isle-Loue-Auvézère en Périgord,CC,28
+242500320,Communauté de communes entre Doubs et Loue,CC,12
+242500338,Communauté de communes du Grand Pontarlier,CC,10
+242500361,Communauté urbaine Grand Besançon Métropole,CU,67
+242504116,Communauté de communes du Val de Morteau,CC,8
+242504181,Communauté de communes des Portes du Haut-Doubs,CC,47
+242504355,Communauté de communes du Plateau de Russey,CC,17
+242504371,Communauté de communes du Pays de Sancey-Belleherbe,CC,27
+242504447,Communauté de communes du Doubs Baumois,CC,58
+242504488,Communauté de communes Altitude 800,CC,9
+242504496,Communauté de communes du Plateau de Frasne et du Val du Drugeon (CFD),CC,10
+242600252,Communauté de communes du Val de Drôme en Biovallée,CC,29
+242600492,Communauté de communes Dieulefit-Bourdeaux,CC,21
+242600534,Communauté de communes du Diois,CC,50
+242700276,Communauté de communes du Pays de Conches,CC,25
+242700607,Communauté de communes du Pays du Neubourg,CC,41
+242852465,Communauté de communes du Bonnevalais,CC,19
+242900074,Communauté de communes du Pays d'Iroise,CC,19
+242900314,Brest Métropole,METRO,8
+242900553,Communauté de communes du Pays des Abers,CC,13
+242900561,Communauté de communes de Haute Cornouaille,CC,11
+242900629,Communauté de communes Cap Sizun - Pointe du Raz,CC,10
+242900645,Communauté de communes Douarnenez Communauté,CC,5
+242900660,Communauté de communes du Pays Fouesnantais,CC,7
+242900694,Communauté d'agglomération Quimperlé Communauté,CA,16
+242900702,Communauté de communes du Pays Bigouden Sud,CC,12
+242900710,Communauté de communes du Haut Pays Bigouden,CC,10
+242900744,Communauté de communes Poher communauté,CC,11
+242900751,Communauté de communes du Pays de Landivisiau,CC,19
+242900769,Communauté d'agglomération Concarneau Cornouaille Agglomération,CA,9
+242900793,Communauté de communes Communauté Lesneven Côte des Légendes,CC,14
+242900801,Communauté d'agglomération du Pays de Landerneau-Daoulas,CA,22
+242900835,Communauté d'agglomération Morlaix Communauté,CA,26
+243000270,Communauté de communes du Pays Viganais,CC,21
+243000296,Communauté de communes du Pays de Sommières,CC,18
+243000569,"Communauté de communes Rhony, Vistre, Vidourle",CC,10
+243000585,Communauté de communes Beaucaire Terre d'Argence,CC,5
+243000593,Communauté de communes de Petite Camargue,CC,5
+243000643,Communauté d'agglomération de Nîmes Métropole,CA,39
+243000650,Communauté de communes Terre de Camargue,CC,3
+243000684,Communauté de communes du Pont du Gard,CC,15
+243100518,Toulouse Métropole,METRO,37
+243100567,Communauté de communes Aux sources du Canal du Midi,CC,28
+243100633,Communauté d'agglomération du Sicoval,CA,36
+243100732,Communauté de communes des Coteaux du Girou,CC,18
+243100773,Communauté de communes Val'Aïgo,CC,9
+243100781,Communauté d'agglomération Le Grand Ouest Toulousain,CA,9
+243100815,Communauté de communes des Coteaux Bellevue,CC,7
+243200391,Communauté de communes de la Lomagne Gersoise,CC,43
+243200409,Communauté de communes du Bas Armagnac,CC,26
+243200417,Communauté de communes de la Tenarèze,CC,26
+243200425,Communauté de communes Cœur d'Astarac en Gascogne,CC,19
+243200458,Communauté de communes du Grand Armagnac,CC,25
+243200508,Communauté de communes Bastides et Vallons du Gers,CC,30
+243200599,Communauté de communes du Saves,CC,32
+243200607,Communauté de communes Artagnan de Fezensac,CC,25
+243300316,Bordeaux Métropole,METRO,28
+243300563,Communauté d'agglomération Bassin d'Arcachon Sud (COBAS),CA,4
+243300811,Communauté de communes de l'Estuaire,CC,14
+243301165,Communauté de communes Jalle-Eau-Bourde,CC,3
+243301181,Communauté de communes Latitude Nord Gironde,CC,12
+243301215,Communauté de communes du Créonnais,CC,15
+243301223,Communauté de communes du Grand Cubzaguais,CC,16
+243301249,Communauté de communes Les Rives de la Laurence,CC,6
+243301264,Communauté de communes de Montesquieu,CC,13
+243301355,Communauté de communes Les Coteaux Bordelais,CC,8
+243301371,Communauté de communes du Pays Foyen,CC,20
+243301389,Communauté de communes Médullienne,CC,10
+243301397,Communauté de communes du Fronsadais,CC,18
+243301405,Communauté de communes du Val de l'Eyre,CC,5
+243301439,Communauté de communes des Portes de l'Entre-Deux-Mers,CC,11
+243301447,Communauté de communes Médoc Estuaire,CC,10
+243301454,Communauté de communes Castillon/Pujols,CC,31
+243301504,Communauté d'agglomération du Bassin d'Arcachon Nord,CA,8
+243400017,Montpellier Méditerranée Métropole,METRO,31
+243400355,Communauté de communes du Clermontais,CC,21
+243400470,Communauté d'agglomération du Pays de l'Or,CA,8
+243400488,Communauté de communes La Domitienne,CC,8
+243400520,Communauté d'agglomération Lunel Agglo,CA,14
+243400694,Communauté de communes Vallée de l'Hérault,CC,28
+243400736,Communauté de communes des Cévennes Gangeoises et Suménoises,CC,13
+243400769,Communauté d'agglomération de Béziers-Méditerranée,CA,17
+243400819,Communauté d'agglomération Hérault-Méditerranée,CA,20
+243500139,Rennes Métropole,METRO,43
+243500550,Communauté de communes Montfort Communauté,CC,8
+243500618,Communauté de communes Brocéliande Communauté,CC,8
+243500634,Communauté de communes Roche aux Fées Communauté,CC,16
+243500659,Communauté de communes Pays de Châteaugiron Communauté,CC,5
+243500667,Communauté de communes Val d'Ille-Aubigné,CC,19
+243500725,Communauté de communes Côte d'Émeraude,CC,8
+243500733,Communauté de communes Bretagne Romantique,CC,25
+243500741,Communauté d'agglomération Redon Agglomération,CA,31
+243500774,Communauté de communes Liffré-Cormier Communauté,CC,9
+243500782,Communauté d'agglomération du Pays de Saint Malo Agglomération,CA,18
+243600202,Communauté de communes Chabris - Pays de Bazelle,CC,10
+243600236,Communauté de communes du Pays d'Issoudun,CC,12
+243600293,Communauté de communes Levroux Boischaut Champagne,CC,10
+243600301,Communauté de communes Val de l'Indre - Brenne,CC,12
+243600319,Communauté de communes Brenne - Val de Creuse,CC,28
+243600327,Communauté d'agglomération Châteauroux Métropole,CA,14
+243600343,Communauté de communes Cœur de Brenne,CC,11
+243600350,Communauté de communes de la Châtre et Sainte-Sévère,CC,30
+243700499,Communauté de communes du Castelrenaudais,CC,16
+243700754,Tours Métropole Val de Loire,METRO,22
+243700820,Communauté de communes Autour de Chenonceaux Bléré-Val de Cher,CC,15
+243800604,Communauté d'agglomération Porte de l'Isère (CAPI),CA,22
+243800745,Communauté de communes de l'Oisans,CC,19
+243800935,Communauté de communes Lyon Saint Exupéry en Dauphiné,CC,6
+243800984,Communauté d'agglomération du Pays Voironnais,CA,31
+243801024,Communauté de communes du Massif du Vercors,CC,6
+243801073,Communauté de communes de Bièvre Est,CC,14
+243801255,Communauté de communes Collines Isère Nord Communauté,CC,10
+243900354,Communauté de communes de la Station des Rousses-Haut Jura,CC,4
+243900420,Communauté de communes du Val d'Amour,CC,24
+243900479,Communauté de communes Haut-Jura Arcade Communauté,CC,4
+243900560,Communauté de communes Jura Nord,CC,32
+243900610,Communauté de communes La Grandvallière,CC,8
+243901089,Communauté de communes de la Plaine Jurassienne,CC,21
+244000543,Communauté de communes de Mimizan,CC,6
+244000659,Communauté de communes du Seignanx,CC,8
+244000675,Communauté d'agglomération du Grand Dax,CA,20
+244000691,Communauté de communes du Pays Morcenais,CC,6
+244000766,Communauté de communes du Pays Tarusate,CC,17
+244000774,Communauté de communes du Pays de Villeneuve en Armagnac Landais,CC,12
+244000808,Mont de Marsan Agglomération,CA,18
+244000824,Communauté de communes du Pays Grenadois,CC,11
+244000857,Communauté de communes Côte Landes Nature,CC,10
+244000865,Communauté de communes Maremne Adour Côte Sud,CC,23
+244000873,Communauté de communes des Grands Lacs,CC,7
+244000881,Communauté de communes Coteaux et Vallées des Luys,CC,16
+244100293,Communauté de communes des Collines du Perche,CC,12
+244100780,Communauté de communes de la Sologne des Étangs,CC,12
+244100798,Communauté de communes du Grand Chambord,CC,16
+244100806,Communauté de communes de la Sologne des Rivières,CC,7
+244200614,Communauté de communes des Vals d'Aix et Isable,CC,12
+244200622,Communauté de communes des Monts du Pilat,CC,16
+244200630,Communauté de communes du Pays entre Loire et Rhône,CC,16
+244200770,Saint-Etienne Métropole,METRO,53
+244200820,Communauté de communes du Pays d'Urfé,CC,11
+244200895,Communauté de communes du Pilat Rhodanien,CC,14
+244300307,Communauté de communes Haut Pays du Velay Communauté,CC,8
+244301016,Communauté de communes des Sucs,CC,9
+244301099,Communauté de communes Auzon Communauté,CC,12
+244301107,Communauté de communes du Haut-Lignon,CC,6
+244301123,Communauté de communes des Pays de Cayres et de Pradelles,CC,20
+244301131,Communauté de communes Loire et Semène,CC,7
+244400404,Nantes Métropole,METRO,24
+244400438,Communauté de communes Grand Lieu Communauté,CC,9
+244400453,Communauté de communes Pays de Blain Communauté,CC,4
+244400503,Communauté de communes d'Erdre et Gesvres,CC,12
+244400537,Communauté de communes de Nozay,CC,7
+244400552,Communauté de communes du Pays d'Ancenis,CC,20
+244400586,Communauté de communes du Sud Estuaire,CC,6
+244400610,Communauté d'agglomération de la Presqu'île de Guérande Atlantique (Cap Atlantique),CA,15
+244400644,Communauté d'agglomération de la Région Nazairienne et de l'Estuaire (CARENE),CA,10
+244500203,Communauté d'agglomération Montargoise et Rives du Loing (AME),CA,15
+244500211,Communauté de communes Giennoises,CC,11
+244500419,Communauté de communes des Quatre Vallées,CC,20
+244500427,Communauté de communes des Loges,CC,20
+244500468,Orléans Métropole,METRO,22
+244500484,Communauté de communes de la Forêt,CC,10
+244500542,Communauté de communes de la Plaine du Nord Loiret,CC,15
+244600433,Communauté de communes de la Vallée du Lot et du Vignoble,CC,27
+244600482,Communauté de communes Quercy - Bouriane,CC,20
+244600532,Communauté de communes du Pays de Lalbenque-Limogne,CC,23
+244600573,Communauté de communes du Causse de Labastide-Murat,CC,17
+244700449,Communauté de communes du Pays de Duras,CC,17
+244700464,Communauté de communes du Pays de Lauzun,CC,20
+244701355,Communauté de communes des Coteaux et Landes de Gascogne,CC,27
+244701405,Communauté de communes Lot et Tolzac,CC,15
+244800405,Communauté de communes Cœur de Lozère,CC,7
+244800470,Communauté de communes du Gévaudan,CC,12
+244900015,Communauté urbaine Angers Loire Métropole,CU,29
+244900809,Communauté de communes Anjou Bleu Communauté,CC,11
+244900882,Communauté de communes Baugeois Vallée,CC,7
+245100615,Communauté de communes de la Grande Vallée de la Marne,CC,14
+245100888,Communauté de communes de la Brie Champenoise,CC,20
+245100979,Communauté de communes du Sud Marnais,CC,14
+245200597,Communauté de communes des Trois Forêts,CC,29
+245300223,Communauté de communes du Pays de Meslay-Grez,CC,22
+245300355,Communauté de communes de l'Ernée,CC,15
+245300389,Communauté de communes du Bocage Mayennais,CC,27
+245300447,Communauté de communes du Pays de Château-Gontier,CC,16
+245400171,Communauté de communes Moselle et Madon,CC,19
+245400189,Communauté de communes des Pays du Sel et du Vermois,CC,16
+245400262,Agglomération du Grand Longwy,CA,21
+245400510,Communauté de communes du Pays de Colombey et du Sud Toulois,CC,38
+245400601,Communauté de communes du Bassin de Pompey,CC,13
+245400676,Métropole du Grand Nancy,METRO,20
+245400759,Communauté de communes du Pays du Sanon,CC,28
+245500327,Communauté de communes du Sammiellois,CC,19
+245501176,Communauté de communes du Territoire de Fresnes-en-Woëvre,CC,32
+245501184,Communauté de communes du Pays de Revigny-sur-Ornain,CC,16
+245501242,Communauté de communes du Pays d'Étain,CC,26
+245501259,Communauté de communes du Pays de Montmédy,CC,25
+245600440,Blavet Bellevue Océan Communauté,CC,5
+245600465,Communauté de communes de Belle-Île-en-Mer,CC,4
+245614383,Communauté de communes Questembert Communauté,CC,13
+245614417,Communauté de communes Roi Morvan Communauté,CC,21
+245614433,Communauté de communes Pontivy Communauté,CC,24
+245700133,Communauté de communes du District Urbain de Faulquemont,CC,33
+245700372,Communauté d'agglomération de Forbach Porte de France,CA,21
+245700398,Communauté de communes de Freyming-Merlebach,CC,11
+245700695,Communauté de communes de Cattenom et Environs,CC,22
+245700950,Communauté de communes du Pays de Phalsbourg,CC,26
+245701164,Communauté de communes du Warndt,CC,5
+245701206,Communauté de communes du Saulnois,CC,128
+245701271,Communauté de communes du Pays Orne Moselle,CC,12
+245701354,Communauté de communes de l'Arc Mosellan,CC,26
+245701404,Communauté de communes du Pays Haut Val d'Alzette,CC,8
+245801063,Communauté de communes Loire et Allier,CC,5
+245804406,Communauté d'agglomération de Nevers,CA,14
+245804497,Communauté de communes du Nivernais Bourbonnais,CC,9
+245900428,Communauté urbaine de Dunkerque,CU,17
+245900758,Communauté de communes Flandre Lys,CC,8
+245901038,Communauté de communes du Pays Solesmois,CC,15
+245901152,Communauté d'agglomération Cœur d'Ostrevent,CA,20
+245901160,Communauté d'agglomération Valenciennes Métropole,CA,35
+246000129,Communauté de communes du Liancourtois,CC,10
+246000376,Communauté de communes du Clermontois,CC,18
+246000566,Communauté de communes du Plateau Picard,CC,52
+246000582,Communauté de communes des Sablons,CC,21
+246000707,Communauté de communes du Vexin-Thelle,CC,37
+246000749,Communauté de communes des Lisières de l'Oise,CC,20
+246000756,Communauté de communes du Pays Noyonnais,CC,42
+246000764,Communauté de communes de l'Aire Cantilienne,CC,11
+246000772,Communauté de communes des Deux Vallées,CC,16
+246000848,Communauté de communes de la Picardie Verte,CC,88
+246000855,Communauté de communes du Pays des Sources,CC,48
+246000871,Communauté de communes du Pays de Valois,CC,62
+246000897,Communauté de communes de la Plaine d'Estrées,CC,19
+246000913,Communauté de communes du Pays de Bray,CC,23
+246000921,Communauté de communes des Pays d'Oise et d'Halatte,CC,17
+246100390,Communauté de communes du Val d'Orne,CC,17
+246100663,Communauté urbaine d'Alençon,CU,31
+246200299,Communauté d'agglomération d'Hénin-Carvin,CA,14
+246200364,Communauté d'agglomération de Lens - Liévin,CA,36
+246200380,Communauté de communes de la Terre des Deux Caps,CC,21
+246200729,Communauté d'agglomération du Boulonnais,CA,22
+246200844,Communauté de communes de la Région d'Audruicq,CC,15
+246201016,Communauté de communes du Pays de Lumbres,CC,36
+246300701,Clermont Auvergne Métropole,METRO,21
+246300966,Communauté de communes du Massif du Sancy,CC,20
+246301097,Communauté de communes Entre Dore et Allier,CC,14
+246400337,Communauté de communes de la Vallée d'Ossau,CC,18
+246401756,Communauté de communes Pays de Nay,CC,29
+246500482,Communauté de communes de la Haute-Bigorre,CC,25
+246500573,Communauté de communes Aure Louron,CC,46
+246600282,Communauté de communes Sud-Roussillon,CC,6
+246600373,Communauté de communes du Vallespir,CC,10
+246600399,Communauté de communes Pyrénées Cerdagne,CC,19
+246600415,Communauté de communes Roussillon-Conflent,CC,15
+246600423,Communauté de communes Agly Fenouillèdes,CC,24
+246600449,Communauté de communes des Aspres,CC,19
+246600464,Communauté de communes Pyrénées catalanes,CC,19
+246600548,Communauté de communes du Haut Vallespir,CC,14
+246700306,Communauté de communes de la Vallée de la Bruche,CC,26
+246700488,Eurométropole de Strasbourg,METRO,33
+246700744,Communauté de communes des Portes de Rosheim,CC,9
+246700777,Communauté de communes de la Vallée de Villé,CC,18
+246700843,Communauté de communes de la Basse-Zorn,CC,7
+246700926,Communauté de communes du Pays de Wissembourg,CC,12
+246700959,Communauté de communes du Pays de la Zorn,CC,20
+246700967,Communauté de communes de Sélestat,CC,12
+246701064,Communauté de communes de la Région de Molsheim-Mutzig,CC,18
+246701080,Communauté de communes du Pays de Sainte-Odile,CC,6
+246701098,Communauté de communes du Pays de Niederbronn-les-Bains,CC,13
+246800205,Communauté de communes de la Vallée de Saint-Amarin,CC,15
+246800395,Communauté de communes du Val d'Argent,CC,4
+246800445,Communauté de communes du Centre du Haut-Rhin,CC,9
+246800494,"Communauté de communes du Pays de Rouffach, Vignobles et Châteaux",CC,11
+246800551,Communauté de communes de la Vallée de Kaysersberg,CC,8
+246800569,Communauté de communes de la Région de Guebwiller,CC,19
+246800577,Communauté de communes du Pays de Ribeauvillé,CC,16
+246800585,Communauté de communes de la Vallée de Munster,CC,16
+246800676,Communauté de communes de la Vallée de la Doller et du Soultzbach,CC,15
+246800726,Communauté d'agglomération Colmar Agglomération,CA,20
+246900575,Communauté de communes de l'Est Lyonnais (CCEL),CC,8
+246900625,Communauté de communes du Pays de l'Arbresle (CCPA),CC,17
+246900724,Communauté de communes des Vallons du Lyonnais (CCVL),CC,8
+246900740,Communauté de communes du Pays Mornantais (COPAMO),CC,11
+246900757,Communauté de communes de la Vallée du Garon (CCVG),CC,5
+246900765,Communauté de communes du Pays de l'Ozon,CC,7
+247000011,Communauté d'agglomération de Vesoul,CA,20
+247000367,Communauté de communes des Combes,CC,27
+247000623,Communauté de communes des Quatre Rivières,CC,41
+247000664,Communauté de communes du Pays de Lure,CC,23
+247000698,Communauté de communes des Monts de Gy,CC,24
+247000706,Communauté de communes du Pays Riolais,CC,33
+247000714,Communauté de communes du Pays de Villersexel,CC,32
+247000722,Communauté de communes du Pays d'Héricourt,CC,23
+247000755,Communauté de communes du Pays de Luxeuil,CC,15
+247000821,Communauté de communes Rahin et Chérimont,CC,9
+247000854,Communauté de communes des 1000 étangs,CC,26
+247100290,Communauté urbaine Le Creusot Montceau-les-Mines,CU,34
+247100589,Communauté d'agglomération Le Grand Chalon,CA,51
+247100639,Communauté de communes de Marcigny,CC,12
+247100647,Communauté de communes Bresse Nord Intercom',CC,16
+247103765,Communauté de communes Entre Saône et Grosne,CC,23
+247103864,Communauté de communes de Semur-en-Brionnais,CC,14
+247104094,Communauté de communes Sud Côte Chalonnaise,CC,36
+247200090,Communauté de communes du Pays Sabolien,CC,17
+247200132,Communauté urbaine Le Mans Métropole,CU,20
+247200348,Communauté de communes du Pays Fléchois,CC,14
+247200421,Communauté de communes du Sud Est Manceau,CC,5
+247200447,Communauté de communes Orée de Bercé - Belinois,CC,7
+247200629,Communauté de communes du Val de Sarthe,CC,16
+247200686,Communauté de communes du Perche Emeraude,CC,33
+247300015,Communauté de communes des Vallées d'Aigueblanche,CC,3
+247300254,Communauté de communes de Haute-Tarentaise,CC,8
+247300262,Communauté de communes de Yenne,CC,13
+247300361,Communauté de communes du Canton de La Chambre,CC,12
+247300452,Communauté de communes Maurienne Galibier,CC,6
+247300528,Communauté de communes Val Guiers,CC,11
+247300668,Communauté de communes du Lac d'Aiguebelette (CCLA),CC,10
+247300676,Communauté de communes Porte de Maurienne,CC,11
+247300817,Communauté de communes Les Versants d'Aime,CC,4
+247400047,Communauté de communes de la Vallée Verte,CC,8
+247400112,Communauté de communes du Pays de Cruseilles,CC,13
+247400567,Communauté de communes Fier et Usses,CC,7
+247400583,Communauté de communes Arve et Salève,CC,8
+247400617,Communauté de communes des Vallées de Thônes,CC,12
+247400666,Communauté de communes des Quatre Rivières,CC,11
+247400682,Communauté de communes du Haut-Chablais,CC,15
+247400690,Communauté de communes du Genevois,CC,17
+247400724,Communauté de communes du Pays Rochois,CC,9
+247400740,Communauté de communes Rumilly Terre de Savoie,CC,17
+247400773,Communauté de communes des Sources du Lac d'Annecy,CC,7
+247600505,Communauté de communes Campagne-de-Caux,CC,22
+247600588,Communauté de communes des Villes Sœurs,CC,28
+247600604,Communauté de communes de Londinières,CC,16
+247600620,Communauté de communes Yvetot Normandie,CC,19
+247600646,Communauté de communes Caux - Austreberthe,CC,9
+247600729,Communauté de communes Falaises du Talou,CC,24
+247600786,Communauté d'agglomération de la Région Dieppoise,CA,16
+247700032,Communauté de communes Moret Seine et Loing,CC,18
+247700057,Communauté d'agglomération Melun Val de Seine,CA,20
+247700065,Communauté de communes du Pays de l'Ourcq,CC,22
+247700107,Communauté de communes Pays de Montereau,CC,21
+247700339,Communauté d'agglomération Val d'Europe Agglomération,CA,10
+247700594,Communauté d'agglomération Marne et Gondoire,CA,20
+247700644,Communauté de communes l'Orée de la Brie,CC,4
+247700701,Communauté de communes Brie Nangissienne,CC,20
+247800550,Communauté de communes du Pays Houdanais (CCPH),CC,36
+247800584,Communauté d'agglomération Versailles Grand Parc (CAVGP),CA,18
+247800618,Communauté de communes Cœur d'Yvelines,CC,31
+247900798,Communauté de communes du Thouarsais,CC,24
+248000499,Communauté de communes du Val de Somme,CC,33
+248000531,Communauté d'agglomération Amiens Métropole,CA,39
+248000747,Communauté de communes du Pays du Coquelicot,CC,65
+248100158,Communauté de communes du Sor et de l'Agout,CC,26
+248100430,Communauté d'agglomération de Castres Mazamet,CA,14
+248100497,Communauté de communes Val 81,CC,19
+248100737,Communauté d'agglomération de l'Albigeois (C2A),CA,16
+248100745,Communauté de communes Thoré Montagne Noire,CC,9
+248200016,Communauté de communes des Deux Rives,CC,28
+248200057,Communauté de communes du Quercy Caussadais,CC,19
+248200065,Communauté de communes de la Lomagne Tarn-et-Garonnaise,CC,31
+248200099,Communauté d'agglomération Grand Montauban,CA,12
+248200107,Communauté de communes du Quercy Rouergue et des Gorges de l'Aveyron,CC,17
+248300394,Communauté d'agglomération Sud Sainte Baume,CA,9
+248300410,Communauté de communes de la Vallée du Gapeau,CC,5
+248300493,Communauté d'agglomération Dracénie Provence Verdon Agglomération,CA,23
+248300543,Métropole Toulon-Provence-Méditerranée,METRO,12
+248300550,Communauté de communes Cœur du Var,CC,11
+248400053,Communauté d'agglomération Ventoux-Comtat-Venaissin (COVE),CA,25
+248400160,Communauté de communes Aygues-Ouvèze en Provence (CCAOP),CC,8
+248400236,Communauté de communes Pays d'Orange en Provence,CC,5
+248400251,Communauté d'agglomération du Grand Avignon (COGA),CA,16
+248400285,Communauté de communes Sud Luberon,CC,16
+248400293,Communauté d'agglomération des Sorgues du Comtat,CA,5
+248400319,Communauté de communes du Pays des Sorgues et des Monts de Vaucluse,CC,5
+248400335,Communauté de communes Vaison Ventoux,CC,19
+248500191,Communauté de communes de l'Île de Noirmoutier,CC,4
+248500258,Communauté de communes Océan Marais de Monts,CC,5
+248500340,Communauté de communes Pays de Chantonnay,CC,10
+248500415,Communauté de communes du Pays de la Châtaigneraie,CC,14
+248500464,Communauté de communes du Pays de Pouzauges,CC,10
+248500530,Communauté de communes du Pays des Achards,CC,9
+248500563,"Communauté de communes Vendée, Sèvre, Autise",CC,15
+248500589,Communauté d'agglomération La Roche-sur-Yon Agglomération,CA,13
+248500621,Communauté de communes du Pays des Herbiers,CC,8
+248500662,Communauté de communes du Pays de Mortagne,CC,11
+248600413,Communauté d'agglomération Grand Châtellerault,CA,47
+248600447,Communauté de communes du Pays Loudunais,CC,45
+248700189,Communauté de communes du Pays de Saint-Yrieix,CC,9
+248719262,Communauté de communes Gartempe - Saint-Pardoux,CC,6
+248719288,Communauté de communes du Val de Vienne,CC,9
+248719312,Communauté urbaine Limoges Métropole,CU,20
+248719338,Communauté de communes Briance-Combade,CC,10
+248719353,Communauté de communes des Portes de Vassivière,CC,12
+248719361,Communauté de communes de Noblat,CC,12
+248900334,Communauté d'agglomération du Grand Sénonais,CA,27
+248900383,Communauté de communes de l'Agglomération Migennoise,CC,8
+248900524,Communauté de communes de l'Aillantais en Bourgogne,CC,13
+248900664,Communauté de communes de la Vanne et du Pays d'Othe,CC,22
+248900748,Communauté de communes du Gâtinais en Bourgogne,CC,26
+248900896,Communauté de communes Yonne Nord,CC,23
+248900938,Communauté de communes du Jovinien,CC,19
+249000241,Communauté de communes du Sud Territoire,CC,27
+249100074,Communauté de communes du Pays de Limours (CCPL),CC,14
+249100157,Communauté de communes des Deux Vallées,CC,15
+249100546,Communauté de communes du Val d'Essonne (CCVE),CC,21
+249100553,Communauté de communes Entre Juine et Renarde (CCEJR),CC,16
+249100595,Communauté de communes Le Dourdannais en Hurepoix (CCDH),CC,11
+249500109,Communauté d'agglomération de Cergy-Pontoise,CA,13
+249500430,Communauté de communes Sausseron Impressionnistes,CC,15
+249500455,Communauté de communes de la Vallée de l'Oise et des Trois Forêts,CC,9
+249500489,Communauté de communes du Haut Val d'Oise,CC,9
+249500513,Communauté de communes du Vexin-Val de Seine,CC,26
+249710047,Communauté de communes de Marie-Galante,CC,3
+249710062,Communauté d'agglomération du Nord Basse-Terre,CA,6
+249710070,Communauté d'agglomération Grand Sud Caraïbe,CA,11
+249720053,Communauté d'agglomération de l'Espace Sud de la Martinique,CA,12
+249720061,Communauté d'agglomération du Centre de la Martinique,CA,4
+249730037,Communauté de communes de l'Ouest Guyanais,CC,8
+249730045,Communauté d'agglomération du Centre Littoral,CA,6
+249730052,Communauté de communes de l'Est Guyanais,CC,4
+249740077,Communauté d'agglomération CIVIS (Communauté Intercommunale des Villes Solidaires),CA,6
+249740085,Communauté d'agglomération du Sud,CA,4
+249740093,Communauté d'agglomération Intercommunale de la Réunion Est (CIREST),CA,6
+249740101,Communauté d'agglomération Territoire de la Côte Ouest (TCO),CA,5
+249740119,Communauté d'agglomération Intercommunale du Nord de la Réunion (CINOR),CA,3
+992367730,Thionville Fensch Agglomération,CA,23
+994579670,Communauté de communes du Lévézou,CC,19
+ZZZZZZZZZ,Sans objet,ZZ,4
