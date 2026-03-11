@@ -28,7 +28,6 @@ with candidats_p as (
         cdd.total_candidatures,
         cdd.total_diagnostics,
         cdd.total_embauches,
-        cdd.type_inscription,
         cdd.injection_ai,
         cdd.pe_inscrit,
         case
