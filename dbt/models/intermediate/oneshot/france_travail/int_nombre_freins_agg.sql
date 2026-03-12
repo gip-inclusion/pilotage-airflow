@@ -10,6 +10,7 @@ with freins_par_dimensions as (
         tranche_age,
         categorie_demandeurs_emploi,
         diagnostic_effectue,
+        date_extraction,
         sum(nombre_demandeurs_emploi)                                    as nombre_demandeurs_emploi,
         sum(frein_numerique)                                             as frein_numerique,
         sum(frein_mobilite)                                              as frein_mobilite,
@@ -39,7 +40,8 @@ with freins_par_dimensions as (
         sexe,
         tranche_age,
         categorie_demandeurs_emploi,
-        diagnostic_effectue
+        diagnostic_effectue,
+        date_extraction
 )
 
 select
@@ -53,6 +55,7 @@ select
     f.tranche_age,
     f.categorie_demandeurs_emploi,
     f.diagnostic_effectue,
+    f.date_extraction,
     f.nombre_demandeurs_emploi,
     f.demandeurs_emploi_avec_freins,
     frein_type.type_frein,

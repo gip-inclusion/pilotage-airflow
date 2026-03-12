@@ -41,6 +41,13 @@ with airflow.DAG(
         append_env=True,
     )
 
+    dbt_snapshot = bash.BashOperator(
+        task_id="dbt_snapshot",
+        bash_command="dbt snapshot --select offre_insertion_couverture_snapshot",
+        env=env_vars,
+        append_env=True,
+    )
+
     dbt_test = bash.BashOperator(
         task_id="dbt_test",
         bash_command="dbt test --select +offre_insertion_couverture +offre_insertion_nombre_freins_de",
@@ -48,4 +55,4 @@ with airflow.DAG(
         append_env=True,
     )
 
-    dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_test >> slack.success_notifying_task()
+    dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_snapshot >> dbt_test >> slack.success_notifying_task()
