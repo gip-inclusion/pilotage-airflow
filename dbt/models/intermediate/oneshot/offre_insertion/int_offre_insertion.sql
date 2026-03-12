@@ -16,6 +16,7 @@ with offre_insertion as (
 select
     oi.id_clpe,
     oi.libelle_clpe,
+    oi.date_extraction,
     oi.nombre_demandeurs_emploi,
     oi.demandeurs_emploi_avec_freins,
     oi.nbr_total_thematiques,

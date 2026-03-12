@@ -2,6 +2,7 @@ with freins_clpe as (
     select
         id_clpe,
         libelle_clpe,
+        date_extraction,
         sum(nombre_demandeurs_emploi)      as nombre_demandeurs_emploi,
         sum(frein_numerique)               as frein_numerique,
         sum(frein_mobilite)                as frein_mobilite,
@@ -15,7 +16,8 @@ with freins_clpe as (
     from {{ ref("int_nombre_freins_par_groupe") }}
     group by
         id_clpe,
-        libelle_clpe
+        libelle_clpe,
+        date_extraction
 )
 
 select

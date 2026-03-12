@@ -52,7 +52,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     def drop_tables():
         con = db.connection_engine()
         con.execute("""drop table if exists data_inclusion.services_v1 cascade;
-                       drop table if exists data_inclusion.structures_v1 cascade;""")
+                       drop table if exists data_inclusion.structures_v1 ;""")
 
     @task
     def import_structures_v1(**kwargs):
