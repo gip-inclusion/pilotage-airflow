@@ -1,6 +1,7 @@
 select
     oi.id_clpe,
     oi.libelle_clpe,
+    oi.date_extraction,
     clpe.departement_id,
     clpe.nom_departement,
     clpe.nom_region,
