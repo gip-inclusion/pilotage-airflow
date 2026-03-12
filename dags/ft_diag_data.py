@@ -37,7 +37,7 @@ with DAG(
         try:
             with db.MetabaseDatabaseCursor3() as (cur, conn):
                 # linting checked with sqlfluff
-                cur.execute("DROP TABLE IF EXISTS france_travail.data_diag_ft")
+                cur.execute("DROP TABLE IF EXISTS france_travail.data_diag_ft CASCADE")
                 cur.execute("""
                     CREATE TABLE france_travail.data_diag_ft (
                         mois_statistique INT,
@@ -59,6 +59,8 @@ with DAG(
                         structure_accompagnement FLOAT,
                         parcours_accompagnement TEXT,
                         defm INT,
+                        diag INT,
+                        n_nbcontraintesactives FLOAT,
                         contrainte_numerique INT,
                         c_impactcontrainte_numeriq_id TEXT,
                         contrainte_mobilite INT,
@@ -74,9 +76,7 @@ with DAG(
                         contrainte_financiere INT,
                         c_impactcontrainte_finance_id TEXT,
                         contrainte_admin_jurid INT,
-                        c_impactcontrainte_adminjur_id TEXT,
-                        n_nbcontraintesactives FLOAT,
-                        diag TEXT
+                        c_impactcontrainte_adminjur_id TEXT
                     )
                 """)
 
