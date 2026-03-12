@@ -34,6 +34,10 @@ select
     contrainte_admin_jurid                        as frein_admin_jur,
     c_impactcontrainte_adminjur_id                as intensite_frein_admin_jur,
     n_nbcontraintesactives,
-    diag                                          as diagnostic_effectue,
+    diag                                          as nombre_de_diagnostics,
+    case
+        when diag is null then 'NON'
+        else 'OUI'
+    end                                           as diagnostic_effectue,
     to_date(mois_statistique || '01', 'YYYYMMDD') as date_extraction
 from {{ source("france_travail","data_diag_ft") }}

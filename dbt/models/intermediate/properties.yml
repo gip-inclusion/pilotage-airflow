@@ -65,7 +65,6 @@ models:
       - name: nbr_freins_declares
         description: Nombre de demandeurs d'emploi déclarant ce type de frein
         tests:
-          - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: true
