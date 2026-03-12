@@ -10,18 +10,6 @@ snapshots:
       Ce snapshot permet de suivre les modifications au sein des candidats en recherche active.
       Il suit l'ajout de nouveaux candidats (via l'id) et les nouvelles dates de derniere candidature, d'embauche et de candidature acceptée.
 
-<<<<<<< HEAD
   - name: offre_insertion_couverture_snapshot
     description: >
       Ce snapshot permet de suivre les évolution de freins par territoire, pour chaque extraction fournie par FT
-=======
-  - name: offre_insertion_couverture
-    description: >
-      Ce snapshot permet de suivre les évolution de freins par territoire, pour chaque extraction fournie par FT
-
-  - name: offre_insertion_nombre_freins_de_snapshot
-    description: >
-      Ce snapshot permet de suivre les évolution de freins par type de public, pour chaque extraction fournie par FT
-
-
->>>>>>> a7022f6 (add the extraction date to the tension tables + snapshot)

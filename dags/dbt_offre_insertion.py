@@ -43,12 +43,7 @@ with airflow.DAG(
 
     dbt_snapshot = bash.BashOperator(
         task_id="dbt_snapshot",
-<<<<<<< HEAD
         bash_command="dbt snapshot --select offre_insertion_couverture_snapshot",
-=======
-        bash_command="dbt snapshot --select offre_insertion_nombre_freins_de_snapshot "
-        "offre_insertion_couverture_snapshot",
->>>>>>> a7022f6 (add the extraction date to the tension tables + snapshot)
         env=env_vars,
         append_env=True,
     )
