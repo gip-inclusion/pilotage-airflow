@@ -1,5 +1,6 @@
 select
     {{ pilo_star(ref('stg_candidatures'), except=['origine_détaillée'], relation_alias='candidatures') }},
+    candidats.hash_nir,
     candidats.sous_type_auteur_diagnostic               as auteur_diag_candidat_detaille,
     candidats.type_auteur_diagnostic                    as auteur_diag_candidat,
     candidats.eligibilite_dispositif,
