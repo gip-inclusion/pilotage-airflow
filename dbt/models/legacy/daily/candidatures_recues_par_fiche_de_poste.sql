@@ -13,6 +13,7 @@ select
     c."département_structure",
     c.id                                   as id_candidature,
     c.id_candidat,
+    c.hash_nir,
     c.id_structure,
     c.motif_de_refus,
     c."nom_département_structure",

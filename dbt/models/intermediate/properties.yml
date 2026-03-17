@@ -1,7 +1,26 @@
 version: 2
 
 models:
-
+  - name: int_origine_derniere_candidature_par_candidat
+    description: >
+      Table contenant les origines et la date de la dernière candidature émise par chaque candidat. Cela nous donne une information sur l'éventuel dernier accompagnement reçu.
+    columns:
+      - name: hash_nir
+        tests:
+          - not_null
+          - unique
+      - name: date_derniere_candidature
+        tests:
+          - not_null
+      - name: id_org_prescripteur
+      - name: nom_org_prescripteur
+      - name: origine_detaillee
+      - name: origine
+  - name: int_metiers_derniere_candidature_fdp_par_candidat
+    description: >
+      Table contenant les codes romes associés à la dernière fiche de poste auquel le candidat a candidaté.
+      Cela ne corresponds pas forcement à la dernière candidature parce que on peut avoir des candidatures spontanées (i.e. non associés à une fiche de poste.)
+      Un fiche de poste peut avoir plusiers code romes associés. 
   - name : int_thematiques_clpe
     description: >
      Table permettant de sommer le nombre de thematiques (tous services confondus) et de les agréger par clpe. Ainsi nous aurons une vue territoriale (partielle) sur l'offre proposée
