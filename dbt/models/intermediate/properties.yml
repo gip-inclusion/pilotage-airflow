@@ -20,7 +20,12 @@ models:
     description: >
       Table contenant les codes romes associés à la dernière fiche de poste auquel le candidat a candidaté.
       Cela ne corresponds pas forcement à la dernière candidature parce que on peut avoir des candidatures spontanées (i.e. non associés à une fiche de poste.)
-      Un fiche de poste peut avoir plusiers code romes associés. 
+      Un fiche de poste peut avoir plusiers code romes associés.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - 'hash_nir'
+            - 'code_rome_fdp'
   - name : int_thematiques_clpe
     description: >
      Table permettant de sommer le nombre de thematiques (tous services confondus) et de les agréger par clpe. Ainsi nous aurons une vue territoriale (partielle) sur l'offre proposée
