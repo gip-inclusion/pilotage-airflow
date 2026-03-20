@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(source('data_inclusion','structures_v1'), relation_alias = 'structures') }},
+    {{ pilo_star(ref('structures_v1'), relation_alias = 'structures') }},
     reseau_porteur,
     services.service_thematique,
     services.service_public,
@@ -11,7 +11,7 @@ select
         when geo.code_dept like '%97%' then lpad(geo.code_dept, 3, '0')
         else lpad(geo.code_dept, 2, '0')
     end as code_dept
-from {{ source('data_inclusion', 'structures_v1') }} as structures
+from {{ ref('structures_v1') }} as structures
 left join lateral unnest(reseaux_porteurs) as reseau_porteur on true
 left join {{ ref('services_thematiques_public_accueil_v1') }} as services
     on structures.id = services.structure_id

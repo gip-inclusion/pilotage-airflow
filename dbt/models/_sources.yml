@@ -228,8 +228,8 @@ sources:
     tables:
       - name: structures_v0
       - name: services_v0
-      - name: structures_v1
-      - name: services_v1
+      - name: structures_v1_with_soliguide
+      - name: services_v1_with_soliguide
   - name: gps
     schema: public
     description: >

@@ -22,7 +22,7 @@ with freins_clpe as (
 
 select
     f.*,
-    {{ dbt_utils.star(ref('int_thematiques_clpe')) }},
+    {{ dbt_utils.star(ref('dim_thematiques_clpe')) }},
     {{ safe_divide('frein_numerique', 'demandeurs_emploi_avec_freins') }}                                   as besoin_numerique,
     {{ safe_divide('frein_mobilite', 'demandeurs_emploi_avec_freins') }}                                    as besoin_mobilite,
     {{ safe_divide('frein_familial', 'demandeurs_emploi_avec_freins') }}                                    as besoin_famille,

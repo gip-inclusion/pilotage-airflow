@@ -7,7 +7,6 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators import bash
-from airflow.utils.trigger_rule import TriggerRule
 from sqlalchemy.dialects import postgresql
 
 from dags.common import db, dbt, default_dag_args, slack
@@ -51,15 +50,15 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     @task
     def drop_tables():
         con = db.connection_engine()
-        con.execute("""drop table if exists data_inclusion.services_v1 cascade;
-                       drop table if exists data_inclusion.structures_v1 cascade;""")
+        con.execute("""drop table if exists data_inclusion.services_v1_with_soliguide cascade;
+                       drop table if exists data_inclusion.structures_v1_with_soliguide cascade;""")
 
     @task
     def import_structures_v1(**kwargs):
         structures = pd.DataFrame(get_all_items("/api/v1/structures"))
         structures["date_maj"] = structures["date_maj"].apply(to_date)
         structures.to_sql(
-            "structures_v1",
+            "structures_v1_with_soliguide",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
             if_exists="replace",
@@ -76,7 +75,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         services = pd.DataFrame(get_all_items("/api/v1/services"))
         services["date_maj"] = services["date_maj"].apply(to_date)
         services.to_sql(
-            "services_v1",
+            "services_v1_with_soliguide",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
             if_exists="replace",
@@ -95,7 +94,6 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
         bash_command="dbt deps",
-        trigger_rule=TriggerRule.ALL_DONE,
         env=env_vars,
         append_env=True,
     )
@@ -110,7 +108,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     dbt_run = bash.BashOperator(
         task_id="dbt_run",
         bash_command="dbt run --select staging.data_inclusion intermediate.data_inclusion "
-        "marts_core.data_inclusion marts.data_inclusion",
+        "marts_core.data_inclusion +marts.data_inclusion",
         env=env_vars,
         append_env=True,
     )
