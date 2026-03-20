@@ -1,6 +1,46 @@
 version: 2
 
 models:
+  - name: services_v1
+    description: >
+      Table contenant toutes les sources sauf soliguide car l'exposition publique des données de cette source est réglémentée.
+    columns:
+      - name: source
+        tests:
+          - not_null
+      - name: structure_id
+        tests:
+          - not_null
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        tests:
+          - not_null
+      - name: description
+        tests:
+          - not_null
+      - name: date_maj
+        tests:
+          - not_null
+  - name: structures_v1
+    description: >
+      Table contenant toutes les sources sauf soliguide car l'exposition publique des données de cette source est réglémentée.
+    columns:
+      - name: source
+        tests:
+          - not_null
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        tests:
+          - not_null
+      - name: date_maj
+        tests:
+          - not_null
   - name: structures_thematiques_public_accueil_v1
     description: >
       Table créée à partir des données sources de l'API data inclusion. Les listes ont été eclatées afin de permettre de filtrer les indicateurs crées a partir de cette table.
