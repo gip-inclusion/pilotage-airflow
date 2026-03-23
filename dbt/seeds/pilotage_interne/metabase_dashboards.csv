@@ -52,8 +52,10 @@ id_tb,nom_tb,public,type
 550,tb 550 - SIAE - Suivi des bénéficiaires taux d’encadrement et présence en emploi,SIAE,TB privé
 566,tb 440 - SIAE - Données conventionnement - Maille structure,SIAE,TB privé
 573,tb 160 - Facilitation de l'embauche DREETS/DDETS,DREETS/DDETS,TB privé
+575,tb 267 - Focus auto-prescription DREETS/DDETS,DREETS/DDETS,TB privé
 577,tb 289 - Suivi des prescriptions des PH DDETS/DREETS,DDETS/DREETS, TB privé
 578,tb 485 - DDETS/DREETS/CD - Données conventionnement - Maille structure,DDETS/DREETS/CD, TB privé
+580,tb 295 - Suivi de l'auto-prescription (SIAE),SIAE,TB privé
 643,tb-643 - SIAE - Mes données brutes,SIAE,TB privé
 646,tb-646 - SIAE - Données brutes candidatures,SIAE,TB privé
 647,tb-647 - SIAE - Données brutes auto prescription,SIAE,TB privé
