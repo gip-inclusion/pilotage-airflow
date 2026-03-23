@@ -1,25 +1,14 @@
 version: 2
 
 models:
-  - name: fct_logins_utilisateurs
+  - name: candidatures_recues_par_fiche_de_poste
     description: >
-      Table contenant les last logins des utilisateurs des Emplois récuperés via la table utilisateurs_v0, en utilisant un modèle incrémentale.
-    columns:
-      - name: user_id
-        description: "Identifiant de l'utilisateur"
-        tests:
-          - not_null
-      - name: last_login
-        description: "Date de dernière connexion"
-        tests:
-          - not_null
-      - name: loaded_at
-        description: "Timestamp de chargement"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - 'user_id'
-            - 'last_login'
+      Table des candidatures effectuées avec une fiche de poste.
+      Les candidatures spontanées (c’est-à-dire sans fiche de poste) ne sont pas prises en compte.
+      Cette table inclut les informations du code ROME et du domaine fonctionnel.
+      Le code et le nom ROME sont récupérés via la table fiches_de_poste des emplois,
+      mise à jour tous les quinze jours à l'aide de l'API France Travail.
+      Les données sur le grand domaine ou le domaine professionnel viennent d'une extraction réalisée en 2024 et ne sont pas mises à jour automatiquement.
   - name: suivi_candidatures_prescripteurs_habilites
     description: >
       Table introduite pour réaliser le tableau de bord prescripteurs.
@@ -73,6 +62,11 @@ models:
       On prends que l'accompagnementle plus récent. On y ajoute aussi l'information des métiers associés à leur dernière candidature avec fichie de poste.
       On remarque que 1) on peut avoir plusieurs métiers associés à une fiche de poste, donc plusieurs ligne par hash_nir 2) il y a un nombre non négligeable de
       candidats qui ont n'ont aucune candidature rattachée à une fiche de poste même si ont été accompagnés.
+      Pour associer un métier à un candidat on fait le choix d'utiliser la dernière candidature à une fiche de poste plutôt que le code_rome_contrat présents dans le donnée de l'ASP car
+      dans les données ASP plutôt qu'être renseignés avec un code rome, sont renseignés par le code naf de la structure et ce n'est pas ce qu'on souhaite.
+      On remarque également que ici nous ne récuperons pas le grand domaine et le domaine professionel qui sont présents dans le fichier "candidatures_recues_par_fiche_de_poste" car ces données pour le moment
+      sont issus d'un fichier 2024 non mise à jour et pas de l'API FT comme le code rome. Tous les candidats qui n'ont jamais fait une candidature via fiche de poste, auront un code rome null.
+      Si on veut faire une mise en prod, il serait pertinent d'améliorer la qualité des données, en effet à date des communes par rattachées à des départements ou d'autres données incomplets.
     columns:
       - name: hash_nir
         description: >
