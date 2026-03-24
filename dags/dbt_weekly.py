@@ -1,7 +1,7 @@
 import airflow
 from airflow.decorators import task
 from airflow.models.param import Param
-from airflow.operators import bash, trigger_dagrun
+from airflow.operators import bash
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -38,7 +38,7 @@ with airflow.DAG(
             kwargs["ti"].xcom_push("dbt_run_args", "--full-refresh --exclude marts.daily marts.oneshot marts.manual")
         else:
             kwargs["ti"].xcom_push("dbt_seed_args", "")
-            kwargs["ti"].xcom_push("dbt_run_args", "--select +staging +marts.weekly+ +legacy.weekly+")
+            kwargs["ti"].xcom_push("dbt_run_args", "--select +marts.weekly+ +legacy.weekly+")
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
@@ -54,16 +54,6 @@ with airflow.DAG(
         append_env=True,
     )
 
-    trigger_data_consistency = trigger_dagrun.TriggerDagRunOperator(
-        trigger_dag_id="data_consistency", task_id="trigger_data_consistency"
-    )
+    dbt_test = bash.BashOperator(task_id="dbt_test", bash_command="dbt test --select +marts.weekly+ +legacy.weekly+")
 
-    (
-        params_check()
-        >> dbt_debug
-        >> dbt_deps
-        >> dbt_seed
-        >> dbt_run
-        >> trigger_data_consistency
-        >> slack.success_notifying_task()
-    )
+    (params_check() >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_test >> slack.success_notifying_task())
