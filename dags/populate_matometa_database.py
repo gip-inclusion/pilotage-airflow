@@ -6,8 +6,6 @@ import logging
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
-from airflow.providers.ssh.hooks import ssh
-from furl import furl
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -16,37 +14,24 @@ logger = logging.getLogger(__name__)
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-tables_emploi = ["candidats", "prolongations", "organisations"]
-tables_asp = ["fluxIAE_Structure_v2"]
-tables_monrecap = ["Contacts", "Commandes"]
-tables_datalake = ["pdi_base_unique_tous_les_pros"]
-tables_dora = ["les_emplois_utilisateurs"]
+TABLES_EMPLOI = ["prolongations", "organisations"]
+TABLES_ASP = ["fluxIAE_Structure_v2"]
+TABLES_MONRECAP = ["Contacts", "Commandes"]
+TABLES_DATALAKE = ["pdi_base_unique_tous_les_pros"]
+TABLES_DORA = ["les_emplois_utilisateurs"]
 
-col_anonymize = ["hash_nir"]
-
-hmac_secret = Variable.get("MATOMETA_HMAC_SECRET").encode()
+COL_ANONYMIZE = ["hash_nir"]
 
 
-def export_tables(tables_to_export, src_schema, dest_schema, src_db_url_variable=None, src_ssh_conn_id=None):
-    db_url = furl(Variable.get("MATOMETA_DB_URL_SECRET"))
+def get_hmac_secret():
+    return Variable.get("MATOMETA_HMAC_SECRET").encode()
 
-    ssh_hook = ssh.SSHHook(ssh_conn_id="matometa_scalingo_ssh")
 
-    logger.info("Tunnel creation...")
-    with ssh_hook.get_tunnel(remote_port=db_url.port, remote_host=db_url.host) as tunnel:
-        logger.info("Tunnel created")
-        db_url.host = "127.0.0.1"
-        db_url.port = tunnel.local_bind_port
-        engine = db.create_engine(db_url.url)
-
-        for table in tables_to_export:
+def sync_tables(table_names, src_schema, dest_schema, from_db=None):
+    with db.DBConnection(db_url_variable="MATOMETA_DB_URL_SECRET", ssh_conn_id="matometa_scalingo_ssh") as dst_db:
+        for table in table_names:
             query = f'SELECT * FROM "{src_schema}"."{table}";'
-            if src_db_url_variable and src_ssh_conn_id:
-                df = db.create_df_from_ssh_tunnel_db(
-                    query, db_url_variable=src_db_url_variable, ssh_conn_id=src_ssh_conn_id
-                )
-            else:
-                df = db.create_df_from_db(query)
+            df = from_db.query(query)
 
             if df is None or df.empty:
                 logger.info("No data found for table %s, skipping.", table)
@@ -58,24 +43,16 @@ def export_tables(tables_to_export, src_schema, dest_schema, src_db_url_variable
                 if df[col].dtype == object:
                     df[col] = df[col].map(lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x)
 
-            for col in col_anonymize:
+            for col in COL_ANONYMIZE:
                 if col in df.columns:
                     df[col] = df[col].map(
-                        lambda x, secret=hmac_secret: hmac.new(secret, str(x).encode(), hashlib.sha256).hexdigest()
+                        lambda x: hmac.new(get_hmac_secret(), str(x).encode(), hashlib.sha256).hexdigest()
                         if x is not None
                         else None
                     )
                     logger.info("Anonymized column %s in table %s.", col, table)
 
-            with engine.begin() as conn:
-                df.to_sql(
-                    name=table,
-                    con=conn,
-                    schema=dest_schema,
-                    if_exists="replace",
-                    index=False,
-                    chunksize=5000,
-                )
+            dst_db.to_sql(df, table=table, schema=dest_schema)
             logger.info("Exported %d rows to %s.%s", len(df), dest_schema, table)
 
 
@@ -83,35 +60,28 @@ with DAG("populate_matometa_db", schedule="@daily", **dag_args) as dag:
 
     @task
     def export_emplois_tables():
-        export_tables(tables_to_export=tables_emploi, src_schema="public", dest_schema="les_emplois")
+        with db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET") as src_db:
+            sync_tables(TABLES_EMPLOI, src_schema="public", dest_schema="les_emplois", from_db=src_db)
 
     @task
     def export_asp_tables():
-        export_tables(tables_to_export=tables_asp, src_schema="public", dest_schema="asp")
+        with db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET") as src_db:
+            sync_tables(TABLES_ASP, src_schema="public", dest_schema="asp", from_db=src_db)
 
     @task
     def export_monrecap_tables():
-        export_tables(tables_to_export=tables_monrecap, src_schema="monrecap", dest_schema="monrecap")
+        with db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET") as src_db:
+            sync_tables(TABLES_MONRECAP, src_schema="monrecap", dest_schema="monrecap", from_db=src_db)
 
     @task
     def export_datalake_tables():
-        export_tables(
-            tables_to_export=tables_datalake,
-            src_schema="public",
-            dest_schema="datalake",
-            src_db_url_variable="DATALAKE_DB_URL_SECRET",
-            src_ssh_conn_id="datalake_scalingo_ssh",
-        )
+        with db.DBConnection(db_url_variable="DATALAKE_DB_URL_SECRET", ssh_conn_id="datalake_scalingo_ssh") as src_db:
+            sync_tables(TABLES_DATALAKE, src_schema="public", dest_schema="datalake", from_db=src_db)
 
     @task
     def export_dora_tables():
-        export_tables(
-            tables_to_export=tables_dora,
-            src_schema="public_les_emplois",
-            dest_schema="dora",
-            src_db_url_variable="DORA_DB_URL_SECRET",
-            src_ssh_conn_id="dora_scalingo_ssh",
-        )
+        with db.DBConnection(db_url_variable="DORA_DB_URL_SECRET", ssh_conn_id="dora_scalingo_ssh") as src_db:
+            sync_tables(TABLES_DORA, src_schema="public_les_emplois", dest_schema="dora", from_db=src_db)
 
     (
         export_emplois_tables()
