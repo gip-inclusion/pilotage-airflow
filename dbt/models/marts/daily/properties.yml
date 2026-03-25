@@ -1,6 +1,41 @@
 version: 2
 
 models:
+  - name: candidats_criteres_admin
+    description: >
+      Table des critères administratifs 'actifs' par personne.
+      Chaque ligne représente un critère dont la valeur est égale à 1 dans la table source, pour l'hash_nir donné.
+      Elle a l'objectif de faciliter le filtre sur metabase en fonction des critères administratifs.
+    columns:
+      - name: hash_nir
+        description: >
+          Hash_nir, identifiant unique de la personne.
+        tests:
+          - not_null
+      - name: critere
+        description: >
+          Nom du critère administratif 'actif' pour la personne. Correspond à une colonne de la table source pour laquelle la valeur est égale à 1.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - critère_n1_bénéficiaire_du_rsa
+                - critère_n1_allocataire_ass
+                - critère_n1_allocataire_aah
+                - critère_n1_detld_plus_de_24_mois
+                - critère_n2_senior_plus_de_50_ans
+                - critère_n2_jeune_moins_de_26_ans
+                - critère_n2_sortant_de_l_ase
+                - critère_n2_deld_12_à_24_mois
+                - critère_n2_travailleur_handicapé
+                - critère_n2_parent_isolé
+                - critère_n2_personne_sans_hébergement_ou_hébergée_ou_ayant_u
+                - critère_n2_réfugié_statutaire_bénéficiaire_d_une_protection
+                - critère_n2_résident_zrr
+                - critère_n2_résident_qpv
+                - critère_n2_sortant_de_détention_ou_personne_placée_sous_main
+                - critère_n2_maîtrise_de_la_langue_française_inférieure_au_ni
+                - critère_n2_problème_de_mobilité
   - name: candidatures_recues_par_fiche_de_poste
     description: >
       Table des candidatures effectuées avec une fiche de poste.
