@@ -5,7 +5,7 @@ with etp_conventionnes as (
             from {{ ref("suivi_etp_conventionnes_v2") }}
         ) as count_us,
         (
-            select round(sum("ETP conventionnés"))
+            select round(sum(("ETP conventionnés")::numeric))
             from {{ source("DGEFP","dgefp_donnees_etp") }}
             where "Type Aide" = 'Aide au poste'
         ) as count_them

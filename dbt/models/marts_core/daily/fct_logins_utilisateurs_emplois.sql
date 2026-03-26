@@ -1,6 +1,13 @@
 {{ config(
     materialized='incremental',
-    unique_key=['user_id', 'last_login']
+    unique_key=['user_id', 'last_login'],
+    post_hook="
+        delete from {{ this }}
+        where user_id not in (
+            select distinct id
+            from {{ source('emplois', 'utilisateurs_v0') }}
+        )
+    "
 ) }}
 
 with source as (
