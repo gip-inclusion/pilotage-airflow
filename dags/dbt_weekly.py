@@ -54,6 +54,11 @@ with airflow.DAG(
         append_env=True,
     )
 
-    dbt_test = bash.BashOperator(task_id="dbt_test", bash_command="dbt test --select +marts.weekly+ +legacy.weekly+")
+    dbt_test = bash.BashOperator(
+        task_id="dbt_test",
+        bash_command="dbt test --select +marts.weekly+ +legacy.weekly+",
+        env=env_vars,
+        append_env=True,
+    )
 
     (params_check() >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_test >> slack.success_notifying_task())

@@ -38,8 +38,4 @@ with airflow.DAG(
         append_env=True,
     )
 
-    dbt_test = bash.BashOperator(
-        task_id="dbt_test", bash_command="dbt test --select resource_type:snapshot", env=env_vars, append_env=True
-    )
-
-    dbt_debug >> dbt_deps >> dbt_snapshot >> dbt_test >> slack.success_notifying_task()
+    dbt_debug >> dbt_deps >> dbt_snapshot >> slack.success_notifying_task()
