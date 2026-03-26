@@ -36,6 +36,7 @@ models:
   - name: fct_logins_utilisateurs_emplois
     description: >
       Table contenant les last logins des utilisateurs des Emplois récuperés via la table utilisateurs_v0, en utilisant un modèle incrémentale.
+      Nous éliminons de la table les user qui ne sont plus suivis dans la table utilisateurs_v0 d'origine.
     columns:
       - name: user_id
         description: "Identifiant de l'utilisateur"
