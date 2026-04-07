@@ -1,0 +1,31 @@
+metier,metier_family,metier_family_label
+Médecin,medical,Médical
+Psychiatre,medical,Médical
+Infirmier (IDE),paramedical,Paramédical
+Ergothérapeute,paramedical,Paramédical
+Kinésithérapeute,paramedical,Paramédical
+Orthoptiste,paramedical,Paramédical
+Orthophoniste,paramedical,Paramédical
+Animateur,socio_educatif,Socio-éducatif
+Professionnel d'activité physique adaptée,socio_educatif,Socio-éducatif
+Moniteur éducateur,socio_educatif,Socio-éducatif
+Educateur spécialisé,socio_educatif,Socio-éducatif
+Assistant social,socio_educatif,Socio-éducatif
+CESF,socio_educatif,Socio-éducatif
+Interprète/interface de communication,socio_educatif,Socio-éducatif
+Instructeur en locomotion,socio_educatif,Socio-éducatif
+Psychologue clinicien (dont TCC),psychologue,Psychologue
+Neuropsychologue,psychologue,Psychologue
+Psychologue du travail,psychologue,Psychologue
+Formateur/Formatrice,pedagogie,Pédagogie
+Référent formation accompagnée,pedagogie,Pédagogie
+Jobcoach,pedagogie,Pédagogie
+CIP,pedagogie,Pédagogie
+Équipe de direction,support_administratif,Support & administratif
+"Équipe support (RH, compta, ...)",support_administratif,Support & administratif
+Assistant administratif,support_administratif,Support & administratif
+Documentaliste,support_administratif,Support & administratif
+Chargé de relations partenariales,support_administratif,Support & administratif
+Service hébergement,support_administratif,Support & administratif
+Service logistique,support_administratif,Support & administratif
+Service restauration,support_administratif,Support & administratif

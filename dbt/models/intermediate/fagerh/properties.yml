@@ -1,0 +1,368 @@
+version: 2
+
+models:
+  - name: int_fagerh__prestations
+    config:
+      tags: ["fagerh"]
+    description: Une ligne par réponse et par prestation renseignée dans le JSON des prestations. Le modèle extrait les principaux indicateurs d'activité et ajoute une classification métier de la prestation à partir de la seed `seed_fagerh__prestation_mapping`.
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse du questionnaire.
+        data_tests:
+          - not_null
+
+      - name: answer_id
+        description: Identifiant technique de la réponse dans la table source.
+
+      - name: prestation_key
+        description: Clé technique complète de la prestation dans le JSON.
+        data_tests:
+          - not_null
+
+      - name: prestation_key_base
+        description: Clé technique de la prestation sans le suffixe numérique final. Elle sert à faire le lien avec la seed de mapping des prestations.
+        data_tests:
+          - not_null
+
+      - name: prestation_group
+        description: Grand groupe de prestation issu du menu du questionnaire, par exemple Directes, Parcours socio-pro, Parcours à visée certifiante, Directes sans ORP ou Indirectes.
+        data_tests:
+          - not_null
+
+      - name: prestation_label
+        description: Libellé métier de la prestation lorsque la clé permet de l'identifier de manière fiable. Peut être vide pour les clés ambiguës.
+
+      - name: orp_status
+        description: Statut ORP CDAPH de la prestation, par exemple Avec ORP CDAPH, Sans ORP CDAPH, Hors ORP CDAPH ou Non applicable.
+
+      - name: is_reliable_prestation_mapping
+        description: Indique si le mapping permet d'identifier précisément la prestation. Si la valeur est false, seule une partie de la classification peut être fiable, par exemple le groupe de prestation.
+        data_tests:
+          - not_null
+
+      - name: is_unmapped_prestation
+        description: Indique si la prestation n'a pas été retrouvée dans la seed de mapping.
+        data_tests:
+          - not_null
+
+      - name: prestation_done
+        description: Indique si la prestation a été renseignée jusqu'au bout.
+        data_tests:
+          - not_null
+
+  - name: int_fagerh__prestations_publics
+
+    config:
+      tags: ["fagerh"]
+
+    description: >
+      Données de typologie des publics accompagnés, extraites des JSON de prestations. Le modèle est au format long avec une ligne par réponse, prestation, dimension,
+      sous-dimension éventuelle et catégorie. Les catégories avec un effectif nul ne sont pas conservées.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - uuid
+            - prestation_key
+            - public_dimension
+            - public_subdimension
+            - public_category_position
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de réponse au questionnaire.
+        tests:
+          - not_null
+
+      - name: prestation_key
+        description: >
+          Clé technique d'origine de la prestation.
+          Cette clé contient un numéro final lié à l'ordre dynamique dans le formulaire.
+        data_tests:
+          - not_null
+
+      - name: prestation_key_base
+        description: >
+          Clé technique normalisée de la prestation.
+          Le numéro final a été retiré.
+          Cette clé sert à relier la prestation à son mapping.
+        data_tests:
+          - not_null
+
+      - name: prestation_group
+        description: >
+          Grand groupe de la prestation.
+          Il vient de la seed de mapping des prestations.
+          Il permet de regrouper les prestations dans les analyses.
+        data_tests:
+          - not_null
+
+      - name: prestation_label
+        description: >
+          Libellé métier de la prestation.
+          Il est renseigné quand la prestation peut être identifiée de façon fiable.
+
+      - name: orp_status
+        description: >
+          Statut ORP CDAPH de la prestation.
+          Par exemple avec ORP CDAPH, sans ORP CDAPH, hors ORP CDAPH ou non applicable.
+
+      - name: is_reliable_prestation_mapping
+        description: >
+          Indique si le mapping permet d'identifier précisément la prestation.
+          Si la valeur est false, le mapping reste utile mais seulement à un niveau plus agrégé.
+        data_tests:
+          - not_null
+
+      - name: is_unmapped_prestation
+        description: >
+          Indique si la prestation n'a pas été trouvée dans la seed de mapping.
+          Cette colonne sert au contrôle qualité.
+        data_tests:
+          - not_null
+
+      - name: prestation_done
+        description: Indique si la prestation a été marquée comme terminée dans le JSON.
+
+      - name: public_dimension
+        description: Dimension de typologie du public.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - genre
+                - age
+                - niveau_formation_entree
+                - situation_entree
+                - type_handicap
+
+      - name: public_subdimension
+        description: >
+          Sous-dimension de la donnée de public. Renseignée uniquement pour type_handicap afin de distinguer les déficiences principales et associées.
+          Nulle pour les autres dimensions.
+        tests:
+          - accepted_values:
+              values:
+                - principal
+                - associe
+              config:
+                where: "public_subdimension is not null"
+
+      - name: public_category_position
+        description: Position de la catégorie dans le tableau JSON d'origine.
+        tests:
+          - not_null
+
+      - name: public_category_code
+        description: Code stable de la catégorie, issu de la seed de mapping.
+        tests:
+          - not_null
+
+      - name: public_category_label
+        description: Libellé lisible de la catégorie, issu de la seed de mapping.
+        tests:
+          - not_null
+
+      - name: public_count
+        description: >
+          Nombre de personnes dans la catégorie. Seules les lignes avec un effectif strictement supérieur à zéro sont conservées.
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+
+  - name: int_fagerh__etablissements
+
+    config:
+      tags: ["fagerh"]
+
+    description: >
+      Table intermédiaire avec une ligne par établissement répondant.
+
+      Ce modèle sert à garder les informations principales de chaque établissement. Il contient son nom, son département, ses dispositifs
+      actifs et ses ETP.
+
+      Il contient aussi des informations simples sur l'établissement : sa zone d'implantation, les transports, l'accès PMR, l'hébergement,
+      la restauration et le coin cuisine.
+
+      Ce modèle est utilisé pour ajouter les informations de l'établissement aux modèles finaux sur l'activité, les publics et les ressources
+      humaines. Il sert aussi de base au modèle fagerh__profil_etablissements.
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: is_response_completed
+        description: Indique si le questionnaire a été validé.
+
+      - name: finess
+        description: Numéro FINESS de l'établissement.
+
+      - name: establishment_name
+        description: Raison sociale de l'établissement.
+        data_tests:
+          - not_null
+
+      - name: departement
+        description: Département de l'établissement.
+
+      - name: has_esrp
+        description: Indique si l'établissement déclare une activité ESRP.
+
+      - name: has_espo
+        description: Indique si l'établissement déclare une activité ESPO.
+
+      - name: has_ueros
+        description: Indique si l'établissement déclare une activité UEROS.
+
+      - name: has_deac
+        description: Indique si l'établissement déclare une activité DEAc.
+
+      - name: esrp_etp
+        description: ETP déclarés pour l'activité ESRP.
+
+      - name: espo_etp
+        description: ETP déclarés pour l'activité ESPO.
+
+      - name: ueros_etp
+        description: ETP déclarés pour l'activité UEROS.
+
+      - name: deac_etp
+        description: ETP déclarés pour l'activité DEAc.
+
+      - name: implantation_zone
+        description: >
+          Zone d'implantation de l'établissement.
+          Par exemple zone urbaine, périurbaine ou rurale selon la réponse au questionnaire.
+
+      - name: has_public_transport
+        description: Indique si l'établissement est desservi par les transports en commun.
+
+      - name: is_pmr_accessible
+        description: Indique si l'établissement est accessible aux personnes à mobilité réduite.
+
+      - name: has_alternative_transport
+        description: Indique si des transports alternatifs sont organisés.
+
+      - name: distance_to_prefecture
+        description: >
+          Situation de l'établissement par rapport à la préfecture du département.
+          Cette information vient de la réponse au questionnaire.
+
+      - name: has_accommodation
+        description: Indique si l'établissement propose un hébergement.
+
+      - name: accommodation_places
+        description: Nombre de places d'hébergement déclarées.
+
+      - name: accommodation_open_weekend
+        description: Indique si l'hébergement est ouvert le week-end.
+
+      - name: accommodation_has_weekend_accounting
+        description: >
+          Indique si l'établissement déclare avoir une comptabilité différente
+          pour l'hébergement le week-end.
+
+      - name: accommodation_has_closure_periods
+        description: Indique si l'hébergement prévoit des périodes de fermeture.
+
+      - name: accommodation_closure_weeks
+        description: Nombre de semaines de fermeture de l'hébergement.
+
+      - name: accommodation_has_alternatives
+        description: >
+          Indique si des alternatives sont proposées pendant les périodes
+          de fermeture de l'hébergement.
+
+      - name: has_collective_restaurant
+        description: Indique si l'établissement propose un restaurant collectif.
+
+      - name: restaurant_open_weekend
+        description: Indique si le restaurant collectif est ouvert le week-end.
+
+      - name: has_external_catering
+        description: Indique si une restauration externe est prévue.
+
+      - name: has_catering_financial_participation
+        description: >
+          Indique s'il existe une participation financière de l'établissement
+          pour la restauration.
+
+      - name: has_shared_kitchen
+        description: Indique si l'établissement propose un coin cuisine à disposition.
+
+      - name: shared_kitchen_open_weekend
+        description: Indique si le coin cuisine est ouvert le week-end.
+
+  - name: int_fagerh__metiers
+
+    config:
+      tags: ["fagerh"]
+
+    description: >
+      Table intermédiaire qui décrit les métiers déclarés dans le volet RH du questionnaire FAGERH.
+
+      Le modèle part de la colonne metiers_json du modèle stg_fagerh__reponses. Chaque métier déclaré dans le JSON devient une ligne du modèle.
+
+      Ce modèle sert à analyser la répartition des ETP par métier, par famille de métier et par mode d'emploi interne ou externe.
+
+      Les familles de métiers viennent de la seed seed_fagerh__metier_family_mapping, selon les categories montrés dans le frontend du formulaire. Ça permet de regrouper
+      les métiers en catégories plus simples à analyser.
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse au questionnaire.
+        tests:
+          - not_null
+
+      - name: metier
+        description: Métier déclaré dans le questionnaire.
+        tests:
+          - not_null
+
+      - name: metier_family
+        description: Famille technique du métier, utilisée pour regrouper les métiers dans les analyses.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - medical
+                - paramedical
+                - socio_educatif
+                - psychologue
+                - pedagogie
+                - support_administratif
+
+      - name: metier_family_label
+        description: Libellé lisible de la famille de métier.
+        tests:
+          - not_null
+
+      - name: employment_mode
+        description: >
+          Mode d'emploi du métier déclaré. La valeur indique si les ETP sont internes
+          à la structure ou externes.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - interne
+                - externe
+
+      - name: etp_cdi
+        description: >
+          Nombre d'ETP en CDI pour ce métier. Cette valeur concerne surtout les métiers internes.
+          Elle peut être nulle si l'information n'est pas renseignée ou si elle ne s'applique pas.
+
+      - name: etp_cdd
+        description: >
+          Nombre d'ETP en CDD pour ce métier. Cette valeur concerne surtout les métiers internes.
+          Elle peut être nulle si l'information n'est pas renseignée ou si elle ne s'applique pas.
+
+      - name: etp_total
+        description: >
+          Nombre total d'ETP déclaré pour ce métier. Cette valeur reprend le total présent
+          dans le questionnaire. Elle n'est pas recalculée à partir des ETP CDI et CDD.

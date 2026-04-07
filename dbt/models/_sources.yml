@@ -758,4 +758,13 @@ sources:
         description: >
           Table contenant les connexions des utilisateurs sur les derniers trois mois
 
+  - name: raw
+    schema: raw
+    description: "Tables contenant des données brutes"
+
+    tables:
+        - name: fagerh_reponses
+          description: >
+            Table avec les données brutes du questionnaire de Fagerh provenant de
+            https://grist.numerique.gouv.fr/o/gipinclusion/adcjAbtXzq25/fagerh
 

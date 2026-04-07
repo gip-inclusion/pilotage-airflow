@@ -1,0 +1,14 @@
+prestation_key_base,prestation_group,prestation_label,orp_status,is_direct,is_reliable
+directes-orp-cdaph-ueros,Directes,UEROS,Avec ORP CDAPH,true,true
+directes-orp-cdaph-espo,Directes,ESPO,Avec ORP CDAPH,true,true
+directes-orp-cdaph-esrp,Directes,ESRP,Avec ORP CDAPH,true,true
+directes-orp-cdaph-prestation-d-evaluations-et-de,Directes,,,true,false
+directes-orp-cdaph-autre-dispositif-d-evaluation-a,Directes,Autre dispositif d'évaluation avec ORP CDAPH,Avec ORP CDAPH,true,true
+directes-orp-cdaph-autre-dispositif-d-evaluation-s,Directes,Autre dispositif d'évaluation sans ORP CDAPH,Sans ORP CDAPH,true,true
+directes-orp-cdaph-parcours-a-visee-socio-professi,Parcours socio-pro,,Avec ORP CDAPH,true,false
+directes-orp-cdaph-parcours-accompagnement-a-visee,Parcours à visée certifiante,,Avec ORP CDAPH,true,false
+directes-hors-orp-cdaph-evaluations-professionnell,Directes sans ORP,Évaluations professionnelles,Hors ORP CDAPH,true,true
+directes-hors-orp-cdaph-informations-aux-personnes,Directes sans ORP,Informations aux personnes,Hors ORP CDAPH,true,true
+indirectes-informations-partenaires,Indirectes,Informations partenaires,,false,true
+indirectes-informations-organisme-de-formation,Indirectes,Informations organismes formation,,false,true
+indirectes-participations-mdph,Indirectes,Participations MDPH,,false,true
