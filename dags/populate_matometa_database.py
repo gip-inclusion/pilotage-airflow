@@ -14,13 +14,45 @@ logger = logging.getLogger(__name__)
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-TABLES_EMPLOI = ["prolongations", "organisations"]
-TABLES_ASP = ["fluxIAE_Structure_v2"]
-TABLES_MONRECAP = ["Contacts", "Commandes"]
+TABLES_EMPLOI = [
+    "candidats",
+    "candidatures_echelle_locale",
+    "fiches_de_poste_par_candidature",
+    "structures",
+    "prolongations",
+    "organisations",
+    "utilisateurs",
+    "pass_agréments",
+    "suspensions_pass",
+    "suivi_auto_prescription",
+]
+TABLES_ASP = [
+    "fluxIAE_Structure_v2",
+    "suivi_realisation_convention_par_structure",
+    "suivi_realisation_convention_mensuelle",
+    "suivi_etp_conventionnes_v2",
+    "FluxIAE_ContratMission_v2",
+]
+TABLES_MONRECAP = ["Contacts", "Commandes", "barometre"]
 TABLES_DATALAKE = ["pdi_base_unique_tous_les_pros"]
-TABLES_DORA = ["les_emplois_utilisateurs"]
+TABLES_DORA = [
+    "structures_structure",
+    "structures_structuremember",
+    "services_service",
+    "services_servicecategory",
+    "services_service_categories",
+    "orientations_orientation",
+    "users_user",
+    "stats_searchview",
+    "stats_serviceview",
+    "stats_mobilisationevent",
+    "stats_structureinfosview",
+    "stats_structureview",
+    "di_structures",
+    "di_services",
+]
 
-COL_ANONYMIZE = ["hash_nir"]
+COLS_TO_ANONYMIZE = ["hash_nir", "hash_numéro_pass_iae"]
 
 
 def get_hmac_secret():
@@ -43,7 +75,7 @@ def sync_tables(table_names, src_schema, dest_schema, from_db=None):
                 if df[col].dtype == object:
                     df[col] = df[col].map(lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x)
 
-            for col in COL_ANONYMIZE:
+            for col in COLS_TO_ANONYMIZE:
                 if col in df.columns:
                     df[col] = df[col].map(
                         lambda x: hmac.new(get_hmac_secret(), str(x).encode(), hashlib.sha256).hexdigest()
@@ -81,7 +113,7 @@ with DAG("populate_matometa_db", schedule="@daily", **dag_args) as dag:
     @task
     def export_dora_tables():
         with db.DBConnection(db_url_variable="DORA_DB_URL_SECRET", ssh_conn_id="dora_scalingo_ssh") as src_db:
-            sync_tables(TABLES_DORA, src_schema="public_les_emplois", dest_schema="dora", from_db=src_db)
+            sync_tables(TABLES_DORA, src_schema="public", dest_schema="dora", from_db=src_db)
 
     (
         export_emplois_tables()
