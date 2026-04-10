@@ -1,4 +1,6 @@
+import io
 import textwrap
+from contextlib import closing
 
 import sqlalchemy
 from airflow.models import Variable
@@ -111,32 +113,41 @@ class DBConnection:
             db_url.host = "127.0.0.1"
             db_url.port = self.tunnel.local_bind_port
 
-        self.engine = create_engine(db_url.url)
+        self.engine = create_engine(
+            db_url.url,
+            # same values as metabase connection in emplois
+            connect_args={"keepalives": 1, "keepalives_idle": 30, "keepalives_interval": 5, "keepalives_count": 5},
+        )
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         if self.engine:
             self.engine.dispose()
         if self.tunnel:
             self.tunnel.stop()
 
-    def query(self, query):
+    def query_chunked(self, query, chunksize=10_000):
         import pandas as pd
 
-        return pd.read_sql_query(query, self.engine)
+        with self.engine.connect() as conn:
+            yield from pd.read_sql_query(query, conn, chunksize=chunksize)
 
-    def to_sql(self, df, table, schema, chunksize=5000, method="multi", **kwargs):
-        with self.engine.begin() as conn:
-            df.to_sql(
-                name=table,
-                con=conn,
-                schema=schema,
-                if_exists="replace",
-                index=False,
-                chunksize=chunksize,
-                method=method,
-                **kwargs,
-            )
+    def to_sql(self, df, table, schema, if_exists="replace"):
+        df = df.convert_dtypes(convert_string=False, convert_floating=False)
+        for col in df.select_dtypes(include=["timedelta64"]):
+            df[col] = df[col].astype("int64")
+
+        if if_exists == "replace":
+            with self.engine.begin() as conn:
+                df.head(0).to_sql(name=table, con=conn, schema=schema, if_exists="replace", index=False)
+
+        with closing(self.engine.raw_connection()) as raw_conn:
+            with raw_conn.cursor() as cur:
+                cur.copy_expert(
+                    f"""COPY "{schema}"."{table}" FROM STDIN WITH (FORMAT CSV, NULL '\\N')""",
+                    io.StringIO(df.to_csv(index=False, header=False, na_rep="\\N")),
+                )
+            raw_conn.commit()
 
 
 def pg_store(table_name, df, create_table_sql):
