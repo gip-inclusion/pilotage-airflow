@@ -260,3 +260,19 @@ sources:
         - name: dsn_type_siae_et_secteur_activite
         - name: dsn_type_siae_et_sexe
 
+  - name: raw
+    schema: raw
+    description: "Tables contenant des données brutes"
+
+    tables:
+        - name: fagerh_reponses
+          description: >
+            Table avec les données brutes du questionnaire de Fagerh provenant de
+            https://grist.numerique.gouv.fr/o/gipinclusion/adcjAbtXzq25/fagerh
+        - name: dsn_geographie_et_secteur_activite
+        - name: dsn_geographie_et_sexe
+        - name: dsn_type_siae_et_geographie
+        - name: dsn_type_siae_et_nature_contrat
+        - name: dsn_type_siae_et_secteur_activite
+        - name: dsn_type_siae_et_sexe
+

@@ -5,8 +5,9 @@ import pandas as pd
 import requests
 from airflow import DAG
 from airflow.decorators import task
+from airflow.operators import bash
 
-from dags.common import db, default_dag_args
+from dags.common import db, dbt, default_dag_args
 
 
 CSV_URL = (
@@ -21,12 +22,14 @@ LOCAL_TMP_ROOT = Path("/tmp") / DAG_ID
 RAW_SCHEMA = "raw"
 RAW_TABLE_NAME = "fagerh_reponses"
 
+dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with DAG(
     dag_id=DAG_ID,
     schedule=None,
-    **default_dag_args(),
+    **dag_args,
 ) as dag:
+    env_vars = db.connection_envvars()
 
     @task
     def download_csv():
@@ -63,8 +66,6 @@ with DAG(
         print(f"{file_path=}")
         print(f"{db_table=}")
 
-        db.create_schema(RAW_SCHEMA)
-
         df = pd.read_csv(file_path, dtype=str)
 
         with db.connection_engine().begin() as conn:
@@ -81,5 +82,28 @@ with DAG(
         print(f"{inserted_rows=}")
         print("status=loaded")
 
+    dbt_debug = bash.BashOperator(
+        task_id="dbt_debug",
+        bash_command="dbt debug",
+        env=env_vars,
+        append_env=True,
+    )
+
+    dbt_deps = bash.BashOperator(
+        task_id="dbt_deps",
+        bash_command="dbt deps",
+        env=env_vars,
+        append_env=True,
+    )
+
+    dbt_build = bash.BashOperator(
+        task_id="dbt_build",
+        bash_command="dbt build --select stg_fagerh_reponses",
+        env=env_vars,
+        append_env=True,
+    )
+
     downloaded = download_csv()
-    load_raw_csv_to_db(downloaded)
+    loaded = load_raw_csv_to_db(downloaded)
+
+    loaded >> dbt_debug >> dbt_deps >> dbt_build
