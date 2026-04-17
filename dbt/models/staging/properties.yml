@@ -751,6 +751,575 @@ models:
       - dbt_utils.equal_rowcount:
           compare_model: source('data_inclusion', 'services_v1')
 
+  - name: stg_esat__surveys_esat_answers
+    description: >
+        Réponses au questionnaire 2025 relatif au Plan de Transformation des ESAT, transmis par les établissements
+        dans le cadre de leur obligation réglementaire de reporting aux ARS. Ce modèle conserve une ligne par
+        réponse et regroupe des informations déclaratives sur l’activité de l’ESAT, les travailleurs accompagnés, les
+        dispositifs mobilisés et plusieurs indicateurs liés au Réseau pour l’Emploi.
+        https://pilotage.inclusion.beta.gouv.fr/survey/esat-2025/019d9049-9290-7cb1-bf6b-fbcdc9c8fe4b/introduction
+    columns:
+        - name: answer_id
+          description: >
+            Identifiant unique de la réponse au questionnaire. Une ligne correspond
+            à un questionnaire renseigné par un ESAT.
+          tests:
+            - unique
+            - not_null
+
+        # Identification
+        - name: finess_num
+          description: >
+            Numéro FINESS de l’établissement principal.
+
+        # Organization
+        - name: esat_role
+          description: >
+            Fonction de la personne ayant renseigné le questionnaire au sein de l’ESAT.
+
+        - name: esat_name
+          description: >
+            Nom de l’ESAT.
+
+        - name: esat_siret
+          description: >
+            Numéro SIRET de l’ESAT.
+
+        - name: managing_organization_finess
+          description: >
+            Numéro FINESS de l’entité juridique de rattachement.
+
+        - name: esat_status
+          description: >
+            Statut de l’ESAT.
+
+        - name: esat_dept
+          description: >
+            Département d’implantation de l’ESAT.
+
+        - name: nb_places_allowed
+          description: >
+            Nombre de places autorisées fixé par l’ARS au 31 décembre de l’année n-1.
+
+        - name: nb_employee_worked
+          description: >
+            Nombre de salariés ou d’agents publics employés dans l’ESAT au 31 décembre
+            de l’année n-1.
+
+        - name: nb_employee_shared
+          description: >
+            Nombre de salariés mutualisés sur plusieurs ESAT parmi les effectifs
+            au 31 décembre de l’année n-1.
+
+        # Workers supported
+        - name: nb_worker_supported
+          description: >
+            Nombre de travailleurs et travailleuses accompagnés en année n-1.
+
+        - name: nb_worker_half_time
+          description: >
+            Nombre de travailleurs et travailleuses à temps partiel en année n-1.
+
+        - name: mean_worker_age
+          description: >
+            Âge moyen des travailleurs et travailleuses accompagnés au 31 décembre
+            de l’année n-1.
+
+        - name: mean_seniority
+          description: >
+            Ancienneté moyenne des travailleurs et travailleuses accompagnés au
+            31 décembre de l’année n-1.
+
+        # Workers new
+        - name: nb_worker_previous_mot
+          description: >
+            Nombre de travailleurs ayant occupé antérieurement un emploi en milieu
+            ordinaire, y compris en entreprise adaptée, avant leur admission à l’ESAT.
+
+        - name: nb_worker_new
+          description: >
+            Nombre de travailleurs et travailleuses admis pour la première fois
+            en milieu protégé de travail.
+
+        - name: nb_worker_temporary
+          description: >
+            Nombre de travailleurs et travailleuses admis temporairement dans l’ESAT.
+
+        # Establishment discovery
+        - name: nb_worker_mispe_mdph
+          description: >
+            Nombre de personnes accompagnées par l’ESAT dans le cadre d’une mise
+            en situation professionnelle prescrite par une MDPH.
+
+        - name: nb_worker_mispe_rpe
+          description: >
+            Nombre de personnes accompagnées par l’ESAT dans le cadre d’une mise
+            en situation professionnelle prescrite par le Réseau pour l’Emploi.
+
+        # Ordinary working environment
+        - name: nb_worker_willing_mot
+          description: >
+            Nombre de travailleurs ayant exprimé dans leur projet personnalisé
+            leur volonté d’aller travailler en milieu ordinaire.
+
+        - name: nb_worker_ft_job_seekers
+          description: >
+            Nombre de travailleurs et travailleuses inscrits comme demandeurs
+            d’emploi à France Travail.
+
+        # Ordinary working environment and customers involvement
+        - name: has_prescription_delegate
+          description: >
+            Indique si l’ESAT est délégataire de prescription de PMSMP.
+
+        - name: is_pmsmp_refused
+          description: >
+            Indique si l’ESAT a eu des refus de PMSMP de la part des organismes
+            du Réseau pour l’Emploi.
+
+        - name: nb_worker_pmsmp
+          description: >
+            Nombre de travailleurs et travailleuses ayant effectué une PMSMP.
+
+        - name: nb_worker_service
+          description: >
+            Nombre de travailleurs et travailleuses ayant réalisé une prestation
+            de service auprès d’une entreprise, d’une collectivité publique ou
+            d’un autre organisme.
+
+        - name: nb_worker_mad_indiv
+          description: >
+            Nombre de travailleurs et travailleuses ayant réalisé une mise à
+            disposition individuelle ou collective chez un employeur public ou privé.
+
+        - name: nb_worker_with_public
+          description: >
+            Nombre de travailleurs et travailleuses ayant réalisé une activité
+            dans un lieu au contact de la clientèle.
+
+        - name: nb_worker_only_inside
+          description: >
+            Nombre de travailleurs et travailleuses étant restés travailler dans
+            les murs sans contact avec le public ou le milieu ordinaire.
+
+        - name: nb_worker_cumul_esat_ea
+          description: >
+            Nombre de travailleurs et travailleuses ayant cumulé un temps partiel
+            dans l’ESAT et un emploi à temps partiel en entreprise adaptée.
+
+        - name: nb_worker_cumul_esat_mot
+          description: >
+            Nombre de travailleurs et travailleuses ayant cumulé un temps partiel
+            dans l’ESAT et un emploi à temps partiel en milieu ordinaire.
+
+        # Workers left
+        - name: nb_worker_left
+          description: >
+            Nombre de travailleurs et travailleuses ayant quitté l’ESAT en année n-1.
+
+        - name: nb_worker_left_ea
+          description: >
+            Nombre de travailleurs ayant quitté l’ESAT pour un emploi en entreprise adaptée.
+
+        - name: nb_worker_left_private
+          description: >
+            Nombre de travailleurs ayant quitté l’ESAT pour un emploi dans le milieu
+            ordinaire privé lucratif.
+
+        - name: nb_worker_left_public
+          description: >
+            Nombre de travailleurs ayant quitté l’ESAT pour un emploi dans le milieu
+            ordinaire public.
+
+        - name: nb_worker_left_asso
+          description: >
+            Nombre de travailleurs ayant quitté l’ESAT pour un emploi dans le milieu
+            ordinaire privé non lucratif.
+
+        - name: nb_worker_left_other_reason
+          description: >
+            Nombre de travailleurs ayant quitté l’ESAT pour d’autres raisons.
+
+        - name: nb_worker_cdi
+          description: >
+            Nombre de travailleurs ayant signé un CDI parmi ceux ayant quitté l’ESAT
+            pour un autre emploi.
+
+        - name: nb_worker_cdd
+          description: >
+            Nombre de travailleurs ayant signé un CDD.
+
+        - name: nb_worker_interim
+          description: >
+            Nombre de travailleurs en mission d’intérim.
+
+        - name: nb_worker_prof
+          description: >
+            Nombre de travailleurs en contrat de professionnalisation.
+
+        - name: nb_worker_apprentice
+          description: >
+            Nombre de travailleurs en contrat d’apprentissage.
+
+        - name: nb_conv_exit_agreement
+          description: >
+            Nombre de conventions d’appui en vigueur au 31 décembre de l’année n-1
+            avec un employeur public ou privé pour accompagner la sortie vers le
+            milieu ordinaire.
+
+        - name: nb_conv_exit_agreement_new
+          description: >
+            Nombre de conventions d’appui signées en année n-1 avec un employeur
+            public ou privé pour accompagner la sortie vers le milieu ordinaire.
+
+        - name: nb_worker_esrp
+          description: >
+            Nombre de travailleurs et travailleuses ayant suivi une formation en
+            établissement ou service de réadaptation professionnelle.
+
+        # Workers right to return
+        - name: nb_worker_reinteg
+          description: >
+            Nombre de travailleurs et travailleuses ayant réintégré l’ESAT.
+
+        - name: nb_worker_reinteg_other
+          description: >
+            Nombre de travailleurs et travailleuses ayant intégré un autre ESAT.
+
+        - name: nb_esat_agreement
+          description: >
+            Nombre d’ESAT avec lesquels une convention a été établie pour garantir
+            l’exercice du droit au retour.
+
+        # Support hours
+        - name: nb_support_hours
+          description: >
+            Catégorie correspondant au nombre moyen d’heures de soutien liées à
+            l’activité professionnelle dont chaque travailleur a bénéficié en année n-1.
+
+        - name: support_themes
+          description: >
+            Thématiques principales d’accompagnement médico-social proposées par
+            l’ESAT. Cette colonne peut contenir plusieurs valeurs.
+
+        # Formations
+        - name: has_contrib_opco
+          description: >
+            Indique si l’ESAT a acquitté une contribution pour la formation des
+            travailleurs et travailleuses auprès de l’OPCO Santé ou de l’ANFH.
+
+        - name: pct_opco
+          description: >
+            Taux de contribution à l’OPCO Santé ou à l’ANFH.
+
+        - name: nb_worker_formation_opco
+          description: >
+            Nombre de travailleurs et travailleuses ayant suivi une formation prise
+            en charge par l’OPCO Santé ou par l’ANFH en année n-1.
+
+        - name: has_opco_or_anfh_refusal
+          description: >
+            Indique si l’ESAT a fait l’objet d’un ou plusieurs refus de financement
+            d’une formation par l’OPCO Santé ou l’ANFH.
+
+        - name: nb_worker_cpf_used
+          description: >
+            Nombre de travailleurs et travailleuses ayant utilisé leur CPF au
+            31 décembre de l’année n-1, depuis leur admission dans l’ESAT.
+            Le nom source de la colonne était trompeur.
+
+        - name: cpf_unused_reason
+          description: >
+            Raisons pour lesquelles les travailleurs et travailleuses n’utilisent
+            pas leur CPF.
+
+        - name: formation_cpf
+          description: >
+            Formation majoritairement suivie par les travailleurs et travailleuses
+            au titre de leur CPF.
+
+        - name: nb_worker_intern_formation
+          description: >
+            Nombre de travailleurs et travailleuses ayant bénéficié d’au moins une
+            formation animée en interne par les salarié(e)s de l’ESAT.
+
+        - name: formation_subject
+          description: >
+            Sujets des formations dispensées en interne par l’ESAT.
+
+        - name: has_autodetermination_formation
+          description: >
+            Indique si une formation à l’autodétermination a été mise en place pour
+            les travailleurs et travailleuses.
+
+        - name: nb_worker_autodetermination
+          description: >
+            Nombre de travailleurs et travailleuses ayant bénéficié d’une formation
+            à l’autodétermination dans l’année.
+
+        - name: has_autodetermination_external_formation
+          description: >
+            Indique si la formation à l’autodétermination est assurée par l’intermédiaire
+            d’un organisme externe.
+
+        # Skills
+        - name: skills_validation_type
+          description: >
+            Types de dispositifs dont ont bénéficié les travailleurs et travailleuses
+            pour reconnaître et développer leurs compétences.
+
+        - name: nb_worker_rae_rsfp
+          description: >
+            Nombre de travailleurs et travailleuses ayant bénéficié d’une RAE ou d’une RSFP.
+
+        - name: nb_worker_vae
+          description: >
+            Nombre de travailleurs et travailleuses ayant bénéficié d’une VAE.
+
+        - name: after_skills_validation
+          description: >
+            Nombre de travailleurs sortis dans l’année ayant obtenu auparavant une
+            validation ou une reconnaissance de leurs compétences.
+
+        # Duodays
+        - name: nb_worker_duoday
+          description: >
+            Nombre de travailleurs et travailleuses de l’ESAT ayant participé à Duoday
+            en année n-1.
+
+        - name: nb_employee_reverse_duoday
+          description: >
+            Nombre de professionnels du milieu ordinaire ayant participé à des Duoday
+            inversés en année n-1.
+
+        # Skills notebook
+        - name: skills_notebook
+          description: >
+            Indique si un carnet de parcours et de compétences a été mis en place.
+
+        - name: software_financial_help
+          description: >
+            Indique si l’ESAT a bénéficié d’une aide financière pour mettre en place
+            le carnet de parcours et de compétences et, le cas échéant, acquérir un logiciel.
+
+        - name: software_financial_help_type
+          description: >
+            Type d’aide financière reçue pour la mise en place du carnet de parcours
+            et de compétences.
+
+        # Retirement
+        - name: retirement_preparation_actions
+          description: >
+            Actions conduites par l’ESAT pour préparer les travailleurs et travailleuses
+            au départ à la retraite.
+
+        - name: uaat_inscription
+          description: >
+            Indique si l’ESAT est inscrit dans la démarche Un Avenir Après le Travail.
+
+        - name: retirement_preparation_nb_workers
+          description: >
+            Nombre de travailleurs et travailleuses ayant bénéficié d’actions de
+            préparation à la retraite.
+
+        - name: pct_more_than50
+          description: >
+            Nombre de travailleurs et travailleuses de plus de 50 ans ayant travaillé
+            dans l’ESAT en année n-1.
+
+        # Language accessibility
+        - name: documents_falclist
+          description: >
+            Indique si les principaux documents destinés aux travailleurs et travailleuses
+            étaient accessibles en FALC ou en CAA au 31 décembre de l’année n-1.
+
+        # Working conditions
+        - name: has_worker_delegate
+          description: >
+            Indique s’il existe dans l’ESAT un ou une délégué(e) des travailleurs élu(e).
+
+        - name: worker_delegate_formation
+          description: >
+            Indique si le ou la délégué(e) des travailleurs a bénéficié d’une formation
+            au cours de son mandat pour cette mission.
+
+        - name: worker_delegate_hours_credit
+          description: >
+            Indique si le ou la délégué(e) des travailleurs a bénéficié d’un crédit
+            d’heures chaque mois pour remplir sa mission.
+
+        - name: has_delegate_hours
+          description: >
+            Indique si un nombre d’heures a été précisé pour le crédit d’heures
+            du ou de la délégué(e) des travailleurs.
+
+        - name: has_mix_qvt_in_place
+          description: >
+            Indique si une instance mixte sur la qualité de vie au travail, l’hygiène
+            et la sécurité était en place en année n-1.
+
+        # Profit sharing
+        - name: profit_sharing_bonus
+          description: >
+            Montant moyen de la prime d’intéressement versée aux travailleurs et
+            travailleuses en année n-1.
+
+        - name: mean_pct_esat_rem
+          description: >
+            Pourcentage moyen de rémunération directe des travailleurs pris en charge
+            par l’ESAT au 31 décembre de l’année n-1.
+
+        # Insurance policy
+        - name: has_foresight_in_place
+          description: >
+            Indique si l’ESAT a contribué en année n-1 à un régime de prévoyance
+            avec compensation partielle de la rémunération garantie.
+
+        - name: year_foresight_in_place
+          description: >
+            Année de mise en œuvre du régime de prévoyance dans l’ESAT.
+
+        # Mobility program
+        - name: annual_transport_budget
+          description: >
+            Budget annuel alloué au transport des travailleurs et travailleuses de
+            leur domicile à l’ESAT.
+
+        - name: nb_worker_transport
+          description: >
+            Nombre de travailleurs et travailleuses ayant bénéficié d’un transport
+            financé ou organisé par l’ESAT.
+
+        - name: nb_worker_mobility_inclusion_card
+          description: >
+            Nombre de travailleurs et travailleuses ayant bénéficié de la carte
+            mobilité inclusion.
+
+        - name: nb_worker_driving_licence
+          description: >
+            Nombre de travailleurs et travailleuses titulaires du permis de conduire.
+
+        - name: nb_worker_code
+          description: >
+            Nombre de travailleurs et travailleuses ayant obtenu le code de la route.
+
+        # Vouchers
+        - name: has_holiday_voucher
+          description: >
+            Indique si l’ESAT propose des chèques vacances aux travailleurs et travailleuses.
+
+        - name: holiday_voucher_annual_budget
+          description: >
+            Budget annuel de l’ESAT consacré aux chèques vacances.
+
+        - name: has_gift_voucher
+          description: >
+            Indique si l’ESAT propose des chèques cadeaux aux travailleurs et travailleuses.
+
+        - name: gift_voucher_annual_budget
+          description: >
+            Budget annuel de l’ESAT consacré aux chèques cadeaux.
+
+        # Sunday work
+        - name: nb_worker_worked_sunday
+          description: >
+            Nombre de travailleurs et travailleuses ayant travaillé au moins un dimanche
+            ou un jour férié en année n-1.
+
+        # Partnership agreements
+        - name: has_agreement_signed_ft
+          description: >
+            Indique si une convention était en vigueur en année n-1 avec les acteurs
+            du Réseau pour l’Emploi.
+
+        - name: has_agreement_signed_ea
+          description: >
+            Indique si une convention était en vigueur en année n-1 avec une entreprise adaptée.
+
+        - name: has_agreement_signed_dept_pae
+          description: >
+            Indique si une convention était en vigueur en année n-1 avec la plateforme
+            emploi accompagné du département.
+
+        # Staff
+        - name: nb_insertion_staff
+          description: >
+            Nombre de conseillers en parcours d’insertion ou assimilés dans les effectifs
+            au 31 décembre de l’année n-1.
+
+        - name: nb_insertion_dispo
+          description: >
+            Nombre de postes de conseillers en parcours d’insertion ou assimilés mis
+            à disposition ou mutualisés au 31 décembre de l’année n-1.
+
+        - name: insertion_staff_funding
+          description: >
+            Mode de financement des conseillers en parcours d’insertion ou assimilés.
+
+        # Commercial operation
+        - name: annual_ca
+          description: >
+            Chiffre d’affaires annuel commercial total, toutes activités confondues.
+
+        - name: annual_ca_production
+          description: >
+            Chiffre d’affaires annuel commercial issu des productions propres.
+
+        - name: annual_ca_service
+          description: >
+            Chiffre d’affaires annuel commercial issu des prestations de service.
+
+        - name: annual_ca_mad
+          description: >
+            Montant annuel du chiffre d’affaires issu exclusivement des contrats de
+            mise à disposition.
+
+        - name: pct_ca_public
+          description: >
+            Pourcentage du chiffre d’affaires réalisé avec des clients du secteur public.
+
+        - name: budget_commercial
+          description: >
+            Situation du résultat net de la section commerciale.
+
+        - name: budget_commercial_deficit
+          description: >
+            Montant du déficit de la section commerciale.
+
+        - name: budget_commercial_excedent
+          description: >
+            Montant de l’excédent de la section commerciale.
+
+        # Social activity budget
+        - name: budget_social
+          description: >
+            Situation du résultat de clôture du budget de fonctionnement, section
+            d’exploitation du budget social.
+
+        - name: budget_social_deficit
+          description: >
+            Montant du déficit du budget social.
+
+        - name: budget_social_excedent
+          description: >
+            Montant de l’excédent du budget social.
+
+        # Investments
+        - name: budget_accessibility
+          description: >
+            Montant des investissements réalisés pour la mise aux normes de sécurité
+            et d’accessibilité des installations.
+
+        - name: budget_diversity
+          description: >
+            Montant des investissements réalisés pour diversifier les activités proposées
+            aux travailleurs et travailleuses.
+
+        # Comments
+        - name: comments
+          description: >
+            Champ libre permettant d’apporter des précisions complémentaires ou de
+            signaler des questions auxquelles l’ESAT n’a pas pu répondre.
 
 
 

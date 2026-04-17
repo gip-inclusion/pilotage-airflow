@@ -124,3 +124,28 @@ models:
     description: >
       Enrichissement des métriques offre/demande avec les indicateurs de couverture par type de frein.
       Formule couverture : offre / (besoin + offre).
+
+  - name: int_esat__surveys_esat_answers_deduplicated
+    description: >
+      Modèle intermédiaire de déduplication des réponses au questionnaire ESAT 2025.
+      Lorsqu’un même établissement identifié par finess_num a transmis plusieurs
+      réponses, ce modèle conserve uniquement la réponse la plus complète.
+
+      La complétude est mesurée en comptant le nombre de colonnes renseignées,
+      hors identifiants techniques answer_id et finess_num.
+
+      En cas d’égalité, la réponse conservée est celle ayant le `answer_id` le
+      plus élevé.
+
+    columns:
+      - name: finess_num
+        description: >
+          Numéro FINESS de l’établissement principal.
+        tests:
+          - unique
+          - not_null
+
+      - name: completeness_score
+        description: >
+          Nombre de colonnes renseignées dans la réponse, hors `answer_id` et
+          `finess_num`. Une valeur élevée indique une réponse plus complète.
