@@ -220,6 +220,13 @@ sources:
       Données importées de Tally (et bientôt des emplois).
     tables:
       - name: raw_questionnaire_2025
+  - name: esat_raw
+    schema: raw
+    tables:
+      - name: surveys_esatanswer
+        description: >
+            Réponses au Questionnaire relatif au Plan de Transformation des ESAT 2025.
+            https://pilotage.inclusion.beta.gouv.fr/survey/esat-2025/019d9049-9290-7cb1-bf6b-fbcdc9c8fe4b/introduction
   - name: data_inclusion
     schema: data_inclusion
     description: >
