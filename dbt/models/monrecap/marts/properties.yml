@@ -6,16 +6,816 @@ models:
       Table créée afin de calculer la mesure d'impact principale de Mon Récap
   - name: Contacts
     description: >
-      Table des contacts de mon recap. Nous créons cette table à partir des contacts commandeurs et non commandeurs.
+      Table des contacts de Mon Récap. Créée à partir des contacts commandeurs et non commandeurs.
+    columns:
+      - name: EMAIL
+        description: Adresse email du contact (clé d'identification principale).
+
+      - name: STRUCTURE
+        description: Nom de la structure du contact.
+
+      - name: Réseau
+        description: Identifiant numérique du réseau auquel appartient la structure.
+
+      - name: LIEN_TALLY
+        description: Lien vers le formulaire Tally de commande pré-rempli pour ce contact.
+
+      - name: Date jour
+        description: Date du jour de la dernière synchronisation ou mise à jour de la fiche contact.
+
+      - name: Date de dernière commande
+        description: Date de la commande la plus récente passée par ce contact.
+
+      - name: Tel
+        description: Numéro de téléphone du contact.
+
+      - name: Fonction
+        description: Intitulé de poste du contact tel que saisi dans le formulaire.
+
+      - name: Contact
+        description: Nom et prénom du contact.
+
+      - name: LIEN_BARO
+        description: Lien vers le formulaire baromètre pré-rempli pour ce contact.
+
+      - name: Code postal
+        description: Code postal de la structure du contact.
+
+      - name: "Nombre d'envois du baromètre"
+        description: Nombre de fois où le formulaire baromètre a été envoyé à ce contact.
+
+      - name: Type de Structure
+        description: Catégorie de la structure du contact.
+
+      - name: Date de première commande
+        description: Date de la toute première commande passée par ce contact.
+
+      - name: Date envoi mail Relance J+71
+        description: Date d'envoi du mail de relance automatique à J+71 après la première commande.
+
+      - name: "Fonction (recatégorisée)"
+        description: Intitulé de poste normalisé (version recatégorisée pour les analyses).
+
+      - name: Structure-réseau-label
+        description: Libellé combiné structure + réseau utilisé pour les affichages et filtres.
+
+      - name: Code dpt
+        description: Code département de la structure (2 ou 3 caractères).
+
+      - name: Objectifs de réponses enquêtes
+        description: Objectif de réponses fixé pour les enquêtes usagers, saisi manuellement.
+
+      - name: "Qui ?"
+        description: Identifiant de l'opérateur interne ayant effectué un suivi sur ce contact.
+
+      - name: "date de l'échange"
+        description: Date du dernier échange avec le contact (champ libre, non typé date).
+
+      - name: "Vague d'envoi mail enquête usagers"
+        description: Vague de déploiement de l'enquête usagers associée à ce contact.
+
+      - name: A relancer
+        description: Indique si ce contact doit être relancé (champ libre).
+
+      - name: Envoyeur
+        description: Identifiant de l'expéditeur interne pour les envois de mails à ce contact.
+
+      - name: "Nbre de réponses à l'enquête au 25/04"
+        description: Nombre de réponses reçues à l'enquête usagers arrêté au 25 avril (champ figé).
+
+      - name: Date de dernière réponse au baromètre
+        description: Date de la dernière réponse au formulaire baromètre soumise par ce contact.
+
+      - name: "Utilise le carnet ?"
+        description: Déclaratif sur l'utilisation du carnet Mon Récap par la structure.
+
+      - name: Date envoi mail merci
+        description: Date d'envoi du mail de remerciement après commande.
+
+      - name: Réticences
+        description: Notes libres sur les réticences ou freins exprimés par le contact.
+
+      - name: Estimation par la structure
+        description: Estimation déclarative du nombre d'usagers accompagnés par la structure.
+
+      - name: Infos complémentaires
+        description: Notes libres complémentaires saisies par l'équipe Mon Récap.
+
+      - name: Suivi contact
+        description: Historique ou notes de suivi de la relation avec ce contact.
+
+      - name: Mail CC
+        description: Adresse email en copie pour les envois à ce contact.
+
+      - name: Type de contact
+        description: Distingue les contacts ayant passé au moins une commande des contacts non commandeurs.
+
+      - name: Organisation
+        description: Nom de l'organisation ou du réseau de tutelle de la structure.
+
+      - name: Commandeur référent
+        description: Nom du commandeur référent associé à ce contact non commandeur.
+
+      - name: Commandes
+        description: Identifiants des commandes liées à ce contact (champ texte, liste séparée par des virgules).
+
+      - name: date de la dernière commande
+        description: Date de la dernière commande (doublon de "Date de dernière commande" — vérifier la cohérence).
+
+      - name: Adresse
+        description: Adresse postale de la structure.
+
+      - name: Ville
+        description: Ville de la structure.
+
+      - name: declaratif autonomie
+        description: Réponse déclarative sur l'autonomie des usagers dans l'utilisation du carnet.
+
+      - name: declaratif autre outil
+        description: Réponse déclarative sur l'utilisation d'un autre outil de coordination du parcours.
+
+      - name: declaratif plusieurs freins
+        description: Réponse déclarative sur la présence de plusieurs freins à l'utilisation.
+
+      - name: declaratif quels freins
+        description: Liste JSON des freins spécifiques identifiés par le contact.
+
+      - name: "Votre structure appartient à une structure, un réseau ou un l"
+        description: Appartenance déclarée à un réseau ou groupement (nom tronqué dans Airtable).
+
+      - name: nom_departement
+        description: Nom du département de la structure (enrichi en SQL depuis le code département).
+
+      - name: region
+        description: Nom de la région de la structure (enrichi en SQL depuis le code département).
+
+      - name: Commande passée
+        description: Vrai si le contact a passé au moins une commande.
+
+      - name: "Nombre de carnets commandés Total"
+        description: Nombre cumulé de carnets commandés par ce contact sur toutes ses commandes.
+
+      - name: Nombre de commandes total
+        description: Nombre total de commandes passées par ce contact.
+
+      - name: Relance baro 30j J+71
+        description: Vrai si la relance baromètre à J+71 a été déclenchée pour ce contact.
+
+      - name: Total commandes TTC
+        description: Montant total TTC cumulé des commandes payantes de ce contact (en euros).
+
+      - name: Date de dernière commande auto
+        description: Date de la dernière commande calculée automatiquement (champ calculé Airtable).
+
+      - name: Kit appropriation envoyé
+        description: Vrai si le kit d'appropriation a été envoyé à ce contact.
+
+      - name: Manuel
+        description: Vrai si ce contact a été ajouté manuellement (hors formulaire Tally).
+
+      - name: type pour baromètre
+        description: Segment utilisé pour décider de l'envoi du baromètre à ce contact.
+
+      - name: Nombre de réponses au baromètre
+        description: Nombre de réponses au baromètre reçues de ce contact.
+
+      - name: Envoi mail merci
+        description: Vrai si le mail de remerciement a été envoyé à ce contact.
+
+      - name: "Logement ?"
+        description: Vrai si la structure du contact est spécialisée dans l'accompagnement logement.
+
+      - name: Conseil Consultatif
+        description: Vrai si le contact fait partie du conseil consultatif Mon Récap.
+
+      - name: Offre découverte
+        description: Vrai si le contact bénéficie de l'offre découverte (carnets offerts).
+
+      - name: "Offre payante (devis validé)"
+        description: Vrai si le contact a validé un devis et bénéficie de l'offre payante.
+
+      - name: "Date d'envoi du dernier baromètre"
+        description: Date du dernier envoi du formulaire baromètre à ce contact.
+
+      - name: "Date d'envoi du premier Baromètre"
+        description: Date du premier envoi du formulaire baromètre à ce contact.
+
+      - name: Source
+        description: Canal d'acquisition du contact (valeurs non normalisées — casse et orthographe variables).
+
+      - name: recup fonction
+        description: Fonction récupérée ou normalisée depuis une source externe.
+
+      - name: Secteur
+        description: Secteur d'activité de la structure.
+
   - name: Commandes
     description: >
-      Table des commandes de mon recap. Nous créons cette table à partir d'une version v0 afin de faire des modifications eventuelle en sql et non en python
-    tests:
+      Table des commandes de Mon Récap. Créée à partir d'une version v0 afin de permettre
+      des modifications en SQL plutôt qu'en Python.
+          tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('monrecap','Commandes_v0')
+          compare_model: source('monrecap', 'Commandes_v0')
+    columns:
+      - name: Email
+        description: Adresse email du commandeur (clé de jointure vers la table Contacts).
+
+      - name: Submission ID
+        description: Identifiant unique de la soumission Tally (clé primaire de la commande).
+
+      - name: Respondent ID
+        description: Identifiant du répondant dans Tally.
+
+      - name: Submitted at
+        description: Horodatage de soumission du formulaire de commande.
+
+      - name: Nombre de Carnets
+        description: Nombre de carnets commandés dans cette commande.
+
+      - name: reseau
+        description: Niveau d'appartenance à un réseau partenaire (valeurs texte '0', '1', '2').
+
+      - name: Vos nom et prénom
+        description: Nom et prénom du commandeur saisi dans le formulaire.
+
+      - name: reseau_new
+        description: Identifiant numérique du réseau partenaire (version recalculée).
+
+      - name: Nom de votre structure
+        description: Nom de la structure commandeuse saisi dans le formulaire.
+
+      - name: Fonction
+        description: Fonction du commandeur au sein de sa structure.
+
+      - name: Adresse
+        description: Adresse postale de livraison saisie dans le formulaire.
+
+      - name: Ville
+        description: Ville de livraison.
+
+      - name: Code Postal
+        description: Code postal de livraison.
+
+      - name: "Téléphone"
+        description: "Numéro de téléphone du commandeur."
+
+      - name: reseau_old
+        description: Ancienne valeur numérique de l'identifiant réseau (conservée pour historique).
+
+      - name: "Ajouté à contact ?"
+        description: Vrai si la commande a été rattachée à une fiche contact dans Airtable.
+
+      - name: Contacts
+        description: Référence JSON vers la fiche contact Airtable associée à cette commande.
+
+      - name: Commande count
+        description: Rang de la commande pour ce commandeur (1 = première commande, 2 = deuxième, etc.).
+
+      - name: "Commande confirmée"
+        description: Vrai si la commande a été confirmée par l'équipe Mon Récap.
+
+      - name: "Expédition confirmée"
+        description: Vrai si l'expédition a été confirmée.
+
+      - name: "Commande validée"
+        description: Vrai si la commande a passé toutes les étapes de validation (confirmation + fabrication + expédition).
+
+      - name: Source
+        description: Canal d'acquisition de la commande (valeurs non normalisées — casse et orthographe variables).
+
+      - name: "Première commande ?"
+        description: Vrai si c'est la première commande passée par ce commandeur.
+
+      - name: "Envoyé en fabrication"
+        description: Vrai si le bon de commande a été transmis au prestataire de fabrication.
+
+      - name: "Numéro du BDC"
+        description: Numéro du bon de commande transmis au fabricant.
+
+      - name: Date de confirmation de commande
+        description: Date à laquelle la commande a été confirmée par l'équipe.
+
+      - name: NPS
+        description: Score NPS déclaré par le commandeur au moment de la commande (0–10).
+
+      - name: Date de fabrication
+        description: Date à laquelle les carnets ont été mis en fabrication.
+
+      - name: "Date d'expédition"
+        description: "Date d'expédition des carnets vers le commandeur."
+
+      - name: start automation
+        description: Vrai si le déclenchement des automations (mails, workflows) a été activé pour cette commande.
+
+      - name: Confirmation de fabrication envoyée
+        description: Vrai si le mail de confirmation de mise en fabrication a été envoyé au commandeur.
+
+      - name: "mail commande reçue ? envoyé"
+        description: Vrai si le mail de confirmation de réception des carnets a été envoyé.
+
+      - name: Type de structure
+        description: Catégorie de la structure commandeuse (valeurs non normalisées — quelques typos observées).
+
+      - name: "Comment j'ai connu ?"
+        description: Source de découverte de Mon Récap déclarée par le commandeur (champ libre).
+
+      - name: tarif port HT
+        description: Tarif de port hors taxes appliqué à la commande (stocké en texte).
+
+      - name: Ajout des frais de port
+        description: Vrai si des frais de port ont été ajoutés à la commande.
+
+      - name: declaratif 1ere commande
+        description: Réponse déclarative du commandeur sur le contexte de sa première commande.
+
+      - name: declaratif autonomie
+        description: Réponse déclarative sur l'autonomie des usagers dans l'utilisation du carnet.
+
+      - name: declaratif autre outil
+        description: Réponse déclarative sur l'utilisation d'un autre outil de suivi du parcours.
+
+      - name: declaratif plusieurs freins
+        description: Réponse déclarative sur la présence de plusieurs freins à l'utilisation.
+
+      - name: "Votre structure appartient à une structure, un réseau ou un l"
+        description: Appartenance déclarée à un réseau ou groupement (nom tronqué dans Airtable).
+
+      - name: Flag diag raté
+        description: Signalement d'une erreur lors du diagnostic d'éligibilité lié à cette commande.
+
+      - name: "Coût des carnets HT"
+        description: "Coût total des carnets hors taxes (en euros)."
+
+      - name: Total commande TTC
+        description: Montant total de la commande toutes taxes comprises, frais de port inclus (en euros).
+
+      - name: "adresse complète"
+        description: Adresse postale de livraison complète (concaténation des champs adresse/ville/CP).
+
+      - name: Validation manuelle
+        description: JSON enregistrant l'historique des validations manuelles effectuées par l'équipe.
+
+      - name: date du jour
+        description: Horodatage de la dernière synchronisation de la fiche commande.
+
+      - name: Demande de prise de RDV
+        description: Référence JSON vers une demande de rendez-vous liée à cette commande.
+
+      - name: LIEN_TALLY
+        description: Lien vers le formulaire Tally de commande de renouvellement pré-rempli.
+
+      - name: LIEN_CALENDLY
+        description: Lien Calendly pré-rempli pour la prise de rendez-vous avec le commandeur.
+
+      - name: Commande 69
+        description: Identifiant de commande dans le pilote département 69 (Rhône).
+
+      - name: Date de dernière modification
+        description: Horodatage de la dernière modification de la fiche commande dans Airtable.
+
+      - name: commande recommandée
+        description: Identifiant de la commande ayant servi de référence pour recommander celle-ci.
+
+      - name: Calcul poids
+        description: Poids calculé de la commande en grammes (base de calcul des frais de port).
+
+      - name: Poids arrondi
+        description: Poids arrondi de la commande en grammes (valeur utilisée pour la tarification port).
+
+      - name: "Coût des carnets TTC"
+        description: "Coût total des carnets toutes taxes comprises (en euros)."
+
+      - name: domaine
+        description: Domaine de l'adresse email du commandeur (haute cardinalité — ~1 700 valeurs distinctes).
+
+      - name: LIEN_TALLY V2
+        description: Lien vers la version V2 du formulaire Tally de commande pré-rempli.
+
+      - name: Semaine fabrication
+        description: Semaine calendaire de mise en fabrication (format texte, ex. « S12 2025 »).
+
+      - name: Refus manuel
+        description: JSON enregistrant les refus manuels et leurs motifs.
+
+      - name: "département"
+        description: Code ou nom du département de la structure commandeuse.
+
+      - name: type pour baromètre
+        description: Segment utilisé pour décider de l'envoi du baromètre à ce commandeur.
+
+      - name: LIEN_BARO
+        description: Lien vers le formulaire baromètre pré-rempli pour ce commandeur.
+
+      - name: Key
+        description: Clé technique Airtable de la fiche commande (identifiant interne Airtable).
+
+      - name: Supprimer cette commande et son contact
+        description: Champ JSON de bouton Airtable pour déclencher la suppression de la commande et du contact associé.
+
+      - name: AAP_LIEN_TALLY_EVAL
+        description: Lien vers le formulaire Tally d'évaluation dans le cadre d'un appel à projets (AAP).
+
+      - name: commande_recordid
+        description: Identifiant de l'enregistrement Airtable de la commande (Record ID).
+
+      - name: Alerte commande non reçue
+        description: Vrai si le commandeur a signalé ne pas avoir reçu sa commande.
+
+      - name: "Carnets Reçus ?"
+        description: Vrai si le commandeur a confirmé la réception des carnets.
+
+      - name: "Carnets utilisés ?"
+        description: Déclaratif sur l'utilisation des carnets par la structure après réception.
+
+      - name: "Santé/handicap ?"
+        description: Vrai si la structure est spécialisée dans l'accompagnement santé ou handicap.
+
+      - name: Connu autre produit PDI
+        description: Réponse déclarative sur la connaissance d'autres produits du Programme De l'Inclusion.
+
+      - name: cas commande
+        description: Qualification du cas de commande selon le pipeline commercial Mon Récap.
+
+      - name: Date envoi relance J+102
+        description: Date d'envoi de la relance automatique à J+102 après la commande.
+
+      - name: cd manual
+        description: Vrai si le cofinancement Conseil Départemental a été saisi manuellement.
+
+      - name: Mail CC
+        description: Adresse email en copie pour les communications liées à cette commande.
+
+      - name: mail cc clean
+        description: Adresse email en copie nettoyée (minuscules, sans espaces).
+
+      - name: "date d'envoi du dernier baromètre"
+        description: Date du dernier envoi du formulaire baromètre associé à cette commande.
+
+      - name: test date pour filtre
+        description: Champ texte de test utilisé pour les filtres de date (à ne pas utiliser en production).
+
+      - name: Siret
+        description: Numéro SIRET de la structure commandeuse.
+
+      - name: "Si le test de Mon Récap répond bien à vos besoins, sur une"
+        description: Score NPS issu d'une enquête de satisfaction intermédiaire (nom tronqué dans Airtable).
+
+      - name: Date de relance
+        description: Date planifiée pour la prochaine relance commerciale de ce commandeur.
+
+      - name: mail
+        description: Adresse email normalisée du commandeur (minuscules, sans espaces).
+
+      - name: Commande avec devis
+        description: Vrai si cette commande a nécessité l'émission d'un devis.
+
+      - name: Statut du devis/facture
+        description: État du devis ou de la facture associé à la commande (valeurs non normalisées — casse variable).
+
+      - name: "Commande payante (devis validé)"
+        description: Vrai si le devis a été validé et la commande est payante.
+
+      - name: Date envoi facture
+        description: Date d'envoi de la facture au commandeur.
+
+      - name: Statut suite relance
+        description: JSON enregistrant le statut et les notes suite aux relances commerciales.
+
+      - name: "Commande annulée"
+        description: Vrai si la commande a été annulée.
+
+      - name: saved time for cancelled order
+        description: Temps estimé économisé pour la commande annulée (champ texte, usage opérationnel interne).
+
+      - name: ajout manuel
+        description: Vrai si la commande a été créée manuellement (hors formulaire Tally).
+
+      - name: CD
+        description: Vrai si cette commande est portée par un Conseil Départemental.
+
+      - name: date_envoi_grille_eva
+        description: Date du premier envoi de la grille d'évaluation d'impact.
+
+      - name: date_envoi_grille_eva_last
+        description: Date du dernier envoi de la grille d'évaluation d'impact.
+
+      - name: Contacts non commandeurs
+        description: Identifiants des contacts non commandeurs rattachés à cette commande.
+
+      - name: A bloquer pour le moment
+        description: Vrai si cette commande est temporairement bloquée (en attente de validation ou d'informations).
+
+      - name: demande de RDV envoyée
+        description: Vrai si une demande de rendez-vous a été envoyée au commandeur.
+
+      - name: Date dernier échange
+        description: Date du dernier échange avec le commandeur.
+
+      - name: flag erreur à investiguer 9/11
+        description: Drapeau d'erreur détecté lors du contrôle qualité du 9 novembre (investigation manuelle requise).
+
+      - name: Motif refus devis
+        description: Motif saisi manuellement lors du refus ou de l'annulation du devis.
+
+      - name: Devis signé
+        description: JSON contenant les informations relatives au devis signé (lien, date, etc.).
+
+      - name: Potentiel de financement
+        description: Évaluation manuelle du potentiel de passage en offre payante pour ce commandeur.
+
+      - name: A relancer le
+        description: Date planifiée pour la prochaine relance (champ texte libre, format variable).
+
+      - name: Date de fab 2
+        description: Date d'une deuxième mise en fabrication (commandes avec réédition ou complément).
+
+      - name: Forcer une offre découverte
+        description: Vrai si l'offre découverte est forcée manuellement pour ce commandeur (override des règles automatiques).
+
+      - name: Statut rlance
+        description: JSON enregistrant le statut détaillé des relances (doublon partiel de "Statut suite relance").
+
+      - name: Fonction précise
+        description: Intitulé de poste précis saisi par le commandeur (complément de la colonne Fonction).
+
+      - name: Date envoi relance J+82
+        description: Date d'envoi de la relance automatique à J+82 après la commande.
+
+      - name: Nom Departement
+        description: Nom du département de la structure commandeuse (enrichi depuis le code postal).
+
+      - name: declaratif quels freins
+        description: Détail des freins spécifiques identifiés (champ libre).
+
+      - name: region
+        description: Nom de la région de la structure commandeuse (enrichi depuis le code postal).
+
   - name: barometre
     description: >
-      Table du barometre de mon recap. Nous créons cette table à partir d'une version v0 afin de faire des modifications eventuelle en sql et non en python
+      Table du baromètre de Mon Récap. Créée à partir d'une version v0 afin de permettre
+      des modifications en SQL plutôt qu'en Python. Chaque ligne est une réponse au formulaire
+      Tally baromètre envoyé périodiquement aux commandeurs.
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('monrecap','raw_barometre')
+          compare_model: source('monrecap', 'raw_barometre')
+    columns:
+      - name: Submission ID
+        description: Identifiant unique de la soumission Tally (clé primaire de la réponse).
+
+      - name: Respondent ID
+        description: Identifiant du répondant dans Tally.
+
+      - name: Submitted at
+        description: Horodatage de soumission du formulaire baromètre.
+
+      - name: email
+        description: Adresse email du répondant (clé de jointure vers Contacts et Commandes).
+
+      - name: cost
+        description: Coût total de la commande associée au répondant au moment de l'envoi du baromètre.
+
+      - name: nb_carnets
+        description: Nombre de carnets commandés par le répondant au moment de l'envoi du baromètre.
+
+      - name: type
+        description: Segment du répondant utilisé pour le ciblage et l'analyse du baromètre.
+
+      - name: "Votre adresse mail ?"
+        description: Adresse email saisie par le répondant dans le formulaire (peut différer de email).
+
+      - name: Votre utilisation de Mon Récap
+        description: Déclaratif sur l'utilisation du carnet Mon Récap par la structure.
+
+      - name: "Pouvez-vous expliquer pourquoi vous ne l'avez pas utilisé ?"
+        description: Motif libre de non-utilisation du carnet (renseigné si le répondant n'utilise pas Mon Récap).
+
+      - name: "Quand avez-vous passé votre commande ?"
+        description: Date de commande déclarée par le répondant.
+
+      - name: "Pourquoi ne l'avez vous pas recommandé ?"
+        description: Motif libre de non-recommandation (renseigné si NPS < 9).
+
+      - name: "Combien de carnets avez-vous distribués depuis le début de vo[...]"
+        description: Nombre cumulé de carnets distribués aux usagers depuis le début de l'utilisation.
+
+      - name: "Les usagers reviennent-ils avec le carnet ?"
+        description: Fréquence déclarée à laquelle les usagers reviennent en rendez-vous avec leur carnet.
+
+      - name: "Les usagers reviennent-ils avec le carnet ? (Toujours)"
+        description: Sélection « Toujours » pour la question sur le retour des usagers avec le carnet (colonne multi-select dépliée).
+
+      - name: "Les usagers reviennent-ils avec le carnet ? (Souvent )"
+        description: Sélection « Souvent » pour la question sur le retour des usagers avec le carnet.
+
+      - name: "Les usagers reviennent-ils avec le carnet ? (Régulièrement)"
+        description: Sélection « Régulièrement » pour la question sur le retour des usagers avec le carnet.
+
+      - name: "Les usagers reviennent-ils avec le carnet ? (Rarement)"
+        description: Sélection « Rarement » pour la question sur le retour des usagers avec le carnet.
+
+      - name: "Les usagers reviennent-ils avec le carnet ? (Jamais)"
+        description: Sélection « Jamais » pour la question sur le retour des usagers avec le carnet.
+
+      - name: "Les usagers utilisent-ils, en général, le carnet avec d'autre[...]"
+        description: Réponse à la question sur l'utilisation du carnet avec d'autres professionnels de l'accompagnement.
+
+      - name: "Le carnet vous-a t'il permis d'apprendre des choses grâce aux [...]"
+        description: Réponse à la question sur les informations découvertes grâce aux notes des usagers dans le carnet.
+
+      - name: "Pourquoi les usagers ne l'utilisent pas avec d'autres professio[...]"
+        description: Motif libre expliquant la non-utilisation du carnet avec d'autres professionnels.
+
+      - name: "Avez-vous constaté une amélioration dans le parcours de vos u[...]"
+        description: Réponse à la question sur l'amélioration observable du parcours des usagers grâce au carnet.
+
+      - name: "D'après vous, la qualité (fluidité, facilité de communicati[...]"
+        description: Score (numérique) sur la qualité de la communication inter-professionnelle grâce au carnet.
+
+      - name: "Dans quelle mesure êtes-vous d'accord avec l'affirmation suiva[...]"
+        description: Score d'accord (numérique) avec une affirmation sur l'impact du carnet (libellé tronqué).
+
+      - name: "Lorsqu'un usager utilise Mon Récap, constatez-vous une meilleu[...]"
+        description: Réponse sur l'amélioration de la coordination entre professionnels grâce au carnet.
+
+      - name: "Vous avez répondu Diriez-vous que grâce au carnet : exemple e[...]"
+        description: Exemple illustratif donné par le répondant sur l'impact du carnet (champ libre).
+
+      - name: "Diriez-vous que grâce au carnet, les usagers accèdent plus fa[...]"
+        description: Réponse à la question sur l'accès facilité aux droits ou services pour les usagers.
+
+      - name: "Quelle(s) information(s) vous manque t'il encore pour mieux ac[...]"
+        description: Informations manquantes identifiées par le professionnel pour mieux accompagner les usagers.
+
+      - name: Temps gagné sur une heure
+        description: Déclaratif sur le temps gagné par rendez-vous grâce au carnet (réponse multi-select agrégée).
+
+      - name: "Temps gagné sur une heure (Je ne gagne pas de temps)"
+        description: Sélection « Je ne gagne pas de temps » pour la question sur le temps gagné par heure.
+
+      - name: "Temps gagné sur une heure (Moins de 5min)"
+        description: Sélection « Moins de 5 minutes » pour la question sur le temps gagné.
+
+      - name: "Temps gagné sur une heure (Entre 5 et 10min)"
+        description: Sélection « Entre 5 et 10 minutes » pour la question sur le temps gagné.
+
+      - name: "Temps gagné sur une heure (Entre 10 et 15min)"
+        description: Sélection « Entre 10 et 15 minutes » pour la question sur le temps gagné.
+
+      - name: "Temps gagné sur une heure (Entre 15 et 30min)"
+        description: Sélection « Entre 15 et 30 minutes » pour la question sur le temps gagné.
+
+      - name: "Temps gagné sur une heure (Plus de 30min)"
+        description: Sélection « Plus de 30 minutes » pour la question sur le temps gagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ?"
+        description: Types de public accompagnés par la structure (réponse multi-select agrégée).
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (Personnes en situ[...])"
+        description: Sélection « Personnes en situation de handicap » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (Personnes éloign[...])"
+        description: Sélection « Personnes éloignées de l'emploi » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (Bénéficiaires d[...])"
+        description: Sélection « Bénéficiaires de droits sociaux (RSA, AAH, etc.) » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (Demandeurs d'asil[...])"
+        description: Sélection « Demandeurs d'asile / réfugiés » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (Personnes sous ma[...])"
+        description: Sélection « Personnes sous main de justice » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (Seniors)"
+        description: Sélection « Seniors » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (18 - 25 ans)"
+        description: Sélection « 18 - 25 ans » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (Personnes sans do[...])"
+        description: Sélection « Personnes sans domicile fixe » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (illectronisme)"
+        description: Sélection « Illectronisme » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (illetrisme)"
+        description: Sélection « Illettrisme » pour la question sur le public accompagné.
+
+      - name: "Quel(s) type(s) de public accompagnez-vous ? (Autres)"
+        description: Sélection « Autres » pour la question sur le public accompagné.
+
+      - name: "Pouvez-vous préciser ?"
+        description: Précision libre sur le public accompagné (renseignée si « Autres » est sélectionné).
+
+      - name: "Quelles sont les chances que vous recommandiez Mon Récap à vo[...]"
+        description: Score NPS (0–10) indiquant la probabilité de recommandation de Mon Récap.
+
+      - name: "Que pensez-vous de l'équilibre prix / impact du produit ?"
+        description: Évaluation de l'équilibre prix / impact perçu du produit.
+
+      - name: "Pourquoi ? Pouvez-vous détailler ?"
+        description: Justification libre de l'évaluation prix / impact (champ ouvert).
+
+      - name: "Un commentaire, une suggestion, une belle histoire ? N'hésitez[...]"
+        description: Commentaire libre du répondant (retours qualitatifs, verbatims d'impact).
+
+      - name: "Souhaitez-vous témoigner lors d'un prochain webinaire organis[...]"
+        description: Réponse à la sollicitation de témoignage lors d'un webinaire Mon Récap.
+
+      - name: "D'après vous,  [vos usagers expliquent bien les actions ou dé[...]"
+        description: Score sur la capacité des usagers à expliquer leurs démarches grâce au carnet.
+
+      - name: "D'après vous,  [vos usagers s'organisent bien]"
+        description: Score sur la capacité des usagers à s'organiser grâce au carnet.
+
+      - name: "D'après vous,  [vos usagers ont de l'assurance lors des échan[...]"
+        description: Score sur l'assurance des usagers lors des échanges avec les professionnels.
+
+      - name: "D'après vous,  [vous comprenez facilement le besoin d'aide]"
+        description: Score sur la facilité du professionnel à comprendre le besoin d'aide grâce au carnet.
+
+      - name: "D'après vous,  [vous résolvez rapidement les demandes d'aide]"
+        description: Score sur la rapidité de résolution des demandes d'aide grâce au carnet.
+
+      - name: "D'après vous,  [vous créez facilement un lien de confiance av[...]"
+        description: Score sur la facilité à créer un lien de confiance avec les usagers grâce au carnet.
+
+      - name: "Si vous en avez un en tête, racontez-nous un exemple de parcou[...]"
+        description: Exemple qualitatif d'un parcours usager amélioré grâce au carnet (champ libre).
+
+      - name: "Avez-vous distribué plusieurs carnets à certains usagers ?"
+        description: Indique si certains usagers ont reçu plusieurs carnets au cours de leur parcours.
+
+      - name: "Si oui, combien de vos usagers ont reçu plusieurs carnets ?"
+        description: Estimation du nombre d'usagers ayant reçu plusieurs carnets (champ libre, renseigné si Oui).
+
+      - name: "D'après vous, vos usagers peuvent rencontrer combien d'accompa[...]"
+        description: Estimation du nombre de professionnels différents rencontrés par un usager dans son parcours.
+
+      - name: "D'après vous, votre structure serait-elle prête à payer pour[...]"
+        description: Disposition déclarée de la structure à payer pour Mon Récap (question de monétisation).
+
+      - name: "Si oui, combien par carnet ?"
+        description: Montant que la structure serait prête à payer par carnet (champ libre, renseigné si Oui).
+
+      - name: "Combien d'usagers ont reçu au moins un carnet (approximativeme[...]"
+        description: Estimation du nombre total d'usagers ayant reçu au moins un carnet depuis le début.
+
+      - name: "Parmi ces usagers, combien d'usagers ont perdu le carnet ou ne[...]"
+        description: Estimation du nombre d'usagers ayant perdu leur carnet ou ne l'utilisant plus.
+
+      - name: "D'après vous, Mon Récap permet aux usagers de ?  [mieux expli[...]"
+        description: Score sur la capacité du carnet à aider les usagers à mieux expliquer leur situation.
+
+      - name: "D'après vous, Mon Récap permet aux usagers de ?  [mieux s'org[...]"
+        description: Score sur la capacité du carnet à aider les usagers à mieux s'organiser.
+
+      - name: "D'après vous, Mon Récap permet aux usagers de ?  [avoir plus[...]"
+        description: Score sur la capacité du carnet à donner plus d'assurance aux usagers.
+
+      - name: "D'après vous, Mon Récap permet aux usagers de ?  [résoudre p[...]"
+        description: Score sur la capacité du carnet à aider les usagers à résoudre plus rapidement leurs demandes.
+
+      - name: "D'après vous, Mon Récap permet aux usagers de ?  [Autre (à d[...]"
+        description: Autre impact identifié par le répondant sur les usagers (champ libre).
+
+      - name: "D'après vous, Mon Récap vous permet de ? [avoir une meilleure[...]"
+        description: Score sur l'amélioration de la vision du parcours usager pour le professionnel.
+
+      - name: "D'après vous, Mon Récap vous permet de ? [découvrir que l'us[...]"
+        description: Score sur la capacité du carnet à révéler des besoins non exprimés de l'usager.
+
+      - name: "D'après vous, Mon Récap vous permet de ? [Créer plus facilem[...]"
+        description: Score sur la facilité à créer du lien de confiance avec l'usager grâce au carnet.
+
+      - name: "D'après vous, Mon Récap vous permet de ? [Autre (à détaille[...]"
+        description: Autre bénéfice identifié par le répondant pour le professionnel (champ libre).
+
+      - name: "Pouvez-vous détailler ? D'après vous, Mon Récap permet aussi[...]"
+        description: Précision libre sur les bénéfices supplémentaires du carnet pour les usagers.
+
+      - name: "Pouvez-vous détailler ? D'après vous, Mon Récap vous permet[...]"
+        description: Précision libre sur les bénéfices supplémentaires du carnet pour le professionnel.
+
+      - name: "Souhaiteriez-vous une version numérique (en plus de la version papier) ?"
+        description: Disposition déclarée envers une version numérique de Mon Récap en complément du carnet papier.
+
+      - name: Les personnes écrivent-elles seules dans leur carnet ?
+        description: Réponse à la question sur l'autonomie des usagers dans la complétion du carnet.
+
+      - name: "Avez-vous des refus d'utilisation de la part des usagers"
+        description: Indique si des usagers ont refusé d'utiliser le carnet Mon Récap.
+
+      - name: "Pouvez-vous expliquer les raisons du refus d'utilisation ?"
+        description: Motifs libres de refus d'utilisation par les usagers (renseigné si refus observés).
+
+      - name: "Pourquoi pensez-vous qu'avoir une version numérique serait une[...]"
+        description: Justification libre de l'intérêt d'une version numérique (renseignée si Oui).
+
+      - name: "Seriez-vous prêt à remplacer la version numérique par la ver[...]"
+        description: Disposition à remplacer totalement le carnet papier par une version numérique.
+
+      - name: nom_departement
+        description: Nom du département du répondant (enrichi en SQL depuis les données de commande).
+
+      - name: region
+        description: Nom de la région du répondant (enrichi en SQL depuis les données de commande).
