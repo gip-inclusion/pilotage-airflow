@@ -57,7 +57,215 @@ models:
         - le nombre de siae partenaires de ces organisations
   - name: organisations
     description: >
-      Copie de la table organisations_v0 du c1 enrichie de données pour faire marcher certains filtres sur metabase.
+      Table des organisations prescriptrices et orienteuses inscrites sur la
+      plateforme Emplois de l'Inclusion. Chaque ligne représente une organisation
+      unique (France Travail, Mission locale, CCAS, CHRS, conseil départemental…)
+      habilitée ou non à réaliser des diagnostics d'éligibilité IAE.
+      Les organisations habilitées peuvent délivrer un PASS IAE ; les orienteurs
+      peuvent uniquement orienter des candidats vers des SIAE.
+      Mise à jour : quotidienne.
+      Clé étrangère dans `les_emplois.candidatures_echelle_locale.id_org_prescripteur`
+      et `les_emplois.candidats.id_auteur_diagnostic_prescripteur`.
+    columns:
+      - name: id
+        description: >
+          Identifiant unique de l'organisation (entier). Clé primaire de la table.
+
+      - name: nom
+        description: >
+          Nom de l'organisation tel que saisi lors de l'inscription sur la
+          plateforme.
+
+      - name: type
+        description: >
+          Code du type d'organisation (33 valeurs).
+          Principaux codes : 'FT' (France Travail), 'ML' (Mission locale),
+          'CCAS', 'CHRS', 'ODC' (Cap emploi), 'DEPT' (Conseil départemental),
+          'PLIE', 'CHU', 'CADA', 'RS_FJT', 'SPIP', 'CAP_EMPLOI', 'AFPA',
+          'CPH', 'PREVENTION', 'CSAPA', 'PJJ', 'OIL', 'CIDFF', 'HUDA',
+          'PIJ_BIJ', 'E2C', 'OCASF', 'OHPD', 'ASE', 'CAARUD', 'PENSION',
+          'CAF', 'OACAS', 'EPIDE', 'MSA', 'CAVA', 'Autre'.
+          Voir `type_complet` pour les libellés longs correspondants.
+
+      - name: habilitée
+        description: >
+          Indicateur d'habilitation préfectorale de l'organisation
+          (1 = habilitée, 0 = non habilitée / orienteur).
+          Équivalent entier de `habilitation`.
+
+      - name: adresse_ligne_1
+        description: >
+          Première ligne de l'adresse de l'organisation.
+
+      - name: adresse_ligne_2
+        description: >
+          Deuxième ligne de l'adresse (complément).
+
+      - name: code_postal
+        description: >
+          Code postal de l'organisation.
+
+      - name: longitude
+        description: >
+          Longitude géographique de l'organisation.
+
+      - name: latitude
+        description: >
+          Latitude géographique de l'organisation.
+
+      - name: département
+        description: >
+          Code INSEE du département de l'organisation (ex : '59', '75', '974').
+
+      - name: date_inscription
+        description: >
+          Date d'inscription de l'organisation sur la plateforme Emplois de
+          l'Inclusion.
+
+      - name: code_safir
+        description: >
+          Code SAFIR de l'agence (identifiant France Travail). Renseigné
+          uniquement pour les organisations de type 'FT'.
+          Null pour les autres organisations.
+
+      - name: total_membres
+        description: >
+          Nombre total de membres (utilisateurs) rattachés à l'organisation
+          sur la plateforme.
+
+      - name: total_candidatures
+        description: >
+          Nombre total de candidatures émises par l'organisation depuis son
+          inscription.
+
+      - name: total_embauches
+        description: >
+          Nombre total de candidatures acceptées (embauches effectives) issues
+          de cette organisation.
+
+      - name: date_dernière_candidature
+        description: >
+          Date de la dernière candidature émise par un membre de l'organisation.
+          Indicateur de récence de l'activité prescriptrice.
+
+      - name: date_dernière_connexion
+        description: >
+          Date de la dernière connexion d'un membre de l'organisation à la
+          plateforme.
+
+      - name: active
+        description: >
+          Indicateur d'activité de l'organisation sur la plateforme
+          (1 = active, 0 = inactive).
+
+      - name: brsa
+        description: >
+          Indicateur indiquant si l'organisation gère des bénéficiaires du RSA
+          (1 = oui, 0 = non). Pertinent pour les Conseils départementaux et
+          leurs délégataires.
+
+      - name: date_mise_à_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.
+
+      - name: nom_département
+        description: >
+          Nom du département de l'organisation.
+
+      - name: siret_org_prescripteur
+        description: >
+          Numéro SIRET de l'organisation (14 chiffres). Renseigné pour ~9 786
+          organisations sur 9 959.
+
+      - name: dept_org
+        description: >
+          Code département de l'organisation (variante de `département`,
+          héritée d'une jointure historique).
+
+      - name: num_département_org
+        description: >
+          Numéro de département normalisé sur 2-3 caractères
+          (ex : '01', '2A', '974').
+
+      - name: région_org
+        description: >
+          Nom de la région de l'organisation (variante de `région`).
+
+      - name: région
+        description: >
+          Nom de la région de l'organisation.
+
+      - name: nom_département_insee
+        description: >
+          Nom INSEE du département (référentiel COG), potentiellement distinct
+          du libellé applicatif.
+
+      - name: nom_arrondissement
+        description: >
+          Nom de l'arrondissement pour les communes découpées (Paris, Lyon,
+          Marseille).
+
+      - name: zone_emploi
+        description: >
+          Zone d'emploi INSEE de l'organisation.
+
+      - name: epci
+        description: >
+          Code EPCI (Établissement Public de Coopération Intercommunale) de
+          l'organisation.
+
+      - name: type_complet
+        description: >
+          Libellé long du type d'organisation, correspondant au code `type`.
+          Exemples : 'France Travail', 'Mission locale',
+          "CCAS - Centre communal d'action sociale ou centre intercommunal
+          d'action sociale",
+          "CHRS - Centre d'hébergement et de réinsertion sociale",
+          "Organisation délégataire d'un Conseil Départemental (Orientation
+          et suivi des BRSA)", 'Service social du conseil départemental',
+          "PLIE - Plan local pour l'insertion et l'emploi", 'Autre', etc.
+
+      - name: type_org
+        description: >
+          Code du type d'organisation (identique à `type`). Présent pour
+          compatibilité avec les jointures depuis `les_emplois.candidats` et
+          `les_emplois.candidatures_echelle_locale`.
+
+      - name: ville
+        description: >
+          Nom de la ville de l'organisation.
+
+      - name: code_commune
+        description: >
+          Code INSEE de la commune de l'organisation (5 caractères).
+
+      - name: type_prescripteur
+        description: >
+          Catégorie regroupée du type de prescripteur, utilisée dans les
+          tableaux de bord territoriaux.
+          Valeurs : 'SPE' (Service Public de l'Emploi : France Travail,
+          Cap emploi, Missions locales), 'Département' (Conseils
+          départementaux et délégataires BRSA), 'Nouveaux prescripteurs'
+          (CCAS, CHRS, SPIP, CIDFF, etc.), 'Autre'.
+
+      - name: habilitation
+        description: >
+          Statut d'habilitation de l'organisation.
+          Valeurs : 'Prescripteur habilité' (peut réaliser des diagnostics
+          d'éligibilité et délivrer des PASS IAE),
+          'Orienteur' (peut orienter des candidats mais ne délivre pas de PASS).
+
+      - name: type_avec_habilitation
+        description: >
+          Combinaison du code de type et du statut d'habilitation
+          (ex : 'FT (habilité)', 'CCAS (non habilité)').
+          Utile pour les analyses croisant type et habilitation.
+
+      - name: type_complet_avec_habilitation
+        description: >
+          Combinaison du libellé long du type et du statut d'habilitation.
+          Affine `type_avec_habilitation` avec les libellés complets.
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'organisations_v0')
@@ -71,9 +279,230 @@ models:
       Nécessaire pour restreindre le choix des filtres uniquement aux prescripteurs de la DIHAL.
   - name: suivi_auto_prescription
     description: >
-      Table introduite pour le suivi de l'auto precription.
-      Nécessaire pour selectionner les canditures concernées par l'auto prescription. Nous parlons d'auto prescription lorsque
-      l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
+      Table analytique dénormalisée dédiée au suivi du taux d'autoprescription
+      sur la plateforme Emplois de l'Inclusion. L'autoprescription désigne le cas
+      où une structure employeuse (SIAE) réalise elle-même le diagnostic
+      d'éligibilité IAE d'un candidat, sans passer par un prescripteur externe.
+      La table est en grain candidature (une ligne par candidature, `id_candidature`
+      est unique). Elle couvre l'ensemble des candidatures — pas uniquement les
+      autoprescriptions — afin de permettre le calcul du taux
+      (`type_de_candidature = 'Autoprescription'` / total).
+      Elle joint les informations du candidat (profil démographique, diagnostic),
+      de la candidature (état, origine, dates) et de la structure (type, géographie).
+      Les analyses standards filtrent sur `état = 'Candidature acceptée'` et
+      `categorie_structure = 'IAE'` pour mesurer le taux d'autoprescription
+      parmi les embauches effectives.
+      Mise à jour : quotidienne.
+    columns:
+      - name: id_candidat
+        description: >
+          Identifiant du candidat. Clé étrangère vers `les_emplois.candidats.id`.
+
+      - name: id_candidature
+        description: >
+          Identifiant unique de la candidature (UUID). Clé primaire fonctionnelle
+          de la table — une ligne par candidature.
+          Clé étrangère vers `les_emplois.candidatures_echelle_locale.id`.
+
+      - name: hash_nir
+        description: >
+          NIR du candidat anonymisé par hachage. Permet la déduplication sans
+          exposer de donnée personnelle.
+
+      - name: age
+        description: >
+          Âge du candidat en années à la date de mise à jour Metabase.
+
+      - name: tranche_age
+        description: >
+          Tranche d'âge catégorielle du candidat.
+          Valeurs : 'Jeune (moins de 26 ans)', 'Adulte (26-54 ans)',
+          'Senior (55 ans et plus)'.
+
+      - name: sexe_selon_nir
+        description: >
+          Sexe du candidat extrait du NIR. Valeurs : '1' (masculin), '2' (féminin).
+
+      - name: département
+        description: >
+          Code INSEE du département de résidence du candidat.
+
+      - name: nom_département
+        description: >
+          Nom du département de résidence du candidat.
+
+      - name: région
+        description: >
+          Nom de la région de résidence du candidat.
+
+      - name: adresse_en_qpv
+        description: >
+          Statut de géolocalisation de l'adresse du candidat par rapport aux
+          Quartiers Prioritaires de la Ville.
+          Valeurs : 'Adresse en QPV', 'Adresse hors QPV', 'Adresse imprécise',
+          'Adresse non-géolocalisée'.
+
+      - name: total_candidatures
+        description: >
+          Nombre total de candidatures émises par le candidat depuis son
+          inscription (agrégat depuis `public.candidats`).
+
+      - name: total_embauches
+        description: >
+          Nombre total d'embauches effectives du candidat depuis son inscription
+          (agrégat depuis `public.candidats`).
+
+      - name: date_diagnostic
+        description: >
+          Date du diagnostic d'éligibilité IAE du candidat associé à cette
+          candidature.
+
+      - name: date_candidature
+        description: >
+          Date de dépôt de la candidature. Date de référence principale pour
+          les analyses temporelles.
+
+      - name: id_auteur_diagnostic_employeur
+        description: >
+          Identifiant de la structure employeuse auteure du diagnostic
+          (autoprescription). Clé étrangère vers `public.structures.id`.
+          Renseigné uniquement pour les candidatures de type 'Autoprescription'.
+
+      - name: type_auteur_diagnostic
+        description: >
+          Catégorie de l'auteur du diagnostic d'éligibilité.
+          Valeurs : 'Prescripteur' (parcours classique), 'Employeur'
+          (autoprescription). Null si aucun diagnostic.
+
+      - name: sous_type_auteur_diagnostic
+        description: >
+          Type détaillé de l'auteur du diagnostic (ex : 'Prescripteur FT',
+          'Prescripteur ML', 'Employeur ACI', 'Employeur EI'…).
+          Voir `public.candidats.sous_type_auteur_diagnostic` pour la liste
+          complète des valeurs.
+
+      - name: nom_auteur_diagnostic
+        description: >
+          Nom de l'organisme ou de la structure ayant réalisé le diagnostic.
+
+      - name: nom_org_prescripteur
+        description: >
+          Nom de l'organisation prescriptrice ayant orienté le candidat vers
+          la structure. Null pour les candidatures autonomes ou en autoprescription.
+
+      - name: injection_ai
+        description: >
+          Indicateur technique de candidature issue de la reprise de stock AI
+          (1 = injectée, 0 = native). Voir aussi `reprise_de_stock_ai_candidatures`.
+
+      - name: état
+        description: >
+          État de traitement de la candidature.
+          Valeurs : 'Candidature acceptée', 'Candidature refusée',
+          'Embauché ailleurs', 'Nouvelle candidature', 'Candidature en attente',
+          'Candidature à l''étude', 'Embauche annulée', 'Vivier de candidatures',
+          'Action préalable à l''embauche'.
+
+      - name: id_structure
+        description: >
+          Identifiant de la structure employeuse. Clé étrangère vers
+          `public.structures.id`.
+
+      - name: origine
+        description: >
+          Type d'acteur à l'origine de la candidature.
+          Voir `public.candidatures_echelle_locale.origine` pour la liste
+          complète des valeurs.
+
+      - name: origine_détaillée
+        description: >
+          Libellé détaillé de l'origine de la candidature.
+          Voir `public.candidatures_echelle_locale.origine_détaillée` pour la
+          liste complète des valeurs.
+
+      - name: type_structure
+        description: >
+          Type de la structure employeuse.
+          Valeurs : 'ACI', 'AI', 'EI', 'ETTI', 'EITI', 'GEIQ', 'EA', 'EATT',
+          'OPCS'.
+
+      - name: categorie_structure
+        description: >
+          Catégorie regroupée de la structure ('IAE' ou 'Hors IAE').
+          Les analyses standard filtrent sur `categorie_structure = 'IAE'`.
+
+      - name: nom_structure
+        description: >
+          Nom court de la structure employeuse.
+
+      - name: département_structure
+        description: >
+          Code INSEE du département de la structure employeuse.
+
+      - name: nom_département_structure
+        description: >
+          Nom du département de la structure employeuse.
+
+      - name: région_structure
+        description: >
+          Nom de la région de la structure employeuse.
+
+      - name: nom_epci_structure
+        description: >
+          Nom de l'EPCI de la structure employeuse.
+
+      - name: bassin_emploi_prescripteur
+        description: >
+          Bassin d'emploi de l'organisation prescriptrice.
+
+      - name: bassin_emploi_structure
+        description: >
+          Bassin d'emploi de la structure employeuse.
+
+      - name: année_diagnostic
+        description: >
+          Année du diagnostic d'éligibilité (type DOUBLE PRECISION, dérivé de
+          `date_diagnostic`). Utile pour les regroupements annuels.
+
+      - name: année_candidature
+        description: >
+          Année de dépôt de la candidature (type DOUBLE PRECISION, dérivé de
+          `date_candidature`). Utile pour les regroupements annuels.
+
+      - name: type_de_candidature
+        description: >
+          Indicateur clé de la table : distingue les candidatures en autoprescription
+          des candidatures en parcours classique.
+          Valeurs : 'Autoprescription' (la structure a réalisé elle-même le
+          diagnostic d'éligibilité), 'parcours classique' (diagnostic réalisé
+          par un prescripteur externe ou candidature sans diagnostic).
+
+      - name: reprise_de_stock_ai_candidats
+        description: >
+          Indicateur de reprise de stock AI au niveau du candidat
+          ('Oui' / 'Non'). À exclure (`= 'Non'`) pour les analyses de flux courant.
+
+      - name: reprise_de_stock_ai_candidatures
+        description: >
+          Indicateur de reprise de stock AI au niveau de la candidature
+          ('Oui' / 'Non'). Filtre de référence pour les analyses de flux courant.
+
+      - name: siret
+        description: >
+          Numéro SIRET de la structure employeuse.
+
+      - name: active
+        description: >
+          Indicateur d'activité de la structure employeuse sur la plateforme
+          (1 = active, 0 = inactive).
+
+      - name: ville
+        description: >
+          Nom de la ville de la structure employeuse.
+
+      - name: nom_structure_complet
+        description: >
+          Nom complet de la structure employeuse sous le format "Type de structure - ID structure - Nom de la structure"
   - name: candidats_auto_prescription
     description: >
       Table introduite pour le suivi des candidats ayant bénéficié de l'auto precription.
@@ -81,10 +510,452 @@ models:
       l'auteur du diagnostic et l'origine de la candidature proviennent du même employeur.
   - name: candidatures_echelle_locale
     description: >
-      Table introduite pour le suivi des candidatures tout en ayant une information sur les bassins d'emploi d'où elles proviennent.
+      Table dénormalisée des candidatures émises sur la plateforme Emplois de l'Inclusion (emplois.inclusion.beta.gouv.fr).
+      Chaque ligne représente une candidature d'un demandeur d'emploi (candidat) auprès d'une structure d'insertion
+      (SIAE, GEIQ, EA…), avec l'ensemble des informations nécessaires aux analyses métier : état de traitement,
+      délais de réponse, géographie, type de structure, type de prescripteur et profil du candidat.
+    columns:
+
+      # ── Identifiant ──────────────────────────────────────────────────────────
+      - name: id
+        description: >
+          Identifiant unique de la candidature (UUID). Clé primaire de la table.
+
+      # ── Dates ────────────────────────────────────────────────────────────────
+      - name: date_candidature
+        description: >
+          Date de dépôt de la candidature par le candidat ou son prescripteur.
+          Date de référence principale pour les analyses d'activité.
+
+      - name: date_traitement
+        description: >
+          Date à laquelle l'employeur a traité la candidature (premier changement d'état
+          significatif). Null si la candidature n'a pas encore été traitée.
+
+      - name: date_embauche
+        description: >
+          Date d'embauche effective du candidat. Renseignée uniquement lorsque l'état
+          est 'Candidature acceptée'. Peut être postérieure de plusieurs semaines à
+          `date_candidature`. Une date d'embauche déclarée sur les emplois n'aboutit pas toujours sur un contrat.
+          L'idéal est de compléter cette information avec les données de contrat de l'ASP présentes dans fluxIAE_ContratMission_v2.
+
+      - name: date_début_contrat
+        description: >
+          Date de début du contrat de travail, distincte de la date d'embauche dans
+          certains cas (contrats différés).
+
+      - name: date_inscription_candidat
+        description: >
+          Date d'inscription du candidat sur la plateforme Emplois de l'Inclusion.
+
+      - name: date_inscription_orga
+        description: >
+          Date d'inscription de l'organisation prescriptrice sur la plateforme.
+
+      - name: date_dernière_connexion
+        description: >
+          Date de dernière connexion de l'organisation prescriptrice à la plateforme.
+
+      - name: annee_candidature
+        description: >
+          Année de dépôt de la candidature, dérivée de `date_candidature`.
+          Colonne calculée, utile pour les regroupements annuels.
+
+      # ── Délais ───────────────────────────────────────────────────────────────
+      - name: délai_prise_en_compte
+        description: >
+          Délai entre la date de dépôt et la première prise en compte par l'employeur.
+          Voir aussi `temps_de_prise_en_compte` (valeur numérique en jours).
+
+      - name: délai_de_réponse
+        description: >
+          Délai entre la date de dépôt et la réponse finale (acceptation, refus ou
+          archivage).
+          Voir aussi `temps_de_reponse` (valeur numérique en jours).
+
+      - name: temps_de_reponse
+        description: >
+          Délai de réponse finale en nombre de jours. Null si aucune
+          réponse n'a encore été apportée. Utiliser ce champ avec un filtre
+          `date_candidature < CURRENT_DATE - INTERVAL '30 days'` pour des taux
+          de réponse comparables dans le temps.
+
+      - name: temps_de_prise_en_compte
+        description: >
+          Délai de première prise en compte en nombre de jours.
+
+      - name: temps_de_reponse_intervalle
+        description: >
+          Tranche catégorielle du délai de réponse (ex : '< 7 jours', '7-30 jours',
+          '> 30 jours'). Utile pour les distributions et les affichages.
+
+      - name: temps_de_prise_en_compte_intervalle
+        description: >
+          Tranche catégorielle du délai de prise en compte, selon le même découpage
+          que `temps_de_reponse_intervalle`.
+
+      # ── État et contexte de la candidature ───────────────────────────────────
+      - name: état
+        description: >
+          État courant de la candidature dans le workflow de traitement.
+          Valeurs : 'Nouvelle candidature', 'Candidature en attente',
+          'Candidature à l''étude', 'Candidature acceptée', 'Candidature refusée',
+          'Embauché ailleurs', 'Embauche annulée', 'Vivier de candidatures',
+          'Action préalable à l''embauche'.
+
+      - name: origine
+        description: >
+          Type d'acteur à l'origine de la candidature.
+          Valeurs : 'Candidat' (candidature autonome), 'Employeur' (recrutement direct
+          par la structure), 'Employeur orienteur' (la structure oriente vers une autre
+          structure), 'Orienteur' (organisme non habilité), 'Prescripteur habilité'
+          (organisme habilité par arrêté préfectoral
+
+      - name: origine_détaillée
+        description: >
+          Libellé détaillé de l'origine, affinant `origine`.
+          Pour 'Candidat' : 'Candidat'.
+          Pour 'Employeur' et 'Employeur orienteur' : type de structure employeuse
+          (ACI, AI, EATT, EI, EITI, ETTI, GEIQ, OPCS).
+          Pour 'Orienteur' : organisme non habilité ou 'Orienteur sans organisation' / 'Autre'.
+          Pour 'Prescripteur habilité' : 32 organismes habilités distincts
+          (France Travail, Mission locale, PLIE, Organisation délégataire d'un Conseil
+          Départemental, Service social du conseil départemental, CHRS, Cap emploi, CCAS,
+          CPH, CHU, SPIP, CIDFF, CADA, CSAPA, CAARUD, HUDA, E2C, EPIDE, AFPA, ASE,
+          OACAS, Organisme habilité par le préfet de département, Organisme mentionné
+          au 8° du I de l'article L. 312-1 du code de l'action sociale et des familles,
+          Opérateur d'intermédiation locative, CAF, CAVA, PIJ-BIJ, PJJ, MSA,
+          Résidence sociale / FJT, Pension de famille / résidence accueil,
+          Service ou club de prévention)
+
+      - name: type_complet
+        description: >
+          Type complet du prescripteur habilité. Contient les 32 organismes distincts présents dans la colonne origine_détaillée.
+
+      - name: origine_id_structure
+        description: >
+          Identifiant de la structure d'origine de la candidature lorsque celle-ci
+          provient d'une autre structure (transfert de candidature).
+
+      - name: parcours_de_création
+        description: >
+          Parcours technique emprunté lors de la création de la candidature sur la
+          plateforme (ex : 'postuler', 'orienter').
+
+      - name: motif_de_refus
+        description: >
+          Motif sélectionné par l'employeur lorsque `état = 'Candidature refusée'`.
+          Null pour les candidatures non refusées.
+          Valeurs :
+          'Refus automatique',
+          'Autre (la SIAE a saisi le motif "autre")',
+          'Pas de recrutement en cours',
+          'Candidat non joignable',
+          'Un des freins à l''emploi du candidat est incompatible avec le poste proposé',
+          'Candidat ne s''étant pas présenté à l''entretien',
+          'Candidat non intéressé',
+          'Le candidat n''a pas les compétences requises pour le poste',
+          'Candidat indisponible : en emploi',
+          'Candidat non éligible',
+          'Candidature en doublon',
+          'L''embauche du candidat empêche la réalisation des objectifs du dialogue de gestion',
+          'Candidat indisponible ou non intéressé par le poste',
+          'Candidat non mobile',
+          'Candidat indisponible : en formation',
+          'Doute sur l''éligibilité du candidat (penser à renvoyer la personne vers un prescripteur)',
+          'La date de fin du PASS IAE / agrément est trop proche',
+          'Candidature pas assez renseignée',
+          'La structure n''est plus conventionnée'.
+
+      - name: mode_attribution_pass_iae
+        description: >
+          Mode d'attribution du PASS IAE associé à la candidature.
+          Exemples : 'AUTO', 'MANUAL'.
+
+      - name: candidature_archivee
+        description: >
+          Indique si la candidature a été archivée ('Oui' / 'Non').
+
+      - name: candidature_refusée_automatiquement
+        description: >
+          Indicateur de refus automatique de la candidature (1 = refusée
+          automatiquement par le système, 0 = traitement manuel).
+
+      - name: présence_de_cv
+        description: >
+          Indicateur de présence d'un CV joint à la candidature (1 = CV présent,
+          0 = absent).
+
+      - name: type_contrat_candidature
+        description: >
+          Type de contrat visé par la candidature (ex : 'CDDI', 'CDD', 'CDI inclusion').
+
+      # ── Reprise de stock AI ───────────────────────────────────────────────────
+      - name: injection_ai
+        description: >
+          Indicateur technique de candidature issue de la reprise de stock AI
+          (Associations Intermédiaires). 1 = candidature injectée depuis l'historique,
+          0 = candidature native. Filtrer sur `injection_ai = 0` pour les analyses
+          de flux courant.
+
+      - name: reprise_de_stock_ai
+        description: >
+          Libellé de l'indicateur de reprise de stock AI ('Oui' / 'Non').
+          Équivalent textuel de `injection_ai`. À exclure systématiquement
+          (`reprise_de_stock_ai = 'Non'`) pour les analyses comparatives.
+
+      # ── Structure employeuse ──────────────────────────────────────────────────
+      - name: id_structure
+        description: >
+          Identifiant de la structure employeuse. Clé étrangère vers
+          `public.structures_v0`.
+
+      - name: nom_structure
+        description: >
+          Nom court de la structure employeuse (SIAE, GEIQ, EA…).
+
+      - name: nom_complet_structure
+        description: >
+          Nom complet de la structure employeuse, sous format "Type de structure - ID structure - Nom de la structure".
+
+      - name: type_structure
+        description: >
+          Type de structure employeuse. Valeurs : 'ACI', 'AI', 'EI', 'ETTI', 'EITI',
+          'GEIQ', 'EA', 'EATT'.
+
+      - name: categorie_structure
+        description: >
+          Catégorie regroupée de la structure (ex : 'SIAE', 'GEIQ', 'EA').
+
+      - name: département_structure
+        description: >
+          Code INSEE du département de la structure (ex : '75', '13', '974').
+
+      - name: nom_département_structure
+        description: >
+          Nom du département de la structure (ex : 'Paris', 'Bouches-du-Rhône').
+
+      - name: région_structure
+        description: >
+          Nom de la région de la structure.
+
+      - name: zone_emploi
+        description: >
+          Zone d'emploi INSEE de la structure employeuse. Maille géographique
+          intermédiaire entre le département et le bassin d'emploi.
+
+      - name: epci
+        description: >
+          Code EPCI (Établissement Public de Coopération Intercommunale) de la
+          structure employeuse.
+
+      - name: nom_epci_structure
+        description: >
+          Nom de l'EPCI de la structure employeuse.
+
+      - name: bassin_emploi_structure
+        description: >
+          Bassin d'emploi de la structure employeuse. Maille d'analyse économique
+          locale utilisée dans les tableaux de bord territoriaux.
+
+      - name: structure_convergence
+        description: >
+          Indicateur de participation de la structure au programme Convergence France
+          ('Oui' / 'Non').
+
+      # ── Organisation prescriptrice ────────────────────────────────────────────
+      - name: id_org_prescripteur
+        description: >
+          Identifiant de l'organisation prescriptrice. Clé étrangère vers
+          `public.organisations_v0`.
+
+      - name: nom_org_prescripteur
+        description: >
+          Nom de l'organisation prescriptrice ayant orienté le candidat.
+
+      - name: type_org_prescripteur
+        description: >
+          Type de l'organisation prescriptrice (ex : 'PE', 'CAP_EMPLOI', 'ML',
+          'DEPT', 'AUTRE').
+
+      - name: type_org
+        description: >
+          Libellé du type d'organisation prescriptrice.
+
+      - name: type_prescripteur
+        description: >
+          Catégorie de prescripteur : 'Prescripteur habilité' ou 'Orienteur'.
+
+      - name: habilitation
+        description: >
+          Type d'habilitation de l'organisation prescriptrice (ex : 'PE', 'AFPA').
+          Null si l'organisation n'est pas habilitée.
+
+      - name: habilitée
+        description: >
+          Indicateur d'habilitation de l'organisation prescriptrice
+          (1 = habilitée, 0 = non habilitée).
+
+      - name: type_avec_habilitation
+        description: >
+          Combinaison du type de prescripteur et de son statut d'habilitation
+          (ex : 'PE (habilité)', 'ML (non habilité)').
+
+      - name: type_complet_avec_habilitation
+        description: >
+          Libellé complet du type d'organisation avec mention de l'habilitation,
+          utilisé dans les affichages détaillés.
+
+      - name: safir_org_prescripteur
+        description: >
+          Code SAFIR de l'organisation prescriptrice (identifiant France Travail /
+          ancien Pôle emploi pour les agences).
+
+      - name: siret_org_prescripteur
+        description: >
+          SIRET de l'organisation prescriptrice.
+
+      - name: brsa
+        description: >
+          Indicateur indiquant si l'organisation prescriptrice gère les bénéficiaires
+          du RSA (1 = oui, 0 = non). Pertinent pour les Conseils départementaux.
+
+      - name: bassin_emploi_prescripteur
+        description: >
+          Bassin d'emploi de l'organisation prescriptrice.
+
+      - name: nom_prénom_conseiller
+        description: >
+          Nom et prénom du conseiller (utilisateur de la plateforme) ayant créé ou
+          orienté la candidature.
+
+      - name: id_utilisateur_origine_candidature
+        description: >
+          Identifiant de l'utilisateur (employeur ou prescripteur) ayant initié la
+          candidature sur la plateforme.
+
+      # ── Géographie de l'organisation prescriptrice (dénormalisée) ─────────────
+      - name: nom
+        description: >
+          Nom court de l'organisation prescriptrice (dénormalisé depuis
+          `public.organisations_v0`).
+
+      - name: adresse_ligne_1
+        description: >
+          Première ligne d'adresse de l'organisation prescriptrice.
+
+      - name: adresse_ligne_2
+        description: >
+          Deuxième ligne d'adresse de l'organisation prescriptrice (complément).
+
+      - name: code_postal
+        description: >
+          Code postal de l'organisation prescriptrice.
+
+      - name: longitude
+        description: >
+          Longitude géographique de l'organisation prescriptrice (WGS84).
+
+      - name: latitude
+        description: >
+          Latitude géographique de l'organisation prescriptrice (WGS84).
+
+      - name: département
+        description: >
+          Code département de l'organisation prescriptrice.
+
+      - name: département_orga
+        description: >
+          Code département de l'organisation prescriptrice (variante de `département`,
+          présente pour des raisons historiques de compatibilité).
+
+      - name: dept_org
+        description: >
+          Code département de l'organisation prescriptrice (autre variante, héritée
+          d'une jointure sur `public.organisations_v0`).
+
+      - name: num_département_org
+        description: >
+          Numéro de département de l'organisation prescriptrice (format texte normalisé
+          sur 2-3 caractères, ex : '01', '2A', '974').
+
+      - name: nom_département
+        description: >
+          Nom du département de l'organisation prescriptrice.
+
+      - name: nom_département_insee
+        description: >
+          Nom INSEE du département (référentiel COG), potentiellement distinct du
+          libellé applicatif.
+
+      - name: région
+        description: >
+          Région de l'organisation prescriptrice.
+
+      - name: région_org
+        description: >
+          Région de l'organisation prescriptrice (variante issue d'une jointure
+          distincte).
+
+      - name: nom_arrondissement
+        description: >
+          Nom de l'arrondissement pour les communes découpées (Paris, Lyon, Marseille).
+
+      - name: code_safir
+        description: >
+          Code SAFIR de l'organisation (identifiant France Travail), dénormalisé
+          depuis `public.organisations_v0`.
+
+      - name: active
+        description: >
+          Indicateur d'activité de l'organisation prescriptrice (1 = active,
+          0 = inactive).
+
+      # ── Candidat ─────────────────────────────────────────────────────────────
+      - name: id_candidat
+        description: >
+          Identifiant du candidat. Clé étrangère vers `public.candidats`.
+
+      - name: hash_nir
+        description: >
+          NIR (numéro de sécurité sociale) du candidat, anonymisé par hachage.
+          Permet de déduplicer les candidats sans exposer de donnée personnelle.
+
+      - name: tranche_age
+        description: >
+          Tranche d'âge du candidat au moment de la candidature.
+          Exemples : '< 26 ans', '26-49 ans', '≥ 50 ans'.
+
+      - name: genre_candidat
+        description: >
+          Genre du candidat déclaré lors du diagnostic. Valeurs : 'Homme', 'Femme'.
+
+      - name: auteur_diag_candidat
+        description: >
+          Catégorie de l'auteur du diagnostic d'éligibilité IAE du candidat
+
+      - name: auteur_diag_candidat_detaille
+        description: >
+          Libellé détaillé de l'auteur du diagnostic, affinant `auteur_diag_candidat`.
+
+      - name: eligibilite_dispositif
+        description: >
+          Dispositif d'éligibilité IAE reconnu pour le candidat au moment de la
+          candidature (ex : 'Bénéficiaire du RSA', 'DELD', 'Jeune -26 ans').
+
+      - name: eligible_cej
+        description: >
+          Indicateur d'éligibilité du candidat au Contrat d'Engagement Jeune
+          ('Oui' / 'Non').
+
+      - name: eligible_cdi_inclusion
+        description: >
+          Indicateur d'éligibilité du candidat au CDI Inclusion
+          ('Oui' / 'Non').
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'candidatures')
+
   - name: candidatures_reseaux
     description: >
       Table introduite pour le suivi des candidatures des réseaux. Nous sommes obligés de créer une table séparée pour le suivi des candidatures des réseaux car une même structure peut appartenir à plusieurs réseaux.
@@ -177,8 +1048,55 @@ models:
           - not_null
   - name: suspensions_pass
     description: >
-      Table permettant de connaître les pass agrément ou IAE suspendus.
-      Ajoute à la source suspensions_v0 l'état de suspension et le motif de suspension en toutes lettres.
+      Table des suspensions de PASS IAE. Une suspension interrompt temporairement
+      la validité d'un PASS IAE lorsque le contrat de travail du salarié prend fin
+      ou est suspendu. Le PASS IAE peut être réactivé si le salarié reprend un
+      contrat dans une nouvelle structure avant l'expiration de ses 2 ans.
+      Un même PASS peut faire l'objet de plusieurs suspensions successives :
+      `id_pass_agrément` n'est pas une clé unique dans cette table.
+      Toutes les lignes ont une `date_fin`
+      renseignée. Historique depuis septembre 2019.
+      Mise à jour : quotidienne.
+    columns:
+      - name: id_pass_agrément
+        description: >
+          Identifiant du PASS IAE concerné par la suspension. Clé étrangère vers
+          `les_emplois.pass_agréments.id`. Non unique dans cette table : un PASS peut
+          avoir plusieurs suspensions successives.
+
+      - name: date_début
+        description: >
+          Date de début de la période de suspension du PASS IAE. Correspond
+          généralement à la date de fin du contrat de travail dans la structure.
+
+      - name: date_fin
+        description: >
+          Date de fin de la période de suspension. Correspond à la date de reprise
+          d'un contrat dans une nouvelle structure, ou à la date d'expiration du
+          PASS IAE si celui-ci n'a pas été réactivé. Toujours renseignée.
+
+      - name: motif_suspension
+        description: >
+          Motif justifiant la suspension du PASS IAE. 11 valeurs :
+          'Contrat de travail terminé',
+          'Contrat de travail suspendu depuis plus de 15 jours',
+          'Contrat de travail rompu',
+          'Situation faisant l''objet d''un accord entre les acteurs membres du
+          CTA (Comité technique d''animation)',
+          'Bascule dans l''expérimentation contrat passerelle',
+          'Raison de force majeure conduisant le salarié à quitter son emploi ou
+          toute autre situation faisant l''objet d''un accord entre les acteurs
+          membres du CTA',
+          'Période d''essai auprès d''un employeur ne relevant pas de l''insertion
+          par l''activité économique',
+          'Arrêt pour longue maladie',
+          'Incarcération',
+          'Congé de maternité',
+          'Période de cure pour désintoxication'.
+
+      - name: suspension_en_cours
+        description: >
+          Indicateur de suspension active au moment de la mise à jour.
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'suspensions_v0')
@@ -188,10 +1106,375 @@ models:
       Cette information est utilisée dans la table stats du C1 afin des filtrer les données des candidats par dernière date d'embauche.
   - name: candidats
     description: >
-      Equivalent à la table candidat_v0 avec des informations complémentaires.
+      Table des demandeurs d'emploi inscrits sur la plateforme Emplois de l'Inclusion.
+      Chaque ligne représente un candidat unique, avec son profil démographique, son diagnostic d'éligibilité IAE en cours, ses
+      critères d'éligibilité détaillés et ses agrégats d'activité (candidatures, embauches).
+      Cette table est en grain candidat : un candidat peut avoir plusieurs candidatures
+      dans `les_emplois.candidatures_echelle_locale` (jointure sur `id`).
+      Mise à jour : quotidienne.
+    columns:
+      - name: id
+        description: >
+          Identifiant unique du candidat. Clé primaire de la table.
+          Clé étrangère dans `les_emplois.candidatures_echelle_locale.id_candidat`.
+
+      - name: hash_nir
+        description: >
+          NIR (numéro de sécurité sociale) du candidat, anonymisé par hachage.
+          Permet de déduplicer les candidats entre tables sans exposer de donnée
+          personnelle.
+
+      - name: sexe_selon_nir
+        description: >
+          Sexe du candidat tel qu'il ressort du NIR. Valeurs : '1' (masculin),
+          '2' (féminin).
+
+      - name: annee_naissance_selon_nir
+        description: >
+          Année de naissance extraite du NIR (entier sur 4 chiffres).
+
+      - name: mois_naissance_selon_nir
+        description: >
+          Mois de naissance extrait du NIR (entier de 1 à 12).
+
+      - name: age
+        description: >
+          Âge du candidat en années, calculé à la date de mise à jour Metabase.
+
+      - name: date_inscription
+        description: >
+          Date d'inscription du candidat sur la plateforme Emplois de l'Inclusion.
+
+      - name: pe_connect
+        description: >
+          Indicateur de connexion via France Travail Connect (ex PE Connect)
+          (1 = compte lié, 0 = non lié).
+
+      - name: pe_inscrit
+        description: >
+          Indicateur d'inscription à France Travail (1 = inscrit, 0 = non inscrit).
+
+      - name: date_dernière_connexion
+        description: >
+          Date de la dernière connexion du candidat à la plateforme.
+
+      - name: date_premiere_connexion
+        description: >
+          Date de la première connexion du candidat à la plateforme.
+
+      - name: actif
+        description: >
+          Indicateur d'activité récente du candidat sur la plateforme
+          (1 = actif, 0 = inactif).
+
+      - name: code_postal
+        description: >
+          Code postal de l'adresse du candidat.
+
+      - name: département
+        description: >
+          Code INSEE du département de résidence du candidat (ex : '59', '75', '974').
+
+      - name: nom_département
+        description: >
+          Nom du département de résidence du candidat.
+
+      - name: région
+        description: >
+          Nom de la région de résidence du candidat.
+
+      - name: adresse_en_qpv
+        description: >
+          Statut de géolocalisation de l'adresse du candidat par rapport aux
+          Quartiers Prioritaires de la Ville.
+          Valeurs : 'Adresse en QPV', 'Adresse hors QPV', 'Adresse imprécise',
+          'Adresse non-géolocalisée'.
+
+      - name: total_candidatures
+        description: >
+          Nombre total de candidatures émises par le candidat, toutes structures
+          et tous états confondus.
+
+      - name: total_embauches
+        description: >
+          Nombre total de candidatures acceptées (embauches effectives) pour ce
+          candidat.
+
+      - name: total_diagnostics
+        description: >
+          Nombre total de diagnostics d'éligibilité IAE réalisés pour ce candidat
+          depuis son inscription.
+
+      - name: date_diagnostic
+        description: >
+          Date du diagnostic d'éligibilité IAE le plus récent.
+
+      - name: date_expiration_diagnostic
+        description: >
+          Date d'expiration du diagnostic d'éligibilité en cours. Le PASS IAE est
+          valable 2 ans.
+
+      - name: id_auteur_diagnostic_prescripteur
+        description: >
+          Identifiant de l'organisation prescriptrice auteure du diagnostic.
+          Clé étrangère vers `public.organisations_v0`. Null si le diagnostic
+          a été réalisé par un employeur.
+
+      - name: id_auteur_diagnostic_employeur
+        description: >
+          Identifiant de la structure employeuse auteure du diagnostic
+          (autoprescription). Null si le diagnostic a été réalisé par un prescripteur.
+
+      - name: type_auteur_diagnostic
+        description: >
+          Catégorie de l'auteur du diagnostic d'éligibilité le plus récent.
+          Valeurs : 'Prescripteur' (organisme externe habilité),
+          'Employeur' (autoprescription par la SIAE).
+          Null si aucun diagnostic réalisé.
+
+      - name: sous_type_auteur_diagnostic
+        description: >
+          Type détaillé de l'auteur du diagnostic. Affine `type_auteur_diagnostic`.
+          Pour les prescripteurs (préfixe 'Prescripteur ') :
+          'Prescripteur FT', 'Prescripteur ML', 'Prescripteur DEPT',
+          'Prescripteur PLIE', 'Prescripteur ODC', 'Prescripteur CAP_EMPLOI',
+          'Prescripteur CHRS', 'Prescripteur CCAS', 'Prescripteur PREVENTION',
+          'Prescripteur CPH', 'Prescripteur SPIP', 'Prescripteur CHU',
+          'Prescripteur CIDFF', 'Prescripteur CADA', 'Prescripteur OHPD',
+          'Prescripteur OCASF', 'Prescripteur CSAPA', 'Prescripteur CAARUD',
+          'Prescripteur OIL', 'Prescripteur RS_FJT', 'Prescripteur E2C',
+          'Prescripteur HUDA', 'Prescripteur PIJ_BIJ', 'Prescripteur EPIDE',
+          'Prescripteur AFPA', 'Prescripteur MSA', 'Prescripteur PJJ',
+          'Prescripteur OACAS', 'Prescripteur ASE', 'Prescripteur PENSION',
+          'Prescripteur CAVA', 'Prescripteur CAF', 'Prescripteur Autre'.
+          Pour les employeurs (préfixe 'Employeur ') :
+          'Employeur AI', 'Employeur ETTI', 'Employeur ACI', 'Employeur EI',
+          'Employeur EITI'.
+          Null si aucun diagnostic réalisé.
+
+      - name: nom_auteur_diagnostic
+        description: >
+          Nom de l'organisme ou de la structure ayant réalisé le diagnostic
+          d'éligibilité le plus récent.
+
+      - name: type_structure_dernière_embauche
+        description: >
+          Type de structure (SIAE) dans laquelle le candidat a été embauché en
+          dernier. Valeurs : 'ACI', 'AI', 'EI', 'ETTI', 'EITI', 'GEIQ', 'EA', 'EATT'.
+          Null si aucune embauche.
+
+      - name: total_critères_niveau_1
+        description: >
+          Nombre de critères d'éligibilité de niveau 1 validés pour ce candidat.
+          Un seul critère N1 suffit pour être éligible à l'IAE.
+
+      - name: total_critères_niveau_2
+        description: >
+          Nombre de critères d'éligibilité de niveau 2 validés. Deux critères N2
+          sont nécessaires en l'absence de critère N1.
+
+      - name: critère_n1_bénéficiaire_du_rsa
+        description: >
+          Critère N1 — Bénéficiaire du Revenu de Solidarité Active (RSA)
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n1_bénéficiaire_du_rsa_date_certification
+        description: >
+          Date de certification du critère RSA.
+
+      - name: critère_n1_bénéficiaire_du_rsa_période_certification
+        description: >
+          Période de validité de la certification RSA.
+
+      - name: critère_n1_allocataire_ass
+        description: >
+          Critère N1 — Allocataire de l'Allocation de Solidarité Spécifique (ASS)
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n1_allocataire_aah
+        description: >
+          Critère N1 — Allocataire de l'Allocation aux Adultes Handicapés (AAH)
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n1_allocataire_aah_date_certification
+        description: >
+          Date de certification du critère AAH.
+
+      - name: critère_n1_allocataire_aah_période_certification
+        description: >
+          Période de validité de la certification AAH.
+
+      - name: critère_n1_detld_plus_de_24_mois
+        description: >
+          Critère N1 — Demandeur d'emploi de très longue durée : inscrit depuis
+          plus de 24 mois (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_niveau_d_étude_3_cap_bep_ou_infra
+        description: >
+          Critère N2 — Niveau d'étude inférieur ou égal au CAP/BEP
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_senior_plus_de_50_ans
+        description: >
+          Critère N2 — Senior de 50 ans et plus
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_jeune_moins_de_26_ans
+        description: >
+          Critère N2 — Jeune de moins de 26 ans
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_sortant_de_l_ase
+        description: >
+          Critère N2 — Sortant de l'Aide Sociale à l'Enfance (ASE)
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_deld_12_à_24_mois
+        description: >
+          Critère N2 — Demandeur d'emploi de longue durée : inscrit entre 12 et
+          24 mois (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_travailleur_handicapé
+        description: >
+          Critère N2 — Travailleur reconnu handicapé (RQTH)
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_travailleur_handicapé_date_certification
+        description: >
+          Date de certification du critère RQTH.
+
+      - name: critère_n2_travailleur_handicapé_période_certification
+        description: >
+          Période de validité de la certification RQTH.
+
+      - name: critère_n2_parent_isolé
+        description: >
+          Critère N2 — Parent isolé (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_parent_isolé_date_certification
+        description: >
+          Date de certification du critère parent isolé.
+
+      - name: critère_n2_parent_isolé_période_certification
+        description: >
+          Période de validité de la certification parent isolé.
+
+      - name: critère_n2_personne_sans_hébergement_ou_hébergée_ou_ayant_u
+        description: >
+          Critère N2 — Personne sans hébergement stable, hébergée ou ayant un parcours de rue (1 = critère validé, 0 = non validé).
+          Nom tronqué en base (50 caractères max).
+
+      - name: critère_n2_réfugié_statutaire_bénéficiaire_d_une_protectio
+        description: >
+          Critère N2 — Réfugié statutaire, bénéficiaire d’une protection temporaire, protégé subsidiaire ou demandeur d’asile.
+          (1 = critère validé, 0 = non validé).
+          Nom tronqué en base (50 caractères max).
+
+      - name: critère_n2_résident_zrr
+        description: >
+          Critère N2 — Résident en Zone de Revitalisation Rurale (ZRR)
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_résident_qpv
+        description: >
+          Critère N2 — Résident en Quartier Prioritaire de la Ville (QPV)
+          (1 = critère validé, 0 = non validé).
+
+      - name: critère_n2_sortant_de_détention_ou_personne_placée_sous_main
+        description: >
+          Critère N2 — Sortant de détention ou personne placée sous main de justice
+          (1 = critère validé, 0 = non validé).
+          Nom tronqué en base (50 caractères max).
+
+      - name: critère_n2_maîtrise_de_la_langue_française_inférieure_au_ni
+        description: >
+          Critère N2 — Maîtrise de la langue française inférieure au niveau A1
+          (1 = critère validé, 0 = non validé).
+          Nom tronqué en base (50 caractères max).
+
+      - name: critère_n2_problème_de_mobilité
+        description: >
+          Critère N2 — Problème de mobilité identifié comme frein à l'emploi
+          (1 = critère validé, 0 = non validé).
+
+      - name: injection_ai
+        description: >
+          Indicateur technique de candidat issu de la reprise de stock AI
+          (Associations Intermédiaires). 1 = candidat injecté depuis l'historique,
+          0 = candidat natif. Filtrer sur `injection_ai = 0` pour les analyses
+          de flux courant.
+
+      - name: date_mise_à_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.
+
+      - name: categorie_structure
+        description: >
+          Catégorie de la structure de la dernière embauche du candidat.
+          Valeurs : 'IAE' (structure d'insertion par l'activité économique),
+          'Hors IAE' (GEIQ, EA…).
+          Null si aucune embauche..
+
+      - name: type_org
+        description: >
+          Code du type de l'organisation auteure du diagnostic (sans préfixe).
+          Valeurs : 'FT', 'ML', 'DEPT', 'PLIE', 'ODC', 'CAP_EMPLOI', 'CHRS',
+          'CCAS', 'PREVENTION', 'CPH', 'SPIP', 'CHU', 'CIDFF', 'CADA', 'OHPD',
+          'OCASF', 'CSAPA', 'CAARUD', 'OIL', 'RS_FJT', 'E2C', 'HUDA', 'PIJ_BIJ',
+          'EPIDE', 'AFPA', 'MSA', 'PJJ', 'OACAS', 'ASE', 'PENSION', 'CAVA',
+          'CAF', 'Autre'.
+          Null si le diagnostic a été réalisé par un employeur ou si aucun
+          diagnostic n'existe. Équivalent de `sous_type_auteur_diagnostic` sans
+          le préfixe 'Prescripteur '.
+
+      - name: région_diag
+        description: >
+          Région de l'organisme auteur du diagnostic d'éligibilité.
+
+      - name: département_diag
+        description: >
+          Département de l'organisme auteur du diagnostic d'éligibilité.
+
+      - name: age_selon_nir
+        description: >
+          Âge calculé à partir de l'année de naissance du NIR (type NUMERIC).
+          Peut différer de `age` si le NIR n'est pas renseigné.
+
+      - name: date_derniere_candidature
+        description: >
+          Date de la dernière candidature émise par le candidat.
+
+      - name: date_premiere_candidature
+        description: >
+          Date de la première candidature émise par le candidat.
+
+      - name: diagnostic_valide
+        description: >
+          Indicateur de présence d'un diagnostic d'éligibilité IAE valide et non
+          expiré à la date de mise à jour (1 = valide, 0 = absent ou expiré).
+
+      - name: tranche_age
+        description: >
+          Tranche d'âge catégorielle du candidat.
+          Valeurs : 'Jeune (moins de 26 ans)', 'Adulte (26-54 ans)',
+          'Senior (55 ans et plus)'.
+
+      - name: eligibilite_dispositif
+        description: >
+          Dispositif d'éligibilité IAE principal reconnu pour le candidat.
+
+      - name: eligible_cej
+        description: >
+          Éligibilité du candidat au Contrat d'Engagement Jeune ('Oui' / 'Non').
+
+      - name: eligible_cdi_inclusion
+        description: >
+          Éligibilité du candidat au CDI Inclusion ('Oui' / 'Non')
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'candidats_v0')
+
   - name: candidatures_par_candidat
     description: >
       Permet de suvire les différentes candidatures réalisées par un candidat.
@@ -231,9 +1514,79 @@ models:
             column_type: float
   - name: utilisateurs
     description: >
-        Table contenant les utilisateurs des emplois ainsi que l'id de la structure/orga/institution à laquelle ils sont rattachés.
-        Attention dans cette table les utilisateurs apparaîssent autant de fois qu'ils ont de collaborations.
-        Pour obtenir le nombre d'utilisateurs réels il faut passer par un distinct sur l'id ou l'email.
+      Table des utilisateurs professionnels inscrits sur la plateforme Emplois de
+      l'Inclusion. Chaque ligne représente un utilisateur pro : employeur (membre
+      d'une SIAE), prescripteur (membre d'une organisation prescriptrice) ou
+      inspecteur du travail.
+      Les candidats (demandeurs d'emploi) ne sont pas dans cette table —
+      voir `les_emplois.candidats`.
+      Selon le type, l'utilisateur est rattaché à une structure (`id_structure`),
+      une organisation (`id_organisation`) ou une institution (`id_institution`) —
+      ces trois clés sont mutuellement exclusives dans la majorité des cas.
+      Volumétrie : ~105 550 utilisateurs (77 608 prescripteurs, 26 891 employeurs,
+      1 052 inspecteurs du travail). Mise à jour : quotidienne.
+      Pour les analyses cross-produits impliquant d'autres services (Dora, RDV-i…),
+      utiliser `datalake.pdi_base_unique_tous_les_pros`.
+    columns:
+      - name: id
+        description: >
+          Identifiant unique de l'utilisateur (entier). Clé primaire de la table.
+          Référencé dans `public.candidatures_echelle_locale.id_utilisateur_origine_candidature`.
+
+      - name: email
+        description: >
+          Adresse e-mail de l'utilisateur, utilisée pour l'authentification.
+          Donnée non publique.
+
+      - name: type
+        description: >
+          Type de l'utilisateur professionnel.
+          Valeurs : 'employer' (membre d'une structure employeuse),
+          'prescriber' (membre d'une organisation prescriptrice ou orienteuse),
+          'labor_inspector' (inspecteur du travail).
+
+      - name: prenom
+        description: >
+          Prénom de l'utilisateur.
+
+      - name: nom
+        description: >
+          Nom de famille de l'utilisateur.
+
+      - name: dernière_connexion
+        description: >
+          Horodatage de la dernière connexion de l'utilisateur à la plateforme
+          (timestamp with time zone). Utilisé pour calculer les taux d'utilisateurs
+          actifs à 30 et 90 jours.
+
+      - name: date_inscription
+        description: >
+          Date d'inscription de l'utilisateur sur la plateforme.
+
+      - name: date_mise_à_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.
+
+      - name: id_structure
+        description: >
+          Identifiant de la structure employeuse à laquelle est rattaché
+          l'utilisateur. Clé étrangère vers `les_emplois.structures.id`.
+          Renseigné pour les utilisateurs de type 'employer'.
+          Null pour les prescripteurs et inspecteurs du travail.
+
+      - name: id_organisation
+        description: >
+          Identifiant de l'organisation prescriptrice à laquelle est rattaché
+          l'utilisateur. Clé étrangère vers `les_emplois.organisations.id`.
+
+      - name: id_institution
+        description: >
+          Identifiant de l'institution à laquelle est rattaché l'utilisateur.
+          Clé étrangère vers `les_emplois.institutions.id`.
+          Renseigné pour les inspecteurs du travail et certains prescripteurs
+          institutionnels (~966 lignes).
+
   - name: utilisateurs_jamais_venus
     description: >
       Table permettant de récupérer les mails des utilisateurs des emplois ne s'étant jamais connecté sur les tb prives.
@@ -264,10 +1617,284 @@ models:
         - l’employeur n'a pas refusé des candidatures dans les 30 derniers jours pour le motif “Pas de poste ouvert”
   - name: structures
     description: >
-      Copie de la table structures_v0 du c1 enrichie de données pour faire marcher certains filtres sur metabase.
+      Table des structures employeuses inscrites sur la plateforme Emplois de
+      l'Inclusion. Chaque ligne représente une
+      structure unique (SIAE, GEIQ, EA, EATT, OPCS), avec ses informations
+      administratives, ses deux adresses (principale et de correspondance),
+      ses agrégats d'activité (candidatures, embauches, fiches de poste) et
+      ses métadonnées de suivi.
+      Une structure sera considérée comme mère si elle est présente dans asp.fluxIAE_Structures_v2 et dans cette table,
+      la correspondance se fait sur fluxIAE_Structures_v2.id et structures.id_asp
+    columns:
+      - name: id
+        description: >
+          Identifiant unique de la structure (entier). Clé primaire de la table.
+          Clé étrangère dans `public.candidatures_echelle_locale.id_structure`.
+
+      - name: id_asp
+        description: >
+          Identifiant de la structure dans le système de l'ASP (Agence de Services
+          et de Paiement), qui gère les conventionnements et le financement des SIAE.
+          Null pour les structures non conventionnées via l'ASP (GEIQ, EA, OPCS).
+          Permet d'identifier les structures mères.
+          Une structure sera considérée comme mère si elle est présente dans asp.fluxIAE_Structures_v2 et dans cette table,
+          la correspondance se fait sur fluxIAE_Structures_v2.id et structures.id_asp
+
+      - name: nom
+        description: >
+          Nom court de la structure tel que saisi par l'utilisateur lors de
+          l'inscription.
+
+      - name: nom_complet
+        description: >
+          Nom complet de la structure employeuse, sous format "Type de structure - ID structure - Nom de la structure".
+
+      - name: description
+        description: >
+          Description libre de la structure et de ses activités, saisie par
+          l'employeur.
+
+      - name: type
+        description: >
+          Type de structure employeuse.
+          Valeurs : 'ACI' (Atelier et Chantier d'Insertion),
+          'EI' (Entreprise d'Insertion),
+          'AI' (Association Intermédiaire),
+          'ETTI' (Entreprise de Travail Temporaire d'Insertion),
+          'EA' (Entreprise Adaptée),
+          'GEIQ' (Groupement d'Employeurs pour l'Insertion et la Qualification),
+          'EITI' (Entreprise d'Insertion par le Travail Indépendant),
+          'EATT' (Entreprise Adaptée de Travail Temporaire),
+          'OPCS' (Organisme à but non lucratif concourant à la formation,
+          à l'insertion et au retour à l'emploi des personnes condamnées
+          ou sortant de détention).
+
+      - name: siret
+        description: >
+          Numéro SIRET de la structure (14 chiffres). Identifiant unique de
+          l'établissement au sens INSEE.
+
+      - name: code_naf
+        description: >
+          Code NAF (Nomenclature des Activités Françaises) de la structure,
+          décrivant son activité principale.
+
+      - name: email_public
+        description: >
+          Adresse e-mail publique de la structure, affichée sur les fiches de poste
+          et visible des candidats.
+
+      - name: email_authentification
+        description: >
+          Adresse e-mail utilisée pour l'authentification sur la plateforme.
+          Donnée non publique.
+
+      - name: convergence_france
+        description: >
+          Indicateur de participation de la structure au programme Convergence France,
+          dispositif d'accompagnement renforcé vers l'emploi durable.
+          (1 = participante, 0 = non participante).
+
+      - name: adresse_ligne_1
+        description: >
+          Première ligne de l'adresse principale de la structure, équivalente à celle de la structure mère.
+
+      - name: adresse_ligne_2
+        description: >
+          Deuxième ligne de l'adresse principale (complément d'adresse), équivalente à celle de la structure mère.
+
+      - name: code_postal
+        description: >
+          Code postal de l'adresse principale, équivalent à celui de la structure mère.
+
+      - name: code_commune
+        description: >
+          Code INSEE de la commune de l'adresse principale (5 caractères), équivalent à celui de la structure mère.
+
+      - name: longitude
+        description: >
+          Longitude géographique de l'adresse principale (WGS84), équivalente à celle de la structure mère.
+
+      - name: latitude
+        description: >
+          Latitude géographique de l'adresse principale (WGS84), équivalente à celle de la structure mère.
+
+      - name: département
+        description: >
+          Code INSEE du département de l'adresse principale, équivalent à celui de la structure mère.
+          (ex : '59', '75', '974').
+
+      - name: nom_département
+        description: >
+          Nom du département de l'adresse principale, équivalent à celui de la structure mère.
+
+      - name: région
+        description: >
+          Nom de la région de l'adresse principale, équivalent à celui de la structure mère.
+
+      - name: adresse_ligne_1_c1
+        description: >
+          Première ligne de l'adresse de correspondance (C1), distincte de
+          l'adresse principale pour les structures ayant deux établissements.
+
+      - name: adresse_ligne_2_c1
+        description: >
+          Deuxième ligne de l'adresse de correspondance (complément).
+
+      - name: code_postal_c1
+        description: >
+          Code postal de l'adresse de correspondance.
+
+      - name: code_commune_c1
+        description: >
+          Code INSEE de la commune de l'adresse de correspondance.
+
+      - name: ville_c1
+        description: >
+          Nom de la ville de l'adresse de correspondance.
+
+      - name: longitude_c1
+        description: >
+          Longitude géographique de l'adresse de correspondance (WGS84).
+
+      - name: latitude_c1
+        description: >
+          Latitude géographique de l'adresse de correspondance (WGS84).
+
+      - name: département_c1
+        description: >
+          Code INSEE du département de l'adresse de correspondance.
+
+      - name: nom_département_c1
+        description: >
+          Nom du département de l'adresse de correspondance.
+
+      - name: région_c1
+        description: >
+          Nom de la région de l'adresse de correspondance.
+
+      - name: date_inscription
+        description: >
+          Date d'inscription de la structure sur la plateforme Emplois de
+          l'Inclusion.
+
+      - name: total_membres
+        description: >
+          Nombre total de membres (utilisateurs) rattachés à la structure.
+
+      - name: total_candidatures
+        description: >
+          Nombre total de candidatures reçues par la structure depuis son
+          inscription, tous états confondus.
+
+      - name: total_candidatures_30j
+        description: >
+          Nombre de candidatures reçues par la structure au cours des 30 derniers
+          jours.
+
+      - name: total_embauches
+        description: >
+          Nombre total de candidatures acceptées (embauches effectives) par la
+          structure depuis son inscription.
+
+      - name: total_embauches_30j
+        description: >
+          Nombre d'embauches effectives au cours des 30 derniers jours.
+
+      - name: taux_conversion_30j
+        description: >
+          Taux de conversion candidatures → embauches sur les 30 derniers jours
+
+      - name: total_auto_prescriptions
+        description: >
+          Nombre total de candidatures pour lesquelles la structure a elle-même
+          réalisé le diagnostic d'éligibilité IAE (autoprescription).
+
+      - name: total_candidatures_autonomes
+        description: >
+          Nombre total de candidatures reçues en provenance de candidats ayant
+          postulé de manière autonome (`origine = 'Candidat'`).
+
+      - name: total_candidatures_via_prescripteur
+        description: >
+          Nombre total de candidatures reçues via un prescripteur ou orienteur
+
+      - name: total_candidatures_non_traitées
+        description: >
+          Nombre de candidatures en attente de traitement par la structure
+          (état 'Nouvelle candidature' ou 'Candidature en attente').
+
+      - name: total_candidatures_en_étude
+        description: >
+          Nombre de candidatures actuellement à l'étude par la structure
+          (état 'Candidature à l'étude').
+
+      - name: date_dernière_connexion
+        description: >
+          Date de la dernière connexion d'un membre de la structure à la
+          plateforme.
+
+      - name: active
+        description: >
+          Indicateur d'activité de la structure sur la plateforme
+          (1 = active, 0 = inactive).
+
+      - name: date_dernière_évolution_candidature
+        description: >
+          Date du dernier changement d'état sur une candidature reçue par la
+          structure. Indicateur de récence de l'activité de traitement.
+
+      - name: total_fiches_de_poste_actives
+        description: >
+          Nombre de fiches de poste actuellement ouvertes au recrutement.
+
+      - name: total_fiches_de_poste_inactives
+        description: >
+          Nombre de fiches de poste fermées ou archivées.
+
+      - name: date_mise_à_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.
+
+      - name: ville
+        description: >
+          Nom de la ville de l'adresse principale.
+
+      - name: bassin_d_emploi
+        description: >
+          Bassin d'emploi de la structure, maille d'analyse économique locale
+          utilisée dans les tableaux de bord territoriaux.
+
+      - name: categorie_structure
+        description: >
+          Catégorie regroupée de la structure.
+          Valeurs : 'IAE' (ACI, AI, EI, ETTI, EITI), 'Hors IAE' (EA, EATT, GEIQ,
+          OPCS).
+
+      - name: nom_epci_structure
+        description: >
+          Nom de l'EPCI (Établissement Public de Coopération Intercommunale) de
+          la structure.
+
+      - name: source
+        description: >
+          Origine de la création de la fiche structure dans la plateforme.
+          Il faut distinguer les SIAE en fonction de leur source et toujours les expliciter.
+          Par exemple si l'on demande le nombre de SIAE en France il faut les agréger par source en précisant que juridiquement (et donc aux yeux de la DGEFP & ASP)
+          seules les SIAE qui ont pour source = 'Export ASP' doivent être compatibilisées.
+          Les SIAE qui ont pour source = 'Utilisateur (Antenne)' n'ont pas d'existence juridique et sont rattachées a des SIAE de l'export ASP (= structure mère)
+          Valeurs : 'Export ASP' (import automatique depuis l'ASP),
+          'Export EA+EATT' (import depuis le fichier EA/EATT),
+          'Export GEIQ' (import depuis le fichier GEIQ),
+          'Utilisateur (Antenne)' (création manuelle par un utilisateur antenne),
+          'Utilisateur (OPCS)' (création manuelle par un utilisateur OPCS),
+          'Staff Itou (OPCS)' (création par l'équipe interne pour un OPCS),
+          'Staff Itou' (création directe par l'équipe interne).
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: source('emplois', 'structures_v0')
+
   - name: taux_refus_structures
     description: >
         Donne le nombre de candidatures emises et refusées (avec et sans autoprescription) pour permettre le calcul des taux de refus par structure.

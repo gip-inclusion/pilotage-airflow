@@ -58,14 +58,221 @@ sources:
       - name: departements
       - name: fiches_de_poste
       - name: fiches_de_poste_par_candidature
+        description: >
+            Table de liaison entre les candidatures et les fiches de poste.
+            Résout la relation many-to-many : une candidature peut être associée à
+            plusieurs fiches de poste, et une fiche de poste peut recevoir plusieurs
+            candidatures.
+            À joindre avec `les_emplois.candidatures_echelle_locale` (sur `id`) et
+            `les_emplois.fiches_de_poste` (sur `id`) pour enrichir les candidatures avec
+            le métier, le type de contrat ou le domaine professionnel visé.
+        columns:
+          - name: id_fiche_de_poste
+            description: >
+              Identifiant de la fiche de poste. Clé étrangère vers
+              `les_emplois.fiches_de_poste.id`
+          - name: id_candidature
+            description: >
+              Identifiant de la candidature. Clé étrangère vers
+              `les_emplois.candidatures_echelle_locale.id` (type UUID).
+          - name: date_mise_à_jour_metabase
+            description: >
+              Date de la dernière synchronisation de cette ligne dans Metabase.
+              Mise à jour quotidienne.
       - name: institutions
       - name: organisations_v0
       - name: pass_agréments
+        description: >
+          Table de l'ensemble des PASS IAE et agréments délivrés depuis la création
+          de la plateforme Emplois de l'Inclusion. Chaque ligne représente un PASS IAE
+          ou un agrément Pôle emploi historique associant un candidat à une structure
+          employeuse pour une période donnée.
+          Le PASS IAE est le titre d'accès à l'IAE, valable 2 ans, renouvelable par
+          prolongation (`les_emplois.prolongations`). Un même candidat peut avoir plusieurs
+          PASS successifs dans cette table.
+          Mise à jour : quotidienne.
+        columns:
+          - name: id
+            description: >
+              Identifiant unique du PASS IAE ou agrément (entier). Clé primaire de
+              la table. Référencé dans `les_emplois.prolongations.id_pass_agrément`.
+    
+          - name: type
+            description: >
+              Type de titre d'accès à l'IAE.
+              Valeurs : 'PASS IAE (99999)' (titre natif de la plateforme, délivré
+              depuis 2021), 'Agrément PE via ITOU (non 99999)' (ancien agrément
+              Pôle emploi importé dans la plateforme, antérieur à la bascule PASS IAE).
+    
+          - name: date_début
+            description: >
+              Date de début de validité du PASS IAE. Correspond généralement à la
+              date d'embauche effective du candidat.
+    
+          - name: date_fin
+            description: >
+              Date de fin de validité du PASS IAE. Calculée à 2 ans après
+              `date_début`, prolongée si des prolongations ont été accordées.
+              La valeur '2040-01-01' est utilisée comme sentinelle pour les PASS
+              sans date de fin définie.
+    
+          - name: durée
+            description: >
+              Durée de validité du PASS IAE (type PostgreSQL INTERVAL), calculée
+              entre `date_début` et `date_fin`.
+    
+          - name: id_candidat
+            description: >
+              Identifiant du candidat titulaire du PASS IAE. Clé étrangère vers
+              `les_emplois.candidats.id`.
+    
+          - name: id_structure
+            description: >
+              Identifiant de la structure employeuse ayant déclenché le PASS IAE.
+              Clé étrangère vers `les_emplois.structures.id`.
+    
+          - name: type_structure
+            description: >
+              Type de la structure employeuse associée au PASS IAE.
+              Valeurs : 'ACI', 'AI', 'ETTI', 'EI', 'EITI', 'GEIQ', 'OPCS', 'EA',
+              'EATT'. Il ne faut pas considérer les PASS hors SIAE ('ACI', 'AI', 'ETTI', 'EI', 'EITI')
+    
+          - name: siret_structure
+            description: >
+              Numéro SIRET de la structure employeuse au moment de la délivrance
+              du PASS IAE.
+    
+          - name: nom_structure
+            description: >
+              Nom de la structure employeuse au moment de la délivrance du PASS IAE.
+    
+          - name: département_structure_ou_org_pe
+            description: >
+              Code INSEE du département de la structure employeuse, ou de
+              l'organisation Pôle emploi pour les agréments historiques
+              (type 'Agrément PE via ITOU').
+    
+          - name: nom_département_structure_ou_org_pe
+            description: >
+              Nom du département de la structure employeuse ou de l'organisation
+              Pôle emploi pour les agréments historiques.
+    
+          - name: région_structure_ou_org_pe
+            description: >
+              Nom de la région de la structure employeuse ou de l'organisation
+              Pôle emploi pour les agréments historiques.
+    
+          - name: injection_ai
+            description: >
+              Indicateur technique de PASS issu de la reprise de stock AI
+              (Associations Intermédiaires).
+              (1 = PASS injecté depuis l'historique AI, 0 = PASS natif).
+              Filtrer sur `injection_ai = 0` pour les analyses de flux courant.
+    
+          - name: hash_numéro_pass_iae
+            description: >
+              Numéro du PASS IAE anonymisé par hachage. Permet de référencer un
+              PASS sans exposer son numéro réel.
+    
+          - name: date_mise_à_jour_metabase
+            description: >
+              Date de la dernière synchronisation de cette ligne dans Metabase.
+              Mise à jour quotidienne.
       - name: structures
       - name: suspensions_v0
       - name: utilisateurs_v0
       - name: demandes_de_prolongation
       - name: prolongations
+        description: >
+          Table des prolongations de PASS IAE accordées sur la plateforme Emplois de
+          l'Inclusion. Une prolongation étend la durée de validité d'un PASS IAE
+          au-delà de ses 2 ans initiaux, pour permettre à un salarié en insertion de
+          poursuivre son parcours.
+          Chaque ligne représente une prolongation accordée, liée à un PASS IAE et
+          à la structure déclarante. Certains motifs (depuis le 26 juillet 2023)
+          nécessitent une validation par un prescripteur habilité avant d'être
+          accordés ; d'autres sont validés directement par la SIAE.
+          Les 20 137 lignes sans `id_demande_de_prolongation` correspondent
+          aux prolongations antérieures au dispositif de demande formalisée (avant
+          juillet 2023). Mise à jour : quotidienne.
+          À compléter avec `les_emplois.suivi_demandes_prolongations` pour accéder aux
+          champs de workflow (état, délai de traitement, motif de refus).
+        columns:
+          - name: id
+            description: >
+              Identifiant unique de la prolongation (entier). Clé primaire de la table.
+    
+          - name: id_pass_agrément
+            description: >
+              Identifiant du PASS IAE prolongé. Clé étrangère vers
+              `les_emplois.pass_agréments.id`. Un même PASS peut faire l'objet de
+              plusieurs prolongations successives.
+    
+          - name: date_début
+            description: >
+              Date de début de la période de prolongation. Correspond généralement
+              à la date d'expiration du PASS IAE initial ou de la prolongation
+              précédente.
+    
+          - name: date_fin
+            description: >
+              Date de fin de la période de prolongation. La valeur '2040-01-01'
+              est utilisée comme sentinelle pour les prolongations à durée
+              indéterminée.
+    
+          - name: motif
+            description: >
+              Motif justifiant la prolongation du PASS IAE.
+              Valeurs nécessitant une validation par un prescripteur habilité
+              (depuis le 26 juillet 2023) :
+              '50 ans et plus',
+              'RQTH - Reconnaissance de la qualité de travailleur handicapé',
+              'Difficultés particulièrement importantes dont l''absence de prise en
+              charge ferait obstacle à son insertion professionnelle'.
+              Valeurs validées directement par la SIAE :
+              'Fin d''une formation',
+              'CDI conclu avec une personne de plus de 57 ans',
+              'Contexte sanitaire'.
+    
+          - name: id_utilisateur_déclarant
+            description: >
+              Identifiant de l'utilisateur (membre de la structure) ayant déclaré
+              la prolongation sur la plateforme.
+    
+          - name: id_structure_déclarante
+            description: >
+              Identifiant de la structure employeuse ayant déclaré la prolongation.
+              Clé étrangère vers `les_emplois.structures.id`.
+    
+          - name: id_organisation_prescripteur
+            description: >
+              Identifiant de l'organisation prescriptrice ayant validé la demande
+              de prolongation. Clé étrangère vers `les_emplois.organisations.id`.
+              Null pour les prolongations à validation directe SIAE
+              et pour les prolongations antérieures à juillet 2023.
+    
+          - name: id_utilisateur_prescripteur
+            description: >
+              Identifiant de l'utilisateur prescripteur ayant traité la demande
+              de prolongation. Null si aucun prescripteur impliqué.
+    
+          - name: date_de_création
+            description: >
+              Date de création de la prolongation dans le système. Permet de distinguer
+              les prolongations avant (< 2023-07-26) et après la réforme du dispositif
+              de demande formalisée.
+    
+          - name: id_demande_de_prolongation
+            description: >
+              Identifiant de la demande de prolongation associée. Clé étrangère vers
+              `les_emplois.suivi_demandes_prolongations.id`. Null pour les ~20 100
+              prolongations créées avant la mise en place du workflow de demande
+              (avant juillet 2023).
+    
+          - name: date_mise_à_jour_metabase
+            description: >
+              Date de la dernière synchronisation de cette ligne dans Metabase.
+              Mise à jour quotidienne.
       - name: structures_v0
       - name: c1_ref_type_contrat
         description: >
