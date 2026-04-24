@@ -1,0 +1,292 @@
+version: 2
+
+models:
+  - name: int_fagerh__prestations
+    description: Une ligne par réponse et par prestation renseignée dans le JSON des prestations.
+    columns:
+      - name: uuid
+        description: Identifiant unique de reprise du questionnaire.
+        data_tests:
+          - not_null
+
+      - name: answer_id
+        description: Identifiant de la réponse source.
+        data_tests:
+          - not_null
+
+      - name: prestation_key
+        description: Clé technique de la prestation dans le JSON.
+        data_tests:
+          - not_null
+
+      - name: prestation_done
+        description: Indique si la prestation a été renseignée jusqu'au bout.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true]
+
+      - name: visited_blocks
+        description: Blocs visités dans le formulaire pour cette prestation.
+
+      - name: nb_files_active
+        description: Nombre de personnes présentes à l'effectif au 31/12 ayant signé un contrat de séjour.
+
+      - name: preaccueil_sans_suite
+        description: Nombre de personnes reçues en pré-accueil sans suite dans l'année.
+
+      - name: sorties_avant_terme
+        description: Nombre de sorties définitives avant le terme de la prestation.
+
+      - name: sorties_terme
+        description: Nombre de sorties au terme de la prestation.
+
+      - name: sorties
+        description: Nombre de sorties définitives en 2025.
+
+      - name: journees
+        description: Nombre de journées réalisées.
+
+      - name: journees_theoriques
+        description: Nombre de journées théoriques.
+
+      - name: json_coh_genre
+        description: Répartition par genre, conservée au format JSON.
+
+      - name: json_coh_age
+        description: Répartition par âge, conservée au format JSON.
+
+      - name: json_coh_niveau_entree
+        description: Répartition par niveau à l'entrée, conservée au format JSON.
+
+      - name: json_coh_situation_entree
+        description: Répartition par situation à l'entrée, conservée au format JSON.
+
+      - name: json_coh_ressources_entree
+        description: Répartition par ressources à l'entrée, conservée au format JSON.
+
+      - name: json_coh_pathologies
+        description: Répartition par nombre de pathologies, conservée au format JSON.
+
+      - name: json_coh_origine_handicap
+        description: Répartition par origine du handicap, conservée au format JSON.
+
+      - name: json_coh_lesion_origine
+        description: Répartition par origine de lésion, conservée au format JSON.
+
+      - name: json_geo_rows
+        description: Répartition géographique de la prestation, conservée au format JSON.
+
+      - name: json_handicap_matrix
+        description: Matrice des handicaps principaux et associés, conservée au format JSON.
+
+      - name: direct_avec_orp_enabled
+        description: Indique si le bloc direct avec ORP CDAPH est activé pour cette prestation.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Oui', 'Non']
+
+      - name: direct_sans_orp_enabled
+        description: Indique si le bloc direct sans ORP CDAPH est activé pour cette prestation.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Oui', 'Non']
+
+      - name: indirect_enabled
+        description: Indique si le bloc indirect est activé pour cette prestation.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Oui', 'Non']
+
+      - name: direct_beneficiaires
+        description: Nombre de bénéficiaires en prestation directe avec ORP CDAPH.
+
+      - name: direct_discontinue_personnes
+
+      - name: direct_presentiel_total
+        description: Nombre total de personnes accompagnées en présentiel.
+
+      - name: direct_presentiel_complet
+        description: Nombre de personnes accompagnées en présentiel complet.
+
+      - name: direct_presentiel_partiel
+        description: Nombre de personnes accompagnées en présentiel partiel.
+
+      - name: direct_hybride_total
+        description: Nombre total de personnes accompagnées en hybride.
+
+      - name: direct_hybride_complet
+        description: Nombre de personnes accompagnées en hybride complet.
+
+      - name: direct_hybride_partiel
+        description: Nombre de personnes accompagnées en hybride partiel.
+
+      - name: direct_distanciel_total
+        description: Nombre total de personnes accompagnées à distance.
+
+      - name: direct_distanciel_complet
+        description: Nombre de personnes accompagnées à distance complet.
+
+      - name: direct_distanciel_partiel
+        description: Nombre de personnes accompagnées à distance partiel.
+
+      - name: direct_hors_murs_personnes
+        description: Nombre de personnes accompagnées hors les murs.
+
+      - name: direct_hors_murs_journees
+        description: Nombre de journées d'accompagnement hors les murs.
+
+      - name: direct_hebergees_personnes
+        description: Nombre de personnes hébergées.
+
+      - name: direct_hebergees_journees
+        description: Nombre de journées d'hébergement.
+
+      - name: direct_hebergees_nuitees
+        description: Nombre de nuitées d'hébergement.
+
+      - name: sorties_nb
+        description: Nombre de sorties dans le bloc sorties.
+
+      - name: sorties_depart_volontaire
+        description: Nombre de sorties pour départ volontaire.
+
+      - name: sorties_sante
+        description: Nombre de sorties pour raison de santé.
+
+      - name: sorties_reorientation
+        description: Nombre de sorties pour réorientation.
+
+      - name: sorties_disciplinaire
+        description: Nombre de sorties pour raison disciplinaire.
+
+      - name: sorties_objectif
+        description: Nombre de sorties pour objectif atteint.
+
+      - name: sorties_reprise_emploi
+        description: Nombre de sorties pour reprise d'emploi.
+
+      - name: sorties_je_ne_sais_pas
+        description: Nombre de sorties dont la raison est inconnue.
+
+      - name: sorties_autres_nb
+        description: Nombre de sorties pour autre raison.
+
+      - name: sorties_autres_precision
+        description: Précision associée aux autres raisons de sortie.
+
+      - name: suspensions_nb
+        description: Nombre de suspensions.
+
+      - name: suspensions_sante_non_liee
+        description: Nombre de suspensions pour santé non liée au handicap.
+
+      - name: suspensions_evolution_handicap
+        description: Nombre de suspensions liées à une évolution du handicap.
+
+      - name: suspensions_evolution_sociale
+        description: Nombre de suspensions liées à une évolution sociale.
+
+      - name: suspensions_parcours_suspendu
+        description: Nombre de suspensions liées au parcours.
+
+      - name: suspensions_autres_nb
+        description: Nombre de suspensions pour autre raison.
+
+      - name: suspensions_autres_precision
+        description: Précision associée aux autres raisons de suspension.
+
+      - name: preco_emploi_milieu_ordinaire
+        description: Nombre de préconisations vers l'emploi en milieu ordinaire.
+
+      - name: preco_entreprise_adaptee
+        description: Nombre de préconisations vers une entreprise adaptée.
+
+      - name: preco_esat
+        description: Nombre de préconisations vers un ESAT.
+
+      - name: preco_creation_entreprise
+        description: Nombre de préconisations vers la création d'entreprise.
+
+      - name: preco_maintien_emploi
+        description: Nombre de préconisations vers le maintien en emploi.
+
+      - name: preco_formation_droit_commun
+        description: Nombre de préconisations vers une formation de droit commun.
+
+      - name: preco_formation_alternance
+        description: Nombre de préconisations vers une formation en alternance.
+
+      - name: preco_formation_esrp_dfa
+        description: Nombre de préconisations vers une formation ESRP ou DFA.
+
+      - name: preco_espo_specialisee_ueros
+        description: Nombre de préconisations vers une ESPO spécialisée ou UEROS.
+
+      - name: preco_service_accompagnement_social
+        description: Nombre de préconisations vers un service d'accompagnement social.
+
+      - name: preco_vie_sociale
+        description: Nombre de préconisations liées à la vie sociale.
+
+      - name: preco_soins
+        description: Nombre de préconisations vers des soins.
+
+      - name: preco_emploi_accompagne
+        description: Nombre de préconisations vers l'emploi accompagné.
+
+      - name: preco_autres
+        description: Nombre d'autres préconisations.
+
+      - name: preco_autres_precision
+        description: Précision associée aux autres préconisations.
+
+      - name: emploi_sorties_n_1
+        description: Nombre de sorties de l'année précédente suivies pour l'emploi.
+
+      - name: emploi_nb_repondants
+        description: Nombre de répondants au suivi emploi.
+
+      - name: emploi_acces_nb
+        description: Nombre de personnes ayant accédé à l'emploi.
+
+      - name: emploi_acces_cdi
+        description: Nombre d'accès à l'emploi en CDI.
+
+      - name: emploi_acces_cdd_plus6
+        description: Nombre d'accès à l'emploi en CDD de plus de 6 mois.
+
+      - name: emploi_acces_cdd_moins6
+        description: Nombre d'accès à l'emploi en CDD de moins de 6 mois.
+
+      - name: emploi_acces_alternance
+        description: Nombre d'accès à l'emploi en alternance.
+
+      - name: emploi_acces_interim
+        description: Nombre d'accès à l'emploi en intérim.
+
+      - name: emploi_acces_autre
+        description: Nombre d'autres accès à l'emploi.
+
+      - name: emploi_acces_encore_nb
+
+      - name: emploi_sans_acces_formation_qualifiante_nb
+        description: Nombre de personnes sans accès à l'emploi mais en formation qualifiante.
+
+      - name: emploi_sans_acces_formation_non_qualifiante_nb
+        description: Nombre de personnes sans accès à l'emploi mais en formation non qualifiante.
+
+      - name: emploi_sans_acces_stage_nb
+        description: Nombre de personnes sans accès à l'emploi mais en stage.
+
+      - name: emploi_sans_acces_benevolat_nb
+        description: Nombre de personnes sans accès à l'emploi mais en bénévolat.
+
+      - name: emploi_presence_nb
+
+      - name: json_prestation_raw
+        description: JSON brut de la prestation.

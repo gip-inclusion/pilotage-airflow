@@ -751,6 +751,229 @@ models:
       - dbt_utils.equal_rowcount:
           compare_model: source('data_inclusion', 'services_v1')
 
+  - name: stg_fagerh__reponses
+    description: Réponses FAGERH nettoyées depuis la table raw.
+    columns:
+      - name: uuid
+        description: Identifiant unique de reprise du questionnaire.
+        tests:
+          - not_null
+          - unique
+
+      - name: id
+        tests:
+          - not_null
+
+      - name: saisie_terminee
+        description: Questionnaire validé.
+
+      - name: es_nom
+        description: Raison sociale de l'établissement principal.
+
+      - name: es_departement
+        description: Département de l'établissement principal.
+
+      - name: finess_main
+        description: Numéro FINESS de l'établissement principal.
+
+      - name: finess_json
+        description: Liste des FINESS associés.
+
+      - name: validateur_nom
+        description: Nom du validateur.
+
+      - name: validateur_prenom
+        description: Prénom du validateur.
+
+      - name: validateur_email
+        description: Email du validateur.
+
+      - name: esrp_active
+        description: L'établissement délivre-t-il des prestations ESRP ?
+
+      - name: espo_active
+        description: L'établissement délivre-t-il des prestations ESPO ?
+
+      - name: ueros_active
+        description: L'établissement délivre-t-il des prestations UEROS ?
+
+      - name: deac_active
+        description: L'établissement délivre-t-il des DEAc ?
+
+      - name: esrp_etp
+        description: Effectifs globaux ESRP.
+
+      - name: espo_etp
+        description: Effectifs globaux ESPO.
+
+      - name: ueros_etp
+        description: Effectifs globaux UEROS.
+
+      - name: deac_etp
+        description: Effectifs globaux DEAc.
+
+      - name: metiers_json
+        description: Répartition par métier.
+
+      - name: pec
+        description: Prestation d'évaluations et de conseils sélectionnée ?
+
+      - name: pec_avec_orp_cdaph
+        description: PEC avec ORP CDAPH sélectionnée ?
+
+      - name: pec_sans_orp_cdaph
+        description: PEC sans ORP CDAPH sélectionnée ?
+
+      - name: autre_dispositif_eval
+        description: Autre dispositif d'évaluation sélectionné ?
+
+      - name: autre_dispositif_eval_avec_orp_cdaph
+        description: Autre dispositif d'évaluation avec ORP CDAPH sélectionné ?
+
+      - name: autre_dispositif_eval_sans_orp_cdaph
+        description: Autre dispositif d'évaluation sans ORP CDAPH sélectionné ?
+
+      - name: prestations_orp_json
+        description: Prestations directes avec ORP CDAPH.
+
+      - name: prestations_indirectes_json
+        description: Prestations indirectes.
+
+      - name: prestations_json
+        description: Étapes conditionnelles renseignées.
+
+      - name: catalogue_formations_json
+        description: Formations sélectionnées dans les étapes conditionnelles.
+
+      - name: prestations_details_json
+        description: État complet du wizard.
+
+      - name: emploi_indicateurs_json
+        description: Indicateurs emploi.
+
+      - name: q32_implantation
+        description: Dans quelle zone est situé l'établissement ?
+
+      - name: q33_transports
+        description: L'établissement est-il desservi par des transports en commun ?
+
+      - name: q33_pmr
+        description: L'établissement est-il accessible PMR ?
+
+      - name: q33_alternatif
+        description: Des transports alternatifs sont-ils organisés ?
+
+      - name: q34_prefecture
+        description: Où se situe l'établissement par rapport à la préfecture du département ?
+
+      - name: q35_hebergement
+        description: L'établissement porte-t-il un hébergement ?
+
+      - name: q35_places
+        description: Nombre de places d'hébergement.
+
+      - name: q35_weekend
+        description: L'hébergement est-il ouvert le week-end ?
+
+      - name: q35_comptabilite_we
+        description: Avez-vous une comptabilité différente pour le week-end ?
+
+      - name: q35_fermetures
+        description: L'hébergement prévoit-il des périodes de fermeture ?
+
+      - name: q35_fermetures_semaines
+        description: Combien de semaines de fermeture ?
+
+      - name: q35_alternatives
+        description: Des alternatives sont-elles proposées pendant les fermetures ?
+
+      - name: q36_restaurant
+        description: L'établissement porte-t-il un restaurant collectif ?
+
+      - name: q36_weekend
+        description: Le restaurant est-il ouvert le week-end ?
+
+      - name: q36_externe
+        description: Une restauration est-elle prévue à l'externe ?
+
+      - name: q36_participation
+        description: Y a-t-il une participation financière de l'établissement ?
+
+      - name: q37_cuisine
+        description: L'établissement porte-t-il un coin cuisine à disposition ?
+
+      - name: q37_weekend
+        description: Le coin cuisine est-il ouvert le week-end ?
+
+      - name: q38_dui
+        description: Avez-vous un DUI ?
+
+      - name: q38_dui_lequel
+        description: Si oui.
+
+      - name: q38_autre_outil_informatise
+        description: Disposez-vous d'un autre outil informatisé pour le suivi des parcours ?
+
+      - name: q38_outil_suivi_actuel
+        description: Sinon.
+
+      - name: q40_remuneration
+        description: Le traitement de la rémunération est-il délégué à un opérateur ?
+
+      - name: q40_operateur
+        description: Nom de l'opérateur de rémunération.
+
+      - name: q41_esat
+        description: Nombre d'ESAT sur le département.
+
+      - name: q42_ea
+        description: Nombre d'EA sur le département.
+
+      - name: q43_ei
+        description: Nombre d'EI sur le département.
+
+      - name: q44_ccas
+        description: CCAS.
+
+      - name: q45_cpts
+        description: Communauté Professionnelle Territoriale de Santé, CPTS.
+
+      - name: q46_cpt
+        description: Communauté Psychiatrique de Territoire, CPT.
+
+      - name: q46_fagerh
+        description: FAGERH représentée dans la CPT ?
+
+      - name: q47_clsm
+        description: Comité Local de Santé Mentale, CLSM.
+
+      - name: q47_fagerh
+        description: FAGERH représentée dans le CLSM ?
+
+      - name: q48_cle
+        description: Comité Local pour l'Emploi, CLE.
+
+      - name: q48_fagerh
+        description: FAGERH représentée dans le CLE ?
+
+      - name: q49_cre
+        description: Comité Régional pour l'Emploi, CRE.
+
+      - name: q49_fagerh
+        description: FAGERH représentée dans le CRE ?
+
+      - name: q50_fiphfp
+        description: Comité local FIPHFP.
+
+      - name: q50_fagerh
+        description: Comité local FIPHFP, FAGERH représentée ?
+
+      - name: q51_fagerh
+        description: Comité PRITH, FAGERH représentée ?
+
+      - name: q53_afpa
+        description: L'AFPA est-elle présente sur le territoire ?
+
 
 
 
