@@ -1,0 +1,58 @@
+public_dimension,public_category_position,public_category_code,public_category_label
+age,0,age_16_17,16-17 ans
+age,1,age_18_19,18-19 ans
+age,2,age_20_24,20-24 ans
+age,3,age_25_29,25-29 ans
+age,4,age_30_34,30-34 ans
+age,5,age_35_39,35-39 ans
+age,6,age_40_44,40-44 ans
+age,7,age_45_49,45-49 ans
+age,8,age_50_54,50-54 ans
+age,9,age_55_59,55-59 ans
+age,10,age_60_plus,60 ans et +
+age,11,unknown,Je ne sais pas
+genre,0,homme,Hommes
+genre,1,femme,Femmes
+genre,2,autre,Autre
+niveau_formation_entree,0,niveau_2,"Niveau 2 (CEP, sans formation)"
+niveau_formation_entree,1,niveau_3,"Niveau 3 (CAP, BEP)"
+niveau_formation_entree,2,niveau_4,"Niveau 4 (Bac, Bac pro)"
+niveau_formation_entree,3,niveau_5,"Niveau 5 (Bac +2, BTS)"
+niveau_formation_entree,4,niveau_6,"Niveau 6 (Bac +3, Bac +4)"
+niveau_formation_entree,5,niveau_7,Niveau 7 (Bac +5)
+niveau_formation_entree,6,unknown,Je ne sais pas
+situation_entree,0,emploi_prive,En emploi du secteur privé
+situation_entree,1,emploi_prive_ea,En emploi du secteur privé: Dont entreprises adaptées
+situation_entree,2,emploi_prive_alternance,"En emploi du secteur privé, Dont alternance"
+situation_entree,3,emploi_public,En emploi secteur public
+situation_entree,4,emploi_public_fpt,En emploi secteur public: FPT
+situation_entree,5,emploi_public_fpt_contractuel,"En emploi secteur public: FPT, Dont contractuels (FPT)"
+situation_entree,6,emploi_public_fpt_alternance,"En emploi secteur public: FPT, Dont alternance (FPT)"
+situation_entree,7,emploi_public_fph,En emploi secteur public: FPH
+situation_entree,8,emploi_public_fph_contractuel,"En emploi secteur public: FPH, Dont contractuels (FPH)"
+situation_entree,9,emploi_public_fph_alternance,"En emploi secteur public: FPH, Dont alternance (FPH)"
+situation_entree,10,emploi_public_fpe,En emploi secteur public: FPE
+situation_entree,11,emploi_public_fpe_contractuel,"En emploi secteur public: FPE, Dont contractuels (FPE)"
+situation_entree,12,emploi_public_fpe_alternance,"En emploi secteur public: FPE, Dont alternance (FPE)"
+situation_entree,13,activite_non_salariee,"En activité non salariée (travailleurs indépendants, service civique)"
+situation_entree,14,travailleur_esat,Travailleurs d'ESAT
+situation_entree,15,sans_emploi_moins_1_an,Sans emploi depuis moins d'1 an
+situation_entree,16,sans_emploi_1_2_ans,Sans emploi depuis 1 à 2 ans
+situation_entree,17,sans_emploi_2_ans_plus,Sans emploi depuis 2 ans ou plus
+situation_entree,18,jamais_travaille,N'avaient jamais travaillé
+situation_entree,19,formation,En formation
+situation_entree,20,unknown,Je ne sais pas
+type_handicap,0,deficience_intellectuelle,Déficiences intellectuelles
+type_handicap,1,autisme_ted,Autisme et autres TED
+type_handicap,2,trouble_psychique,Troubles psychiques
+type_handicap,3,trouble_langage_apprentissage,Troubles langage/apprentissages
+type_handicap,4,deficience_auditive,Déficiences auditives
+type_handicap,5,deficience_visuelle,Déficiences visuelles
+type_handicap,6,deficience_motrice,Déficiences motrices
+type_handicap,7,deficience_metabolique_nutritionnelle,Déficiences métaboliques/nutritionnelles
+type_handicap,8,cerebro_lesion,Cérébro-lésions
+type_handicap,9,polyhandicap,Polyhandicap
+type_handicap,10,tcc_comportement_communication,TCC (comportement/com.)
+type_handicap,11,diagnostic_en_cours,Diagnostics en cours
+type_handicap,12,autre_deficience,Autres types de déficiences
+type_handicap,13,unknown,Je ne sais pas

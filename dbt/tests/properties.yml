@@ -44,3 +44,7 @@ tests:
   - name: test_stg_contrats_parent
     description: >
         Test permettant de vérifier qu'il n'y a pas plus de 10 (arbitraire) contrat_parent_id pas unique dans stg_contrats_parent
+  - name: assert_handicap_has_public_subdimension
+    description: >
+      Concerne l'extraction du type d'handicap du publique des prestations dans le formulaire Fagerh. Vérifie que les lignes de typologie issues de la matrice handicap ont toujours une sous-dimension
+      renseignée. Pour type_handicap, public_subdimension doit distinguer les déficiences principales et associées.

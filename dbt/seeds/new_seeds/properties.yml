@@ -1,0 +1,34 @@
+version: 2
+
+seeds:
+  - name: seed_fagerh__prestations_public_category_mapping
+    description: >
+        Mapping des positions de catégories JSON vers des codes et des libellés lisibles. Cela permet de relier les comptages présents dans le JSON des
+        prestations avec les valeurs possibles présentes dans le formulaire Fagerh.
+
+    columns:
+      - name: public_dimension
+        description: Dimension du public concernée.
+        tests:
+          - not_null
+
+      - name: public_category_position
+        description: Position de la catégorie dans le tableau JSON d'origine.
+        tests:
+          - not_null
+
+      - name: public_category_code
+        description: Code stable de la catégorie.
+        tests:
+          - not_null
+
+      - name: public_category_label
+        description: Libellé lisible de la catégorie.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - public_dimension
+            - public_category_position

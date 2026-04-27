@@ -5,12 +5,7 @@ models:
     description: Une ligne par réponse et par prestation renseignée dans le JSON des prestations.
     columns:
       - name: uuid
-        description: Identifiant unique de reprise du questionnaire.
-        data_tests:
-          - not_null
-
-      - name: answer_id
-        description: Identifiant de la réponse source.
+        description: Identifiant unique de la réponse du questionnaire.
         data_tests:
           - not_null
 
@@ -23,9 +18,6 @@ models:
         description: Indique si la prestation a été renseignée jusqu'au bout.
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [true]
 
       - name: visited_blocks
         description: Blocs visités dans le formulaire pour cette prestation.
@@ -57,8 +49,8 @@ models:
       - name: json_coh_age
         description: Répartition par âge, conservée au format JSON.
 
-      - name: json_coh_niveau_entree
-        description: Répartition par niveau à l'entrée, conservée au format JSON.
+      - name: json_coh_niveau_formation_entree
+        description: Répartition par niveau de formation à l'entrée, conservée au format JSON.
 
       - name: json_coh_situation_entree
         description: Répartition par situation à l'entrée, conservée au format JSON.
@@ -290,3 +282,78 @@ models:
 
       - name: json_prestation_raw
         description: JSON brut de la prestation.
+
+  - name: int_fagerh__prestations_publics
+    description: >
+      Données de typologie des publics accompagnés, extraites des JSON de prestations. Le modèle est au format long avec une ligne par réponse, prestation, dimension,
+      sous-dimension éventuelle et catégorie. Les catégories avec un effectif nul ne sont pas conservées.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - uuid
+            - prestation_key
+            - public_dimension
+            - public_subdimension
+            - public_category_position
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de réponse au questionnaire.
+        tests:
+          - not_null
+
+      - name: prestation_key
+        description: Clé de la prestation dans le JSON d'origine.
+        tests:
+          - not_null
+
+      - name: prestation_done
+        description: Indique si la prestation a été marquée comme terminée dans le JSON.
+
+      - name: public_dimension
+        description: Dimension de typologie du public.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - genre
+                - age
+                - niveau_formation_entree
+                - situation_entree
+                - type_handicap
+
+      - name: public_subdimension
+        description: >
+          Sous-dimension de la donnée de public. Renseignée uniquement pour type_handicap afin de distinguer les déficiences principales et associées.
+          Nulle pour les autres dimensions.
+        tests:
+          - accepted_values:
+              values:
+                - principal
+                - associe
+              config:
+                where: "public_subdimension is not null"
+
+      - name: public_category_position
+        description: Position de la catégorie dans le tableau JSON d'origine.
+        tests:
+          - not_null
+
+      - name: public_category_code
+        description: Code stable de la catégorie, issu de la seed de mapping.
+        tests:
+          - not_null
+
+      - name: public_category_label
+        description: Libellé lisible de la catégorie, issu de la seed de mapping.
+        tests:
+          - not_null
+
+      - name: public_count
+        description: >
+          Nombre de personnes dans la catégorie. Seules les lignes avec un effectif strictement supérieur à zéro sont conservées.
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "> 0"

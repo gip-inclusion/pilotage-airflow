@@ -23,7 +23,6 @@ final as (
 
     select
         uuid,
-        answer_id,
         prestation_key,
 
         (prestation_json ->> 'done')::boolean                                                                         as prestation_done,
@@ -107,7 +106,7 @@ final as (
 
         prestation_json -> 'coh' -> 'genre'                                                                           as json_coh_genre,
         prestation_json -> 'coh' -> 'age'                                                                             as json_coh_age,
-        prestation_json -> 'coh' -> 'niveau_entree'                                                                   as json_coh_niveau_entree,
+        prestation_json -> 'coh' -> 'niveau_entree'                                                                   as json_coh_niveau_formation_entree,
         prestation_json -> 'coh' -> 'situation_entree'                                                                as json_coh_situation_entree,
         prestation_json -> 'coh' -> 'ressources_entree'                                                               as json_coh_ressources_entree,
         prestation_json -> 'coh' -> 'pathologies'                                                                     as json_coh_pathologies,
