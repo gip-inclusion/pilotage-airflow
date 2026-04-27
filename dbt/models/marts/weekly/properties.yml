@@ -38,7 +38,114 @@ models:
       Table créée pour suivre le nombre d'etp réalisés. Cette table, permet, à travers le calcul du nombre d'heures x la valeur d'un etp de retrouver le nombre d'etp réalisés par mois et par personne physique.
   - name: suivi_etp_conventionnes_v2
     description: >
-      Table créée pour suivre le nombre d'etp conventionnés ainsi que la part de ces ETPs financée par le CD et l'état. Cette table permet d'obtenir le bon nombre d'etp conventionné en considérant la bonne durée des annexes financières
+      Une ligne par annexe financière (AF) conventionnée entre l'État et une SIAE.
+      Contient les ETP conventionnés (État et Conseil Départemental), les montants d'aide annuels
+      et les caractéristiques de chaque AF issue des données ASP FluxIAE.
+
+    columns:
+      - name: id_annexe_financiere
+        description: Identifiant unique de l'annexe financière.
+
+      - name: af_numero_convention
+        description: Numéro de la convention pluriannuelle d'objectifs liant l'État à la SIAE (une convention peut regrouper plusieurs AF annuelles).
+
+      - name: af_numero_annexe_financiere
+        description: Numéro de l'annexe financière (identifiant ASP de l'AF, distinct du numéro de convention).
+
+      - name: af_date_debut_effet_v2
+        description: Date de début d'effet de l'annexe financière.
+
+      - name: af_date_fin_effet_v2
+        description: Date de fin d'effet de l'annexe financière.
+      - name: af_etat_annexe_financiere_code
+        description: État de l'annexe financière côté ASP.
+
+      - name: af_mesure_dispositif_id
+        description: Identifiant numérique ASP du dispositif (mesure) associé à l'annexe financière.
+
+      - name: af_mesure_dispositif_code
+        description: Code du dispositif ASP. Combine le type de structure et le contexte.
+
+      - name: af_numero_avenant_modification
+        description: Numéro d'avenant ou de modification de l'annexe financière.
+
+      - name: effectif_mensuel_conventionné
+        description: Nombre d'ETP conventionnés mensuels tels que définis dans l'annexe financière.
+
+      - name: af_montant_total_annuel
+        description: Montant total annuel de l'aide conventionnée dans l'AF (en euros).
+
+      - name: af_montant_unitaire_annuel_valeur
+        description: Montant unitaire annuel par ETP conventionné (en euros).
+
+      - name: type_structure
+        description: Libellé long du type de structure incluant le contexte (droit commun, milieu pénitentiaire, etc.).
+
+      - name: type_structure_emplois
+        description: Code court du type de SIAE tel qu'utilisé dans les Emplois de l'inclusion.
+
+      - name: structure_id_siae
+        description: Identifiant interne de la SIAE, permet une jointure avec asp.fluxIAE_Structure_v2
+
+      - name: structure_denomination
+        description: Dénomination officielle de la SIAE.
+
+      - name: structure_denomination_unique
+        description: Dénomination unique de la SIAE (peut inclure le SIRET ou une distinction si plusieurs structures portent le même nom).
+
+      - name: commune_structure
+        description: Commune du siège de la SIAE.
+
+      - name: code_insee_structure
+        description: Code INSEE de la commune du siège de la SIAE.
+
+      - name: siret_structure
+        description: Numéro SIRET de la SIAE (14 chiffres, stocké en bigint).
+
+      - name: nom_departement_structure
+        description: Nom du département du siège de la SIAE.
+
+      - name: nom_region_structure
+        description: Nom de la région du siège de la SIAE.
+
+      - name: code_departement_af
+        description: Code du département rattaché à l'annexe financière (peut différer du département de la structure pour les SIAE à périmètre géographique étendu).
+
+      - name: nom_departement_af
+        description: Nom du département rattaché à l'annexe financière.
+
+      - name: nom_region_af
+        description: Nom de la région rattachée à l'annexe financière.
+
+      - name: structure_denomination_af
+        description: Dénomination de la structure telle qu'enregistrée dans l'annexe financière ASP (peut différer de structure_denomination).
+
+      - name: annee_af
+        description: Année de l'annexe financière.
+
+      - name: year_diff
+        description: Écart en années entre l'année de l'AF et l'année courante (utilisé pour des calculs de décalage temporel).
+
+      - name: duree_annexe
+        description: Durée de l'annexe financière en mois (généralement 12 pour une AF annuelle).
+
+      - name: effectif_annuel_conventionné
+        description: Nombre total d'ETP conventionnés sur l'année (effectif_mensuel_conventionné × duree_annexe / 12).
+
+      - name: Montant_total_aide
+        description: Montant total de l'aide versée à la SIAE sur la durée de l'annexe financière (en euros).
+
+      - name: part_conventionnement_cd
+        description: Part (ratio entre 0 et 1) du conventionnement prise en charge par le Conseil Départemental.
+
+      - name: etp_conventionnes_cd
+        description: Nombre d'ETP conventionnés financés par le Conseil Départemental.
+
+      - name: etp_conventionnes_etat
+        description: Nombre d'ETP conventionnés financés par l'État.
+
+      - name: af_mt_cofinance
+        description: Montant cofinancé par le Conseil Départemental dans le cadre de l'annexe financière (en euros).
   - name: etp_par_salarie
     description: >
       Table créée pour suivre le nombre d'etp réalisés par genre. Cette table permet de suivre les informations à l'échelle de l'id_salarie. Des informations sur les caractéristiques des bénéficiaires sont présentes.
@@ -130,15 +237,279 @@ models:
       Grâce à cette table nous pouvons suivre les conventionnements mois par mois de toutes les structures quelle que soit leur durée de conventionnement.
   - name: suivi_realisation_convention_mensuelle
     description: >
-      Cette table nous permet d'obtenir une vue mensuelle du conventionnement ET de la consommation en etp des différentes structures de l'IAE.
-      Grâce à cette table nous pouvons réaliser des indicateurs suivant sur le même plot les conventionnements et consommation mois par mois de toutes les structures quelle que soit leur durée de conventionnement.
+      Table de suivi mensuel de la réalisation des conventions SIAE, issue du
+      flux ASP. Chaque ligne représente un mois de déclaration pour une annexe
+      financière donnée (grain : annexe financière × mois).
+      Cette table est la version mensuelle de
+      `les_emplois.suivi_realisation_convention_par_structure` : là où cette dernière
+      agrège les ETP par annexe, la présente table conserve le détail mois par
+      mois, permettant d'analyser la saisonnalité des effectifs et le taux de
+      saisie des déclarations mensuelles.
+      Une ligne avec `saisie_effectuee = 'Non'` correspond à un mois pour lequel
+      la structure n'a pas encore déclaré ses effectifs réels.
+      Couvre 2024, 2025 et 2026.
+      Jointure naturelle avec `les_emplois.suivi_realisation_convention_par_structure`
+      et `asp.fluxIAE_Structure_v2` via `structure_id_siae`.
+    columns:
+      - name: id_annexe_financiere
+        description: >
+          Identifiant interne ASP de l'annexe financière. Non unique dans la
+          table : une annexe génère autant de lignes que de mois couverts.
+          Clé de jointure avec `asp.suivi_realisation_convention_par_structure`.
+
+      - name: af_numero_convention
+        description: >
+          Numéro de la convention pluriannuelle parente de l'annexe financière.
+          Une convention peut comporter plusieurs annexes financières successives.
+
+      - name: af_numero_annexe_financiere
+        description: >
+          Numéro de référence lisible de l'annexe financière, tel qu'utilisé
+          dans les échanges administratifs avec l'ASP.
+
+      - name: af_etat_annexe_financiere_code
+        description: >
+          État administratif de l'annexe financière au sens financier ASP.
+          Valeurs : 'VALIDE' (annexe active et financièrement validée),
+          'CLOTURE' (annexe clôturée en fin de période),
+          'PROVISOIRE' (annexe en cours de finalisation).
+
+      - name: date_saisie
+        description: >
+          Date à laquelle la déclaration mensuelle d'effectifs a été saisie
+          par la structure dans le système ASP.
+
+      - name: date_validation_declaration
+        description: >
+          Date de validation de la déclaration mensuelle
+
+      - name: emi_esm_etat_code
+        description: >
+          Code d'état de la déclaration mensuelle dans le système ASP.
+          Valeurs : 'VALIDE' (déclaration validée), 'DEBLOQUE' (débloquée
+          après validation), 'SAISI' (saisie en cours), 'BROUILLON' (en cours
+          de rédaction).
+
+      - name: af_date_fin_effet_v2
+        description: >
+          Date de fin d'effet de l'annexe financière (timestamp). Marque la
+          fin de la période couverte par la convention.
+
+      - name: annee_af
+        description: >
+          Année de l'annexe financière (type DOUBLE PRECISION).
+          Valeurs : 2024, 2025, 2026.
+
+      - name: duree_annexe
+        description: >
+          Durée totale de l'annexe financière en mois.
+
+
+      - name: effectif_mensuel_conventionné
+        description: >
+          Nombre d'ETP conventionnés pour ce mois spécifique, tel que prévu
+          dans l'annexe financière.
+
+      - name: effectif_annuel_conventionné
+        description: >
+          Nombre total d'ETP conventionnés pour l'année entière de l'annexe
+          financière. Identique sur toutes les lignes
+          d'une même annexe.
+
+      - name: structure_id_siae
+        description: >
+          Identifiant de la structure dans le système ASP. Clé étrangère vers
+          `asp.fluxIAE_Structure_v2.structure_id_siae` et correspond à
+          `id_asp` dans `les_emplois.structures`.
+
+      - name: type_structure
+        description: >
+          Type détaillé de la structure, combinant le type IAE et le contexte
+          d'exercice.
+          Valeurs : 'ACI Droit commun', 'EI Droit commun', 'AI Droit commun',
+          'ETTI Droit commun', 'EITI Droit commun', 'ACI Milieu pénitentiaire',
+          'ACIPA Droit commun', 'EIPA Droit commun', 'EI Milieu pénitentiaire'.
+
+      - name: structure_denomination
+        description: >
+          Dénomination officielle de la structure telle qu'enregistrée dans
+          le système ASP.
+
+      - name: structure_denomination_unique
+        description: >
+          Dénomination dédupliquée ou normalisée de la structure, utilisée
+          pour les affichages et les jointures. Sous le format "nom de la structure - SIRET"
+
+      - name: commune_structure
+        description: >
+          Nom de la commune de la structure.
+
+      - name: code_insee_structure
+        description: >
+          Code INSEE de la commune de la structure (5 caractères).
+
+      - name: siret_structure
+        description: >
+          Numéro SIRET de la structure (type BIGINT).
+
+      - name: nom_departement_structure
+        description: >
+          Nom du département de la structure.
+
+      - name: nom_region_structure
+        description: >
+          Nom de la région de la structure.
+
+      - name: code_departement_af
+        description: >
+          Code INSEE du département de rattachement de l'annexe financière.
+
+      - name: nom_departement_af
+        description: >
+          Nom du département de rattachement de l'annexe financière.
+
+      - name: nom_region_af
+        description: >
+          Nom de la région de rattachement de l'annexe financière.
+
+      - name: saisie_effectuee
+        description: >
+          Indicateur de saisie de la déclaration mensuelle par la structure.
+          Valeurs : 'Oui' , 'Non'. Les lignes 'Non' correspondent à des mois futurs
+          ou à des retards de saisie.
+
+      - name: effectif_annuel_conventionné_mensualisé
+        description: >
+          Effectif annuel conventionné ramené au mois, calculé comme
+          `effectif_annuel_conventionné / duree_annexe` (type DOUBLE PRECISION).
+          Permet de comparer les objectifs mensuels entre structures d'annexes
+          de durées différentes.
+
+      - name: nombre_heures_travaillees
+        description: >
+          Nombre d'heures travaillées déclarées par la structure pour ce mois
+          (type NUMERIC). Renseigné uniquement lorsque `saisie_effectuee = 'Oui'`.
+
+      - name: nombre_etp_consommes_reels_annuels
+        description: >
+          ETP réels consommés sur l'année, calculés à partir des heures
+          travaillées déclarées (type DOUBLE PRECISION). Cumulatif depuis le
+          début de l'annexe.
+
+      - name: nombre_etp_consommes_reels_mensuels
+        description: >
+          ETP réels consommés pour ce mois, calculés à partir des heures
+          travaillées déclarées (type DOUBLE PRECISION). Valeur nulle lorsque
+          `saisie_effectuee = 'Non'`.
   - name: recrutements
     description: >
       Table permettant de suivre les recrutements réalisés et déclarés à l'ASP.
   - name: suivi_realisation_convention_par_structure
     description: >
-      Table permettant de suivre par id d'annexe financiere (i.e. par structure et par an) les etps conventionnés, réalisés et la différence entre ces derniers.
-      Le delta calculé ici permet de calculer un % de réalisation sur les états mensuels validés très utile au pilotage de l'activité des structures effectuée par les réseaux.
+      Table de suivi de la réalisation des conventions (id annexes financières) par
+      structure SIAE, issue du flux ASP. Chaque ligne représente une annexe
+      financière associée à une structure pour une année donnée, avec les ETP
+      (Équivalents Temps Plein) réalisés comparés aux ETP conventionnés.
+      Le delta entre ETP conventionnés et ETP réalisés est l'indicateur central
+      du dialogue de gestion entre les SIAE et les DDETS (Directions Départementales
+      de l'Emploi, du Travail et des Solidarités).
+      Une sous-réalisation (`delta_etp_conventionnes_realises < 0`) signifie que
+      la structure n'a pas atteint ses objectifs d'insertion ; une sur-réalisation
+      (`> 0`) signifie qu'elle les a dépassés.
+      Volumétrie : ~14 100 annexes financières distinctes,
+      ~4 600 structures, sur 3 années (2024, 2025, 2026).
+      Jointure naturelle avec `asp.fluxIAE_Structure_v2` via `structure_id_siae`.
+    columns:
+      - name: id_annexe_financiere
+        description: >
+          Identifiant interne ASP de l'annexe financière.
+
+      - name: af_numero_annexe_financiere
+        description: >
+          Numéro de référence lisible de l'annexe financière, tel qu'utilisé
+          dans les échanges administratifs avec l'ASP.
+
+      - name: emi_esm_etat_code
+        description: >
+          Code d'état de l'annexe financière dans le système ASP.
+          Valeurs : 'VALIDE' (annexe validée et finalisée), 'SAISI' (saisie en
+          cours), 'DEBLOQUE' (débloquée après validation), 'BROUILLON' (en cours
+          de rédaction).
+
+      - name: annee_af
+        description: >
+          Année de l'annexe financière (type DOUBLE PRECISION). Couvre l'année actuelle et les deux années précédent celle ci.
+      - name: type_structure
+        description: >
+          Type détaillé de la structure, combinant le type IAE et le contexte
+          d'exercice.
+          Valeurs : 'ACI Droit commun', 'EI Droit commun', 'AI Droit commun',
+          'ETTI Droit commun', 'EITI Droit commun', 'ACI Milieu pénitentiaire',
+          'ACIPA Droit commun',
+          'EIPA Droit commun',
+          'EI Milieu pénitentiaire'.
+
+      - name: structure_denomination
+        description: >
+          Dénomination officielle de la structure telle qu'enregistrée dans
+          le système ASP
+
+      - name: commune_structure
+        description: >
+          Nom de la commune de la structure.
+
+      - name: code_insee_structure
+        description: >
+          Code INSEE de la commune de la structure (5 caractères).
+
+      - name: structure_id_siae
+        description: >
+          Identifiant de la structure dans le système ASP. Clé étrangère vers
+          `asp.fluxIAE_Structure_v2.structure_id_siae` et correspond à
+          `id_asp` dans `les_emplois.structures`.
+
+      - name: siret_structure
+        description: >
+          Numéro SIRET de la structure (type BIGINT).
+
+      - name: code_departement_af
+        description: >
+          Code INSEE du département de rattachement de l'annexe financière
+          (ex : '59', '2A', '974').
+
+      - name: nom_departement_af
+        description: >
+          Nom du département de rattachement de l'annexe financière.
+
+      - name: nom_region_af
+        description: >
+          Nom de la région de rattachement de l'annexe financière.
+
+      - name: delta_etp_conventionnes_realises
+        description: >
+          Écart cumulé entre les ETP réalisés et les ETP conventionnés depuis
+          le début de la convention (type DOUBLE PRECISION). Une valeur négative
+          indique une sous-réalisation (la structure n'a pas atteint ses
+          objectifs), une valeur positive une sur-réalisation. Sur les ~19 300
+          lignes : ~13 400 sous-réalisations, ~5 500 sur-réalisations,
+          ~490 réalisations exactes.
+
+      - name: delta_etp_conventionnes_realises_annuel
+        description: >
+          Écart annuel entre les ETP réalisés et les ETP conventionnés pour
+          l'année de l'annexe financière (type DOUBLE PRECISION). Permet
+          de comparer les structures sur une même année civile, sans l'effet
+          de cumul pluriannuel.
+
+      - name: somme_etp_realises
+        description: >
+          Nombre total d'ETP réalisés par la structure depuis le début de la
+          convention (valeur cumulée, type DOUBLE PRECISION).
+
+      - name: somme_etp_realises_annuel
+        description: >
+          Nombre d'ETP réalisés par la structure sur l'année de l'annexe
+          financière (valeur annuelle, type DOUBLE PRECISION).
   - name: suivi_visites_tb_prive_semaine
     description: >
       Permet le suivi par semaine des connections des utilisateurs aux tbs prives.

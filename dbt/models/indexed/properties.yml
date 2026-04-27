@@ -3,14 +3,304 @@ version: 2
 models:
   - name: fluxIAE_ContratMission_v2
     description: >
-      Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
+      Import brut ASP FluxIAE — une ligne par contrat de mission (insertion).
+      Contient les caractéristiques du contrat, le profil socio-professionnel du salarié en insertion
+      et les données de sortie.
+
     columns:
+      - name: contrat_date_creation
+        description: Date de création du contrat dans le système ASP (stockée en texte, format variable).
+
+      - name: contrat_date_modification
+        description: Date de dernière modification du contrat dans le système ASP (stockée en texte).
+
+      - name: contrat_id_structure
+        description: Identifiant ASP de la SIAE ayant émis le contrat.
+
+      - name: contrat_mesure_disp_id
+        description: Identifiant numérique ASP du dispositif (mesure) associé au contrat.
+
+      - name: contrat_mesure_disp_code
+        description: Code du dispositif ASP. Combine le type de structure et le contexte (DC = droit commun, MP = milieu pénitentiaire).
+
+      - name: contrat_id_pph
+        description: Identifiant ASP de la personne (salarié en insertion). Une personne peut avoir plusieurs contrats.
+         Si une même personne a travaillé dans deux structures différentes, elle aura deux contrat_id_pph différents.
+         Afin d'identifier les personnes uniques il faut faire une jointure avec asp.fluxIAE_Salarie_v2 et regarder la colonne hash_nir.
+
       - name: contrat_id_ctr
-        description: >
-          Identifiant unique du contrat de mission.
+        description: Identifiant unique du contrat ASP (clé primaire — 1 ligne = 1 contrat).
         tests:
           - unique
           - not_null
+
+      - name: contrat_duree_contrat
+        description: Durée totale du contrat en mois.
+
+      - name: contrat_type_contrat
+        description: Code ASP du type de contrat
+
+      - name: contrat_format_contrat_id
+        description: Identifiant ASP du format de contrat.
+
+      - name: contrat_format_contrat_code
+        description: Code ASP du format de contrat .
+
+      - name: contrat_code_rome
+        description: Code ROME (Répertoire Opérationnel des Métiers et des Emplois) du poste occupé.
+
+      - name: contrat_remuneration_brute_mensuelle
+        description: Rémunération brute mensuelle du salarié en insertion (en euros).
+
+      - name: contrat_duree_hebdo_travail
+        description: Durée hebdomadaire de travail (format texte HH:MM, qualité variable — contient des valeurs malformées et aberrantes, à nettoyer avant usage).
+
+      - name: contrat_nb_heures_accomp
+        description: Nombre d'heures d'accompagnement réalisées dans le cadre du contrat.
+
+      - name: contrat_date_sortie_definitive
+        description: Date de sortie définitive du salarié de la SIAE (stockée en texte, format ASP).
+
+      - name: contrat_motif_sortie_id
+        description: Identifiant ASP du motif de sortie.
+
+      - name: contrat_motif_sortie_code
+        description: Code ASP du motif de sortie
+
+      - name: contrat_date_premier_client
+        description: Date à laquelle la personne est devenue bénéficiaire IAE pour la première fois
+
+      - name: contrat_ca_3mois_sortie
+        description: Chiffre d'affaires réalisé dans les 3 mois suivant la sortie du contrat (pour les sorties vers la création d'entreprise).
+
+      - name: contrat_revenu_ti_3mois_sortie
+        description: Revenus de travailleur indépendant dans les 3 mois suivant la sortie du contrat.
+
+      - name: contrat_orienteur_id
+        description: Identifiant ASP du type d'orienteur ayant adressé le candidat à la SIAE.
+
+      - name: contrat_orienteur_code
+        description: Code ASP du type d'orienteur (
+
+      - name: contrat_niveau_de_formation_id
+        description: Identifiant ASP du niveau de formation du salarié.
+
+      - name: contrat_niveau_de_formation_code
+        description: Code numérique ASP du niveau de formation (à croiser avec la colonne niveau_de_formation pour le libellé).
+
+      - name: contrat_salarie_is_zrr
+        description: Indique si la SIAE est située en Zone de Revitalisation Rurale (ZRR).
+
+      - name: contrat_salarie_en_emploi
+        description: Indique si le salarié occupait un emploi au moment de l'entrée en contrat.
+
+      - name: contrat_type_employeur_id
+        description: Identifiant ASP du type d'employeur précédent le contrat.
+
+      - name: contrat_type_employeur_code
+        description: Code ASP du type d'employeur précédent.
+
+      - name: contrat_emploi_depuis_id
+        description: Identifiant ASP de la durée depuis laquelle le salarié occupait un emploi avant le contrat.
+
+      - name: contrat_emploi_depuis_code
+        description: Code ASP de la durée d'emploi précédente.
+
+      - name: contrat_sans_ressource
+        description: Indique si le salarié était sans aucune ressource à l'entrée en contrat.
+
+      - name: contrat_inscrit_pole_emploi
+        description: Indique si le salarié était inscrit à France Travail (ex-Pôle Emploi) à l'entrée en contrat.
+
+      - name: contrat_numero_ide
+        description: Numéro d'identifiant de dossier interne ASP.
+
+      - name: contrat_salarie_pe_duree_id
+        description: Identifiant ASP de la durée d'inscription à France Travail.
+
+      - name: contrat_salarie_pe_duree_code
+        description: Code ASP de la durée d'inscription à France Travail (à croiser avec duree_inscription_ft pour le libellé).
+
+      - name: contrat_salarie_rsa
+        description: Situation vis-à-vis du RSA à l'entrée en contrat.
+        tests:
+          - accepted_values:
+              values:
+                - NON
+                - OUI-M
+                - OUI-NM
+
+      - name: contrat_salarie_rsa_duree_id
+        description: Identifiant ASP de la durée de perception du RSA.
+
+      - name: contrat_salarie_rsa_duree_code
+        description: Code ASP de la durée de perception du RSA.
+
+      - name: contrat_salarie_ass
+        description: Indique si le salarié perçoit l'Allocation de Solidarité Spécifique (ASS).
+
+      - name: contrat_salarie_ass_duree_id
+        description: Identifiant ASP de la durée de perception de l'ASS.
+
+      - name: contrat_salarie_ass_duree_code
+        description: Code ASP de la durée de perception de l'ASS.
+
+      - name: contrat_salarie_aah
+        description: Indique si le salarié perçoit l'Allocation aux Adultes Handicapés (AAH).
+
+      - name: contrat_salarie_aah_duree_id
+        description: Identifiant ASP de la durée de perception de l'AAH.
+
+      - name: contrat_salarie_aah_duree_code
+        description: Code ASP de la durée de perception de l'AAH.
+
+      - name: contrat_salarie_rqth
+        description: Indique si le salarié dispose d'une Reconnaissance de la Qualité de Travailleur Handicapé (RQTH).
+
+      - name: contrat_salarie_oeth
+        description: Indique si le salarié entre dans le cadre de l'Obligation d'Emploi des Travailleurs Handicapés (OETH).
+
+      - name: contrat_salarie_aide_sociale
+        description: Indique si le salarié bénéficie d'une aide sociale.
+
+      - name: contrat_salarie_sortant_ase
+        description: Indique si le salarié est sortant de l'Aide Sociale à l'Enfance (ASE).
+
+      - name: contrat_salarie_parent_isole
+        description: Indique si le salarié est parent isolé.
+
+      - name: contrat_salarie_hebergement
+        description: Indique si le salarié est en situation d'hébergement précaire ou sans domicile fixe.
+
+      - name: contrat_salarie_refugie
+        description: Indique si le salarié a le statut de réfugié ou demandeur d'asile.
+
+      - name: contrat_salarie_sortant_detention
+        description: Indique si le salarié est sortant de détention.
+
+      - name: contrat_salarie_langue_francaise
+        description: Indique si le salarié a des difficultés maîtrise de la langue française.
+
+      - name: contrat_salarie_mobilite
+        description: Indique si le salarié a des problèmes de mobilité.
+
+      - name: contrat_emploi_exterieur
+        description: Indique si le salarié a réalisé une mise à disposition auprès d'un employeur extérieur.
+
+      - name: contrat_emploi_exterieur_oui_id
+        description: Identifiant ASP du type d'employeur externe (renseigné si contrat_emploi_exterieur = true).
+
+      - name: contrat_emploi_exterieur_oui_code
+        description: Code ASP du type d'employeur externe.
+
+      - name: contrat_emploi_exterieur_non_id
+        description: Identifiant ASP du motif d'absence de mise à disposition.
+
+      - name: contrat_emploi_exterieur_non_code
+        description: Code ASP du motif d'absence de mise à disposition.
+
+      - name: contrat_beneficiaire_rqth
+        description: Indique si le salarié est bénéficiaire d'une RQTH
+
+      - name: contrat_salarie_are
+        description: Indique si le salarié perçoit l'Allocation de Retour à l'Emploi (ARE).
+
+      - name: contrat_salarie_are_duree_id
+        description: Identifiant ASP de la durée de perception de l'ARE.
+
+      - name: contrat_salarie_are_duree_code
+        description: Code ASP de la durée de perception de l'ARE.
+
+      - name: contrat_prime_activites
+        description: Indique si le salarié perçoit la prime d'activité (CAF).
+
+      - name: contrat_prime_activites_duree_id
+        description: Identifiant ASP de la durée de perception de la prime d'activité.
+
+      - name: contrat_prime_activites_duree_code
+        description: Code ASP de la durée de perception de la prime d'activité.
+
+      - name: contrat_cape
+        description: Indique si le salarié bénéficie d'une Convention d'Accompagnement à la création ou reprise d'Entreprise (CAPE).
+
+      - name: contrat_cesa
+        description: Indique si le salarié est employé via un Chèque Emploi Service Associatif (CESA).
+
+      - name: contrat_acteur_creation_ent
+        description: Nom de l'acteur accompagnant la création d'entreprise lors de la sortie (champ texte libre, qualité variable — nombreuses orthographes différentes pour un même organisme).
+
+      - name: contrat_revenu_ti_annee_prec
+        description: Revenus de travailleur indépendant de l'année précédant l'entrée en contrat.
+
+      - name: contrat_type_cotisations_id
+        description: Identifiant ASP du régime de cotisations sociales du travailleur indépendant.
+
+      - name: contrat_siret_ti
+        description: SIRET de l'entreprise du travailleur indépendant (renseigné pour les sorties vers la création d'entreprise).
+
+      - name: contrat_denomination_ti
+        description: Dénomination de l'entreprise du travailleur indépendant.
+
+      - name: contrat_categorie_juridique_id
+        description: Identifiant ASP de la catégorie juridique de l'entreprise du travailleur indépendant.
+
+      - name: contrat_categorie_juridique_code_ti
+        description: Code de la catégorie juridique de l'entreprise du travailleur indépendant.
+
+      - name: contrat_code_naf_ti
+        description: Code NAF de l'activité de l'entreprise du travailleur indépendant.
+
+      - name: contrat_siret_ien
+        description: SIRET de l'entreprise utilisatrice (IEN = Interlocuteur Entreprise Normalisé)
+
+      - name: contrat_denomination_ien
+        description: Dénomination de l'entreprise utilisatrice.
+
+      - name: contrat_categorie_juridique_id_ien
+        description: Identifiant ASP de la catégorie juridique de l'entreprise utilisatrice.
+
+      - name: contrat_categorie_juridique_code_ien
+        description: Code de la catégorie juridique de l'entreprise utilisatrice.
+
+      - name: contrat_code_naf_ien
+        description: Code NAF de l'activité de l'entreprise utilisatrice.
+
+      - name: contrat_code_naf_lib_ien
+        description: Libellé du code NAF de l'entreprise utilisatrice.
+
+      - name: contrat_adr_numero_voie
+        description: Numéro de voie de l'adresse du lieu de travail ou de la SIAE.
+
+      - name: contrat_codeextensionvoie
+        description: Extension du numéro de voie (bis, ter, etc.).
+
+      - name: contrat_codetypevoie
+        description: Code du type de voie (RUE, AV, BD, etc.).
+
+      - name: contrat_adr_libelle_voie
+        description: Libellé de la voie de l'adresse.
+
+      - name: contrat_adr_cplt_distribution
+        description: Complément de distribution (lieu-dit, bâtiment, etc.).
+
+      - name: contrat_codepostalcedex
+        description: Code postal ou code CEDEX de l'adresse.
+
+      - name: contrat_commune
+        description: Nom de la commune de l'adresse.
+
+      - name: contrat_date_embauche
+        description: Date d'embauche (début du contrat).
+
+      - name: contrat_date_fin_contrat
+        description: Date de fin prévue du contrat.
+
+      - name: niveau_de_formation
+        description: Libellé du niveau de formation du salarié en insertion
+
+      - name: duree_inscription_ft
+        description: Libellé de la durée d'inscription à France Travail
+
   - name: fluxIAE_EtatMensuelIndiv_v2
     description: >
       Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
@@ -25,20 +315,204 @@ models:
       Table introduite afin d'ajouter des index aux tables provenant du fluxIAE.
   - name: fluxIAE_Structure_v2
     description: >
-      Table introduite afin d'ajouter des données geographiques à la table structures du fluxIAE + à l'indexer.
+      Table des structures SIAE issue du flux ASP (Agence de Services et de
+      Paiement), organisme qui gère les conventionnements et le financement des
+      structures d'insertion par l'activité économique. Chaque ligne représente
+      une structure conventionnée unique, identifiée par son `structure_id_siae`.
+      Cette table est un import direct du système FluxIAE de l'ASP, qui constitue
+      la source administrative de référence pour les SIAE conventionnées. Elle
+      complète `les_emplois.structures` avec des informations
+      administratives fines : catégorie juridique, convention collective, adresses
+      séparées administrative et de gestion, correspondant technique.
+      Les structures présentes dans cette table et dans 'les_emplois.structures' correspondent aux structures mères de la table 'les_emplois.structures'.
     columns:
-      - name: structure_denomination_unique
+      - name: structure_date_creation
         description: >
-          denomination structure + SIRET
-        tests:
-          - unique
-          - not_null
+          Date de création de la fiche structure dans le système ASP
+          (type TEXT, format 'DD/MM/YYYY HH:MM:SS').
+
+      - name: structure_date_modification
+        description: >
+          Date de dernière modification de la fiche structure dans le système
+          ASP (type TEXT, format 'DD/MM/YYYY HH:MM:SS').
+
       - name: structure_id_siae
         description: >
-          id de la structure dans la base SIAE
+          Identifiant unique de la structure dans le système ASP (FluxIAE).
+          Clé primaire fonctionnelle de la table. Correspond à `id_asp` dans
+          `les_emplois.structures`.
         tests:
           - unique
           - not_null
+
+      - name: structure_siret_signature
+        description: >
+          Numéro SIRET de la structure au moment de la signature du
+          conventionnement ASP.
+
+      - name: structure_siret_actualise
+        description: >
+          Numéro SIRET actualisé de la structure, mis à jour en cas de
+          changement de SIRET après le conventionnement. Toujours renseigné.
+
+      - name: structure_denomination
+        description: >
+          Dénomination officielle de la structure telle qu'enregistrée dans
+          le système ASP.
+
+      - name: structure_categorie_juridique_id
+        description: >
+          Identifiant interne ASP de la catégorie juridique de la structure.
+
+      - name: structure_categorie_juridique_code
+        description: >
+          Code INSEE de la catégorie juridique de la structure
+          (ex : 9220 pour association loi 1901).
+
+      - name: structure_code_naf
+        description: >
+          Code NAF (Nomenclature des Activités Françaises) de la structure,
+          décrivant son activité principale.
+
+      - name: structure_idcc_id
+        description: >
+          Identifiant interne ASP de la convention collective applicable
+          à la structure.
+
+      - name: structure_idcc_code
+        description: >
+          Code IDCC (Identifiant de la Convention Collective) applicable
+          à la structure.
+
+      - name: structure_adresse_admin_numero_apt
+        description: >
+          Numéro d'appartement de l'adresse administrative de la structure.
+
+      - name: structure_adresse_admin_entree
+        description: >
+          Entrée ou bâtiment de l'adresse administrative.
+
+      - name: structure_adresse_admin_numero
+        description: >
+          Numéro de voie de l'adresse administrative (type DOUBLE PRECISION,
+          héritage du format ASP).
+
+      - name: structure_adresse_admin_cplt_num_voie
+        description: >
+          Complément du numéro de voie de l'adresse administrative
+          (ex : 'bis', 'ter').
+
+      - name: structure_adresse_admin_type_voie
+        description: >
+          Type de voie de l'adresse administrative (ex : 'RUE', 'AVENUE',
+          'BOULEVARD').
+
+      - name: structure_adresse_admin_nom_voie
+        description: >
+          Nom de la voie de l'adresse administrative.
+
+      - name: structure_adresse_admin_cplt_adresse
+        description: >
+          Complément d'adresse administrative (lieu-dit, zone industrielle…).
+
+      - name: structure_adresse_admin_cp
+        description: >
+          Code postal de l'adresse administrative (type BIGINT).
+
+      - name: structure_adresse_admin_commune
+        description: >
+          Nom de la commune de l'adresse administrative.
+
+      - name: structure_adresse_admin_code_insee
+        description: >
+          Code INSEE de la commune de l'adresse administrative (5 caractères).
+
+      - name: structure_adresse_gestion_numero_apt
+        description: >
+          Numéro d'appartement de l'adresse de gestion de la structure.
+          L'adresse de gestion peut différer de l'adresse administrative
+          pour les structures multi-sites.
+
+      - name: structure_adresse_gestion_entree
+        description: >
+          Entrée ou bâtiment de l'adresse de gestion.
+
+      - name: structure_adresse_gestion_numero
+        description: >
+          Numéro de voie de l'adresse de gestion (type DOUBLE PRECISION).
+
+      - name: structure_adresse_gestion_cplt_num_voie
+        description: >
+          Complément du numéro de voie de l'adresse de gestion.
+
+      - name: structure_adresse_gestion_type_voie
+        description: >
+          Type de voie de l'adresse de gestion.
+
+      - name: structure_adresse_gestion_nom_voie
+        description: >
+          Nom de la voie de l'adresse de gestion.
+
+      - name: structure_adresse_gestion_cplt_adresse
+        description: >
+          Complément d'adresse de gestion.
+
+      - name: structure_adresse_gestion_cp
+        description: >
+          Code postal de l'adresse de gestion (type BIGINT).
+
+      - name: structure_adresse_gestion_commune
+        description: >
+          Nom de la commune de l'adresse de gestion.
+
+      - name: structure_adresse_gestion_code_insee
+        description: >
+          Code INSEE de la commune de l'adresse de gestion (5 caractères).
+
+      - name: structure_identifiant_corresp_technique
+        description: >
+          Identifiant du correspondant technique ASP de la structure
+          (référent administratif côté ASP).
+
+      - name: structure_adresse_mail_corresp_technique
+        description: >
+          Adresse e-mail du correspondant technique ASP.
+
+      - name: structure_adresse_nom_corresp_technique
+        description: >
+          Nom du correspondant technique ASP.
+
+      - name: nom_epci_structure
+        description: >
+          Nom de l'EPCI (Établissement Public de Coopération Intercommunale)
+          de la structure, enrichi par jointure géographique (ne provient pas
+          du flux ASP).
+
+      - name: zone_emploi_structure
+        description: >
+          Zone d'emploi INSEE de la structure, enrichie par jointure
+          géographique.
+
+      - name: nom_region_structure
+        description: >
+          Nom de la région de la structure, enrichi par jointure géographique.
+
+      - name: code_dept_structure
+        description: >
+          Code INSEE du département de la structure (ex : '59', '2A', '974'),
+          enrichi par jointure géographique.
+
+      - name: nom_departement_structure
+        description: >
+          Nom du département de la structure, enrichi par jointure géographique.
+
+      - name: structure_denomination_unique
+        description: >
+          Dénomination de la structure, sous le format "nom de la structure - SIRET"
+        tests:
+          - unique
+          - not_null
+
   - name: corresp_af_contrats
     description: >
       Table permettant de récupérer les annexes financières associées aux contrats.
