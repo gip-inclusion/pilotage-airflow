@@ -357,3 +357,68 @@ models:
           - not_null
           - dbt_utils.expression_is_true:
               expression: "> 0"
+
+  - name: int_fagerh__etablissements
+    description: >
+      Table intermédiaire décrivant les établissements FAGERH répondants au questionnaire. Elle identifie les structures, leur département,
+      les dispositifs déclarés comme actifs, les ETP associés, ainsi que quelques éléments simples d'offre de service comme l'hébergement
+      et la restauration.
+      Ce modèle permet de croiser ensuite les données d'activité, de prestations et de publics avec les caractéristiques des établissements,
+      sans mélanger ces informations dans les modèles de prestations.
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse.
+        tests:
+          - not_null
+          - unique
+
+      - name: is_response_completed
+        description: Indique si le questionnaire a été validé.
+
+      - name: finess
+        description: Numéro FINESS de l'établissement.
+
+      - name: establishment_name
+        description: Raison sociale de l'établissement.
+        tests:
+          - not_null
+
+      - name: departement
+        description: Département de l'établissement.
+
+      - name: has_esrp
+        description: Indique si l'établissement déclare une activité ESRP.
+
+      - name: has_espo
+        description: Indique si l'établissement déclare une activité ESPO.
+
+      - name: has_ueros
+        description: Indique si l'établissement déclare une activité UEROS.
+
+      - name: has_deac
+        description: Indique si l'établissement déclare une activité DEAc.
+
+      - name: esrp_etp
+        description: ETP déclarés pour l'activité ESRP.
+
+      - name: espo_etp
+        description: ETP déclarés pour l'activité ESPO.
+
+      - name: ueros_etp
+        description: ETP déclarés pour l'activité UEROS.
+
+      - name: deac_etp
+        description: ETP déclarés pour l'activité DEAc.
+
+      - name: has_accommodation
+        description: Indique si l'établissement propose un hébergement.
+
+      - name: accommodation_places
+        description: Nombre de places d'hébergement déclarées.
+
+      - name: has_collective_restaurant
+        description: Indique si l'établissement propose un restaurant collectif.
+
+      - name: has_shared_kitchen
+        description: Indique si l'établissement propose un coin cuisine à disposition.
