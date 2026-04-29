@@ -1,4 +1,4 @@
-**Carte Notion : **
+**Carte Notion : ** (non nécessaire si `label=hotfix`)
 
 ### Pourquoi ?
 
@@ -6,6 +6,7 @@ Indiquer le problème que nous sommes en train de résoudre et les objectifs mé
 
 ### Checks
 
+- [ ] J'ai rajouté la carte notion associée à la PR (hors `hotfix`)
 - [ ] J'ai lancé le modèle ou seed sur un dump local (si pertinent)
 - [ ] J'ai ajouté des tests à mon code Python, ou des assertions DBT sur le modèle SQL
 - [ ] J'ai documenté ce modèle voire certains de ses champs (usage métier, tableau de bord, etc)

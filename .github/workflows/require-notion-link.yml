@@ -1,0 +1,22 @@
+name: Require Notion Link
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, labeled, unlabeled]
+
+jobs:
+  require-notion-link:
+    runs-on: ubuntu-latest
+    permissions: {}
+    if: |
+      !contains(github.event.pull_request.labels.*.name, 'dependencies') &&
+      !contains(github.event.pull_request.labels.*.name, 'hotfix')
+    steps:
+      - name: Verify Notion link in PR description
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if ! echo "$PR_BODY" | grep --quiet "notion.so"; then
+            echo "PR description must contain a Notion link (notion.so)"
+            exit 1
+          fi
