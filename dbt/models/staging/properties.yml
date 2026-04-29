@@ -716,12 +716,7 @@ models:
         tests:
           - accepted_values:
               values: ['FAIBLE', 'MOYEN', 'FORT', 'NON_RENSEIGNE', 'YYYY', null]
-  - name: stg_di_services
-    description: >
-      Modèle de staging contenant la liste des services récupérés via l'API data inclusion
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: source('data_inclusion', 'services_v1')
+
 
 
 

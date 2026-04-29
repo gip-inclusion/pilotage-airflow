@@ -33,5 +33,16 @@ select
     nombre_semaines,
     horaires_accueil,
     adresse_certifiee,
-    score_qualite
-from {{ source('data_inclusion', 'raw_di_services') }}
+    score_qualite,
+    service_thematique,
+    service_public,
+    service_mode_accueil,
+    nom_region,
+    code_region_insee,
+    nom_departement,
+    code_departement_insee
+from {{ ref('di_services') }}
+left join lateral unnest(thematiques) as service_thematique on true
+left join lateral unnest(publics) as service_public on true
+left join lateral unnest(modes_accueil) as service_mode_accueil on true
+where source != 'soliguide'

@@ -221,15 +221,13 @@ sources:
     tables:
       - name: raw_questionnaire_2025
   - name: data_inclusion
-    schema: data_inclusion
+    schema: raw_data_inclusion
     description: >
-      Données de data inclusion récupérées via leur API. xxx_v0 fait référence aux données de la v0 de l'API; xxx_v1 fait référence aux données de la v1 de l'API.
-      Les données v0 ne sont plus mises à jour depuis mi-octobre 2025
+      Données de data inclusion récupérées via leur API. Toutes les données correspondent à la v1, la v0 étant decomissionnée depuis mai 2026.
     tables:
-      - name: structures_v0
-      - name: services_v0
-      - name: structures_v1_with_soliguide
-      - name: services_v1_with_soliguide
+      - name: raw_di_services
+      - name: raw_di_structures_deduplicated
+      - name: raw_di_structures
   - name: gps
     schema: public
     description: >

@@ -1,0 +1,206 @@
+version: 2
+
+models:
+  - name: stg_di_services
+    description: >
+      Modèle de staging contenant la liste des services récupérés via l'API data inclusion. Ici la source soliguide est incluse.
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('data_inclusion', 'raw_di_services')
+    columns:
+      - name: source
+        description: Identifiant du producteur original de la donnée.
+        tests:
+          - not_null
+      - name: structure_id
+        description: Identifiant de la structure porteuse du service.
+      - name: id
+        description: Identifiant unique du service, combinant l'identifiant du producteur et celui du service.
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        description: Nom du service (3 à 150 caractères).
+      - name: description
+        description: Présentation générale du service (idéalement 200 à 2000 caractères).
+      - name: lien_source
+        description: Lien permettant d'accéder au service sur le site du producteur.
+      - name: date_maj
+        description: Date de dernière modification de la donnée chez le producteur (format ISO 8601).
+      - name: type
+        description: Catégorie du service (référentiel types).
+      - name: thematiques
+        description: Thématiques couvertes par le service (référentiel thematiques).
+      - name: frais
+        description: Statut de facturation du service (référentiel frais, ex. gratuit, payant).
+      - name: frais_precisions
+        description: Précisions sur les frais applicables.
+      - name: publics
+        description: Publics cibles du service — tous-publics ne peut pas être combiné avec d'autres valeurs (référentiel publics).
+      - name: publics_precisions
+        description: Précisions sur les publics cibles.
+      - name: conditions_acces
+        description: Prérequis ou documents nécessaires pour accéder au service.
+      - name: commune
+        description: Nom de la commune où le service est disponible.
+      - name: code_postal
+        description: Code postal du lieu du service (5 chiffres).
+      - name: code_insee
+        description: Code INSEE de la commune du service (5 caractères alphanumériques).
+      - name: adresse
+        description: Adresse du service.
+      - name: complement_adresse
+        description: Complément d'adresse.
+      - name: longitude
+        description: Longitude géographique.
+      - name: latitude
+        description: Latitude géographique.
+      - name: telephone
+        description: Numéro de téléphone de contact, format E.164 privilégié.
+      - name: courriel
+        description: Adresse email de contact (RFC 5322).
+      - name: modes_accueil
+        description: Modalités d'accueil disponibles (référentiel modes_accueil).
+      - name: zone_eligibilite
+        description: Zones géographiques éligibles au service, via codes COG (communes, départements, EPCI, pays).
+      - name: contact_nom_prenom
+        description: Nom et prénom du contact du service.
+      - name: lien_mobilisation
+        description: Lien permettant d'accéder au service ou de le mobiliser.
+      - name: modes_mobilisation
+        description: Modalités de mobilisation du service (référentiel modes_mobilisation).
+      - name: mobilisable_par
+        description: Profils autorisés à mobiliser le service (référentiel personnes_mobilisatrices).
+      - name: mobilisation_precisions
+        description: Précisions sur le processus de mobilisation.
+      - name: volume_horaire_hebdomadaire
+        description: Volume horaire hebdomadaire du service, en heures. Utilisé pour le suivi des activités BRSA (15 à 20h).
+      - name: nombre_semaines
+        description: Durée du service en semaines (minimum 1). Utilisé pour les calculs BRSA.
+      - name: horaires_accueil
+        description: Horaires d'accueil du public (format OpenStreetMap Opening Hours).
+      - name: adresse_certifiee
+        description: Indique si l'adresse a été certifiée.
+      - name: score_qualite
+        description: Score de qualité de la fiche service.
+
+  - name: stg_di_structures
+    description: >
+      Modèle de staging contenant la liste des structures récupérées via l'API data inclusion. Ici la source soliguide est incluse.
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('data_inclusion', 'raw_di_structures')
+    columns:
+      - name: source
+        description: Identifiant du producteur original de la donnée.
+        tests:
+          - not_null
+      - name: id
+        description: Identifiant unique de la structure, combinant l'identifiant du producteur et celui de la structure.
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        description: Nom de la structure (3 à 150 caractères).
+      - name: date_maj
+        description: Date de dernière modification de la structure chez le producteur (format ISO 8601).
+      - name: description
+        description: Présentation générale de la structure.
+      - name: lien_source
+        description: Lien vers la structure sur le site du producteur.
+      - name: siret
+        description: Numéro SIRET associé à la structure (14 chiffres).
+      - name: commune
+        description: Nom de la commune où se situe la structure.
+      - name: code_postal
+        description: Code postal de la structure (5 chiffres).
+      - name: code_insee
+        description: Code INSEE de la commune de la structure (5 caractères alphanumériques).
+      - name: adresse
+        description: Adresse de la structure.
+      - name: complement_adresse
+        description: Complément d'adresse.
+      - name: longitude
+        description: Longitude géographique.
+      - name: latitude
+        description: Latitude géographique.
+      - name: telephone
+        description: Numéro de téléphone pour obtenir des informations sur la structure, format E.164 privilégié.
+      - name: courriel
+        description: Adresse email de contact (RFC 5322).
+      - name: site_web
+        description: URL du site web de la structure.
+      - name: horaires_accueil
+        description: Horaires d'accueil du public par la structure (format OpenStreetMap Opening Hours).
+      - name: accessibilite_lieu
+        description: Lien vers la page Accesslibre décrivant l'accessibilité du lieu.
+      - name: reseaux_porteurs
+        description: Réseaux porteurs auxquels appartient la structure (référentiel reseaux_porteurs).
+      - name: adresse_certifiee
+        description: Indique si l'adresse a été certifiée.
+      - name: score_qualite
+        description: Score de qualité de la fiche structure.
+      - name: doublons
+        description: Liste des doublons identifiés pour cette structure.
+
+  - name: stg_di_structures_deduplicated
+    description: >
+      Modèle de staging contenant la liste des structures récupérées via l'API data inclusion, sans les doublons. Ici la source soliguide est incluse.
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('data_inclusion', 'raw_di_structures_deduplicated')
+    columns:
+      - name: source
+        description: Identifiant du producteur original de la donnée.
+        tests:
+          - not_null
+      - name: id
+        description: Identifiant unique de la structure, combinant l'identifiant du producteur et celui de la structure.
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        description: Nom de la structure (3 à 150 caractères).
+      - name: date_maj
+        description: Date de dernière modification de la structure chez le producteur (format ISO 8601).
+      - name: description
+        description: Présentation générale de la structure.
+      - name: lien_source
+        description: Lien vers la structure sur le site du producteur.
+      - name: siret
+        description: Numéro SIRET associé à la structure (14 chiffres).
+      - name: commune
+        description: Nom de la commune où se situe la structure.
+      - name: code_postal
+        description: Code postal de la structure (5 chiffres).
+      - name: code_insee
+        description: Code INSEE de la commune de la structure (5 caractères alphanumériques).
+      - name: adresse
+        description: Adresse de la structure.
+      - name: complement_adresse
+        description: Complément d'adresse.
+      - name: longitude
+        description: Longitude géographique.
+      - name: latitude
+        description: Latitude géographique.
+      - name: telephone
+        description: Numéro de téléphone pour obtenir des informations sur la structure, format E.164 privilégié.
+      - name: courriel
+        description: Adresse email de contact (RFC 5322).
+      - name: site_web
+        description: URL du site web de la structure.
+      - name: horaires_accueil
+        description: Horaires d'accueil du public par la structure (format OpenStreetMap Opening Hours).
+      - name: accessibilite_lieu
+        description: Lien vers la page Accesslibre décrivant l'accessibilité du lieu.
+      - name: reseaux_porteurs
+        description: Réseaux porteurs auxquels appartient la structure (référentiel reseaux_porteurs).
+      - name: adresse_certifiee
+        description: Indique si l'adresse a été certifiée.
+      - name: score_qualite
+        description: Score de qualité de la fiche structure.
+      - name: doublons
+        description: Liste des doublons identifiés pour cette structure.
