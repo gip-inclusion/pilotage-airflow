@@ -14,7 +14,7 @@ from dags.common.dates import to_date
 from dags.common.tasks import create_schema
 
 
-DB_SCHEMA = "data_inclusion"
+DB_SCHEMA = "raw_data_inclusion"
 
 logger = logging.getLogger(__name__)
 
@@ -29,12 +29,15 @@ def api_client() -> httpx.Client:
     )
 
 
-def get_all_items(path):
+def get_all_items(path, exclure_doublons=False):
     client = api_client()
 
     page_to_fetch = 1
     while True:
-        response = client.get(path, params={"size": 10000, "page": page_to_fetch})
+        params = {"size": 10000, "page": page_to_fetch}
+        if exclure_doublons:
+            params["exclure_doublons"] = True
+        response = client.get(path, params=params)
         response.raise_for_status()
         data = response.json()
         logger.info("Got %r items, metadata=%r", len(data["items"]), {k: v for k, v in data.items() if k != "items"})
@@ -50,15 +53,16 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     @task
     def drop_tables():
         con = db.connection_engine()
-        con.execute("""drop table if exists data_inclusion.services_v1_with_soliguide cascade;
-                       drop table if exists data_inclusion.structures_v1_with_soliguide cascade;""")
+        con.execute("""drop table if exists data_inclusion.di_services cascade;
+                       drop table if exists data_inclusion.di_structures_deduplicated cascade;
+                       drop table if exists data_inclusion.di_structures cascade;""")
 
     @task
-    def import_structures_v1(**kwargs):
+    def import_structures(**kwargs):
         structures = pd.DataFrame(get_all_items("/api/v1/structures"))
         structures["date_maj"] = structures["date_maj"].apply(to_date)
         structures.to_sql(
-            "structures_v1_with_soliguide",
+            "raw_di_structures",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
             if_exists="replace",
@@ -71,11 +75,28 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         logger.info("%r rows created", len(structures.index))
 
     @task
-    def import_services_v1(**kwargs):
+    def import_structures_deduplicated(**kwargs):
+        structures = pd.DataFrame(get_all_items("/api/v1/structures", exclure_doublons=True))
+        structures["date_maj"] = structures["date_maj"].apply(to_date)
+        structures.to_sql(
+            "raw_di_structures_deduplicated",
+            con=db.connection_engine(),
+            schema=DB_SCHEMA,
+            if_exists="replace",
+            index=False,
+            dtype={
+                "reseaux_porteurs": postgresql.ARRAY(sqlalchemy.types.Text),
+                "doublons": postgresql.ARRAY(sqlalchemy.types.JSON),
+            },
+        )
+        logger.info("%r rows created", len(structures.index))
+
+    @task
+    def import_services(**kwargs):
         services = pd.DataFrame(get_all_items("/api/v1/services"))
         services["date_maj"] = services["date_maj"].apply(to_date)
         services.to_sql(
-            "services_v1_with_soliguide",
+            "raw_di_services",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
             if_exists="replace",
@@ -116,7 +137,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     (
         create_schema(DB_SCHEMA).as_setup()
         >> drop_tables()
-        >> [import_structures_v1(), import_services_v1()]
+        >> [import_structures(), import_structures_deduplicated(), import_services()]
         >> dbt_deps
         >> dbt_seed
         >> dbt_run

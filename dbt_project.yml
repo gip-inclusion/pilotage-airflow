@@ -55,6 +55,9 @@ models:
         +materialized: table
       staging:
         +materialized: view
+    reporting:
+      +schema : public
+      +materialized : table
 
 seeds:
   +schema: seeds

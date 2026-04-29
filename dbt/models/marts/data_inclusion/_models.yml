@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: di_structures
+    description: >
+      Table contenant toutes les structures + des informations de géolocalisation associées à ces dernieres.
+      La source soliguide est présente et doit etre filtrée pour toutes les utilisations (sauf certains cas spécifiques).
+      Les doublons sont identifiés par is_not_duplicate = False.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('int_di_structures_geo')
+    columns:
+      - name: source
+        tests:
+          - not_null
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        tests:
+          - not_null
+      - name: date_maj
+        tests:
+          - not_null
+  - name: di_services
+    description: >
+      Table contenant tous les services + des informations de géolocalisation associées à ces derniers.
+      La source soliguide est présente et doit etre filtrée pour toutes les utilisations (sauf certains cas spécifiques)
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('int_di_services_geo')
+    columns:
+      - name: source
+        tests:
+          - not_null
+      - name: structure_id
+        tests:
+          - not_null
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        tests:
+          - not_null
+      - name: description
+        tests:
+          - not_null
+      - name: date_maj
+        tests:
+          - not_null

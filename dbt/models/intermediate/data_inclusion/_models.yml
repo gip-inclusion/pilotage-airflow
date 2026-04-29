@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: int_di_services_geo
+    description: >
+      Modèle intermédiaire enrichissant les services data inclusion avec les données géographiques (département, région, zone d'emploi, EPCI).
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_di_services')
+  - name: int_di_structures_geo
+    description: >
+      Modèle intermédiaire enrichissant les services data inclusion avec les données géographiques (département, région, zone d'emploi, EPCI).
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_di_structures')
