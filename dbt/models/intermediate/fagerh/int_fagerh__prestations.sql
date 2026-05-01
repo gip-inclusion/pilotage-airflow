@@ -5,17 +5,53 @@ with source as (
 
 ),
 
+prestation_mapping as (
+
+    select *
+    from {{ ref('seed_fagerh__prestation_mapping') }}
+
+),
+
 prestations as (
 
     select
         source.uuid,
-        source.id        as answer_id,
-        prestation.key   as prestation_key,
-        prestation.value as prestation_json
+        source.id                        as answer_id,
+        prestation.prestation_json_key   as prestation_key,
+        prestation.prestation_json_value as prestation_json,
+
+        regexp_replace(
+            regexp_replace(prestation.prestation_json_key, '-[0-9]+$', ''),
+            '-+$',
+            ''
+        )                                as prestation_key_base
+
     from source
     cross join lateral jsonb_each(
         coalesce(nullif(source.prestations_json, ''), '{}')::jsonb
-    ) as prestation (key, value)
+    ) as prestation (prestation_json_key, prestation_json_value)
+
+),
+
+prestations_enriched as (
+
+    select
+        prestations.uuid,
+        prestations.answer_id,
+        prestations.prestation_key,
+        prestations.prestation_key_base,
+        prestations.prestation_json,
+
+        prestation_mapping.prestation_group,
+        prestation_mapping.prestation_label,
+        prestation_mapping.orp_status,
+        coalesce(prestation_mapping.is_reliable, false) as is_reliable_prestation_mapping,
+        prestation_mapping.prestation_key_base is null  as is_unmapped_prestation
+
+    from prestations
+
+    left join prestation_mapping
+        on prestations.prestation_key_base = prestation_mapping.prestation_key_base
 
 ),
 
@@ -23,7 +59,15 @@ final as (
 
     select
         uuid,
+        answer_id,
         prestation_key,
+        prestation_key_base,
+
+        prestation_group,
+        prestation_label,
+        orp_status,
+        is_reliable_prestation_mapping,
+        is_unmapped_prestation,
 
         (prestation_json ->> 'done')::boolean                                                                         as prestation_done,
         nullif(prestation_json ->> 'fileActive', '')::integer                                                         as nb_files_active,
@@ -54,6 +98,7 @@ final as (
 
         nullif(prestation_json #>> '{directAvecOrp,row,hebergees_journees}', '')::integer                             as direct_hebergees_journees,
         nullif(prestation_json #>> '{directAvecOrp,row,hebergees_nuitees}', '')::integer                              as direct_hebergees_nuitees,
+
         nullif(prestation_json #>> '{sortiesBloc,nb}', '')::integer                                                   as sorties_nb,
         nullif(prestation_json #>> '{sortiesBloc,raisons,depart_volontaire}', '')::integer                            as sorties_depart_volontaire,
         nullif(prestation_json #>> '{sortiesBloc,raisons,sante}', '')::integer                                        as sorties_sante,
@@ -63,13 +108,14 @@ final as (
         nullif(prestation_json #>> '{sortiesBloc,raisons,reprise_emploi}', '')::integer                               as sorties_reprise_emploi,
         nullif(prestation_json #>> '{sortiesBloc,raisons,je_ne_sais_pas}', '')::integer                               as sorties_je_ne_sais_pas,
         nullif(prestation_json #>> '{sortiesBloc,raisons,autres_nb}', '')::integer                                    as sorties_autres_nb,
+
         nullif(prestation_json #>> '{suspensionsBloc,nb}', '')::integer                                               as suspensions_nb,
         nullif(prestation_json #>> '{suspensionsBloc,raisons,sante_non_liee}', '')::integer                           as suspensions_sante_non_liee,
         nullif(prestation_json #>> '{suspensionsBloc,raisons,evolution_handicap}', '')::integer                       as suspensions_evolution_handicap,
         nullif(prestation_json #>> '{suspensionsBloc,raisons,evolution_sociale}', '')::integer                        as suspensions_evolution_sociale,
         nullif(prestation_json #>> '{suspensionsBloc,raisons,parcours_suspendu}', '')::integer                        as suspensions_parcours_suspendu,
-
         nullif(prestation_json #>> '{suspensionsBloc,raisons,autres_nb}', '')::integer                                as suspensions_autres_nb,
+
         nullif(prestation_json #>> '{preconisationsBloc,emploi_milieu_ordinaire}', '')::integer                       as preco_emploi_milieu_ordinaire,
         nullif(prestation_json #>> '{preconisationsBloc,entreprise_adaptee}', '')::integer                            as preco_entreprise_adaptee,
         nullif(prestation_json #>> '{preconisationsBloc,esat}', '')::integer                                          as preco_esat,
@@ -85,6 +131,7 @@ final as (
         nullif(prestation_json #>> '{preconisationsBloc,soins}', '')::integer                                         as preco_soins,
         nullif(prestation_json #>> '{preconisationsBloc,emploi_accompagne}', '')::integer                             as preco_emploi_accompagne,
         nullif(prestation_json #>> '{preconisationsBloc,autres}', '')::integer                                        as preco_autres,
+
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_sorties_n_1}', '')::integer                             as emploi_sorties_n_1,
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_nb_repondants}', '')::integer                           as emploi_nb_repondants,
 
@@ -96,11 +143,13 @@ final as (
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_acces_interim}', '')::integer                           as emploi_acces_interim,
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_acces_autre}', '')::integer                             as emploi_acces_autre,
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_acces_encore_nb}', '')::integer                         as emploi_acces_encore_nb,
+
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_sans_acces_formation_qualifiante_nb}', '')::integer     as emploi_sans_acces_formation_qualifiante_nb,
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_sans_acces_formation_non_qualifiante_nb}', '')::integer as emploi_sans_acces_formation_non_qualifiante_nb,
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_sans_acces_stage_nb}', '')::integer                     as emploi_sans_acces_stage_nb,
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_sans_acces_benevolat_nb}', '')::integer                 as emploi_sans_acces_benevolat_nb,
         nullif(prestation_json #>> '{directAvecOrp,row,emploi_presence_nb}', '')::integer                             as emploi_presence_nb,
+
         prestation_json                                                                                               as json_prestation_raw,
         prestation_json -> 'visitedBlocks'                                                                            as visited_blocks,
 
@@ -114,15 +163,16 @@ final as (
         prestation_json -> 'coh' -> 'lesion_origine'                                                                  as json_coh_lesion_origine,
         prestation_json -> 'geoRows'                                                                                  as json_geo_rows,
         prestation_json -> 'handicapMatrix'                                                                           as json_handicap_matrix,
+
         nullif(prestation_json #>> '{directAvecOrp,enabled}', '')                                                     as direct_avec_orp_enabled,
         nullif(prestation_json #>> '{directSansOrp,enabled}', '')                                                     as direct_sans_orp_enabled,
         nullif(prestation_json #>> '{indirect,enabled}', '')                                                          as indirect_enabled,
+
         nullif(prestation_json #>> '{sortiesBloc,raisons,autres_precision}', '')                                      as sorties_autres_precision,
         nullif(prestation_json #>> '{suspensionsBloc,raisons,autres_precision}', '')                                  as suspensions_autres_precision,
-
         nullif(prestation_json #>> '{preconisationsBloc,autres_precision}', '')                                       as preco_autres_precision
 
-    from prestations
+    from prestations_enriched
 
 )
 

@@ -1,0 +1,318 @@
+version: 2
+
+models:
+  - name: fagerh__activite_prestations
+    description: >
+      Table finale d'activité des prestations FAGERH.
+
+      Ce modèle:
+      * contient une ligne par réponse et par prestation terminée.
+      * Il rassemble les informations principales de la prestation, de l'établissement et du département.
+      * Il contient aussi les principaux indicateurs d'activité : effectifs actifs, sorties, journées, hébergement, accompagnement hors les murs
+      et suspensions.
+
+      Il ne contient pas le détail des publics, des préconisations, de l'emploi ou des métiers.
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse au questionnaire.
+        data_tests:
+          - not_null
+
+      - name: finess
+        description: Numéro FINESS de l'établissement.
+
+      - name: establishment_name
+        description: Nom de l'établissement répondant.
+        data_tests:
+          - not_null
+
+      - name: departement
+        description: Département de l'établissement.
+
+      - name: prestation_key_base
+        description: >
+          Clé technique normalisée de la prestation.
+          Le numéro final de la clé d'origine a été retiré.
+          Cette clé sert à rattacher la prestation à son mapping.
+        data_tests:
+          - not_null
+
+      - name: prestation_group
+        description: >
+          Grand groupe de la prestation.
+          Il vient du mapping des prestations.
+          Il permet de regrouper les prestations dans les analyses.
+        data_tests:
+          - not_null
+
+      - name: prestation_label
+        description: >
+          Libellé métier de la prestation.
+          Il est renseigné quand la prestation peut être identifiée de façon fiable.
+
+      - name: orp_status
+        description: >
+          Statut ORP CDAPH de la prestation.
+          Par exemple avec ORP CDAPH, sans ORP CDAPH, hors ORP CDAPH ou non applicable.
+
+      - name: is_reliable_prestation_mapping
+        description: >
+          Indique si le mapping permet d'identifier précisément la prestation.
+          Si la valeur est false, le mapping reste utile mais moins précis.
+        data_tests:
+          - not_null
+
+      - name: is_unmapped_prestation
+        description: >
+          Indique si la prestation n'a pas été trouvée dans la seed de mapping.
+          Cette colonne sert au contrôle qualité.
+        data_tests:
+          - not_null
+
+      - name: nb_files_active
+        description: >
+          Nombre de personnes présentes à l'effectif au 31 décembre.
+          Ces personnes ont signé un contrat de séjour.
+
+      - name: preaccueil_sans_suite
+        description: >
+          Nombre de personnes reçues en pré-accueil sans suite dans l'année.
+
+      - name: sorties
+        description: Nombre de sorties définitives déclarées pour la prestation.
+
+      - name: sorties_avant_terme
+        description: Nombre de sorties définitives avant le terme de la prestation.
+
+      - name: sorties_terme
+        description: Nombre de sorties définitives au terme de la prestation.
+
+      - name: journees
+        description: Nombre de journées réalisées.
+
+      - name: journees_theoriques
+        description: Nombre de journées théoriques.
+
+      - name: direct_beneficiaires
+        description: Nombre de bénéficiaires déclarés pour la prestation directe.
+
+      - name: direct_hors_murs_personnes
+        description: Nombre de personnes accompagnées hors les murs.
+
+      - name: direct_hors_murs_journees
+        description: Nombre de journées d'accompagnement hors les murs.
+
+      - name: direct_hebergees_personnes
+        description: Nombre de personnes hébergées pendant la prestation.
+
+      - name: direct_hebergees_nuitees
+        description: Nombre total de nuitées déclarées pour les personnes hébergées.
+
+      - name: suspensions_nb
+        description: Nombre de personnes ayant connu une suspension de parcours.
+
+      - name: direct_presentiel_total
+        description: Nombre total de personnes accompagnées en présentiel.
+
+      - name: direct_hybride_total
+        description: Nombre total de personnes accompagnées en format hybride.
+
+      - name: direct_distanciel_total
+        description: Nombre total de personnes accompagnées en distanciel.
+
+  - name: fagerh__publics_prestations
+    description: >
+      Table finale des publics accompagnés dans les prestations FAGERH. Ce modèle contient une ligne par réponse, prestation, dimension de public
+      et catégorie de public.
+
+      Il sert à analyser le profil des personnes accompagnées. Il permet de regarder les répartitions par genre, âge, niveau de formation à l'entrée,
+      situation à l'entrée et type de handicap.
+
+      Le modèle garde seulement les prestations terminées. Il ajoute aussi les informations de l'établissement et le mapping de la prestation.
+
+      Le modèle contient seulement les effectifs déclarés (ex. pas de valeurs 0).
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse au questionnaire.
+        data_tests:
+          - not_null
+
+      - name: finess
+        description: Numéro FINESS de l'établissement.
+
+      - name: establishment_name
+        description: Nom de l'établissement répondant.
+        data_tests:
+          - not_null
+
+      - name: departement
+        description: Département de l'établissement.
+
+      - name: prestation_key_base
+        description: >
+          Clé technique normalisée de la prestation.
+          Le numéro final de la clé d'origine a été retiré.
+          Cette clé sert à rattacher la prestation à son mapping.
+        data_tests:
+          - not_null
+
+      - name: prestation_group
+        description: >
+          Grand groupe de la prestation.
+          Il vient du mapping des prestations.
+          Il permet de regrouper les prestations dans les analyses.
+        data_tests:
+          - not_null
+
+      - name: prestation_label
+        description: >
+          Libellé métier de la prestation.
+          Il est renseigné quand la prestation peut être identifiée de façon fiable.
+
+      - name: orp_status
+        description: >
+          Statut ORP CDAPH de la prestation.
+          Par exemple avec ORP CDAPH, sans ORP CDAPH, hors ORP CDAPH ou non applicable.
+
+      - name: is_reliable_prestation_mapping
+        description: >
+          Indique si le mapping permet d'identifier précisément la prestation.
+          Si la valeur est false, le mapping reste utile mais seulement à un niveau plus large.
+        data_tests:
+          - not_null
+
+      - name: is_unmapped_prestation
+        description: >
+          Indique si la prestation n'a pas été trouvée dans la seed de mapping.
+          Cette colonne sert au contrôle qualité.
+        data_tests:
+          - not_null
+
+      - name: public_dimension
+        description: >
+          Dimension du public analysée.
+          Par exemple genre, âge, niveau de formation à l'entrée, situation à l'entrée
+          ou type de handicap.
+        data_tests:
+          - not_null
+
+      - name: public_subdimension
+        description: >
+          Sous-dimension du public.
+          Elle est surtout utilisée pour le type de handicap.
+          Elle permet de distinguer le handicap principal et le handicap associé.
+
+      - name: public_category_code
+        description: >
+          Code stable de la catégorie de public.
+          Il vient de la seed de mapping des catégories de public.
+
+      - name: public_category_label
+        description: >
+          Libellé lisible de la catégorie de public.
+          Il vient de la seed de mapping des catégories de public.
+        data_tests:
+          - not_null
+
+      - name: public_count
+        description: >
+          Nombre de personnes déclarées pour cette prestation, cette dimension
+          et cette catégorie de public.
+        data_tests:
+          - not_null
+
+  - name: fagerh__rh_metiers
+    description: >
+      Table finale des métiers déclarés dans le questionnaire FAGERH. Ce modèle contient une ligne par réponse, métier et mode d'intervention.
+
+      Il sert à analyser les ressources humaines mobilisées par les établissements. Il permet de regarder les ETP par métier, par famille de métier,
+      par mode d'intervention, par établissement et par département.
+
+      Le modèle ajoute les informations simples de l'établissement.
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse au questionnaire.
+        data_tests:
+          - not_null
+
+      - name: finess
+        description: Numéro FINESS de l'établissement.
+
+      - name: establishment_name
+        description: Nom de l'établissement répondant.
+        data_tests:
+          - not_null
+
+      - name: departement
+        description: Département de l'établissement.
+
+      - name: metier
+        description: Métier déclaré dans le questionnaire.
+        data_tests:
+          - not_null
+
+      - name: metier_family
+        description: >
+          Code de la famille de métier.
+          Il permet de regrouper plusieurs métiers proches.
+
+      - name: metier_family_label
+        description: >
+          Libellé lisible de la famille de métier.
+          Il sert à analyser les ETP à un niveau plus agrégé.
+
+      - name: employment_mode
+        description: >
+          Mode d'intervention du métier.
+          Par exemple interne, externe ou mixte selon les valeurs du questionnaire.
+
+      - name: etp_cdi
+        description: Nombre d'ETP en CDI pour ce métier et ce mode d'intervention.
+
+      - name: etp_cdd
+        description: Nombre d'ETP en CDD pour ce métier et ce mode d'intervention.
+
+      - name: etp_total
+        description: >
+          Nombre total d'ETP pour ce métier et ce mode d'intervention.
+          Ce total vient du questionnaire.
+        data_tests:
+          - not_null
+
+  - name: fagerh__rh_etp_dispositif_etablissement
+    description: >
+      Table finale des ETP par dispositif et par établissement. Ce modèle contient une ligne par réponse et par établissement.
+
+      Il sert à analyser les ETP déclarés pour chaque dispositif : ESRP, ESPO, UEROS et DEAc.
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse au questionnaire.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: finess
+        description: Numéro FINESS de l'établissement.
+
+      - name: establishment_name
+        description: Nom de l'établissement répondant.
+        data_tests:
+          - not_null
+
+      - name: departement
+        description: Département de l'établissement.
+
+      - name: esrp_etp
+        description: Nombre total d'ETP déclarés pour le dispositif ESRP.
+
+      - name: espo_etp
+        description: Nombre total d'ETP déclarés pour le dispositif ESPO.
+
+      - name: ueros_etp
+        description: Nombre total d'ETP déclarés pour le dispositif UEROS.
+
+      - name: deac_etp
+        description: Nombre total d'ETP déclarés pour le dispositif DEAc.

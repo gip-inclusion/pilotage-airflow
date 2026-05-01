@@ -1,0 +1,96 @@
+version: 2
+
+seeds:
+  - name: seed_fagerh__prestations_public_category_mapping
+    description: >
+        Mapping des positions de catégories JSON vers des codes et des libellés lisibles. Cela permet de relier les comptages présents dans le JSON des
+        prestations avec les valeurs possibles présentes dans le formulaire Fagerh.
+
+    columns:
+      - name: public_dimension
+        description: Dimension du public concernée.
+        tests:
+          - not_null
+
+      - name: public_category_position
+        description: Position de la catégorie dans le tableau JSON d'origine.
+        tests:
+          - not_null
+
+      - name: public_category_code
+        description: Code stable de la catégorie.
+        tests:
+          - not_null
+
+      - name: public_category_label
+        description: Libellé lisible de la catégorie.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - public_dimension
+            - public_category_position
+
+
+  - name: seed_fagerh__metier_family_mapping
+    description: >
+      Table de correspondance entre les métiers du questionnaire FAGERH et leur famille de métier.
+
+      Elle permet de regrouper les métiers détaillés en grandes catégories plus simples à analyser, comme médical, paramédical, socio-éducatif, psychologue, pédagogie,
+      support et administratif.
+
+      Cette seed évite de mettre cette logique directement dans les modèles SQL. Elle rend le regroupement plus clair, plus facile à relire et plus simple à modifier
+      si besoin.
+
+    columns:
+      - name: metier
+        description: Métier tel qu'il apparaît dans le questionnaire FAGERH.
+        tests:
+          - not_null
+          - unique
+
+      - name: metier_family
+        description: Nom technique de la famille de métier.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - medical
+                - paramedical
+                - socio_educatif
+                - psychologue
+                - pedagogie
+                - support_administratif
+
+      - name: metier_family_label
+        description: Libellé lisible de la famille de métier.
+        tests:
+          - not_null
+
+  - name: seed_fagerh__prestation_mapping
+    description: Mapping manuel des clés techniques de prestations vers des libellés métier et des regroupements analytiques. La clé utilisée est la clé de prestation sans suffixe numérique final, car ce suffixe correspond à l'ordre dynamique dans le formulaire.
+    columns:
+      - name: prestation_key_base
+        description: Clé technique de prestation sans suffixe numérique final.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: prestation_group
+        description: Grand groupe de prestation dans le menu du questionnaire.
+
+      - name: prestation_label
+        description: Libellé métier de la prestation lorsque la prestation peut être identifiée précisément.
+
+      - name: orp_status
+        description: Statut ORP CDAPH associé à la prestation.
+
+      - name: is_reliable
+        description: Indique si la clé permet d'identifier précisément la prestation. Si false, le mapping doit être utilisé seulement à un niveau agrégé, par exemple au niveau du groupe de prestation.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]

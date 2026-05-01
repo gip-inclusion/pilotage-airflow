@@ -3,6 +3,12 @@ with source as (
     select
         uuid,
         prestation_key,
+        prestation_key_base,
+        prestation_group,
+        prestation_label,
+        orp_status,
+        is_reliable_prestation_mapping,
+        is_unmapped_prestation,
         prestation_done,
 
         json_coh_genre,
@@ -32,7 +38,14 @@ cohort_arrays as (
     select
         source.uuid,
         source.prestation_key,
+        source.prestation_key_base,
+        source.prestation_group,
+        source.prestation_label,
+        source.orp_status,
+        source.is_reliable_prestation_mapping,
+        source.is_unmapped_prestation,
         source.prestation_done,
+
         cohort.public_dimension,
         cohort.values_json
 
@@ -53,7 +66,14 @@ cohort_publics as (
     select
         cohort_arrays.uuid,
         cohort_arrays.prestation_key,
+        cohort_arrays.prestation_key_base,
+        cohort_arrays.prestation_group,
+        cohort_arrays.prestation_label,
+        cohort_arrays.orp_status,
+        cohort_arrays.is_reliable_prestation_mapping,
+        cohort_arrays.is_unmapped_prestation,
         cohort_arrays.prestation_done,
+
         cohort_arrays.public_dimension,
         null::text                            as public_subdimension,
         (array_item.ordinality - 1)::integer  as public_category_position,
@@ -72,7 +92,14 @@ handicap_publics as (
     select
         source.uuid,
         source.prestation_key,
+        source.prestation_key_base,
+        source.prestation_group,
+        source.prestation_label,
+        source.orp_status,
+        source.is_reliable_prestation_mapping,
+        source.is_unmapped_prestation,
         source.prestation_done,
+
         'type_handicap'                                      as public_dimension,
         handicap_count.public_subdimension,
         (handicap_item.ordinality - 1)::integer              as public_category_position,
@@ -110,6 +137,12 @@ final as (
     select
         publics.uuid,
         publics.prestation_key,
+        publics.prestation_key_base,
+        publics.prestation_group,
+        publics.prestation_label,
+        publics.orp_status,
+        publics.is_reliable_prestation_mapping,
+        publics.is_unmapped_prestation,
         publics.prestation_done,
 
         publics.public_dimension,
