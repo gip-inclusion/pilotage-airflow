@@ -217,15 +217,17 @@ models:
 
   - name: int_esat__surveys_esat_answers_deduplicated
     description: >
-      Modèle intermédiaire de déduplication des réponses au questionnaire ESAT 2025.
-      Lorsqu’un même établissement identifié par finess_num a transmis plusieurs
-      réponses, ce modèle conserve uniquement la réponse la plus complète.
+        Modèle intermédiaire de déduplication des réponses au questionnaire ESAT 2025.
 
-      La complétude est mesurée en comptant le nombre de colonnes renseignées,
-      hors identifiants techniques answer_id et finess_num.
+        Ce modèle conserve uniquement les réponses ayant un finess_num renseigné. Parmi ces réponses, il identifie les doublons à partir de plusieurs
+        identifiants possibles : finess_num, esat_siret et le nom normalisé de l’ESAT en minuscules.
 
-      En cas d’égalité, la réponse conservée est celle ayant le `answer_id` le
-      plus élevé.
+        Si plusieurs réponses sont reliées par au moins un de ces identifiants, elles sont considérées comme appartenant au même groupe de doublons. Le
+        modèle conserve alors uniquement la réponse la plus complète du groupe.
+
+        La complétude est mesurée en comptant le nombre de colonnes renseignées, hors identifiants techniques answer_id et finess_num.
+
+        En cas d’égalité, la réponse conservée est celle ayant le answer_id le plus élevé.
 
     columns:
       - name: finess_num
