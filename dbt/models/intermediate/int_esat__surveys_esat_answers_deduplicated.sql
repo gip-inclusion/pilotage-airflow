@@ -1,4 +1,4 @@
-with base as (
+with recursive base as (
 
     select *
     from {{ ref('stg_esat__surveys_esat_answers') }}
@@ -131,15 +131,83 @@ scored as (
 
 ),
 
+identifiers as (
+
+    select
+        answer_id,
+        'finess:' || regexp_replace(trim(finess_num::text), '\s+', '', 'g') as identifier
+    from scored
+    where nullif(trim(finess_num::text), '') is not null
+
+    union all
+
+    select
+        answer_id,
+        'siret:' || regexp_replace(trim(esat_siret::text), '\s+', '', 'g') as identifier
+    from scored
+    where nullif(trim(esat_siret::text), '') is not null
+
+    union all
+
+    select
+        answer_id,
+        'name:' || lower(regexp_replace(trim(esat_name), '\s+', ' ', 'g')) as identifier
+    from scored
+    where nullif(trim(esat_name), '') is not null
+
+),
+
+edges as (
+
+    select distinct
+        left_identifier.answer_id  as from_answer_id,
+        right_identifier.answer_id as to_answer_id
+    from identifiers as left_identifier
+    inner join identifiers as right_identifier
+        on left_identifier.identifier = right_identifier.identifier
+
+),
+
+duplicate_groups as (
+
+    select
+        answer_id as root_answer_id,
+        answer_id as linked_answer_id
+    from scored
+
+    union
+
+    select
+        duplicate_groups.root_answer_id,
+        edges.to_answer_id as linked_answer_id
+    from duplicate_groups
+    inner join edges
+        on duplicate_groups.linked_answer_id = edges.from_answer_id
+
+),
+
+final_groups as (
+
+    select
+        linked_answer_id    as answer_id,
+        min(root_answer_id) as duplicate_group_id
+    from duplicate_groups
+    group by linked_answer_id
+
+),
+
 ranked as (
 
     select
-        *,
+        scored.*,
+        final_groups.duplicate_group_id,
         row_number() over (
-            partition by finess_num
-            order by completeness_score desc, answer_id desc
+            partition by final_groups.duplicate_group_id
+            order by scored.completeness_score desc, scored.answer_id desc
         ) as rn
     from scored
+    inner join final_groups
+        on scored.answer_id = final_groups.answer_id
 
 )
 
