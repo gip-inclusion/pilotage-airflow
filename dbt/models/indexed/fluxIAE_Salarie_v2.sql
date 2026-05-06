@@ -17,3 +17,5 @@ select distinct
     end as tranche_age
 from
     {{ source('fluxIAE', 'fluxIAE_Salarie') }}
+-- an employee of an SIAE has a NIR & and NTT, we remove the NTT.
+where hash_nir != '936aa21c8553ab199f68a47ac9fbf4cee9241c48a46a037264223c84b5f64cac'

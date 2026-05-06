@@ -1,5 +1,5 @@
 select
     hash_nir,
     salarie_id
-from {{ source("fluxIAE","fluxIAE_Salarie") }}
+from {{ ref("fluxIAE_Salarie_v2") }}
 group by hash_nir, salarie_id
