@@ -10,8 +10,8 @@ select
     fdpc."nom_département_structure",
     fdpc."département_structure",
     fdpc."région_structure",
-    app_geo.nom_epci                                        as epci_structure,
-    app_geo.nom_zone_emploi                                 as bassin_emploi_structure,
+    dim_commune.nom_epci                                    as epci_structure,
+    dim_commune.nom_zone_emploi                             as bassin_emploi_structure,
     fdpc.nom_structure,
     fdpc."date_création_fdp",
     rome.domaine_professionnel,
@@ -54,8 +54,8 @@ left join {{ ref('code_rome_domaine_professionnel') }} as rome
     on fdpc.code_rome_fpd = rome.code_rome
 left join {{ ref('structures') }} as s
     on fdpc.id_structure = s.id
-left join {{ ref('stg_insee_appartenance_geo_communes') }} as app_geo
-    on s.code_commune = app_geo.code_insee
+left join {{ ref('dim_commune') }}
+    on s.code_commune = dim_commune.code_commune_insee
 group by
     fdpc.active,
     fdpc.id_fdp,
@@ -67,8 +67,8 @@ group by
     fdpc."nom_département_structure",
     fdpc."département_structure",
     fdpc."région_structure",
-    app_geo.nom_epci,
-    app_geo.nom_zone_emploi,
+    dim_commune.nom_epci,
+    dim_commune.nom_zone_emploi,
     fdpc.nom_structure,
     fdpc."date_création_fdp",
     rome.domaine_professionnel,
