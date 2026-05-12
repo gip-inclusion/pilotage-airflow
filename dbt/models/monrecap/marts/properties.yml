@@ -457,9 +457,6 @@ models:
       - name: Siret
         description: Numéro SIRET de la structure commandeuse.
 
-      - name: "Si le test de Mon Récap répond bien à vos besoins, sur une"
-        description: Score NPS issu d'une enquête de satisfaction intermédiaire (nom tronqué dans Airtable).
-
       - name: Date de relance
         description: Date planifiée pour la prochaine relance commerciale de ce commandeur.
 
@@ -595,9 +592,6 @@ models:
       - name: "Pourquoi ne l'avez vous pas recommandé ?"
         description: Motif libre de non-recommandation (renseigné si NPS < 9).
 
-      - name: "Combien de carnets avez-vous distribués depuis le début de vo[...]"
-        description: Nombre cumulé de carnets distribués aux usagers depuis le début de l'utilisation.
-
       - name: "Les usagers reviennent-ils avec le carnet ?"
         description: Fréquence déclarée à laquelle les usagers reviennent en rendez-vous avec leur carnet.
 
@@ -615,36 +609,6 @@ models:
 
       - name: "Les usagers reviennent-ils avec le carnet ? (Jamais)"
         description: Sélection « Jamais » pour la question sur le retour des usagers avec le carnet.
-
-      - name: "Les usagers utilisent-ils, en général, le carnet avec d'autre[...]"
-        description: Réponse à la question sur l'utilisation du carnet avec d'autres professionnels de l'accompagnement.
-
-      - name: "Le carnet vous-a t'il permis d'apprendre des choses grâce aux [...]"
-        description: Réponse à la question sur les informations découvertes grâce aux notes des usagers dans le carnet.
-
-      - name: "Pourquoi les usagers ne l'utilisent pas avec d'autres professio[...]"
-        description: Motif libre expliquant la non-utilisation du carnet avec d'autres professionnels.
-
-      - name: "Avez-vous constaté une amélioration dans le parcours de vos u[...]"
-        description: Réponse à la question sur l'amélioration observable du parcours des usagers grâce au carnet.
-
-      - name: "D'après vous, la qualité (fluidité, facilité de communicati[...]"
-        description: Score (numérique) sur la qualité de la communication inter-professionnelle grâce au carnet.
-
-      - name: "Dans quelle mesure êtes-vous d'accord avec l'affirmation suiva[...]"
-        description: Score d'accord (numérique) avec une affirmation sur l'impact du carnet (libellé tronqué).
-
-      - name: "Lorsqu'un usager utilise Mon Récap, constatez-vous une meilleu[...]"
-        description: Réponse sur l'amélioration de la coordination entre professionnels grâce au carnet.
-
-      - name: "Vous avez répondu Diriez-vous que grâce au carnet : exemple e[...]"
-        description: Exemple illustratif donné par le répondant sur l'impact du carnet (champ libre).
-
-      - name: "Diriez-vous que grâce au carnet, les usagers accèdent plus fa[...]"
-        description: Réponse à la question sur l'accès facilité aux droits ou services pour les usagers.
-
-      - name: "Quelle(s) information(s) vous manque t'il encore pour mieux ac[...]"
-        description: Informations manquantes identifiées par le professionnel pour mieux accompagner les usagers.
 
       - name: Temps gagné sur une heure
         description: Déclaratif sur le temps gagné par rendez-vous grâce au carnet (réponse multi-select agrégée).
@@ -670,29 +634,11 @@ models:
       - name: "Quel(s) type(s) de public accompagnez-vous ?"
         description: Types de public accompagnés par la structure (réponse multi-select agrégée).
 
-      - name: "Quel(s) type(s) de public accompagnez-vous ? (Personnes en situ[...])"
-        description: Sélection « Personnes en situation de handicap » pour la question sur le public accompagné.
-
-      - name: "Quel(s) type(s) de public accompagnez-vous ? (Personnes éloign[...])"
-        description: Sélection « Personnes éloignées de l'emploi » pour la question sur le public accompagné.
-
-      - name: "Quel(s) type(s) de public accompagnez-vous ? (Bénéficiaires d[...])"
-        description: Sélection « Bénéficiaires de droits sociaux (RSA, AAH, etc.) » pour la question sur le public accompagné.
-
-      - name: "Quel(s) type(s) de public accompagnez-vous ? (Demandeurs d'asil[...])"
-        description: Sélection « Demandeurs d'asile / réfugiés » pour la question sur le public accompagné.
-
-      - name: "Quel(s) type(s) de public accompagnez-vous ? (Personnes sous ma[...])"
-        description: Sélection « Personnes sous main de justice » pour la question sur le public accompagné.
-
       - name: "Quel(s) type(s) de public accompagnez-vous ? (Seniors)"
         description: Sélection « Seniors » pour la question sur le public accompagné.
 
       - name: "Quel(s) type(s) de public accompagnez-vous ? (18 - 25 ans)"
         description: Sélection « 18 - 25 ans » pour la question sur le public accompagné.
-
-      - name: "Quel(s) type(s) de public accompagnez-vous ? (Personnes sans do[...])"
-        description: Sélection « Personnes sans domicile fixe » pour la question sur le public accompagné.
 
       - name: "Quel(s) type(s) de public accompagnez-vous ? (illectronisme)"
         description: Sélection « Illectronisme » pour la question sur le public accompagné.
@@ -706,29 +652,14 @@ models:
       - name: "Pouvez-vous préciser ?"
         description: Précision libre sur le public accompagné (renseignée si « Autres » est sélectionné).
 
-      - name: "Quelles sont les chances que vous recommandiez Mon Récap à vo[...]"
-        description: Score NPS (0–10) indiquant la probabilité de recommandation de Mon Récap.
-
       - name: "Que pensez-vous de l'équilibre prix / impact du produit ?"
         description: Évaluation de l'équilibre prix / impact perçu du produit.
 
       - name: "Pourquoi ? Pouvez-vous détailler ?"
         description: Justification libre de l'évaluation prix / impact (champ ouvert).
 
-      - name: "Un commentaire, une suggestion, une belle histoire ? N'hésitez[...]"
-        description: Commentaire libre du répondant (retours qualitatifs, verbatims d'impact).
-
-      - name: "Souhaitez-vous témoigner lors d'un prochain webinaire organis[...]"
-        description: Réponse à la sollicitation de témoignage lors d'un webinaire Mon Récap.
-
-      - name: "D'après vous,  [vos usagers expliquent bien les actions ou dé[...]"
-        description: Score sur la capacité des usagers à expliquer leurs démarches grâce au carnet.
-
       - name: "D'après vous,  [vos usagers s'organisent bien]"
         description: Score sur la capacité des usagers à s'organiser grâce au carnet.
-
-      - name: "D'après vous,  [vos usagers ont de l'assurance lors des échan[...]"
-        description: Score sur l'assurance des usagers lors des échanges avec les professionnels.
 
       - name: "D'après vous,  [vous comprenez facilement le besoin d'aide]"
         description: Score sur la facilité du professionnel à comprendre le besoin d'aide grâce au carnet.
@@ -736,68 +667,14 @@ models:
       - name: "D'après vous,  [vous résolvez rapidement les demandes d'aide]"
         description: Score sur la rapidité de résolution des demandes d'aide grâce au carnet.
 
-      - name: "D'après vous,  [vous créez facilement un lien de confiance av[...]"
-        description: Score sur la facilité à créer un lien de confiance avec les usagers grâce au carnet.
-
-      - name: "Si vous en avez un en tête, racontez-nous un exemple de parcou[...]"
-        description: Exemple qualitatif d'un parcours usager amélioré grâce au carnet (champ libre).
-
       - name: "Avez-vous distribué plusieurs carnets à certains usagers ?"
         description: Indique si certains usagers ont reçu plusieurs carnets au cours de leur parcours.
 
       - name: "Si oui, combien de vos usagers ont reçu plusieurs carnets ?"
         description: Estimation du nombre d'usagers ayant reçu plusieurs carnets (champ libre, renseigné si Oui).
 
-      - name: "D'après vous, vos usagers peuvent rencontrer combien d'accompa[...]"
-        description: Estimation du nombre de professionnels différents rencontrés par un usager dans son parcours.
-
-      - name: "D'après vous, votre structure serait-elle prête à payer pour[...]"
-        description: Disposition déclarée de la structure à payer pour Mon Récap (question de monétisation).
-
       - name: "Si oui, combien par carnet ?"
         description: Montant que la structure serait prête à payer par carnet (champ libre, renseigné si Oui).
-
-      - name: "Combien d'usagers ont reçu au moins un carnet (approximativeme[...]"
-        description: Estimation du nombre total d'usagers ayant reçu au moins un carnet depuis le début.
-
-      - name: "Parmi ces usagers, combien d'usagers ont perdu le carnet ou ne[...]"
-        description: Estimation du nombre d'usagers ayant perdu leur carnet ou ne l'utilisant plus.
-
-      - name: "D'après vous, Mon Récap permet aux usagers de ?  [mieux expli[...]"
-        description: Score sur la capacité du carnet à aider les usagers à mieux expliquer leur situation.
-
-      - name: "D'après vous, Mon Récap permet aux usagers de ?  [mieux s'org[...]"
-        description: Score sur la capacité du carnet à aider les usagers à mieux s'organiser.
-
-      - name: "D'après vous, Mon Récap permet aux usagers de ?  [avoir plus[...]"
-        description: Score sur la capacité du carnet à donner plus d'assurance aux usagers.
-
-      - name: "D'après vous, Mon Récap permet aux usagers de ?  [résoudre p[...]"
-        description: Score sur la capacité du carnet à aider les usagers à résoudre plus rapidement leurs demandes.
-
-      - name: "D'après vous, Mon Récap permet aux usagers de ?  [Autre (à d[...]"
-        description: Autre impact identifié par le répondant sur les usagers (champ libre).
-
-      - name: "D'après vous, Mon Récap vous permet de ? [avoir une meilleure[...]"
-        description: Score sur l'amélioration de la vision du parcours usager pour le professionnel.
-
-      - name: "D'après vous, Mon Récap vous permet de ? [découvrir que l'us[...]"
-        description: Score sur la capacité du carnet à révéler des besoins non exprimés de l'usager.
-
-      - name: "D'après vous, Mon Récap vous permet de ? [Créer plus facilem[...]"
-        description: Score sur la facilité à créer du lien de confiance avec l'usager grâce au carnet.
-
-      - name: "D'après vous, Mon Récap vous permet de ? [Autre (à détaille[...]"
-        description: Autre bénéfice identifié par le répondant pour le professionnel (champ libre).
-
-      - name: "Pouvez-vous détailler ? D'après vous, Mon Récap permet aussi[...]"
-        description: Précision libre sur les bénéfices supplémentaires du carnet pour les usagers.
-
-      - name: "Pouvez-vous détailler ? D'après vous, Mon Récap vous permet[...]"
-        description: Précision libre sur les bénéfices supplémentaires du carnet pour le professionnel.
-
-      - name: "Souhaiteriez-vous une version numérique (en plus de la version papier) ?"
-        description: Disposition déclarée envers une version numérique de Mon Récap en complément du carnet papier.
 
       - name: Les personnes écrivent-elles seules dans leur carnet ?
         description: Réponse à la question sur l'autonomie des usagers dans la complétion du carnet.
@@ -807,12 +684,6 @@ models:
 
       - name: "Pouvez-vous expliquer les raisons du refus d'utilisation ?"
         description: Motifs libres de refus d'utilisation par les usagers (renseigné si refus observés).
-
-      - name: "Pourquoi pensez-vous qu'avoir une version numérique serait une[...]"
-        description: Justification libre de l'intérêt d'une version numérique (renseignée si Oui).
-
-      - name: "Seriez-vous prêt à remplacer la version numérique par la ver[...]"
-        description: Disposition à remplacer totalement le carnet papier par une version numérique.
 
       - name: nom_departement
         description: Nom du département du répondant (enrichi en SQL depuis les données de commande).
