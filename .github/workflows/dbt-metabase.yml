@@ -71,4 +71,5 @@ jobs:
             --metabase-url "https://stats.inclusion.beta.gouv.fr" \
             --metabase-api-key "$METABASE_API_KEY" \
             --metabase-database "c2-itou-metabase-db" \
-            --sync-timeout 0
+            --sync-timeout 0 \
+            --exclude-models "stg_*"
