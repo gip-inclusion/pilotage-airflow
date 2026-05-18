@@ -38,11 +38,13 @@ with airflow.DAG(
         if is_full_refresh:
             kwargs["ti"].xcom_push("dbt_seed_args", "--full-refresh")
             kwargs["ti"].xcom_push(
-                "dbt_run_args", "--full-refresh --select staging +marts.daily+ +legacy.daily+ +marts_core.daily+"
+                "dbt_run_args", "--full-refresh --select staging +marts.daily+ +legacy.daily+ +marts.marts_core.daily+"
             )
         else:
             kwargs["ti"].xcom_push("dbt_seed_args", "")
-            kwargs["ti"].xcom_push("dbt_run_args", "--select staging +marts.daily+ +legacy.daily+ +marts_core.daily+")
+            kwargs["ti"].xcom_push(
+                "dbt_run_args", "--select staging +marts.daily+ +legacy.daily+ +marts.marts_core.daily+"
+            )
 
     dbt_seed = bash.BashOperator(
         task_id="dbt_seed",
@@ -60,7 +62,7 @@ with airflow.DAG(
 
     dbt_test = bash.BashOperator(
         task_id="dbt_test",
-        bash_command="dbt test --select +marts.daily+ +legacy.daily+ +marts_core.daily+",
+        bash_command="dbt test --select +marts.daily+ +legacy.daily+ +marts.marts_core.daily+",
         env=env_vars,
         append_env=True,
     )
