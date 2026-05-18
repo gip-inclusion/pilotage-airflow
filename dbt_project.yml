@@ -35,9 +35,6 @@ models:
       +materialized: table
     legacy:
       +materialized: table
-    marts_core:
-      +schema: marts_core
-      +materialized: table
     marts:
       +schema: public
       +materialized: table

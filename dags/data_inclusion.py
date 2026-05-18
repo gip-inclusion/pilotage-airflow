@@ -108,7 +108,7 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     dbt_run = bash.BashOperator(
         task_id="dbt_run",
         bash_command="dbt run --select staging.data_inclusion intermediate.data_inclusion "
-        "marts_core.data_inclusion +marts.data_inclusion",
+        "marts.marts_core.data_inclusion +marts.data_inclusion",
         env=env_vars,
         append_env=True,
     )
