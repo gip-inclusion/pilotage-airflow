@@ -1,5 +1,6 @@
 import logging
 
+import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators import bash
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 
-with DAG("populate_esat_database", schedule="@daily", **dag_args) as dag:
+with DAG("populate_esat_database", schedule=None, **dag_args) as dag:
     env_vars = db.connection_envvars()
 
     @task
@@ -29,6 +30,9 @@ with DAG("populate_esat_database", schedule="@daily", **dag_args) as dag:
             db.DBConnection(db_url_variable="PILO_FRONT_DB_URL_SECRET") as src_db,
             db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET") as dst_db,
         ):
+            with dst_db.engine.begin() as conn:
+                conn.execute(sqlalchemy.text(f'DROP TABLE IF EXISTS "{TARGET_SCHEMA}"."{TARGET_TABLE}" CASCADE'))
+
             first_write = True
 
             for chunk in src_db.query_chunked(query):
