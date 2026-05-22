@@ -1,207 +1,102 @@
 version: 2
 
 models:
-  - name: esat__software_financial_help_by_finess
+  - name: stg_esat__liste_officielle
     description: >
-        Modèle de type mart permettant d’exploser les valeurs de la colonne software_financial_help afin d’obtenir une ligne par établissement (finess_num) et par type d’aide financière.
-
-        La colonne source contient une liste de valeurs sous forme de texte. Ce modèle transforme cette liste en plusieurs lignes, facilitant ainsi
-        l’analyse des dispositifs mobilisés par les ESAT.
+      Modèle de staging de la liste officielle des ESAT.
+      Il reprend les données fournies dans la seed `seed_esat__liste_officielle` et renomme les colonnes pour les rendre plus faciles à exploiter dans les
+      modèles suivants.
 
     columns:
-        - name: finess_num
-          description: >
-            Numéro FINESS de l’établissement principal.
+      - name: managing_organization_finess
+        description: Numéro FINESS de l'établissement juridique auquel l'ESAT est rattaché.
+        tests:
+          - not_null
 
-          tests:
-            - not_null
+      - name: managing_organization_name
+        description: Raison sociale de l'établissement juridique.
 
-        - name: software_financial_help
-          description: >
-            Type(s) d’aide financière mobilisée(s) par l’ESAT pour financer la mise en place du carnet de parcours et de compétences ou l’acquisition d’un logiciel.
+      - name: managing_organization_legal_status_code
+        description: Code du statut juridique de l'établissement juridique.
 
-            Cette variable est issue d’une question à choix multiples. Elle peut contenir plusieurs modalités sélectionnées par un même établissement (exemples : crédits non reconductibles, FATESAT,
-            fonds CCAH, AGGIRC-ARCO)
+      - name: managing_organization_legal_status_label
+        description: Libellé du statut juridique de l'établissement juridique.
 
-          tests:
-            - not_null
+      - name: managing_organization_email
+        description: Adresse e-mail de l'établissement juridique.
 
-    tests:
-        - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
-                - finess_num
-                - software_financial_help
+      - name: establishment_finess_num
+        description: Numéro FINESS de l'établissement ESAT.
+        tests:
+          - not_null
+          - unique
 
+      - name: establishment_name
+        description: Raison sociale de l'établissement ESAT.
 
-  - name: esat__support_themes_by_finess
+      - name: establishment_address
+        description: Adresse postale de l'établissement ESAT.
+
+      - name: establishment_postal_code
+        description: Code postal de l'établissement ESAT.
+
+      - name: establishment_type
+        description: >
+          Type d'établissement dans la liste officielle. Permet notamment d'identifier les établissements principaux et secondaires.
+
+      - name: establishment_siret
+        description: Numéro SIRET de l'établissement ESAT.
+
+      - name: establishment_region_code
+        description: Code de la région de l'établissement ESAT.
+
+      - name: establishment_region_label
+        description: Libellé de la région de l'établissement ESAT.
+
+      - name: establishment_department_code
+        description: Code du département de l'établissement ESAT.
+
+      - name: establishment_department_label
+        description: Libellé du département de l'établissement ESAT.
+
+      - name: establishment_commune_code
+        description: Code INSEE de la commune de l'établissement ESAT.
+
+      - name: establishment_commune_label
+        description: Libellé de la commune de l'établissement ESAT.
+
+      - name: establishment_phone
+        description: Numéro de téléphone de l'établissement ESAT.
+
+      - name: establishment_email
+        description: Adresse e-mail de l'établissement ESAT.
+
+      - name: authorized_capacity
+        description: Capacité autorisée agrégée de l'établissement ESAT.
+
+  - name: stg_esat__surveys_esat_answers
     description: >
-        Modèle de type mart permettant d’exploser les valeurs de la colonne support_themes afin d’obtenir une ligne par établissement (finess_num) et par thématique principale d’accompagnement
-        médico-social.
-
-        La colonne source contient une liste de modalités sélectionnées dans une question à choix multiples du questionnaire. Ce modèle transforme cette liste en plusieurs lignes pour faciliter l’analyse
-        des thématiques d’accompagnement déclarées par les ESAT.
-
-    columns:
-        - name: finess_num
-          description: >
-            Numéro FINESS de l’établissement principal.
-          tests:
-            - not_null
-
-        - name: support_theme
-          description: >
-            Thématique principale d’accompagnement médico-social déclarée par l’ESAT dans le questionnaire.
-
-            Exemples de valeurs : [WORKSHOP_JOB_SEARCH, WORKSHOP_WELLBEING, PROFESSIONAL_SUPPORT, CPF_OPENED, COMPANY_TOUR, OTHER.]
-          tests:
-            - not_null
-
-    tests:
-        - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
-                - finess_num
-                - support_theme
-
-  - name: esat__skills_validation_type_by_finess
-    description: >
-        Modèle de type mart permettant d’exploser les valeurs de la colonne skills_validation_type afin d’obtenir une ligne par établissement (finess_num) et par type de dispositif mobilisé pour
-        reconnaître et développer les compétences des travailleurs et travailleuses.
-
-        La colonne source contient une liste de modalités sélectionnées dans une question à choix multiples du questionnaire. Ce modèle transforme cette liste en plusieurs lignes pour faciliter l’analyse
-        des dispositifs déclarés par les ESAT.
-
-    columns:
-        - name: finess_num
-          description: >
-            Numéro FINESS de l’établissement principal.
-          tests:
-            - not_null
-
-        - name: skills_validation_type
-          description: >
-            Type de dispositif mobilisé par l’ESAT pour reconnaître et développer les compétences des travailleurs et travailleuses.
-
-            Exemples de valeurs : RAE, RSFP, VAE, AFEST, OTHER, NONE.
-          tests:
-            - not_null
-
-    tests:
-        - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
-                - finess_num
-                - skills_validation_type
-
-  - name: esat__retirement_preparation_actions_by_finess
-    description: >
-        Modèle de type mart permettant d’exploser les valeurs de la colonne retirement_preparation_actions afin d’obtenir une ligne par établissement (finess_num) et par action mise en œuvre pour
-        préparer les travailleurs et travailleuses au départ à la retraite.
-
-        La colonne source contient une liste de modalités sélectionnées dans une question à choix multiples du questionnaire. Ce modèle transforme cette liste en plusieurs lignes pour faciliter l’analyse
-        des actions déclarées par les ESAT.
-
-    columns:
-        - name: finess_num
-          description: >
-            Numéro FINESS de l’établissement principal.
-          tests:
-            - not_null
-
-        - name: retirement_preparation_action
-          description: >
-            Action déclarée par l’ESAT pour préparer les travailleurs et travailleuses au départ à la retraite.
-
-            Exemples de valeurs : ADMINISTRATIVE_ASSISTANCE, UAAT, WORKING_HOURS_REDUCTION_AND_ORGANISATION, PSYCHOLOGICAL_AND_SOCIAL_ASSISTANCE.
-          tests:
-            - not_null
-
-    tests:
-        - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
-                - finess_num
-                - retirement_preparation_action
-
-  - name: esat__documents_falclist_by_finess
-    description: >
-        Modèle de type mart permettant d’exploser les valeurs de la colonne documents_falclist afin d’obtenir une ligne par établissement (finess_num) et par type de document rendu accessible en FALC ou
-        en communication alternative augmentée.
-
-        La colonne source contient une liste de modalités sélectionnées dans une question à choix multiples du questionnaire. Ce modèle transforme cette liste en plusieurs lignes pour faciliter l’analyse
-        des documents accessibles déclarés par les ESAT.
-
-    columns:
-        - name: finess_num
-          description: >
-            Numéro FINESS de l’établissement principal.
-          tests:
-            - not_null
-
-        - name: document_falclist_item
-          description: >
-            Type de document déclaré comme accessible en FALC ou en communication alternative augmentée. Exemples de valeurs : CONTRACT, BOOKLET, REGULATION.
-          tests:
-            - not_null
-
-    tests:
-        - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
-                - finess_num
-                - document_falclist_item
-
-  - name: esat__insertion_staff_funding_by_finess
-    description: >
-        Modèle de type mart permettant d’exploser les valeurs de la colonne insertion_staff_funding afin d’obtenir une ligne par établissement (finess_num) et par mode de financement des conseillers en
-        parcours d’insertion ou assimilés.
-
-        La colonne source contient une liste de modalités sélectionnées dans une question à choix multiples du questionnaire. Ce modèle transforme cette liste en plusieurs lignes pour faciliter l’analyse
-        des modes de financement déclarés par les ESAT.
-
-    columns:
-        - name: finess_num
-          description: >
-            Numéro FINESS de l’établissement principal.
-          tests:
-            - not_null
-
-        - name: insertion_staff_funding_item
-          description: >
-            Mode de financement déclaré pour les conseillers en parcours d’insertion ou assimilés. Exemples de valeurs : BPAS, BAPC, OTHER.
-          tests:
-            - not_null
-
-    tests:
-        - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
-                - finess_num
-                - insertion_staff_funding_item
-
-  - name: esat__survey_answers_core
-    description: >
-        Réponses au questionnaire 2025 relatif au Plan de Transformation des ESAT, transmises par les établissements dans le cadre de leur obligation réglementaire de reporting aux ARS.
-
-        Ce modèle constitue la table principale d’analyse. Il conserve une ligne par établissement (clé : finess_num) et regroupe l’ensemble des variables déclaratives à valeur unique portant sur l’activité
-        de l’ESAT, les travailleurs accompagnés, les dispositifs mobilisés et plusieurs indicateurs liés au Réseau pour l’Emploi.
-
-        On ne compte que les réponses avec plus de 10 questions repondues.
-
-        Les variables multivaluées ont été exclues de ce modèle et normalisées dans des modèles dédiés (marts thématiques), afin de faciliter les analyses et les jointures.
-
+        Réponses au questionnaire 2025 relatif au Plan de Transformation des ESAT, transmis par les établissements
+        dans le cadre de leur obligation réglementaire de reporting aux ARS. Ce modèle conserve une ligne par
+        réponse et regroupe des informations déclaratives sur l’activité de l’ESAT, les travailleurs accompagnés, les
+        dispositifs mobilisés et plusieurs indicateurs liés au Réseau pour l’Emploi.
         https://pilotage.inclusion.beta.gouv.fr/survey/esat-2025/019d9049-9290-7cb1-bf6b-fbcdc9c8fe4b/introduction
 
     columns:
         - name: answer_id
           description: >
-                Identifiant technique de la réponse au questionnaire. Une seule réponse est conservée par établissement après déduplication.
+            Identifiant unique de la réponse au questionnaire. Une ligne correspond
+            à un questionnaire renseigné par un ESAT.
           tests:
-            - not_null
             - unique
+            - not_null
 
+        # Identification
         - name: finess_num
           description: >
-                Numéro FINESS de l’établissement principal. Clé principale du modèle, utilisée pour les jointures avec les autres marts.
-          tests:
-            - unique
-            - not_null
+            Numéro FINESS de l’établissement principal.
 
+        # Organization
         - name: esat_role
           description: >
             Fonction de la personne ayant renseigné le questionnaire au sein de l’ESAT.
@@ -240,6 +135,7 @@ models:
             Nombre de salariés mutualisés sur plusieurs ESAT parmi les effectifs
             au 31 décembre de l’année n-1.
 
+        # Workers supported
         - name: nb_worker_supported
           description: >
             Nombre de travailleurs et travailleuses accompagnés en année n-1.
@@ -258,6 +154,7 @@ models:
             Ancienneté moyenne des travailleurs et travailleuses accompagnés au
             31 décembre de l’année n-1.
 
+        # Workers new
         - name: nb_worker_previous_mot
           description: >
             Nombre de travailleurs ayant occupé antérieurement un emploi en milieu
@@ -272,6 +169,7 @@ models:
           description: >
             Nombre de travailleurs et travailleuses admis temporairement dans l’ESAT.
 
+        # Establishment discovery
         - name: nb_worker_mispe_mdph
           description: >
             Nombre de personnes accompagnées par l’ESAT dans le cadre d’une mise
@@ -282,6 +180,7 @@ models:
             Nombre de personnes accompagnées par l’ESAT dans le cadre d’une mise
             en situation professionnelle prescrite par le Réseau pour l’Emploi.
 
+        # Ordinary working environment
         - name: nb_worker_willing_mot
           description: >
             Nombre de travailleurs ayant exprimé dans leur projet personnalisé
@@ -292,6 +191,7 @@ models:
             Nombre de travailleurs et travailleuses inscrits comme demandeurs
             d’emploi à France Travail.
 
+        # Ordinary working environment and customers involvement
         - name: has_prescription_delegate
           description: >
             Indique si l’ESAT est délégataire de prescription de PMSMP.
@@ -336,6 +236,7 @@ models:
             Nombre de travailleurs et travailleuses ayant cumulé un temps partiel
             dans l’ESAT et un emploi à temps partiel en milieu ordinaire.
 
+        # Workers left
         - name: nb_worker_left
           description: >
             Nombre de travailleurs et travailleuses ayant quitté l’ESAT en année n-1.
@@ -400,6 +301,7 @@ models:
             Nombre de travailleurs et travailleuses ayant suivi une formation en
             établissement ou service de réadaptation professionnelle.
 
+        # Workers right to return
         - name: nb_worker_reinteg
           description: >
             Nombre de travailleurs et travailleuses ayant réintégré l’ESAT.
@@ -413,6 +315,7 @@ models:
             Nombre d’ESAT avec lesquels une convention a été établie pour garantir
             l’exercice du droit au retour.
 
+        # Support hours
         - name: nb_support_hours
           description: >
             Catégorie correspondant au nombre moyen d’heures de soutien liées à
@@ -423,6 +326,7 @@ models:
             Thématiques principales d’accompagnement médico-social proposées par
             l’ESAT. Cette colonne peut contenir plusieurs valeurs.
 
+        # Formations
         - name: has_contrib_opco
           description: >
             Indique si l’ESAT a acquitté une contribution pour la formation des
@@ -482,6 +386,7 @@ models:
             Indique si la formation à l’autodétermination est assurée par l’intermédiaire
             d’un organisme externe.
 
+        # Skills
         - name: skills_validation_type
           description: >
             Types de dispositifs dont ont bénéficié les travailleurs et travailleuses
@@ -500,6 +405,7 @@ models:
             Nombre de travailleurs sortis dans l’année ayant obtenu auparavant une
             validation ou une reconnaissance de leurs compétences.
 
+        # Duodays
         - name: nb_worker_duoday
           description: >
             Nombre de travailleurs et travailleuses de l’ESAT ayant participé à Duoday
@@ -510,6 +416,7 @@ models:
             Nombre de professionnels du milieu ordinaire ayant participé à des Duoday
             inversés en année n-1.
 
+        # Skills notebook
         - name: skills_notebook
           description: >
             Indique si un carnet de parcours et de compétences a été mis en place.
@@ -524,6 +431,7 @@ models:
             Type d’aide financière reçue pour la mise en place du carnet de parcours
             et de compétences.
 
+        # Retirement
         - name: retirement_preparation_actions
           description: >
             Actions conduites par l’ESAT pour préparer les travailleurs et travailleuses
@@ -543,11 +451,13 @@ models:
             Nombre de travailleurs et travailleuses de plus de 50 ans ayant travaillé
             dans l’ESAT en année n-1.
 
+        # Language accessibility
         - name: documents_falclist
           description: >
             Indique si les principaux documents destinés aux travailleurs et travailleuses
             étaient accessibles en FALC ou en CAA au 31 décembre de l’année n-1.
 
+        # Working conditions
         - name: has_worker_delegate
           description: >
             Indique s’il existe dans l’ESAT un ou une délégué(e) des travailleurs élu(e).
@@ -572,6 +482,7 @@ models:
             Indique si une instance mixte sur la qualité de vie au travail, l’hygiène
             et la sécurité était en place en année n-1.
 
+        # Profit sharing
         - name: profit_sharing_bonus
           description: >
             Montant moyen de la prime d’intéressement versée aux travailleurs et
@@ -582,6 +493,7 @@ models:
             Pourcentage moyen de rémunération directe des travailleurs pris en charge
             par l’ESAT au 31 décembre de l’année n-1.
 
+        # Insurance policy
         - name: has_foresight_in_place
           description: >
             Indique si l’ESAT a contribué en année n-1 à un régime de prévoyance
@@ -591,6 +503,7 @@ models:
           description: >
             Année de mise en œuvre du régime de prévoyance dans l’ESAT.
 
+        # Mobility program
         - name: annual_transport_budget
           description: >
             Budget annuel alloué au transport des travailleurs et travailleuses de
@@ -614,6 +527,7 @@ models:
           description: >
             Nombre de travailleurs et travailleuses ayant obtenu le code de la route.
 
+        # Vouchers
         - name: has_holiday_voucher
           description: >
             Indique si l’ESAT propose des chèques vacances aux travailleurs et travailleuses.
@@ -630,11 +544,13 @@ models:
           description: >
             Budget annuel de l’ESAT consacré aux chèques cadeaux.
 
+        # Sunday work
         - name: nb_worker_worked_sunday
           description: >
             Nombre de travailleurs et travailleuses ayant travaillé au moins un dimanche
             ou un jour férié en année n-1.
 
+        # Partnership agreements
         - name: has_agreement_signed_ft
           description: >
             Indique si une convention était en vigueur en année n-1 avec les acteurs
@@ -649,6 +565,7 @@ models:
             Indique si une convention était en vigueur en année n-1 avec la plateforme
             emploi accompagné du département.
 
+        # Staff
         - name: nb_insertion_staff
           description: >
             Nombre de conseillers en parcours d’insertion ou assimilés dans les effectifs
@@ -663,6 +580,7 @@ models:
           description: >
             Mode de financement des conseillers en parcours d’insertion ou assimilés.
 
+        # Commercial operation
         - name: annual_ca
           description: >
             Chiffre d’affaires annuel commercial total, toutes activités confondues.
@@ -696,6 +614,7 @@ models:
           description: >
             Montant de l’excédent de la section commerciale.
 
+        # Social activity budget
         - name: budget_social
           description: >
             Situation du résultat de clôture du budget de fonctionnement, section
@@ -709,6 +628,7 @@ models:
           description: >
             Montant de l’excédent du budget social.
 
+        # Investments
         - name: budget_accessibility
           description: >
             Montant des investissements réalisés pour la mise aux normes de sécurité
@@ -719,31 +639,20 @@ models:
             Montant des investissements réalisés pour diversifier les activités proposées
             aux travailleurs et travailleuses.
 
+        # Comments
         - name: comments
           description: >
             Champ libre permettant d’apporter des précisions complémentaires ou de
             signaler des questions auxquelles l’ESAT n’a pas pu répondre.
 
-        - name: duplicate_group_finess_nums
-          description: >
-            Liste des numéros FINESS associés aux réponses interprétées comme des doublons pour cet ESAT.
-
-        - name: duplicate_group_esat_names
-          description: >
-            Liste des noms d’ESAT associés aux réponses interprétées comme des doublons pour cet ESAT.
-
-  - name: fct_esat__survey_answer_mapping
+  - name: stg_esat__liste_mapped_answers
     description: >
-        Modèle qui associe chaque ESAT de la liste officielle à une réponse au questionnaire,
-        quand une réponse peut être trouvée.
+        Modèle de staging basé sur les données fournies dans la seed
+        `seed_esat__mapping_reponses_manuelles`.
 
-        La différence avec `esat__survey_answers_core` est que ce modèle choisit la meilleure
-        réponse pour chaque ESAT de la liste officielle. Le modèle `esat__survey_answers_core`
-        liste, lui, toutes les réponses reçues au questionnaire après déduplication.
-
-        Une seule réponse est conservée par ESAT. Le choix se fait selon un ordre de priorité :
-        mapping manuel, FINESS direct, nom avec organisme gestionnaire, FINESS de l'organisme
-        gestionnaire, puis organisme gestionnaire.
+        Il contient un mapping entre la liste des ESAT et la réponse correcte
+        après vérification humaine, indépendamment des autres critères de matching
+        définis, comme le matching par FINESS ou le matching par nom.
 
     columns:
       - name: finess_num
@@ -756,30 +665,9 @@ models:
               field: finess_num
 
       - name: answer_id
-        description: Identifiant de la réponse au questionnaire associée à l'ESAT.
+        description: Identifiant de la réponse associée manuellement à l'ESAT.
         tests:
+          - not_null
           - relationships:
               to: ref('esat__survey_answers_core')
               field: answer_id
-
-      - name: matching_method
-        description: Méthode utilisée pour associer l'ESAT à une réponse au questionnaire.
-        tests:
-          - not_null
-          - accepted_values:
-              values:
-                - manual_mapping
-                - direct_finess
-                - same_name_and_related_managing_organization
-                - related_managing_organization
-                - no_answer
-      - name: matching_confidence
-        description: Niveau de confiance du matching entre l'ESAT et la réponse au questionnaire.
-        tests:
-            - not_null
-            - accepted_values:
-                values:
-                - high
-                - medium
-                - low
-                - no_answer

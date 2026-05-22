@@ -242,3 +242,50 @@ models:
         description: >
           Indique si le code région ou le code département a été complété
           à partir de la commune parente
+
+  - name: dim_esat
+    description: >
+      Table de dimension recensant les ESAT issus de la liste officielle fournie. Elle contient une ligne unique par établissement ESAT, avec ses principaux
+      attributs descriptifs et les clés permettant de le rattacher à d'autres référentiels (le code commune et le code commune de son établissement juridique).
+
+    columns:
+      - name: finess_num
+        description: Numéro FINESS de l'établissement ESAT.
+        tests:
+          - not_null
+          - unique
+
+      - name: esat_name
+        description: Raison sociale de l'établissement ESAT.
+
+      - name: adresse
+        description: Adresse postale de l'établissement ESAT.
+
+      - name: code_postal
+        description: Code postal de l'établissement ESAT.
+
+      - name: type_esat
+        description: >
+          Type d'établissement dans la liste officielle. Permet notamment d'identifier les établissements principaux et secondaires.
+
+      - name: siret
+        description: Numéro SIRET de l'établissement ESAT.
+
+      - name: code_commune_insee
+        description: >
+          Code INSEE de la commune de l'établissement ESAT.
+          Ce champ permet de rattacher la dimension ESAT à `dim_commune` pour récupérer les informations géographiques complémentaires.
+
+      - name: telephone
+        description: Numéro de téléphone de l'établissement ESAT.
+
+      - name: email
+        description: Adresse e-mail de l'établissement ESAT.
+
+      - name: capacite_autorisee
+        description: Capacité autorisée agrégée de l'établissement ESAT.
+
+      - name: managing_organization_finess
+        description: >
+          Numéro FINESS de l'établissement juridique auquel l'ESAT est rattaché.
+          Ce champ permet de relier la dimension ESAT au modèle `int_esat__legal_entities`.

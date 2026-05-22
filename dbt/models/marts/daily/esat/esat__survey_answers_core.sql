@@ -10,8 +10,10 @@ final as (
     select
         answer_id,
         finess_num,
+        duplicate_group_finess_nums,
         esat_role,
         esat_name,
+        duplicate_group_esat_names,
         esat_siret,
         managing_organization_finess,
         esat_status,
@@ -118,6 +120,7 @@ final as (
         budget_diversity,
         comments
     from source
+    where completeness_score > 10
 
 )
 
