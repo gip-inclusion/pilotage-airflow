@@ -40,6 +40,9 @@ models:
       +materialized: table
       data_inclusion:
         +schema: data_inclusion
+    reporting:
+      +schema: reporting
+      +materialized: table
     intermediate:
       +schema: intermediate
       +materialized: table

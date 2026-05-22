@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: int_esat__legal_entities
+    description: >
+      Modèle intermédiaire qui recense les établissements juridiques présents dans la liste officielle des ESAT.
+
+      La source initiale contient une ligne par établissement ESAT. Les informations relatives à l'établissement juridique sont donc répétées pour chaque ESAT
+      qui lui est rattaché. Ce modèle permet de les isoler dans une table dédiée et de ne conserver qu'une seule ligne par établissement juridique.
+
+      Ce modèle est placé dans la couche `intermediate` plutôt que dans les `marts` car il ne constitue pas une dimension exhaustive des établissements
+      juridiques. Il couvre uniquement les établissements juridiques apparaissant dans la liste officielle des ESAT et sert principalement de brique de
+      transformation réutilisable pour les modèles suivants.
+
+    columns:
+      - name: managing_organization_finess
+        description: Numéro FINESS de l'établissement juridique.
+        tests:
+          - not_null
+          - unique
+
+      - name: managing_organization_name
+        description: Raison sociale de l'établissement juridique.
+
+      - name: managing_organization_legal_status_code
+        description: Code du statut juridique de l'établissement juridique.
+
+      - name: managing_organization_legal_status_label
+        description: Libellé du statut juridique de l'établissement juridique.
+
+      - name: managing_organization_email
+        description: Adresse e-mail de l'établissement juridique.
+
+  - name: int_esat__surveys_esat_answers_deduplicated
+    description: >
+        Modèle intermédiaire de déduplication des réponses au questionnaire ESAT 2025.
+
+        Ce modèle conserve uniquement les réponses ayant un finess_num renseigné. Parmi ces réponses, il identifie les doublons à partir de plusieurs
+        identifiants possibles : finess_num, esat_siret et le nom normalisé de l’ESAT en minuscules.
+
+        Si plusieurs réponses sont reliées par au moins un de ces identifiants, elles sont considérées comme appartenant au même groupe de doublons. Le
+        modèle conserve alors uniquement la réponse la plus complète du groupe.
+
+        La complétude est mesurée en comptant le nombre de colonnes renseignées, hors identifiants techniques answer_id et finess_num.
+
+        En cas d’égalité, la réponse conservée est celle ayant le answer_id le plus élevé.
+
+    columns:
+      - name: finess_num
+        description: >
+          Numéro FINESS de l’établissement principal.
+        tests:
+          - unique
+          - not_null
+
+      - name: completeness_score
+        description: >
+          Nombre de colonnes renseignées dans la réponse, hors `answer_id` et `finess_num`. Une valeur élevée indique une réponse plus complète.

@@ -102,3 +102,16 @@ seeds:
     description: >
       Document contenant les intitulés des secteurs d’activité NAF pour 2025 fournis par l’INSEE. Fichier Excel téléchargé par Diego le 22/12/2025 et sa date de publication est le 30/07/2025. Le seed
       correspond à l’onglet 'Divisions'.
+  - name: seed_esat__liste_officielle
+    description: >
+      Liste officielle des ESAT, avec une classification entre établissements principaux et secondaires, ainsi que l’établissement juridique auquel chacun est
+      rattaché. Document fourni par Alice Hamonic le 20/05/2026.
+    config:
+      column_types:
+        EJ-N°FINESS: text
+        ET-N°FINESS: text
+        ET-SIRET: text
+        ET-Code Postal: text
+        ET-Région Code: text
+        ET-Département Code: text
+        ET-Commune Code: text
