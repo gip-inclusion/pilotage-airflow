@@ -151,9 +151,12 @@ identifiers as (
 
     select
         answer_id,
-        'name:' || lower(regexp_replace(trim(esat_name), '\s+', ' ', 'g')) as identifier
+        'dept:' || regexp_replace(trim(esat_dept::text), '\s+', '', 'g')
+        || '|name:' || lower(regexp_replace(trim(esat_name), '\s+', ' ', 'g')) as identifier
     from scored
-    where nullif(trim(esat_name), '') is not null
+    where
+        nullif(trim(esat_name), '') is not null
+        and nullif(trim(esat_dept::text), '') is not null
 
 ),
 
@@ -196,11 +199,39 @@ final_groups as (
 
 ),
 
+group_values as (
+
+    select
+        final_groups.duplicate_group_id,
+
+        array_agg(
+            distinct scored.finess_num
+            order by scored.finess_num
+        ) filter (
+            where nullif(trim(scored.finess_num::text), '') is not null
+        ) as duplicate_group_finess_nums,
+
+        array_agg(
+            distinct scored.esat_name
+            order by scored.esat_name
+        ) filter (
+            where nullif(trim(scored.esat_name), '') is not null
+        ) as duplicate_group_esat_names
+
+    from scored
+    inner join final_groups
+        on scored.answer_id = final_groups.answer_id
+    group by final_groups.duplicate_group_id
+
+),
+
 ranked as (
 
     select
         scored.*,
         final_groups.duplicate_group_id,
+        group_values.duplicate_group_finess_nums,
+        group_values.duplicate_group_esat_names,
         row_number() over (
             partition by final_groups.duplicate_group_id
             order by scored.completeness_score desc, scored.answer_id desc
@@ -208,14 +239,18 @@ ranked as (
     from scored
     inner join final_groups
         on scored.answer_id = final_groups.answer_id
+    left join group_values
+        on final_groups.duplicate_group_id = group_values.duplicate_group_id
 
 )
 
 select
     answer_id,
     finess_num,
+    duplicate_group_finess_nums,
     esat_role,
     esat_name,
+    duplicate_group_esat_names,
     esat_siret,
     managing_organization_finess,
     esat_status,

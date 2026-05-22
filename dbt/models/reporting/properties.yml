@@ -1,0 +1,262 @@
+version: 2
+
+models:
+  - name: rpt_esat__answer_coverage
+    description: >
+      Analyse la couverture des réponses au questionnaire ESAT.
+      Le modèle indique si chaque ESAT a une réponse directe ou indirecte.
+
+      Une réponse directe correspond uniquement à un match sur le FINESS
+      de l'établissement.
+
+      Les autres cas sont des réponses indirectes.
+
+    columns:
+      - name: finess_num
+        description: >
+          Numéro FINESS de l'ESAT.
+        tests:
+          - not_null
+          - unique
+
+      - name: esat_name
+        description: >
+          Nom de l'ESAT.
+
+      - name: type_esat
+        description: >
+          Type de l'établissement.
+
+      - name: managing_organization_finess
+        description: >
+          Numéro FINESS de l'organisation gestionnaire de l'ESAT.
+
+      - name: has_direct_survey_answer_finess
+        description: >
+          Indique si l'ESAT a une réponse directe.
+          C'est le cas si son FINESS apparaît dans une réponse.
+
+      - name: has_indirect_survey_answer_from_managing_organization_finess
+        description: >
+          Indique si l'ESAT a une réponse indirecte via son organisation
+          gestionnaire.
+          C'est le cas si le FINESS de son organisation gestionnaire apparaît
+          dans une réponse.
+
+      - name: has_indirect_survey_answer_matching_name_and_related_managing_organization
+        description: >
+          Indique si l'ESAT a une réponse indirecte via son nom et son
+          organisation gestionnaire.
+          C'est le cas si une réponse a le même nom d'ESAT et contient aussi
+          le FINESS de son organisation gestionnaire.
+
+      - name: has_indirect_survey_answer_from_same_managing_organization
+        description: >
+          Indique si l'ESAT a une réponse indirecte via la même organisation
+          gestionnaire.
+          C'est le cas si une réponse a le même FINESS d'organisation
+          gestionnaire.
+
+      - name: has_answer_coverage
+        description: >
+          Indique si l'ESAT est couvert par au moins une réponse.
+          Cela inclut les réponses directes et indirectes.
+
+  - name: rpt_esat__survey_answers
+    description: >
+      Modèle de reporting qui rassemble les ESAT de la liste officielle, leur réponse
+      associée au questionnaire quand elle existe, et quelques informations géographiques.
+
+      Une ligne correspond à un ESAT de la liste officielle.
+
+      Le modèle part de `fct_esat__survey_answers_mapping`, qui choisit la meilleure
+      réponse disponible pour chaque ESAT. Il ajoute ensuite les informations principales
+      de `dim_esat`, les informations de commune, département et région depuis
+      `dim_commune`, puis toutes les colonnes de la réponse depuis
+      `esat__survey_answers_core`.
+
+      Les ESAT sans réponse associée sont aussi conservés. Dans ce cas,
+      `answer_id` est vide et `matching_method` vaut `no_answer`.
+      Les ESAT avec un matching de faible confiance sont conservés aussi, mais sans
+      réponse associée directement.
+
+    columns:
+      - name: finess_num
+        description: Numéro FINESS de l'ESAT dans la liste officielle.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('dim_esat')
+              field: finess_num
+
+      - name: answer_id
+        description: Identifiant de la réponse au questionnaire associée à l'ESAT.
+
+      - name: matching_method
+        description: Méthode utilisée pour associer l'ESAT à une réponse au questionnaire.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - manual_mapping
+                - direct_finess
+                - same_name_and_related_managing_organization
+                - related_managing_organization
+                - no_answer
+
+      - name: matching_confidence
+        description: Niveau de confiance du matching entre l'ESAT et la réponse au questionnaire.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - high
+                - low
+                - no_answer
+
+      - name: esat_name
+        description: Nom de l'ESAT dans la liste officielle.
+
+      - name: adresse
+        description: Adresse de l'ESAT dans la liste officielle.
+
+      - name: code_postal
+        description: Code postal de l'ESAT.
+
+      - name: type_esat
+        description: Type de l'établissement.
+
+      - name: siret
+        description: Numéro SIRET de l'ESAT.
+
+      - name: code_commune_insee
+        description: Code INSEE de la commune de l'ESAT.
+
+      - name: nom_commune
+        description: Nom de la commune de l'ESAT.
+
+      - name: code_departement_insee
+        description: Code INSEE du département de l'ESAT.
+
+      - name: nom_departement
+        description: Nom du département de l'ESAT.
+
+      - name: code_region_insee
+        description: Code INSEE de la région de l'ESAT.
+
+      - name: nom_region
+        description: Nom de la région de l'ESAT.
+
+      - name: capacite_autorisee
+        description: Capacité autorisée de l'ESAT.
+
+      - name: managing_organization_finess
+        description: Numéro FINESS de l'organisme gestionnaire de l'ESAT dans la liste officielle.
+
+      - name: answer_finess_num
+        description: Numéro FINESS renseigné dans la réponse au questionnaire.
+
+      - name: answer_esat_name
+        description: Nom de l'ESAT renseigné dans la réponse au questionnaire.
+
+      - name: answer_esat_siret
+        description: Numéro SIRET renseigné dans la réponse au questionnaire.
+
+      - name: answer_managing_organization_finess
+        description: Numéro FINESS de l'organisme gestionnaire renseigné dans la réponse au questionnaire.
+
+  - name: rpt_esat__low_confidence_potential_answers
+    description: >
+      Modèle de reporting qui liste les réponses possibles pour les ESAT dont le meilleur
+      matching est de faible confiance.
+
+      Ces réponses ne sont pas associées directement aux ESAT dans le modèle principal.
+      Elles sont listées ici pour permettre une vérification manuelle si besoin.
+
+      Une ligne correspond à une réponse potentielle. Chaque réponse apparaît une seule fois.
+
+    columns:
+      - name: answer_id
+        description: Identifiant de la réponse potentielle au questionnaire.
+        tests:
+          - not_null
+          - unique
+
+      - name: code_departement_insee
+        description: Code INSEE du département de la réponse.
+
+      - name: nom_departement
+        description: Nom du département de la réponse.
+
+      - name: code_region_insee
+        description: Code INSEE de la région de la réponse.
+
+      - name: nom_region
+        description: Nom de la région de la réponse.
+
+  - name: rpt_esat__answer_coverage_by_region
+    description: >
+      Modèle de reporting qui calcule la couverture des réponses ESAT par région.
+
+      Une ligne correspond à une région. Le modèle compte le nombre total d'ESAT,
+      le nombre d'ESAT avec une réponse confirmée, le nombre d'ESAT avec une réponse
+      en attente de validation, et le nombre d'ESAT sans réponse identifiée.
+
+      Le statut de réponse est déduit de la colonne `matching_confidence` du modèle
+      `fct_esat__survey_answers_mapping` :
+      `high` correspond à une réponse confirmée, `low` correspond à une réponse
+      en attente, et `no_answer` correspond à une absence de réponse.
+
+      Les ESAT sans région associée sont exclus du modèle.
+
+    columns:
+      - name: code_region_insee
+        description: Code INSEE de la région.
+        tests:
+          - not_null
+          - unique
+
+      - name: nom_region
+        description: Nom de la région.
+        tests:
+          - not_null
+
+      - name: total_esat
+        description: Nombre total d'ESAT dans la région.
+        tests:
+          - not_null
+
+      - name: answered_count
+        description: >
+          Nombre d'ESAT avec une réponse confirmée.
+          Cela correspond aux lignes avec `matching_confidence = 'high'`.
+        tests:
+          - not_null
+
+      - name: pending_count
+        description: >
+          Nombre d'ESAT avec une réponse potentielle en attente de validation.
+          Cela correspond aux lignes avec `matching_confidence = 'low'`.
+        tests:
+          - not_null
+
+      - name: no_answer_count
+        description: >
+          Nombre d'ESAT sans réponse identifiée.
+          Cela correspond aux lignes avec `matching_confidence = 'no_answer'`.
+        tests:
+          - not_null
+
+      - name: answered_rate
+        description: >
+          Pourcentage d'ESAT avec une réponse confirmée dans la région.
+
+      - name: pending_rate
+        description: >
+          Pourcentage d'ESAT avec une réponse potentielle en attente de validation
+          dans la région.
+
+      - name: no_answer_rate
+        description: >
+          Pourcentage d'ESAT sans réponse identifiée dans la région.

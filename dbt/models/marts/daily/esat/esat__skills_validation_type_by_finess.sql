@@ -1,18 +1,29 @@
-with source as (
+with valid_answers as (
+
+    select answer_id
+    from {{ ref('esat__survey_answers_core') }}
+
+),
+
+source as (
 
     select
-        finess_num,
-        skills_validation_type
-    from {{ ref('int_esat__surveys_esat_answers_deduplicated') }}
+        source.answer_id,
+        source.finess_num,
+        source.skills_validation_type
+    from {{ ref('int_esat__surveys_esat_answers_deduplicated') }} as source
+    inner join valid_answers
+        on source.answer_id = valid_answers.answer_id
     where
-        skills_validation_type is not null
-        and trim(skills_validation_type) <> ''
+        source.skills_validation_type is not null
+        and trim(source.skills_validation_type) <> ''
 
 ),
 
 cleaned as (
 
     select
+        answer_id,
         finess_num,
         trim(
             both '[]' from replace(skills_validation_type, '''', '')
@@ -24,6 +35,7 @@ cleaned as (
 exploded as (
 
     select
+        answer_id,
         finess_num,
         trim(extracted_value) as skills_validation_type
     from cleaned,
@@ -32,6 +44,7 @@ exploded as (
 )
 
 select
+    answer_id,
     finess_num,
     skills_validation_type
 from exploded

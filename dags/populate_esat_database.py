@@ -67,7 +67,7 @@ with DAG("populate_esat_database", schedule=None, **dag_args) as dag:
 
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command="dbt build --select +path:dbt/models/marts/daily/esat",
+        bash_command="dbt build --select +path:dbt/models/marts/daily/esat+",
         env=env_vars,
         append_env=True,
     )
