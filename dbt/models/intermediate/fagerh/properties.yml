@@ -2,6 +2,8 @@ version: 2
 
 models:
   - name: int_fagerh__prestations
+    config:
+      tags: ["fagerh"]
     description: Une ligne par réponse et par prestation renseignée dans le JSON des prestations. Le modèle extrait les principaux indicateurs d'activité et ajoute une classification métier de la prestation à partir de la seed `seed_fagerh__prestation_mapping`.
     columns:
       - name: uuid
@@ -47,6 +49,10 @@ models:
           - not_null
 
   - name: int_fagerh__prestations_publics
+
+    config:
+      tags: ["fagerh"]
+
     description: >
       Données de typologie des publics accompagnés, extraites des JSON de prestations. Le modèle est au format long avec une ligne par réponse, prestation, dimension,
       sous-dimension éventuelle et catégorie. Les catégories avec un effectif nul ne sont pas conservées.
@@ -164,6 +170,10 @@ models:
               expression: "> 0"
 
   - name: int_fagerh__etablissements
+
+    config:
+      tags: ["fagerh"]
+
     description: >
       Table intermédiaire décrivant les établissements FAGERH répondants au questionnaire. Elle identifie les structures, leur département,
       les dispositifs déclarés comme actifs, les ETP associés, ainsi que quelques éléments simples d'offre de service comme l'hébergement
@@ -229,6 +239,10 @@ models:
         description: Indique si l'établissement propose un coin cuisine à disposition.
 
   - name: int_fagerh__metiers
+
+    config:
+      tags: ["fagerh"]
+
     description: >
       Table intermédiaire qui décrit les métiers déclarés dans le volet RH du questionnaire FAGERH.
 

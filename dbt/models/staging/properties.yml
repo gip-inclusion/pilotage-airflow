@@ -752,6 +752,8 @@ models:
           compare_model: source('data_inclusion', 'services_v1')
 
   - name: stg_fagerh__reponses
+    config:
+      tags: ["fagerh"]
     description: Réponses FAGERH nettoyées depuis la table raw.
     columns:
       - name: uuid

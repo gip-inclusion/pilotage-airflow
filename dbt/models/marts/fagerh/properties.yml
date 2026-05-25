@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: fagerh__activite_prestations
+
+    config:
+      tags: ["fagerh"]
+
     description: >
       Table finale d'activité des prestations FAGERH.
 
@@ -121,6 +125,10 @@ models:
         description: Nombre total de personnes accompagnées en distanciel.
 
   - name: fagerh__publics_prestations
+
+    config:
+      tags: ["fagerh"]
+
     description: >
       Table finale des publics accompagnés dans les prestations FAGERH. Ce modèle contient une ligne par réponse, prestation, dimension de public
       et catégorie de public.
@@ -223,6 +231,10 @@ models:
           - not_null
 
   - name: fagerh__rh_metiers
+
+    config:
+      tags: ["fagerh"]
+
     description: >
       Table finale des métiers déclarés dans le questionnaire FAGERH. Ce modèle contient une ligne par réponse, métier et mode d'intervention.
 
@@ -282,6 +294,10 @@ models:
           - not_null
 
   - name: fagerh__rh_etp_dispositif_etablissement
+
+    config:
+      tags: ["fagerh"]
+
     description: >
       Table finale des ETP par dispositif et par établissement. Ce modèle contient une ligne par réponse et par établissement.
 

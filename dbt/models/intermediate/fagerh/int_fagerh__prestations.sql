@@ -76,8 +76,8 @@ final as (
         nullif(prestation_json ->> 'sortiesAvantTerme', '')::integer                                                  as sorties_avant_terme,
         nullif(prestation_json ->> 'sortiesTerme', '')::integer                                                       as sorties_terme,
         nullif(prestation_json ->> 'sorties', '')::integer                                                            as sorties,
-        nullif(prestation_json ->> 'journees', '')::integer                                                           as journees,
-        nullif(prestation_json ->> 'journeesTheoriques', '')::integer                                                 as journees_theoriques,
+        nullif(prestation_json ->> 'journees', '')::numeric                                                           as journees,
+        nullif(prestation_json ->> 'journeesTheoriques', '')::numeric                                                 as journees_theoriques,
         nullif(prestation_json #>> '{directAvecOrp,row,beneficiaires}', '')::integer                                  as direct_beneficiaires,
 
         nullif(prestation_json #>> '{directAvecOrp,row,discontinue_personnes}', '')::integer                          as direct_discontinue_personnes,
@@ -93,10 +93,10 @@ final as (
         nullif(prestation_json #>> '{directAvecOrp,row,distanciel_partiel}', '')::integer                             as direct_distanciel_partiel,
 
         nullif(prestation_json #>> '{directAvecOrp,row,hors_murs_personnes}', '')::integer                            as direct_hors_murs_personnes,
-        nullif(prestation_json #>> '{directAvecOrp,row,hors_murs_journees}', '')::integer                             as direct_hors_murs_journees,
+        nullif(prestation_json #>> '{directAvecOrp,row,hors_murs_journees}', '')::numeric                             as direct_hors_murs_journees,
         nullif(prestation_json #>> '{directAvecOrp,row,hebergees_personnes}', '')::integer                            as direct_hebergees_personnes,
 
-        nullif(prestation_json #>> '{directAvecOrp,row,hebergees_journees}', '')::integer                             as direct_hebergees_journees,
+        nullif(prestation_json #>> '{directAvecOrp,row,hebergees_journees}', '')::numeric                             as direct_hebergees_journees,
         nullif(prestation_json #>> '{directAvecOrp,row,hebergees_nuitees}', '')::integer                              as direct_hebergees_nuitees,
 
         nullif(prestation_json #>> '{sortiesBloc,nb}', '')::integer                                                   as sorties_nb,

@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import requests
+import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators import bash
@@ -69,11 +70,13 @@ with DAG(
         df = pd.read_csv(file_path, dtype=str)
 
         with db.connection_engine().begin() as conn:
+            conn.execute(sqlalchemy.text(f'DROP TABLE IF EXISTS "{RAW_SCHEMA}"."{RAW_TABLE_NAME}" CASCADE'))
+
             df.to_sql(
                 RAW_TABLE_NAME,
                 con=conn,
                 schema=RAW_SCHEMA,
-                if_exists="replace",
+                if_exists="fail",
                 index=False,
             )
 
@@ -98,7 +101,7 @@ with DAG(
 
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command="dbt build --select stg_fagerh_reponses",
+        bash_command='dbt build --select "+tag:fagerh"',
         env=env_vars,
         append_env=True,
     )
