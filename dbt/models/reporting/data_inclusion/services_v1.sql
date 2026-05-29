@@ -1,9 +1,7 @@
 with services as (
-    select * from {{ ref('services_v1') }}
-),
+    select *
+    from {{ ref('stg_di__services') }}
 
-communes as (
-    select * from {{ ref('dim_commune') }}
 )
 
 select
@@ -23,8 +21,7 @@ select
     services.publics_precisions,
     services.conditions_acces,
 
-    services.code_commune_insee,
-    communes.nom_commune as commune,
+    services.code_insee as code_commune_insee,
     services.code_postal,
     services.adresse,
     services.complement_adresse,
@@ -44,14 +41,6 @@ select
     services.nombre_semaines,
     services.horaires_accueil,
     services.adresse_certifiee,
-    services.score_qualite,
-
-    service_thematique,
-    service_public,
-    service_mode_accueil
-
+    services.score_qualite
 from services
-left join lateral unnest(thematiques) as service_thematique on true
-left join lateral unnest(publics) as service_public on true
-left join lateral unnest(modes_accueil) as service_mode_accueil on true
-left join communes on services.code_commune_insee = communes.code_commune_insee
+where source != 'soliguide'

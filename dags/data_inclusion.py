@@ -53,9 +53,13 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
     @task
     def drop_tables():
         con = db.connection_engine()
-        con.execute("""drop table if exists data_inclusion.di_services cascade;
-                       drop table if exists data_inclusion.di_structures_deduplicated cascade;
-                       drop table if exists data_inclusion.di_structures cascade;""")
+        con.execute(
+            f"""
+            drop table if exists {DB_SCHEMA}.raw_di_services cascade;
+            drop table if exists {DB_SCHEMA}.raw_di_structures_deduplicated cascade;
+            drop table if exists {DB_SCHEMA}.raw_di_structures cascade;
+            """
+        )
 
     @task
     def import_structures(**kwargs):
@@ -65,7 +69,6 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
             "raw_di_structures",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
-            if_exists="replace",
             index=False,
             dtype={
                 "reseaux_porteurs": postgresql.ARRAY(sqlalchemy.types.Text),
@@ -82,7 +85,6 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
             "raw_di_structures_deduplicated",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
-            if_exists="replace",
             index=False,
             dtype={
                 "reseaux_porteurs": postgresql.ARRAY(sqlalchemy.types.Text),
@@ -99,7 +101,6 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
             "raw_di_services",
             con=db.connection_engine(),
             schema=DB_SCHEMA,
-            if_exists="replace",
             index=False,
             dtype={
                 "thematiques": postgresql.ARRAY(sqlalchemy.types.Text),
@@ -126,10 +127,9 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         append_env=True,
     )
 
-    dbt_run = bash.BashOperator(
-        task_id="dbt_run",
-        bash_command="dbt run --select staging.data_inclusion intermediate.data_inclusion "
-        "marts_core.data_inclusion +marts.data_inclusion",
+    dbt_build = bash.BashOperator(
+        task_id="dbt_build",
+        bash_command='dbt build --select "+tag:data-inclusion"',
         env=env_vars,
         append_env=True,
     )
@@ -140,6 +140,6 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
         >> [import_structures(), import_structures_deduplicated(), import_services()]
         >> dbt_deps
         >> dbt_seed
-        >> dbt_run
+        >> dbt_build
         >> slack.success_notifying_task()
     )

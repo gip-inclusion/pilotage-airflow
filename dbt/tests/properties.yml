@@ -44,3 +44,15 @@ tests:
   - name: test_stg_contrats_parent
     description: >
         Test permettant de vérifier qu'il n'y a pas plus de 10 (arbitraire) contrat_parent_id pas unique dans stg_contrats_parent
+  - name: test_dim_data_inclusion__structures_row_count
+    description: >
+        Vérifie que la dimension dim_data_inclusion__structures contient le même nombre de lignes que le
+        nombre d'identifiants distincts dans stg_di__structures_deduplicated. Ce test permet de s'assurer
+        que la construction de la dimension ne duplique ni ne supprime de structures dédupliquées.
+  - name: test_int_di__structure_mapping_source_structure_count.sql
+    description: >
+      Vérifie que toutes les structures présentes dans le modèle staging stg_di__structures sont bien incluses dans le modèle
+      intermédiaire int_di__structure_mapping.
+
+      Le test compare le nombre d'id distincts dans stg_di__structures avec le nombre de source_structure_id distincts dans
+      int_di__structure_mapping.

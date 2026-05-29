@@ -1,0 +1,124 @@
+version: 2
+
+models:
+  - name: structures_thematiques_public_accueil_v1
+    description: >
+      Table créée à partir des données sources de l'API data inclusion. Les listes ont été eclatées afin de permettre de filtrer les indicateurs
+      crées a partir de cette table.
+      Si nous avons une ligne qui contient 3 listes de 2 entrées nous allons alors nous retrouver, pour l'entrée unique, avec 2x2x2 lignes.
+
+      Ce modèle ne doit être utilisé que dans le contexte des tableaux de bord legacy de Data Inclusion, car il fait directement référence aux
+      modèles de staging et non à nos marts préparés avec les références aux sources déjà dédupliquées. Il ne doit jamais être utilisé comme
+      source pour d'autres modèles ni pour alimenter d'autres tableaux de bord.
+
+
+    config:
+        tags:
+          - data-inclusion
+
+  - name: services_thematiques_public_accueil_v1
+    description: >
+      Table créée à partir des données sources de l'API data inclusion. Les listes ont été eclatées afin de permettre de filtrer les indicateurs
+      crées a partir de cette table. Si nous avons une ligne qui contient 3 listes de 2 entrées nous allons alors nous retrouver, pour l'entrée
+      unique, avec 2x2x2 lignes.
+
+      Ce modèle ne doit être utilisé que dans le contexte des tableaux de bord legacy de Data Inclusion, car il fait directement référence aux
+      modèles de staging et non à nos marts préparés avec les références aux sources déjà dédupliquées. Il ne doit jamais être utilisé comme
+      source pour d'autres modèles ni pour alimenter d'autres tableaux de bord.
+
+    config:
+        tags:
+          - data-inclusion
+
+  - name: structures_v1_dpt
+    description: >
+      Table qui contient les structures Data Inclusion, sans dédupliquer, avec le département.
+
+      Ce modèle ne doit être utilisé que dans le contexte des tableaux de bord legacy de Data Inclusion, car il fait directement référence aux
+      modèles de staging et non à nos marts préparés avec les références aux sources déjà dédupliquées. Il ne doit jamais être utilisé comme
+      source pour d'autres modèles ni pour alimenter d'autres tableaux de bord.
+
+    config:
+        tags:
+          - data-inclusion
+
+  - name: services_v1
+    description: >
+      Table contenant les services de toutes les sources, sauf Soliguide, car l'exposition publique des données de cette source est
+      réglementée.
+
+      Ce modèle ne doit être utilisé que dans le contexte des tableaux de bord legacy de Data Inclusion, car il fait directement référence aux
+      modèles de staging et non à nos marts préparés avec les références aux sources déjà dédupliquées. Il ne doit jamais être utilisé comme
+      source pour d'autres modèles ni pour alimenter d'autres tableaux de bord.
+
+
+    columns:
+      - name: source
+        tests:
+          - not_null
+
+      - name: structure_id
+        description: Identifiant de la structure porteuse du service, dans l'API Data Inclusion.
+
+        tests:
+          - not_null
+      - name: id
+        description: Identifiant unique du service, combinant l'identifiant du producteur et celui du service.
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        tests:
+          - not_null
+      - name: description
+        tests:
+          - not_null
+      - name: date_maj
+        tests:
+          - not_null
+
+    config:
+        tags:
+          - data-inclusion
+
+  - name: services_v1_dpt
+    description: >
+      Table contenant les services de toutes les sources, sauf Soliguide, car l'exposition publique des données de cette source est
+      réglementée.
+
+      On y ajoute le département afin de permettre aux utilisateurs/trices de filter par département sur le TB données brutes publié sur
+      le site de DI.
+
+      Ce modèle ne doit être utilisé que dans le contexte des tableaux de bord legacy de Data Inclusion, car il fait directement référence aux
+      modèles de staging et non à nos marts préparés avec les références aux sources déjà dédupliquées. Il ne doit jamais être utilisé comme
+      source pour d'autres modèles ni pour alimenter d'autres tableaux de bord.
+
+
+    columns:
+      - name: source
+        tests:
+          - not_null
+
+      - name: structure_id
+        description: Identifiant de la structure porteuse du service, dans l'API Data Inclusion.
+
+        tests:
+          - not_null
+      - name: id
+        description: Identifiant unique du service, combinant l'identifiant du producteur et celui du service.
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        tests:
+          - not_null
+      - name: description
+        tests:
+          - not_null
+      - name: date_maj
+        tests:
+          - not_null
+
+    config:
+        tags:
+          - data-inclusion

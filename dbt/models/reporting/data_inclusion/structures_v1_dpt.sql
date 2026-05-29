@@ -5,13 +5,6 @@ with structures as (
 
 ),
 
-services as (
-
-    select *
-    from {{ ref('services_thematiques_public_accueil_v1') }}
-
-),
-
 communes as (
 
     select *
@@ -20,8 +13,8 @@ communes as (
 )
 
 select
-    structures.source,
     structures.id,
+    structures.source,
 
     structures.nom,
     structures.description,
@@ -31,10 +24,6 @@ select
 
     structures.code_commune_insee,
     structures.commune,
-    communes.nom_region,
-    communes.code_region_insee      as code_region,
-    communes.nom_departement,
-    communes.code_departement_insee as code_dept,
     structures.code_postal,
     structures.adresse,
     structures.complement_adresse,
@@ -51,15 +40,9 @@ select
     structures.score_qualite,
     structures.doublons,
 
-    reseau_porteur,
-
-    services.service_thematique,
-    services.service_public,
-    services.service_mode_accueil
+    communes.nom_departement,
+    communes.code_departement_insee as code_dept
 
 from structures
 left join communes
     on structures.code_commune_insee = communes.code_commune_insee
-left join lateral unnest(structures.reseaux_porteurs) as reseau_porteur on true
-left join services
-    on structures.id = services.structure_id
