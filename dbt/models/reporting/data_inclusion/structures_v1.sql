@@ -1,14 +1,7 @@
 with structures as (
 
     select *
-    from {{ ref('structures_v1') }}
-
-),
-
-services as (
-
-    select *
-    from {{ ref('services_thematiques_public_accueil_v1') }}
+    from {{ ref('data_inclusion__structures_sans_dedupliquer') }}
 
 ),
 
@@ -20,8 +13,8 @@ communes as (
 )
 
 select
+    structures.source_structure_id as id,
     structures.source,
-    structures.id,
 
     structures.nom,
     structures.description,
@@ -30,11 +23,7 @@ select
     structures.siret,
 
     structures.code_commune_insee,
-    structures.commune,
-    communes.nom_region,
-    communes.code_region_insee      as code_region,
-    communes.nom_departement,
-    communes.code_departement_insee as code_dept,
+    communes.nom_commune           as commune,
     structures.code_postal,
     structures.adresse,
     structures.complement_adresse,
@@ -49,17 +38,9 @@ select
     structures.reseaux_porteurs,
     structures.adresse_certifiee,
     structures.score_qualite,
-    structures.doublons,
-
-    reseau_porteur,
-
-    services.service_thematique,
-    services.service_public,
-    services.service_mode_accueil
+    structures.doublons
 
 from structures
 left join communes
     on structures.code_commune_insee = communes.code_commune_insee
-left join lateral unnest(structures.reseaux_porteurs) as reseau_porteur on true
-left join services
-    on structures.id = services.structure_id
+where source != 'soliguide'
