@@ -10,7 +10,7 @@ with thematiques_per_service as (
         max(case when thematique_principale like '%famille%' then 1 else 0 end)                                   as famille_thematique,
         max(case when thematique_principale like '%difficultes_administratives_ou_juridiques%' then 1 else 0 end) as difficultes_administratives_ou_juridiques_thematique,
         max(case when thematique_principale like '%difficultes_financieres%' then 1 else 0 end)                   as difficultes_financieres_thematique
-    from {{ ref('stg_di_services') }},
+    from {{ ref('stg_di__services') }},
         unnest(thematiques) as thematique_principale
     where thematiques is not null
     group by

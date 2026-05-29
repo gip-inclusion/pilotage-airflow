@@ -1,9 +1,14 @@
 version: 2
 
 models:
-  - name: stg_di_services
+  - name: stg_di__services
     description: >
       Modèle de staging contenant la liste des services récupérés via l'API data inclusion. Ici la source soliguide est incluse.
+
+    config:
+        tags:
+            - data-inclusion
+
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -85,9 +90,14 @@ models:
       - name: score_qualite
         description: Score de qualité de la fiche service.
 
-  - name: stg_di_structures
+  - name: stg_di__structures
     description: >
       Modèle de staging contenant la liste des structures récupérées via l'API data inclusion. Ici la source soliguide est incluse.
+
+    config:
+        tags:
+            - data-inclusion
+
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -145,9 +155,14 @@ models:
       - name: doublons
         description: Liste des doublons identifiés pour cette structure.
 
-  - name: stg_di_structures_deduplicated
+  - name: stg_di__structures_deduplicated
     description: >
       Modèle de staging contenant la liste des structures récupérées via l'API data inclusion, sans les doublons. Ici la source soliguide est incluse.
+
+    config:
+        tags:
+            - data-inclusion
+
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
