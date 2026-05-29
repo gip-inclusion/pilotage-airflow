@@ -1,21 +1,22 @@
 with services as (
 
     select *
-    from {{ ref('dim_data_inclusion__services') }}
+    from {{ ref('stg_di__services') }}
 
 ),
 
-communes as (
+structure_source_mapping as (
 
     select *
-    from {{ ref('dim_commune') }}
+    from {{ ref('int_di__structure_source_mapping') }}
 
 )
 
 select
+    services.id         as service_id,
     services.source,
-    services.structure_id,
-    services.service_id,
+    structure_source_mapping.structure_id,
+
     services.nom,
     services.description,
     services.lien_source,
@@ -27,12 +28,14 @@ select
     services.publics,
     services.publics_precisions,
     services.conditions_acces,
+
+    services.code_insee as code_commune_insee,
     services.code_postal,
-    services.code_commune_insee,
     services.adresse,
     services.complement_adresse,
     services.longitude,
     services.latitude,
+
     services.telephone,
     services.courriel,
     services.modes_accueil,
@@ -46,23 +49,8 @@ select
     services.nombre_semaines,
     services.horaires_accueil,
     services.adresse_certifiee,
-    services.score_qualite,
-
-    service_thematique,
-    service_public,
-    service_mode_accueil,
-
-    communes.nom_commune as commune,
-    communes.nom_region,
-    communes.code_region_insee,
-    communes.nom_departement,
-    communes.code_departement_insee
+    services.score_qualite
 
 from services
-left join communes
-    on services.code_commune_insee = communes.code_commune_insee
-left join lateral unnest(services.thematiques) as service_thematique on true
-left join lateral unnest(services.publics) as service_public on true
-left join lateral unnest(services.modes_accueil) as service_mode_accueil on true
-
-where services.source != 'soliguide'
+left join structure_source_mapping
+    on services.structure_id = structure_source_mapping.source_structure_id

@@ -1,0 +1,286 @@
+version: 2
+
+models:
+  - name: dim_data_inclusion__structures
+    description: >
+      Dimension des structures Data Inclusion. Ce modèle contient une ligne par structure dédupliquée.
+
+      Il garde les informations propres à la structure, comme le nom, le SIRET, l'adresse, le contact ou les
+      horaires.
+
+      Il ajoute aussi la liste des sources dans lesquelles la structure apparaît. Cela permet de savoir si une
+      structure vient d'une seule source ou de plusieurs sources.
+
+    config:
+        tags:
+            - data-inclusion
+    columns:
+      - name: structure_id
+        description: >
+          Identifiant unique de la structure Data Inclusion dédupliquée. Géneré dans
+          `int_data_inclusion__structure_source_mapping`
+        tests:
+          - not_null
+          - unique
+
+      - name: nom
+        description: >
+          Nom de la structure.
+
+      - name: description
+        description: >
+          Description de la structure.
+
+      - name: lien_source
+        description: >
+          Lien vers la fiche de la structure dans la source conservée.
+
+      - name: date_maj
+        description: >
+          Date de dernière mise à jour de la structure dans la source conservée.
+
+      - name: siret
+        description: >
+          Numéro SIRET de la structure, lorsqu'il est disponible.
+
+      - name: code_commune_insee
+        description: >
+          Code INSEE de la commune de la structure. Il permet de faire le lien avec `dim_commune`.
+
+      - name: code_postal
+        description: >
+          Code postal de la structure.
+
+      - name: adresse
+        description: >
+          Adresse de la structure.
+
+      - name: complement_adresse
+        description: >
+          Complément d'adresse de la structure.
+
+      - name: longitude
+        description: >
+          Longitude de la structure.
+
+      - name: latitude
+        description: >
+          Latitude de la structure.
+
+      - name: telephone
+        description: >
+          Numéro de téléphone de la structure.
+
+      - name: courriel
+        description: >
+          Adresse email de contact de la structure.
+
+      - name: site_web
+        description: >
+          Site web de la structure.
+
+      - name: horaires_accueil
+        description: >
+          Horaires d'accueil de la structure.
+
+      - name: accessibilite_lieu
+        description: >
+          Informations sur l'accessibilité du lieu.
+
+      - name: reseaux_porteurs
+        description: >
+          Réseaux porteurs associés à la structure.
+
+      - name: adresse_certifiee
+        description: >
+          Indique si l'adresse de la structure est certifiée dans Data Inclusion.
+
+      - name: score_qualite
+        description: >
+          Score de qualité de la fiche structure dans Data Inclusion.
+
+      - name: sources
+        description: >
+          Liste des sources dans lesquelles la structure apparaît.
+
+      - name: sources_count
+        description: >
+          Nombre de sources dans lesquelles la structure apparaît.
+        tests:
+          - not_null
+
+      - name: is_multisource
+        description: >
+          Indique si la structure apparaît dans plusieurs sources.
+        tests:
+          - not_null
+          - accepted_values:
+                arguments:
+                    values: [true, false]
+                    quote: false
+
+  - name: dim_data_inclusion__services
+    description: >
+      Dimension des services Data Inclusion. Ce modèle contient une ligne par service reçu depuis Data Inclusion.
+
+      Il garde les informations propres au service, comme le nom, la description, les publics, les thématiques,
+      les modalités d'accueil ou les horaires.
+
+      Le modèle rattache aussi chaque service à la structure Data Inclusion dédupliquée correspondante, grâce à
+      `structure_id`. Pour retrouver le `structure_id` original de l'API Data Inclusion, il faut faire la jointure
+      avec le modèle `int_data_inclusion__structure_source_mapping`.
+
+
+    config:
+      tags:
+        - data-inclusion
+
+    columns:
+      - name: service_id
+        description: >
+          Identifiant unique du service Data Inclusion.
+        tests:
+          - not_null
+          - unique
+
+      - name: source
+        description: >
+          Source d'origine du service dans Data Inclusion.
+        tests:
+          - not_null
+
+      - name: structure_id
+        description: >
+          Identifiant de la structure Data Inclusion dédupliquée à laquelle le service est rattaché. C'est la
+          clé à utiliser pour faire le lien avec `dim_data_inclusion__structures`.
+
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_data_inclusion__structures')
+                field: structure_id
+
+      - name: nom
+        description: >
+          Nom du service.
+
+      - name: description
+        description: >
+          Description du service.
+
+      - name: lien_source
+        description: >
+          Lien vers la fiche du service dans la source d'origine.
+
+      - name: date_maj
+        description: >
+          Date de dernière mise à jour du service dans la source d'origine.
+
+      - name: type
+        description: >
+          Type de service.
+
+      - name: thematiques
+        description: >
+          Thématiques associées au service.
+
+      - name: frais
+        description: >
+          Indique si le service peut avoir des frais.
+
+      - name: frais_precisions
+        description: >
+          Précisions sur les frais du service.
+
+      - name: publics
+        description: >
+          Publics concernés par le service.
+
+      - name: publics_precisions
+        description: >
+          Précisions sur les publics concernés.
+
+      - name: conditions_acces
+        description: >
+          Conditions d'accès au service.
+
+      - name: code_commune_insee
+        description: >
+          Code INSEE de la commune du service. Il permet de faire le lien avec `dim_commune`.
+
+      - name: code_postal
+        description: >
+          Code postal du service.
+
+      - name: adresse
+        description: >
+          Adresse du service.
+
+      - name: complement_adresse
+        description: >
+          Complément d'adresse du service.
+
+      - name: longitude
+        description: >
+          Longitude du service.
+
+      - name: latitude
+        description: >
+          Latitude du service.
+
+      - name: telephone
+        description: >
+          Numéro de téléphone du service.
+
+      - name: courriel
+        description: >
+          Adresse email de contact du service.
+
+      - name: modes_accueil
+        description: >
+          Modes d'accueil proposés par le service.
+
+      - name: zone_eligibilite
+        description: >
+          Zone d'éligibilité du service.
+
+      - name: contact_nom_prenom
+        description: >
+          Nom et prénom du contact pour le service.
+
+      - name: lien_mobilisation
+        description: >
+          Lien utilisé pour mobiliser le service.
+
+      - name: modes_mobilisation
+        description: >
+          Modes de mobilisation possibles pour le service.
+
+      - name: mobilisable_par
+        description: >
+          Acteurs pouvant mobiliser le service.
+
+      - name: mobilisation_precisions
+        description: >
+          Précisions sur la mobilisation du service.
+
+      - name: volume_horaire_hebdomadaire
+        description: >
+          Volume horaire hebdomadaire du service.
+
+      - name: nombre_semaines
+        description: >
+          Nombre de semaines concernées par le service.
+
+      - name: horaires_accueil
+        description: >
+          Horaires d'accueil du service.
+
+      - name: adresse_certifiee
+        description: >
+          Indique si l'adresse du service est certifiée dans Data Inclusion.
+
+      - name: score_qualite
+        description: >
+          Score de qualité de la fiche service dans Data Inclusion.

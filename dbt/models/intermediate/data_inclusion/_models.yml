@@ -1,15 +1,47 @@
 version: 2
 
 models:
-  - name: int_di_services_geo
+  - name: int_data_inclusion__structure_source_mapping
     description: >
-      Modèle intermédiaire enrichissant les services data inclusion avec les données géographiques (département, région, zone d'emploi, EPCI).
+        Ce modèle fait le lien entre les structures dédupliquées et les structures d'origine.
+
+        Il contient une ligne par structure présente dans une source.
+
+        Il permet de savoir quelles structures d'origine correspondent à une même structure Data Inclusion
+        dédupliquée.
+
+        Il est utilisé pour rattacher les services à la bonne structure dédupliquée, et pour compter dans
+        combien de sources une structure apparaît.
+
+    config:
+        tags:
+            - data-inclusion
+
+    columns:
+      - name: structure_id
+        description: >
+          Identifiant unique de la structure Data Inclusion consolidée.
+          Il est généré à partir de la source et de l'identifiant de la structure
+          conservée dans la table dédupliquée. Il reste stable tant que cette
+          structure conservée ne change pas.
+        tests:
+          - not_null
+
+      - name: source
+        description: >
+          Source d'origine dans laquelle la structure est présente.
+        tests:
+          - not_null
+
+      - name: source_structure_id
+        description: >
+          Identifiant original de la structure dans sa source.
+        tests:
+          - not_null
+          - unique
+
     tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: ref('stg_di_services')
-  - name: int_di_structures_geo
-    description: >
-      Modèle intermédiaire enrichissant les services data inclusion avec les données géographiques (département, région, zone d'emploi, EPCI).
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: ref('stg_di_structures')
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - source
+            - source_structure_id
