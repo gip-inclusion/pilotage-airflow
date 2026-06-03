@@ -15,7 +15,10 @@ models:
         description: Nom de la structure du contact.
 
       - name: Réseau
-        description: Identifiant numérique du réseau auquel appartient la structure.
+        description: >
+          Calcul du taux de bouche à oreille,
+          réseau = 1 : je commande grâce à un pro
+          réseau = 2 : je commande grâce à un pro qui a commandé grâce à un pro
 
       - name: LIEN_TALLY
         description: Lien vers le formulaire Tally de commande pré-rempli pour ce contact.
@@ -105,7 +108,7 @@ models:
         description: Historique ou notes de suivi de la relation avec ce contact.
 
       - name: Mail CC
-        description: Adresse email en copie pour les envois à ce contact.
+        description: Adresses emails des autres professionnels qui utilisent le carnet dans la structure de ce contact
 
       - name: Type de contact
         description: Distingue les contacts ayant passé au moins une commande des contacts non commandeurs.
@@ -114,7 +117,8 @@ models:
         description: Nom de l'organisation ou du réseau de tutelle de la structure.
 
       - name: Commandeur référent
-        description: Nom du commandeur référent associé à ce contact non commandeur.
+        description: >
+          contact non commande : contacts ajoutés par le contact qui commande, car ils vont également utiliser le carnet au sein de la même structure
 
       - name: Commandes
         description: Identifiants des commandes liées à ce contact (champ texte, liste séparée par des virgules).
@@ -227,7 +231,7 @@ models:
         description: Identifiant du répondant dans Tally.
 
       - name: Submitted at
-        description: Horodatage de soumission du formulaire de commande.
+        description: Horodatage de soumission qui définit la date de commande
 
       - name: Nombre de Carnets
         description: Nombre de carnets commandés dans cette commande.
@@ -275,10 +279,10 @@ models:
         description: Vrai si la commande a été confirmée par l'équipe Mon Récap.
 
       - name: "Expédition confirmée"
-        description: Vrai si l'expédition a été confirmée.
+        description: Vrai si l'expédition a été confirmée par le fabricant
 
       - name: "Commande validée"
-        description: Vrai si la commande a passé toutes les étapes de validation (confirmation + fabrication + expédition).
+        description: Vrai si l'équipe Mon Récap a confirmé la commande
 
       - name: Source
         description: Canal d'acquisition de la commande (valeurs non normalisées — casse et orthographe variables).
@@ -302,7 +306,7 @@ models:
         description: Date à laquelle les carnets ont été mis en fabrication.
 
       - name: "Date d'expédition"
-        description: "Date d'expédition des carnets vers le commandeur."
+        description: Date à laquelle le fabricant nous indique envoyer les carnets au commandeur
 
       - name: start automation
         description: Vrai si le déclenchement des automations (mails, workflows) a été activé pour cette commande.
