@@ -119,6 +119,22 @@ models:
                     values: [true, false]
                     quote: false
 
+      - name: source_structure_ids
+        description: Liste des identifiants des structures source regroupées sous la même structure dédupliquée.
+
+      - name: source_structures_count
+        description: Nombre de structures source regroupées sous la même structure dédupliquée.
+        tests:
+          - not_null
+
+      - name: has_multiple_source_structures
+        description: Indique si la structure dédupliquée regroupe plusieurs structures source.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
   - name: dim_data_inclusion__services
     description: >
       Dimension des services Data Inclusion. Ce modèle contient une ligne par service reçu depuis Data Inclusion.
