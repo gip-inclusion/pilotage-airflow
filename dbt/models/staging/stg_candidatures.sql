@@ -1,37 +1,82 @@
 select
     {{ pilo_star(source('emplois', 'candidatures'),
-        except=["date_mise_à_jour_metabase", "état", "motif_de_refus", "origine", "origine_détaillée", "candidature_archivee", "type_contrat"], relation_alias='candidatures') }},
+        except=[
+            "date_mise_à_jour_metabase",
+            "état",
+            "motif_de_refus",
+            "origine",
+            "origine_détaillée",
+            "candidature_archivee",
+            "type_contrat",
+
+            "département_structure",
+            "nom_département_structure",
+            "région_structure"
+        ],
+        relation_alias='candidatures'
+    ) }},
+
     {{ pilo_star(ref('stg_organisations'),
-        except=["id", "date_mise_à_jour_metabase", "ville", "code_commune", "type", "date_inscription", "total_candidatures", "total_membres", "total_embauches", "date_dernière_candidature"], relation_alias='org_prescripteur') }},
+        except=[
+            "id",
+            "date_mise_à_jour_metabase",
+            "ville",
+            "code_commune",
+            "type",
+            "date_inscription",
+            "total_candidatures",
+            "total_membres",
+            "total_embauches",
+            "date_dernière_candidature"
+        ],
+        relation_alias='org_prescripteur'
+    ) }},
+
     c_type.label                                           as type_contrat_candidature,
+
+    -- géographie structure depuis stg_structures, donc depuis dim_commune
+    struct."département"                                   as "département_structure",
+    struct."nom_département"                               as "nom_département_structure",
+    struct."région"                                        as "région_structure",
     struct.nom_epci_structure,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
+
+    -- géographie prescripteur depuis stg_organisations
     org_prescripteur.zone_emploi                           as bassin_emploi_prescripteur,
+    org_prescripteur.code_commune                          as code_commune_prescripteur,
+    org_prescripteur.ville                                 as ville_prescripteur,
+
     org_prescripteur.type                                  as type_org_prescripteur,
     org_prescripteur.date_inscription                      as date_inscription_orga,
     grp_strct.groupe                                       as categorie_structure,
     struct.structure_convergence,
+
     case
         when candidatures."état" = 'Candidature déclinée' then 'Candidature refusée'
         else candidatures."état"
     end                                                    as "état",
+
     case
         when candidatures.origine_id_structure != candidatures.id_structure
             then 'Employeur orienteur'
         else candidatures.origine
     end                                                    as origine,
+
     case
         when candidatures."origine_détaillée" = 'Prescripteur habilité Autre'
             then 'Prescripteur habilité par habilitation préfectorale'
         else candidatures."origine_détaillée"
     end                                                    as "origine_détaillée",
+
     case
         when candidatures.candidature_archivee = 1 then 'Candidatures archivées'
         else 'Candidatures non archivées'
     end                                                    as candidature_archivee,
+
     extract(day from candidatures."délai_de_réponse")      as temps_de_reponse,
     extract(day from candidatures."délai_prise_en_compte") as temps_de_prise_en_compte,
     extract(year from candidatures.date_candidature)       as annee_candidature,
+
     case
         when motif.label = 'Autre'
             then 'Autre (la SIAE a saisi le motif "autre")'
@@ -40,14 +85,18 @@ select
 
 from
     {{ source('emplois', 'candidatures') }} as candidatures
+
 left join {{ source('emplois', 'c1_ref_type_contrat') }} as c_type
     on candidatures.type_contrat = c_type.code
+
 left join {{ source('emplois', 'c1_ref_motif_de_refus') }} as motif
     on candidatures.motif_de_refus = motif.code
+
 left join {{ ref('stg_structures') }} as struct
     on candidatures.id_structure = struct.id
+
 left join {{ ref('stg_organisations') }} as org_prescripteur
     on candidatures.id_org_prescripteur = org_prescripteur.id
-left join
-    {{ ref('groupes_structures') }} as grp_strct
+
+left join {{ ref('groupes_structures') }} as grp_strct
     on candidatures.type_structure = grp_strct.structure
