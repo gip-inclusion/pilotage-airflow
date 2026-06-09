@@ -1,3 +1,4 @@
+import contextlib
 import io
 import textwrap
 from contextlib import closing
@@ -10,6 +11,26 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql.ddl import CreateSchema
 
 from dags.common import dataframes
+
+
+@contextlib.contextmanager
+def tunnel_db_url(db_url_variable, ssh_conn_id=None):
+    db_url = furl(Variable.get(db_url_variable))
+    db_url.scheme = "postgresql"
+
+    if not ssh_conn_id:
+        yield db_url.url
+        return
+
+    ssh_hook = ssh.SSHHook(ssh_conn_id=ssh_conn_id)
+    tunnel = ssh_hook.get_tunnel(remote_host=db_url.host, remote_port=db_url.port)
+    tunnel.start()
+    try:
+        db_url.host = "127.0.0.1"
+        db_url.port = tunnel.local_bind_port
+        yield db_url.url
+    finally:
+        tunnel.stop()
 
 
 def connection_envvars():
