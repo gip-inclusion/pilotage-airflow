@@ -1,7 +1,7 @@
 with thematiques_per_service as (
     select
-        id                                                                                                        as id_service,
-        code_insee,
+        services.id                                                                                               as id_service,
+        services.code_insee,
         max(case when thematique_principale like '%numerique%' then 1 else 0 end)                                 as numerique_thematique,
         max(case when thematique_principale like '%logement-hebergement%' then 1 else 0 end)                      as logement_hebergement_thematique,
         max(case when thematique_principale like '%sante%' then 1 else 0 end)                                     as sante_thematique,
@@ -10,12 +10,14 @@ with thematiques_per_service as (
         max(case when thematique_principale like '%famille%' then 1 else 0 end)                                   as famille_thematique,
         max(case when thematique_principale like '%difficultes_administratives_ou_juridiques%' then 1 else 0 end) as difficultes_administratives_ou_juridiques_thematique,
         max(case when thematique_principale like '%difficultes_financieres%' then 1 else 0 end)                   as difficultes_financieres_thematique
-    from {{ ref('stg_di__services') }},
-        unnest(thematiques) as thematique_principale
-    where thematiques is not null
+    from {{ ref('stg_di__services') }} as services
+    inner join {{ ref('stg_di__structures_deduplicated') }} as structure
+        on services.structure_id = structure.id,
+        unnest(services.thematiques) as thematique_principale
+    where services.thematiques is not null
     group by
-        id,
-        code_insee
+        services.id,
+        services.code_insee
 )
 
 select
