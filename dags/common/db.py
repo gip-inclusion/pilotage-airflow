@@ -1,3 +1,4 @@
+import datetime
 import io
 import textwrap
 from contextlib import closing
@@ -96,6 +97,16 @@ class MetabaseDatabaseCursor3:
             self.connection.close()
 
 
+def date_column_types(df):
+    # pandas reads DATE columns as object dtype, which to_sql() maps to TEXT; map them back to DATE.
+    types = {}
+    for col in df.select_dtypes(include=["object"]):
+        values = df[col].dropna()
+        if not values.empty and type(values.iloc[0]) is datetime.date:
+            types[col] = sqlalchemy.Date()
+    return types
+
+
 class DBConnection:
     def __init__(self, db_url_variable, ssh_conn_id=None):
         self.db_url_variable = db_url_variable
@@ -132,14 +143,15 @@ class DBConnection:
         with self.engine.connect() as conn:
             yield from pd.read_sql_query(query, conn, chunksize=chunksize)
 
-    def to_sql(self, df, table, schema, if_exists="replace"):
+    def to_sql(self, df, table, schema, if_exists="replace", infer_dates=False):
         df = df.convert_dtypes(convert_string=False, convert_floating=False)
         for col in df.select_dtypes(include=["timedelta64"]):
             df[col] = df[col].astype("int64")
 
         if if_exists == "replace":
+            dtype = date_column_types(df) or None if infer_dates else None
             with self.engine.begin() as conn:
-                df.head(0).to_sql(name=table, con=conn, schema=schema, if_exists="replace", index=False)
+                df.head(0).to_sql(name=table, con=conn, schema=schema, if_exists="replace", index=False, dtype=dtype)
 
         with closing(self.engine.raw_connection()) as raw_conn:
             with raw_conn.cursor() as cur:

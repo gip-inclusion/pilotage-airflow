@@ -156,7 +156,13 @@ def sync_tables(table_names, src_schema, dest_schema, from_db=None):
                         )
                         logger.info("Anonymized column %s in table %s.", col, table)
 
-                dst_db.to_sql(chunk, table=table, schema=dest_schema, if_exists="replace" if i == 0 else "append")
+                dst_db.to_sql(
+                    chunk,
+                    table=table,
+                    schema=dest_schema,
+                    if_exists="replace" if i == 0 else "append",
+                    infer_dates=True,
+                )
                 loaded = True
                 logger.info("Exported %d rows to %s.%s", len(chunk), dest_schema, table)
                 del chunk
