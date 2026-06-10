@@ -16,7 +16,7 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          if ! echo "$PR_BODY" | grep --quiet "notion.so"; then
-            echo "PR description must contain a Notion link (notion.so)"
+          if ! echo "$PR_BODY" | grep --quiet --extended-regexp "https?://[^[:space:]]*notion\.(so|com)"; then
+            echo "PR description must contain a Notion link (notion.so or notion.com)"
             exit 1
           fi
