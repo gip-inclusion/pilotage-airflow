@@ -122,3 +122,7 @@ seeds:
       mapper directement une réponse à un ESAT.
 
       Cette donnée sera utilisée en priorité pour faire le mapping, avant toutes les autres méthodes de matching, comme le matching par FINESS, par nom, etc.
+    config:
+      column_types:
+        establishment_finess_num: text
+        answer_id: text

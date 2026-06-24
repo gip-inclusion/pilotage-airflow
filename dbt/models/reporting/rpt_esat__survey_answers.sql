@@ -28,7 +28,7 @@ communes as (
 survey_answers as (
 
     select *
-    from {{ ref('esat__survey_answers_core') }}
+    from {{ ref('fct_esat__survey_answers') }}
 
 )
 
@@ -59,7 +59,7 @@ select
     survey_answers.managing_organization_finess as answer_managing_organization_finess,
 
     {{ pilo_star(
-        ref('esat__survey_answers_core'),
+        ref('fct_esat__survey_answers'),
         except=[
             "answer_id",
             "finess_num",
@@ -67,7 +67,9 @@ select
             "esat_siret",
             "managing_organization_finess",
             "duplicate_group_esat_names",
-            "duplicate_group_finess_nums"
+            "duplicate_group_finess_nums",
+            "mapped_esat_count",
+            "mapped_finess_nums"
         ],
         relation_alias='survey_answers'
     ) }}

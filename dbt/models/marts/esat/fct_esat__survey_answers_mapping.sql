@@ -8,14 +8,28 @@ with esat as (
 
 ),
 
+completed_answers as (
+
+    select answer_id
+    from {{ ref('int_esat__completed_answers') }}
+
+),
+
+deduplicated_answers as (
+
+    select *
+    from {{ ref('int_esat__surveys_esat_answers_deduplicated') }}
+
+),
+
 survey_answers as (
 
     select
-        answer_id,
-        duplicate_group_finess_nums,
-        managing_organization_finess,
-        lower(trim(esat_name)) as esat_name
-    from {{ ref('esat__survey_answers_core') }}
+        deduplicated_answers.*,
+        lower(trim(deduplicated_answers.esat_name)) as normalized_esat_name
+    from deduplicated_answers
+    inner join completed_answers
+        on deduplicated_answers.answer_id = completed_answers.answer_id
 
 ),
 
@@ -62,7 +76,7 @@ candidate_matches as (
         'high'                                        as matching_confidence
     from esat
     inner join survey_answers
-        on esat.esat_name = survey_answers.esat_name
+        on esat.esat_name = survey_answers.normalized_esat_name
     where
         esat.managing_organization_finess = survey_answers.managing_organization_finess
         or esat.managing_organization_finess

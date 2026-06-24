@@ -1,22 +1,12 @@
-with valid_answers as (
-
-    select answer_id
-    from {{ ref('esat__survey_answers_core') }}
-
-),
-
-source as (
+with source as (
 
     select
-        source.answer_id,
-        source.finess_num,
-        source.insertion_staff_funding
-    from {{ ref('int_esat__surveys_esat_answers_deduplicated') }} as source
-    inner join valid_answers
-        on source.answer_id = valid_answers.answer_id
+        answer_id,
+        insertion_staff_funding
+    from {{ ref('fct_esat__survey_answers') }}
     where
-        source.insertion_staff_funding is not null
-        and trim(source.insertion_staff_funding) <> ''
+        insertion_staff_funding is not null
+        and trim(insertion_staff_funding) <> ''
 
 ),
 
@@ -24,7 +14,6 @@ cleaned as (
 
     select
         answer_id,
-        finess_num,
         trim(
             both '[]' from replace(insertion_staff_funding, '''', '')
         ) as insertion_staff_funding_list
@@ -36,7 +25,6 @@ exploded as (
 
     select
         answer_id,
-        finess_num,
         trim(extracted_value) as insertion_staff_funding_item
     from cleaned,
         unnest(
@@ -47,7 +35,6 @@ exploded as (
 
 select
     answer_id,
-    finess_num,
     insertion_staff_funding_item
 from exploded
 where insertion_staff_funding_item <> ''

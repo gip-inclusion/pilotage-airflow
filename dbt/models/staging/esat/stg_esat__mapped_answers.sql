@@ -6,6 +6,6 @@ with mapped_answers as (
 )
 
 select
-    establishment_finess_num::text as finess_num,
-    answer_id
+    trim(establishment_finess_num::text) as finess_num,
+    trim(answer_id::text)                as answer_id
 from mapped_answers

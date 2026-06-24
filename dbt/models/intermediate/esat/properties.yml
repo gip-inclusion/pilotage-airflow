@@ -2,6 +2,9 @@ version: 2
 
 models:
   - name: int_esat__legal_entities
+    config:
+      tags:
+        - esat
     description: >
       Modèle intermédiaire qui recense les établissements juridiques présents dans la liste officielle des ESAT.
 
@@ -32,6 +35,9 @@ models:
         description: Adresse e-mail de l'établissement juridique.
 
   - name: int_esat__surveys_esat_answers_deduplicated
+    config:
+      tags:
+        - esat
     description: >
         Modèle intermédiaire de déduplication des réponses au questionnaire ESAT 2025.
 
@@ -71,3 +77,30 @@ models:
       - name: completeness_score
         description: >
           Nombre de colonnes renseignées dans la réponse, hors `answer_id` et `finess_num`. Une valeur élevée indique une réponse plus complète.
+
+  - name: int_esat__completed_answers
+    config:
+      tags:
+        - esat
+    description: >
+      Réponses au questionnaire ESAT 2025 considérées comme suffisamment complètes pour être utilisées dans le processus de rapprochement avec la liste officielle
+      des ESAT.
+
+      On ne conserve que les réponses avec plus de 10 questions répondues.
+
+    columns:
+      - name: answer_id
+        description: >
+          Identifiant technique de la réponse au questionnaire.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('int_esat__surveys_esat_answers_deduplicated')
+              field: answer_id
+
+      - name: completeness_score
+        description: >
+          Nombre de questions renseignées dans la réponse au questionnaire.
+        tests:
+          - not_null
