@@ -15,10 +15,26 @@ esat as (
 
 ),
 
-survey_answers as (
+completed_answers as (
+
+    select answer_id
+    from {{ ref('int_esat__completed_answers') }}
+
+),
+
+deduplicated_answers as (
 
     select *
-    from {{ ref('esat__survey_answers_core') }}
+    from {{ ref('int_esat__surveys_esat_answers_deduplicated') }}
+
+),
+
+survey_answers as (
+
+    select deduplicated_answers.*
+    from deduplicated_answers
+    inner join completed_answers
+        on deduplicated_answers.answer_id = completed_answers.answer_id
 
 ),
 
@@ -50,7 +66,7 @@ potential_answers as (
 
 select
     {{ pilo_star(
-        ref('esat__survey_answers_core'),
+        ref('int_esat__surveys_esat_answers_deduplicated'),
         except=[
             "duplicate_group_finess_nums",
             "duplicate_group_esat_names"

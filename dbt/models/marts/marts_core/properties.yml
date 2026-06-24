@@ -244,6 +244,9 @@ models:
           à partir de la commune parente
 
   - name: dim_esat
+    config:
+      tags:
+        - esat
     description: >
       Table de dimension recensant les ESAT issus de la liste officielle fournie. Elle contient une ligne unique par établissement ESAT, avec ses principaux
       attributs descriptifs et les clés permettant de le rattacher à d'autres référentiels (le code commune et le code commune de son établissement juridique).

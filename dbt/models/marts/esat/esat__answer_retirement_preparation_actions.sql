@@ -1,22 +1,12 @@
-with valid_answers as (
-
-    select answer_id
-    from {{ ref('esat__survey_answers_core') }}
-
-),
-
-source as (
+with source as (
 
     select
-        source.answer_id,
-        source.finess_num,
-        source.retirement_preparation_actions
-    from {{ ref('int_esat__surveys_esat_answers_deduplicated') }} as source
-    inner join valid_answers
-        on source.answer_id = valid_answers.answer_id
+        answer_id,
+        retirement_preparation_actions
+    from {{ ref('fct_esat__survey_answers') }}
     where
-        source.retirement_preparation_actions is not null
-        and trim(source.retirement_preparation_actions) <> ''
+        retirement_preparation_actions is not null
+        and trim(retirement_preparation_actions) <> ''
 
 ),
 
@@ -24,7 +14,6 @@ cleaned as (
 
     select
         answer_id,
-        finess_num,
         trim(
             both '[]' from replace(retirement_preparation_actions, '''', '')
         ) as retirement_preparation_action_list
@@ -36,7 +25,6 @@ exploded as (
 
     select
         answer_id,
-        finess_num,
         trim(extracted_value) as retirement_preparation_action
     from cleaned,
         unnest(
@@ -47,7 +35,6 @@ exploded as (
 
 select
     answer_id,
-    finess_num,
     retirement_preparation_action
 from exploded
 where retirement_preparation_action <> ''

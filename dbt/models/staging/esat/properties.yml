@@ -2,6 +2,9 @@ version: 2
 
 models:
   - name: stg_esat__liste_officielle
+    config:
+      tags:
+        - esat
     description: >
       Modèle de staging de la liste officielle des ESAT.
       Il reprend les données fournies dans la seed `seed_esat__liste_officielle` et renomme les colonnes pour les rendre plus faciles à exploiter dans les
@@ -75,6 +78,9 @@ models:
         description: Capacité autorisée agrégée de l'établissement ESAT.
 
   - name: stg_esat__surveys_esat_answers
+    config:
+      tags:
+        - esat
     description: >
         Réponses au questionnaire 2025 relatif au Plan de Transformation des ESAT, transmis par les établissements
         dans le cadre de leur obligation réglementaire de reporting aux ARS. Ce modèle conserve une ligne par
@@ -646,6 +652,9 @@ models:
             signaler des questions auxquelles l’ESAT n’a pas pu répondre.
 
   - name: stg_esat__liste_mapped_answers
+    config:
+      tags:
+        - esat
     description: >
         Modèle de staging basé sur les données fournies dans la seed
         `seed_esat__mapping_reponses_manuelles`.

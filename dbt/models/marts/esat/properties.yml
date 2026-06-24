@@ -1,0 +1,838 @@
+version: 2
+
+models:
+  - name: esat__answer_software_financial_help
+    config:
+      tags:
+        - esat
+    description: >
+      Aides financières déclarées dans les réponses au questionnaire.
+
+      La colonne source peut contenir plusieurs valeurs. Ce modèle crée une ligne
+      par réponse et par aide financière déclarée.
+
+    columns:
+      - name: answer_id
+        description: >
+          Identifiant de la réponse au questionnaire.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_esat__survey_answers')
+              field: answer_id
+
+      - name: software_financial_help
+        description: >
+          Aide financière déclarée pour le carnet de parcours et de compétences,
+          ou pour l'achat d'un logiciel.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - answer_id
+            - software_financial_help
+
+
+  - name: esat__answer_support_themes
+    config:
+      tags:
+        - esat
+    description: >
+      Thématiques d'accompagnement déclarées dans les réponses au questionnaire.
+
+      La colonne source peut contenir plusieurs valeurs. Ce modèle crée une ligne
+      par réponse et par thématique.
+
+    columns:
+      - name: answer_id
+        description: >
+          Identifiant de la réponse au questionnaire.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_esat__survey_answers')
+              field: answer_id
+
+      - name: support_theme
+        description: >
+          Thématique d'accompagnement déclarée dans la réponse.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - answer_id
+            - support_theme
+
+
+  - name: esat__answer_skills_validation_type
+    config:
+      tags:
+        - esat
+    description: >
+      Dispositifs de reconnaissance ou de développement des compétences déclarés
+      dans les réponses au questionnaire.
+
+      La colonne source peut contenir plusieurs valeurs. Ce modèle crée une ligne
+      par réponse et par dispositif.
+
+    columns:
+      - name: answer_id
+        description: >
+          Identifiant de la réponse au questionnaire.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_esat__survey_answers')
+              field: answer_id
+
+      - name: skills_validation_type
+        description: >
+          Dispositif déclaré pour reconnaître ou développer les compétences des travailleurs.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - answer_id
+            - skills_validation_type
+
+
+  - name: esat__answer_retirement_preparation_actions
+    config:
+      tags:
+        - esat
+    description: >
+      Actions déclarées pour préparer les travailleurs au départ à la retraite.
+
+      La colonne source peut contenir plusieurs valeurs. Ce modèle crée une ligne
+      par réponse et par action.
+
+    columns:
+      - name: answer_id
+        description: >
+          Identifiant de la réponse au questionnaire.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_esat__survey_answers')
+              field: answer_id
+
+      - name: retirement_preparation_action
+        description: >
+          Action déclarée pour préparer les travailleurs au départ à la retraite.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - answer_id
+            - retirement_preparation_action
+
+
+  - name: esat__answer_documents_falclist
+    config:
+      tags:
+        - esat
+    description: >
+      Documents déclarés comme accessibles en FALC ou en communication alternative
+      et augmentée.
+
+      La colonne source peut contenir plusieurs valeurs. Ce modèle crée une ligne
+      par réponse et par type de document.
+
+    columns:
+      - name: answer_id
+        description: >
+          Identifiant de la réponse au questionnaire.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_esat__survey_answers')
+              field: answer_id
+
+      - name: document_falclist_item
+        description: >
+          Type de document déclaré comme accessible en FALC ou en communication
+          alternative et augmentée.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - answer_id
+            - document_falclist_item
+
+
+  - name: esat__answer_insertion_staff_funding
+    config:
+      tags:
+        - esat
+    description: >
+      Modes de financement des conseillers en parcours d'insertion déclarés dans
+      les réponses au questionnaire.
+
+      La colonne source peut contenir plusieurs valeurs. Ce modèle crée une ligne
+      par réponse et par mode de financement.
+
+    columns:
+      - name: answer_id
+        description: >
+          Identifiant de la réponse au questionnaire.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_esat__survey_answers')
+              field: answer_id
+
+      - name: insertion_staff_funding_item
+        description: >
+          Mode de financement déclaré pour les conseillers en parcours d'insertion.
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - answer_id
+            - insertion_staff_funding_item
+
+
+  - name: fct_esat__survey_answers_mapping
+    config:
+      tags:
+        - esat
+    description: >
+      Associe chaque ESAT de dim_esat à une réponse du questionnaire, quand une réponse peut être trouvée.
+
+      Le modèle garde une ligne par ESAT. Il indique si une réponse a été trouvée, comment elle a été trouvée,
+      et si le lien est fiable ou à vérifier.
+
+      Les cas avec matching_confidence = low sont gardés pour le suivi, mais ils ne sont pas encore considérés
+      comme des réponses valides. C'est pour ça que answer_id reste vide dans ces cas.
+
+    columns:
+      - name: finess_num
+        description: >
+          Numéro FINESS de l'ESAT dans dim_esat.
+          C'est la clé du modèle. Il y a une ligne par ESAT.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('dim_esat')
+              field: finess_num
+
+      - name: answer_id
+        description: >
+          Identifiant de la réponse liée à l'ESAT.
+
+          Cette colonne est remplie seulement quand le lien est fiable. Elle reste vide si aucune réponse n'a
+          été trouvée, ou si la réponse possible doit encore être vérifiée.
+
+
+      - name: matching_method
+        description: >
+          Méthode utilisée pour trouver la réponse liée à l'ESAT.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - manual_mapping
+                - direct_finess
+                - same_name_and_related_managing_organization
+                - related_managing_organization
+                - no_answer
+
+      - name: matching_confidence
+        description: >
+          Niveau de confiance du lien entre l'ESAT et la réponse.
+
+          * high signifie que la réponse peut être utilisée.
+          * low signifie qu'une réponse possible existe, mais qu'elle doit être vérifiée.
+          * no_answer signifie qu'aucune réponse n'a été trouvée.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - high
+                - low
+                - no_answer
+
+  - name: fct_esat__survey_answers
+    config:
+      tags:
+        - esat
+    description: >
+      Réponses du questionnaire ESAT gardées pour l'analyse.
+
+      Le modèle garde les réponses qui ont été reliées à au moins un ESAT de dim_esat.
+
+      Les données de réponse viennent directement du staging du questionnaire. Le mapping sert à choisir quelles
+      réponses garder.
+
+      Les informations de déduplication sont ajoutées quand elles existent. Elles peuvent être vides si la réponse
+      a été gardée grâce au mapping manuel, mais qu'elle n'a pas été choisie par la déduplication.
+
+      Il y a une ligne par réponse. Si une même réponse est reliée à plusieurs ESAT, elle reste sur une seule ligne.
+      Les ESAT liés sont gardés dans mapped_finess_nums.
+
+    columns:
+      - name: answer_id
+        description: >
+          Identifiant de la réponse au questionnaire. C'est la clé du modèle.
+          Chaque réponse apparaît une seule fois.
+        tests:
+          - not_null
+          - unique
+
+      - name: finess_num
+        description: >
+          Numéro FINESS déclaré dans la réponse au questionnaire. Il vient de la réponse
+          originale. Il n'est pas remplacé par les FINESS trouvés dans le mapping.
+
+      - name: duplicate_group_finess_nums
+        description: >
+          Liste des numéros FINESS présents dans le groupe de réponses dédupliquées.
+
+          Cette colonne vient du modèle de déduplication. Elle peut être vide si la réponse a été gardée grâce au
+          mapping manuel, mais qu'elle n'a pas été choisie par la déduplication.
+
+      - name: esat_role
+        description: >
+          Fonction de la personne ayant renseigné le questionnaire dans l'ESAT.
+
+      - name: esat_name
+        description: >
+          Nom de l'ESAT déclaré dans la réponse.
+
+      - name: duplicate_group_esat_names
+        description: >
+          Liste des noms d'ESAT présents dans le groupe de réponses dédupliquées.
+
+          Cette colonne vient du modèle de déduplication. Elle peut être vide si la réponse a été gardée grâce au
+          mapping manuel, mais qu'elle n'a pas été choisie par la déduplication.
+      - name: completeness_score
+        description: >
+          Nombre de questions renseignées dans la réponse.
+
+          Cette colonne vient du modèle de déduplication. Elle sert surtout à choisir la meilleure réponse quand
+          plusieurs réponses semblent être des doublons.
+
+          Elle peut être vide si la réponse a été gardée grâce au mapping manuel, mais qu'elle n'a pas été choisie
+          par la déduplication.
+
+      - name: esat_siret
+        description: >
+          Numéro SIRET de l'ESAT.
+
+      - name: managing_organization_finess
+        description: >
+          Numéro FINESS de l'entité juridique de rattachement.
+
+      - name: esat_status
+        description: >
+          Statut de l'ESAT.
+
+      - name: esat_dept
+        description: >
+          Département d'implantation de l'ESAT.
+
+      - name: nb_places_allowed
+        description: >
+          Nombre de places autorisées fixé par l'ARS au 31 décembre de l'année n-1.
+
+      - name: nb_employee_worked
+        description: >
+          Nombre de salariés ou d'agents publics employés dans l'ESAT au 31 décembre
+          de l'année n-1.
+
+      - name: nb_employee_shared
+        description: >
+          Nombre de salariés mutualisés sur plusieurs ESAT au 31 décembre de l'année n-1.
+
+      - name: nb_worker_supported
+        description: >
+          Nombre de travailleurs et travailleuses accompagnés en année n-1.
+
+      - name: nb_worker_half_time
+        description: >
+          Nombre de travailleurs et travailleuses à temps partiel en année n-1.
+
+      - name: mean_worker_age
+        description: >
+          Âge moyen des travailleurs et travailleuses au 31 décembre de l'année n-1.
+
+      - name: mean_seniority
+        description: >
+          Ancienneté moyenne des travailleurs et travailleuses au 31 décembre de l'année n-1.
+
+      - name: nb_worker_previous_mot
+        description: >
+          Nombre de travailleurs ayant déjà travaillé en milieu ordinaire avant leur
+          admission à l'ESAT, y compris en entreprise adaptée.
+
+      - name: nb_worker_new
+        description: >
+          Nombre de travailleurs et travailleuses admis pour la première fois en milieu
+          protégé de travail.
+
+      - name: nb_worker_temporary
+        description: >
+          Nombre de travailleurs et travailleuses admis temporairement dans l'ESAT.
+
+      - name: nb_worker_mispe_mdph
+        description: >
+          Nombre de personnes accompagnées dans une MISPE prescrite par une MDPH.
+
+      - name: nb_worker_mispe_rpe
+        description: >
+          Nombre de personnes accompagnées dans une MISPE prescrite par le Réseau pour l'Emploi.
+
+      - name: nb_worker_willing_mot
+        description: >
+          Nombre de travailleurs ayant indiqué dans leur projet personnalisé vouloir
+          travailler en milieu ordinaire.
+
+      - name: nb_worker_ft_job_seekers
+        description: >
+          Nombre de travailleurs et travailleuses inscrits comme demandeurs d'emploi
+          à France Travail.
+
+      - name: has_prescription_delegate
+        description: >
+          Indique si l'ESAT est délégataire de prescription de PMSMP.
+
+      - name: is_pmsmp_refused
+        description: >
+          Indique si l'ESAT a eu des refus de PMSMP de la part du Réseau pour l'Emploi.
+
+      - name: nb_worker_pmsmp
+        description: >
+          Nombre de travailleurs et travailleuses ayant effectué une PMSMP.
+
+      - name: nb_worker_service
+        description: >
+          Nombre de travailleurs et travailleuses ayant réalisé une prestation de service
+          auprès d'une entreprise, d'une collectivité publique ou d'un autre organisme.
+
+      - name: nb_worker_mad_indiv
+        description: >
+          Nombre de travailleurs et travailleuses ayant réalisé une mise à disposition
+          individuelle ou collective chez un employeur public ou privé.
+
+      - name: nb_worker_with_public
+        description: >
+          Nombre de travailleurs et travailleuses ayant travaillé dans un lieu au contact
+          de la clientèle.
+
+      - name: nb_worker_only_inside
+        description: >
+          Nombre de travailleurs et travailleuses restés travailler dans les murs, sans
+          contact avec le public ou le milieu ordinaire.
+
+      - name: nb_worker_cumul_esat_ea
+        description: >
+          Nombre de travailleurs ayant cumulé un temps partiel en ESAT et un emploi à
+          temps partiel en entreprise adaptée.
+
+      - name: nb_worker_cumul_esat_mot
+        description: >
+          Nombre de travailleurs ayant cumulé un temps partiel en ESAT et un emploi à
+          temps partiel en milieu ordinaire.
+
+      - name: nb_worker_left
+        description: >
+          Nombre de travailleurs et travailleuses ayant quitté l'ESAT en année n-1.
+
+      - name: nb_worker_left_ea
+        description: >
+          Nombre de travailleurs ayant quitté l'ESAT pour un emploi en entreprise adaptée.
+
+      - name: nb_worker_left_private
+        description: >
+          Nombre de travailleurs ayant quitté l'ESAT pour un emploi dans le milieu
+          ordinaire privé lucratif.
+
+      - name: nb_worker_left_public
+        description: >
+          Nombre de travailleurs ayant quitté l'ESAT pour un emploi dans le milieu
+          ordinaire public.
+
+      - name: nb_worker_left_asso
+        description: >
+          Nombre de travailleurs ayant quitté l'ESAT pour un emploi dans le milieu
+          ordinaire privé non lucratif.
+
+      - name: nb_worker_left_other_reason
+        description: >
+          Nombre de travailleurs ayant quitté l'ESAT pour d'autres raisons.
+
+      - name: nb_worker_cdi
+        description: >
+          Nombre de travailleurs ayant signé un CDI après avoir quitté l'ESAT pour
+          un autre emploi.
+
+      - name: nb_worker_cdd
+        description: >
+          Nombre de travailleurs ayant signé un CDD.
+
+      - name: nb_worker_interim
+        description: >
+          Nombre de travailleurs en mission d'intérim.
+
+      - name: nb_worker_prof
+        description: >
+          Nombre de travailleurs en contrat de professionnalisation.
+
+      - name: nb_worker_apprentice
+        description: >
+          Nombre de travailleurs en contrat d'apprentissage.
+
+      - name: nb_conv_exit_agreement
+        description: >
+          Nombre de conventions d'appui en vigueur au 31 décembre de l'année n-1
+          avec un employeur public ou privé.
+
+      - name: nb_conv_exit_agreement_new
+        description: >
+          Nombre de conventions d'appui signées en année n-1 avec un employeur public
+          ou privé.
+
+      - name: nb_worker_esrp
+        description: >
+          Nombre de travailleurs et travailleuses ayant suivi une formation en ESRP.
+
+      - name: nb_worker_reinteg
+        description: >
+          Nombre de travailleurs et travailleuses ayant réintégré l'ESAT.
+
+      - name: nb_worker_reinteg_other
+        description: >
+          Nombre de travailleurs et travailleuses ayant intégré un autre ESAT.
+
+      - name: nb_esat_agreement
+        description: >
+          Nombre d'ESAT avec lesquels une convention a été signée pour garantir le droit
+          au retour.
+
+      - name: nb_support_hours
+        description: >
+          Catégorie du nombre moyen d'heures de soutien liées à l'activité professionnelle.
+
+      - name: support_themes
+        description: >
+          Thématiques principales d'accompagnement médico-social proposées par l'ESAT.
+
+          Cette colonne peut contenir plusieurs valeurs.
+
+      - name: has_contrib_opco
+        description: >
+          Indique si l'ESAT a payé une contribution pour la formation des travailleurs
+          auprès de l'OPCO Santé ou de l'ANFH.
+
+      - name: pct_opco
+        description: >
+          Taux de contribution à l'OPCO Santé ou à l'ANFH.
+
+      - name: nb_worker_formation_opco
+        description: >
+          Nombre de travailleurs et travailleuses ayant suivi une formation prise en
+          charge par l'OPCO Santé ou l'ANFH.
+
+      - name: has_opco_or_anfh_refusal
+        description: >
+          Indique si l'ESAT a eu un ou plusieurs refus de financement de formation par
+          l'OPCO Santé ou l'ANFH.
+
+      - name: nb_worker_cpf_used
+        description: >
+          Nombre de travailleurs et travailleuses ayant utilisé leur CPF depuis leur
+          admission dans l'ESAT.
+
+      - name: cpf_unused_reason
+        description: >
+          Raisons pour lesquelles les travailleurs et travailleuses n'utilisent pas leur CPF.
+
+      - name: formation_cpf
+        description: >
+          Formation majoritairement suivie par les travailleurs et travailleuses avec leur CPF.
+
+      - name: nb_worker_intern_formation
+        description: >
+          Nombre de travailleurs et travailleuses ayant suivi au moins une formation
+          animée en interne par l'ESAT.
+
+      - name: formation_subject
+        description: >
+          Sujets des formations internes proposées par l'ESAT.
+
+      - name: has_autodetermination_formation
+        description: >
+          Indique si une formation à l'autodétermination a été mise en place.
+
+      - name: nb_worker_autodetermination
+        description: >
+          Nombre de travailleurs et travailleuses ayant suivi une formation à l'autodétermination.
+
+      - name: has_autodetermination_external_formation
+        description: >
+          Indique si la formation à l'autodétermination est assurée par un organisme externe.
+
+      - name: skills_validation_type
+        description: >
+          Types de dispositifs utilisés pour reconnaître ou développer les compétences
+          des travailleurs.
+
+          Cette colonne peut contenir plusieurs valeurs.
+
+      - name: nb_worker_rae_rsfp
+        description: >
+          Nombre de travailleurs et travailleuses ayant bénéficié d'une RAE ou d'une RSFP.
+
+      - name: nb_worker_vae
+        description: >
+          Nombre de travailleurs et travailleuses ayant bénéficié d'une VAE.
+
+      - name: after_skills_validation
+        description: >
+          Nombre de travailleurs sortis dans l'année après avoir obtenu une validation
+          ou une reconnaissance de leurs compétences.
+
+      - name: nb_worker_duoday
+        description: >
+          Nombre de travailleurs et travailleuses ayant participé à Duoday en année n-1.
+
+      - name: nb_employee_reverse_duoday
+        description: >
+          Nombre de professionnels du milieu ordinaire ayant participé à des Duoday inversés.
+
+      - name: skills_notebook
+        description: >
+          Indique si un carnet de parcours et de compétences a été mis en place.
+
+      - name: software_financial_help
+        description: >
+          Indique si l'ESAT a reçu une aide financière pour le carnet de parcours et de
+          compétences, ou pour acheter un logiciel.
+
+          Cette colonne peut contenir plusieurs valeurs.
+
+      - name: software_financial_help_type
+        description: >
+          Type d'aide financière reçue pour le carnet de parcours et de compétences.
+
+      - name: retirement_preparation_actions
+        description: >
+          Actions menées par l'ESAT pour préparer les travailleurs au départ à la retraite.
+
+          Cette colonne peut contenir plusieurs valeurs.
+
+      - name: uaat_inscription
+        description: >
+          Indique si l'ESAT est inscrit dans la démarche Un Avenir Après le Travail.
+
+      - name: retirement_preparation_nb_workers
+        description: >
+          Nombre de travailleurs et travailleuses ayant bénéficié d'actions de préparation
+          à la retraite.
+
+      - name: pct_more_than50
+        description: >
+          Nombre de travailleurs et travailleuses de plus de 50 ans ayant travaillé dans
+          l'ESAT en année n-1.
+
+      - name: documents_falclist
+        description: >
+          Indique si les principaux documents destinés aux travailleurs étaient accessibles
+          en FALC ou en CAA.
+
+          Cette colonne peut contenir plusieurs valeurs.
+
+      - name: has_worker_delegate
+        description: >
+          Indique s'il existe un ou une déléguée des travailleurs élue dans l'ESAT.
+
+      - name: worker_delegate_formation
+        description: >
+          Indique si le ou la déléguée des travailleurs a suivi une formation pour
+          cette mission.
+
+      - name: worker_delegate_hours_credit
+        description: >
+          Indique si le ou la déléguée des travailleurs a un crédit d'heures mensuel.
+
+      - name: has_delegate_hours
+        description: >
+          Indique si un nombre d'heures a été précisé pour le crédit d'heures.
+
+      - name: has_mix_qvt_in_place
+        description: >
+          Indique si une instance mixte sur la qualité de vie au travail, l'hygiène
+          et la sécurité était en place.
+
+      - name: profit_sharing_bonus
+        description: >
+          Montant moyen de la prime d'intéressement versée aux travailleurs.
+
+      - name: mean_pct_esat_rem
+        description: >
+          Pourcentage moyen de rémunération directe des travailleurs pris en charge
+          par l'ESAT.
+
+      - name: has_foresight_in_place
+        description: >
+          Indique si l'ESAT a contribué à un régime de prévoyance.
+
+      - name: year_foresight_in_place
+        description: >
+          Année de mise en place du régime de prévoyance.
+
+      - name: annual_transport_budget
+        description: >
+          Budget annuel consacré au transport des travailleurs entre leur domicile
+          et l'ESAT.
+
+      - name: nb_worker_transport
+        description: >
+          Nombre de travailleurs et travailleuses ayant bénéficié d'un transport
+          financé ou organisé par l'ESAT.
+
+      - name: nb_worker_mobility_inclusion_card
+        description: >
+          Nombre de travailleurs et travailleuses ayant la carte mobilité inclusion.
+
+      - name: nb_worker_driving_licence
+        description: >
+          Nombre de travailleurs et travailleuses titulaires du permis de conduire.
+
+      - name: nb_worker_code
+        description: >
+          Nombre de travailleurs et travailleuses ayant obtenu le code de la route.
+
+      - name: has_holiday_voucher
+        description: >
+          Indique si l'ESAT propose des chèques vacances aux travailleurs.
+
+      - name: holiday_voucher_annual_budget
+        description: >
+          Budget annuel consacré aux chèques vacances.
+
+      - name: has_gift_voucher
+        description: >
+          Indique si l'ESAT propose des chèques cadeaux aux travailleurs.
+
+      - name: gift_voucher_annual_budget
+        description: >
+          Budget annuel consacré aux chèques cadeaux.
+
+      - name: nb_worker_worked_sunday
+        description: >
+          Nombre de travailleurs et travailleuses ayant travaillé au moins un dimanche
+          ou un jour férié.
+
+      - name: has_agreement_signed_ft
+        description: >
+          Indique si une convention était en vigueur avec les acteurs du Réseau pour l'Emploi.
+
+      - name: has_agreement_signed_ea
+        description: >
+          Indique si une convention était en vigueur avec une entreprise adaptée.
+
+      - name: has_agreement_signed_dept_pae
+        description: >
+          Indique si une convention était en vigueur avec la plateforme emploi accompagné
+          du département.
+
+      - name: nb_insertion_staff
+        description: >
+          Nombre de conseillers en parcours d'insertion ou assimilés dans les effectifs
+          de l'ESAT.
+
+      - name: nb_insertion_dispo
+        description: >
+          Nombre de postes de conseillers en parcours d'insertion mis à disposition
+          ou mutualisés.
+
+      - name: insertion_staff_funding
+        description: >
+          Mode de financement des conseillers en parcours d'insertion.
+
+          Cette colonne peut contenir plusieurs valeurs.
+
+      - name: annual_ca
+        description: >
+          Chiffre d'affaires annuel commercial total.
+
+      - name: annual_ca_production
+        description: >
+          Chiffre d'affaires annuel commercial issu des productions propres.
+
+      - name: annual_ca_service
+        description: >
+          Chiffre d'affaires annuel commercial issu des prestations de service.
+
+      - name: annual_ca_mad
+        description: >
+          Chiffre d'affaires annuel issu uniquement des contrats de mise à disposition.
+
+      - name: pct_ca_public
+        description: >
+          Pourcentage du chiffre d'affaires réalisé avec des clients du secteur public.
+
+      - name: budget_commercial
+        description: >
+          Situation du résultat net de la section commerciale.
+
+      - name: budget_commercial_deficit
+        description: >
+          Montant du déficit de la section commerciale.
+
+      - name: budget_commercial_excedent
+        description: >
+          Montant de l'excédent de la section commerciale.
+
+      - name: budget_social
+        description: >
+          Situation du résultat de clôture du budget social.
+
+      - name: budget_social_deficit
+        description: >
+          Montant du déficit du budget social.
+
+      - name: budget_social_excedent
+        description: >
+          Montant de l'excédent du budget social.
+
+      - name: budget_accessibility
+        description: >
+          Montant investi pour la mise aux normes de sécurité et d'accessibilité.
+
+      - name: budget_diversity
+        description: >
+          Montant investi pour diversifier les activités proposées aux travailleurs.
+
+      - name: comments
+        description: >
+          Champ libre pour ajouter des précisions ou expliquer certaines réponses.
+
+      - name: mapped_esat_count
+        description: >
+          Nombre d'ESAT de dim_esat reliés à cette réponse.
+
+        tests:
+          - not_null
+
+      - name: mapped_finess_nums
+        description: >
+          Liste des numéros FINESS des ESAT de dim_esat reliés à cette réponse.
+
+          Cette colonne permet de garder la trace du mapping sans dupliquer la réponse.
+        tests:
+          - not_null

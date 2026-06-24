@@ -1,22 +1,12 @@
-with valid_answers as (
-
-    select answer_id
-    from {{ ref('esat__survey_answers_core') }}
-
-),
-
-source as (
+with source as (
 
     select
-        source.answer_id,
-        source.finess_num,
-        source.documents_falclist
-    from {{ ref('int_esat__surveys_esat_answers_deduplicated') }} as source
-    inner join valid_answers
-        on source.answer_id = valid_answers.answer_id
+        answer_id,
+        documents_falclist
+    from {{ ref('fct_esat__survey_answers') }}
     where
-        source.documents_falclist is not null
-        and trim(source.documents_falclist) <> ''
+        documents_falclist is not null
+        and trim(documents_falclist) <> ''
 
 ),
 
@@ -24,7 +14,6 @@ cleaned as (
 
     select
         answer_id,
-        finess_num,
         trim(
             both '[]' from replace(documents_falclist, '''', '')
         ) as documents_falclist_list
@@ -36,7 +25,6 @@ exploded as (
 
     select
         answer_id,
-        finess_num,
         trim(extracted_value) as document_falclist_item
     from cleaned,
         unnest(
@@ -47,7 +35,6 @@ exploded as (
 
 select
     answer_id,
-    finess_num,
     document_falclist_item
 from exploded
 where document_falclist_item <> ''
