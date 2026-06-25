@@ -96,84 +96,84 @@ sources:
             description: >
               Identifiant unique du PASS IAE ou agrément (entier). Clé primaire de
               la table. Référencé dans `les_emplois.prolongations.id_pass_agrément`.
-    
+
           - name: type
             description: >
               Type de titre d'accès à l'IAE.
               Valeurs : 'PASS IAE (99999)' (titre natif de la plateforme, délivré
               depuis 2021), 'Agrément PE via ITOU (non 99999)' (ancien agrément
               Pôle emploi importé dans la plateforme, antérieur à la bascule PASS IAE).
-    
+
           - name: date_début
             description: >
               Date de début de validité du PASS IAE. Correspond généralement à la
               date d'embauche effective du candidat.
-    
+
           - name: date_fin
             description: >
               Date de fin de validité du PASS IAE. Calculée à 2 ans après
               `date_début`, prolongée si des prolongations ont été accordées.
               La valeur '2040-01-01' est utilisée comme sentinelle pour les PASS
               sans date de fin définie.
-    
+
           - name: durée
             description: >
               Durée de validité du PASS IAE (type PostgreSQL INTERVAL), calculée
               entre `date_début` et `date_fin`.
-    
+
           - name: id_candidat
             description: >
               Identifiant du candidat titulaire du PASS IAE. Clé étrangère vers
               `les_emplois.candidats.id`.
-    
+
           - name: id_structure
             description: >
               Identifiant de la structure employeuse ayant déclenché le PASS IAE.
               Clé étrangère vers `les_emplois.structures.id`.
-    
+
           - name: type_structure
             description: >
               Type de la structure employeuse associée au PASS IAE.
               Valeurs : 'ACI', 'AI', 'ETTI', 'EI', 'EITI', 'GEIQ', 'OPCS', 'EA',
               'EATT'. Il ne faut pas considérer les PASS hors SIAE ('ACI', 'AI', 'ETTI', 'EI', 'EITI')
-    
+
           - name: siret_structure
             description: >
               Numéro SIRET de la structure employeuse au moment de la délivrance
               du PASS IAE.
-    
+
           - name: nom_structure
             description: >
               Nom de la structure employeuse au moment de la délivrance du PASS IAE.
-    
+
           - name: département_structure_ou_org_pe
             description: >
               Code INSEE du département de la structure employeuse, ou de
               l'organisation Pôle emploi pour les agréments historiques
               (type 'Agrément PE via ITOU').
-    
+
           - name: nom_département_structure_ou_org_pe
             description: >
               Nom du département de la structure employeuse ou de l'organisation
               Pôle emploi pour les agréments historiques.
-    
+
           - name: région_structure_ou_org_pe
             description: >
               Nom de la région de la structure employeuse ou de l'organisation
               Pôle emploi pour les agréments historiques.
-    
+
           - name: injection_ai
             description: >
               Indicateur technique de PASS issu de la reprise de stock AI
               (Associations Intermédiaires).
               (1 = PASS injecté depuis l'historique AI, 0 = PASS natif).
               Filtrer sur `injection_ai = 0` pour les analyses de flux courant.
-    
+
           - name: hash_numéro_pass_iae
             description: >
               Numéro du PASS IAE anonymisé par hachage. Permet de référencer un
               PASS sans exposer son numéro réel.
-    
+
           - name: date_mise_à_jour_metabase
             description: >
               Date de la dernière synchronisation de cette ligne dans Metabase.
@@ -201,25 +201,25 @@ sources:
           - name: id
             description: >
               Identifiant unique de la prolongation (entier). Clé primaire de la table.
-    
+
           - name: id_pass_agrément
             description: >
               Identifiant du PASS IAE prolongé. Clé étrangère vers
               `les_emplois.pass_agréments.id`. Un même PASS peut faire l'objet de
               plusieurs prolongations successives.
-    
+
           - name: date_début
             description: >
               Date de début de la période de prolongation. Correspond généralement
               à la date d'expiration du PASS IAE initial ou de la prolongation
               précédente.
-    
+
           - name: date_fin
             description: >
               Date de fin de la période de prolongation. La valeur '2040-01-01'
               est utilisée comme sentinelle pour les prolongations à durée
               indéterminée.
-    
+
           - name: motif
             description: >
               Motif justifiant la prolongation du PASS IAE.
@@ -233,42 +233,42 @@ sources:
               'Fin d''une formation',
               'CDI conclu avec une personne de plus de 57 ans',
               'Contexte sanitaire'.
-    
+
           - name: id_utilisateur_déclarant
             description: >
               Identifiant de l'utilisateur (membre de la structure) ayant déclaré
               la prolongation sur la plateforme.
-    
+
           - name: id_structure_déclarante
             description: >
               Identifiant de la structure employeuse ayant déclaré la prolongation.
               Clé étrangère vers `les_emplois.structures.id`.
-    
+
           - name: id_organisation_prescripteur
             description: >
               Identifiant de l'organisation prescriptrice ayant validé la demande
               de prolongation. Clé étrangère vers `les_emplois.organisations.id`.
               Null pour les prolongations à validation directe SIAE
               et pour les prolongations antérieures à juillet 2023.
-    
+
           - name: id_utilisateur_prescripteur
             description: >
               Identifiant de l'utilisateur prescripteur ayant traité la demande
               de prolongation. Null si aucun prescripteur impliqué.
-    
+
           - name: date_de_création
             description: >
               Date de création de la prolongation dans le système. Permet de distinguer
               les prolongations avant (< 2023-07-26) et après la réforme du dispositif
               de demande formalisée.
-    
+
           - name: id_demande_de_prolongation
             description: >
               Identifiant de la demande de prolongation associée. Clé étrangère vers
               `les_emplois.suivi_demandes_prolongations.id`. Null pour les ~20 100
               prolongations créées avant la mise en place du workflow de demande
               (avant juillet 2023).
-    
+
           - name: date_mise_à_jour_metabase
             description: >
               Date de la dernière synchronisation de cette ligne dans Metabase.
@@ -473,4 +473,289 @@ sources:
         - name: dsn_type_siae_et_nature_contrat
         - name: dsn_type_siae_et_secteur_activite
         - name: dsn_type_siae_et_sexe
+
+  - name: dora
+    schema: raw_dora
+    description: >
+      Schéma contenant les tables sources issues de la prod de DORA, ainsi que les tables contenant les structures et services data inclusion (di_services et di_structures).
+      Seules les champs ambigus ou pertinents pour les transformations sont documentés ci-dessous.
+    tables:
+      - name: orientations_orientation
+        description: >
+          Liste des orientations.
+          Une orientation (id) correspond à l'envoi d'un formulaire de la part d'un precripteur (prescriber_id).
+          Un formulaire étant la recommandation d'un service (service_id) à un tiers (beneficiary).
+        columns:
+        - name: prescriber_id
+          description: >
+            Identifiant du prescripteur de cette orientation, correspondant à la clé primaire de la table user.
+        - name: prescriber_structure_id
+          description: >
+            Identifiant de la structure du prescripteur, correspondant à la clé primaire de la table structure.
+        - name: service_id
+          description: >
+            Identifiant du service orienté au bénéficiaire, correspondant à la clé primaire de la table service.
+        - name: creation_date
+          description: >
+            Date d'envoi de l'orientation.
+        - name: processing_date
+          description: >
+            Date de prise en compte de l'orientation.
+            Vide lorsque l'orientation est encore ouverte ou que la modération a été rejetée (sauf quelques cas particuliers à la marge).
+        - name: status
+          description: >
+            État de l'orientation (modération_en_cours, modération_rejetée, ouverte, refusée, validée).
+
+      - name: orientations_rejectionreason
+        description: >
+          Table de correspondance id-label des motifs de refus des orientations refusées.
+        columns:
+        - name: id
+          description: >
+            Identifiant motif de refus. Correspondant à rejectionreason_id dans la table orientations_orientation_rejection_reasons.
+        - name: label
+          description: >
+            Description textuelle du motif de refus.
+        - name: value
+          description: >
+            Label textuel du motif de refus.
+
+      - name: orientations_orientation_rejection_reasons
+        description: >
+          Motifs de refus des orientations refusées.
+        columns:
+        - name: id
+          description: >
+            Identifiant de la paire orientation refusée / motif de refus
+        - name: orientation_id
+          description: >
+            Identifiant de l'orientation refusée.
+        - name: value
+          description: >
+            Identifiant du motif de refus.
+
+      - name: services_coachorientationmode
+      - name: services_fundinglabel
+        description: >
+          Table de correspondance id-fundinglabel des labels de financement.
+
+      - name: services_locationkind
+        description: >
+          Table de correspondance id-locationkind des services.
+          Attention toutes les aides financières sont de type `à distance`.
+
+      - name: services_savedsearch
+        ToDo: à clarifier avec métier
+
+      - name: services_service
+        description: >
+          Liste des services.
+          Un service est rattaché à une structure (structure_id).
+          Ne contient pas les services data inclusion qui sont eux récupérés via `fetch_and_export_di_data` dans les tables `di_structures` et `di_services`.
+          Attention, les services data inclusion affichés sur DORA ne sont qu'un sous ensemble des services contenus dans la table di_services, car filtrés selon des règles de localisation ou de score de qualité.
+        columns:
+        - name: id
+          description: >
+            Identifiant du service.
+        - name: creator_id
+          description: >
+            Identifiant de l'utilisateur ayant créé le service.
+        - name: structure_id
+          description: >
+            Identifiant de la structure à laquelle le service est rattaché.
+        - name: model_id
+          description: >
+            Identifiant du service modèle utilisé comme base pour le service (champs vide si aucun modèle utilisé).
+        - name: is_model
+          description: >
+            Booleen à oui true si le service est un modèle. False sinon.
+
+      - name: services_service_categories
+        description: >
+          Catégorie à laquelle un service est rattaché (mobilité, emploi, santé..).
+
+      - name: services_servicecategory
+        description: >
+          Table de correspondance id-servicecategory.
+
+      - name: services_service_coach_orientation_modes
+        ToDo: à documenter avec le métier
+
+      - name: services_coachorientationmodes
+        ToDo: à documenter avec le métier
+
+      - name: services_servicefee
+      - name: services_service_funding_labels
+        description: >
+          Labels de financement des services financés.
+
+      - name: services_service_location_kinds
+        description: >
+          Type de mise à disposition des services (à distance ou en présentiel).
+
+      - name: services_servicesource
+      - name: stats_deploymentstate
+        description: >
+          Etat de déploiement pour chaque département.
+          Donnée complétée à la main sur l'admin par les bizdev en fonction du stade de maturité.
+          Doc maturité : https://www.notion.so/gip-inclusion/Calcul-de-la-maturit-1995f321b6048092b876f7b08a87fa11
+
+      - name: stats_dimobilisationevent
+        description: >
+          Événements de mobilisation (visualisation de fiche service ou d'informations de contact) sur les services data inclusion.
+
+      - name: stats_dimobilisationevent_categories
+        description: >
+          Catégorie des services concernés par les événements de mobilisation.
+
+      - name: stats_diserviceview
+        description: >
+          Événements de visualisation de services data inclusion.
+
+      - name: stats_mobilisationevent
+        description: >
+          Événements de mobilisation des services dora.
+        columns:
+        - name: id
+          description: >
+            Identifiant de l'événement de mobilisation.
+        - name: path
+          description: >
+            Slug de la page concernée.
+        - name: date
+          description: >
+            Date de l'événement.
+        - name: service_id
+          description: >
+            Identifiant du service concerné, clé primaire de la table service.
+        - name: structure_id
+          description: >
+            Identifiant de la structure concernée, clé primaire de la table structure.
+        - name: user_id
+          description: >
+            Si non vide, id de l'utilisateur connecté ayant réalisé la mobilisation.
+
+      - name: stats_mobilisationevent_categories
+        description:
+          Catégorie des services concernés par les événements de mobilisation.
+
+      - name: stats_pageview
+        description: >
+          Événements de visualisation d'une page sur dora (structure, service, page de connexion..).
+        columns:
+        - name: id
+          description: >
+            Identifiant de l'événement de visualisation d'une page.
+        - name: path
+          description: >
+            Slug de la page concernée.
+        - name: date
+          description: >
+            Date de la visualisation.
+        - name: user_id
+          description: >
+            Si non vide, id de l'utilisateur connecté ayant réalisé la visualisation.
+
+      - name: stats_searchview
+        description: >
+          Événements de recherche d'un service ou d'une structure.
+          Attention, ici ne sont pas enregistrées les recherches réalisées avec la barre de recherche (nouvelle feature 2025).
+
+      - name: stats_searchview_categories
+        description: >
+          Catégorie des services concernés par les événements de recherche.
+
+      - name: stats_serviceview
+        description: >
+          Événements de visualisation d'une page service.
+
+      - name: stats_structureinfosview
+        description: >
+          Événements de visualisation des informations d'une structure.
+
+      - name: stats_structureview
+        description: >
+          Événements de visualisation d'une page structure.
+
+      - name: structures_structure
+        description: >
+          Liste des structures.
+        columns:
+        - name: id
+          description: >
+            Identifiant de la structure.
+        - name: creator_id
+          description: >
+            Identifiant de l'utilisateur ayant créé la structure.
+        - name: typology
+          description: >
+            Typologie de la structure. Fiable pour CAP_EMPLOI, FT et ML.
+
+      - name: structures_structuremember
+        description: >
+          Table de correspondance entre les utilisateurs et leur structures de rattachement pour les utilisateurs rattachés.
+        columns:
+        - name: is_admin
+          description: >
+            L'utilisateur a tous les droits sur la structure.
+      - name: structures_structurenationallabel
+        description: >
+          Table de correspondance id-nationallabel.
+
+      - name: structures_structure_national_labels
+        description: >
+          Labels nationaux des structures.
+
+      - name: structures_structureputativemember
+        description: >
+          Table de correspondance entre les utilisateurs et leur structure potentielle, pour lesquels le rattachement n'est pas finalisé (invitation en attente ou demande de rattachement en attente)
+
+      - name: structures_structuresource
+      - name: structures_structuretypology
+        description: >
+          Typologie des structures (donnée déclarative, fiable pour FT, ML et les CD).
+
+      - name: users_user
+        description: >
+          Liste des utilisateurs. On retrouve dans cette table les membres rattachés à une structure (table structures_structuremember), les membres potentiels d'une structure (structures_structureputativemember)
+          ayant été invités par un gestionnaire de territoire mais l'invitation n'a pas encore été acceptée. Il y a aussi le cas d'utilisateurs ni membres ni membres potentiels, lorsque l'utilisateur n'a pas rejoint
+          une structure juste après la création de son compte ou s'il a été modéré.
+          Dans les analyses des utilisateurs Dora, on ne prend en compte que les utilisateurs qui ne sont pas de gestionnaire de territoire et qui sont rattachés à une structure.
+        columns:
+        - name: id
+          description: >
+            Identifiant de l'utilisateur.
+        - name: password
+          description: >
+            Attention. Un mot de passe est automatiquement généré par le modèle django depuis 2025. Donc tous les utilisateurs, y compris ceux n'ayant pas encore réellement créé un compte, en ont un.
+        - name: last_login
+          description: >
+            Date de dernière connexion. Lorsqu'elle est vide, l'utilisateur a été créé suite à un envoi d'invitation par une structure, mais n'a pas encore été activer son compte.
+        - name: is_staff
+          description: >
+            Super utilisateur qui a tous les droits (Membres de la PDI).
+        - name: is_active
+          description: >
+            L'utilisateur a le droit de se connecter à Dora. Par défaut, tous les utilisateurs sont actifs. Peuvent devenir inactif après demande de modération.
+        - name: date_joined
+          description: >
+            Date de création du compte, que ce soit pas l'utilisateur lui même, ou par envoi d'une invitation.
+        - name: is_valid
+          description: >
+            L'adresse email a été vérifiée (vérification avec pro connect).
+        - name: is_manager
+          description: >
+            Utilisateurs qui ont le droits de gestionnaire de territoires sur les départements spécifiés.
+        - name: main_activity
+          description: >
+            Distinction plus très utile aujourd'hui, et pas forcément fiable, car un accompagnateur peut être offreur.
+            À valider avec métier mais sauf erreur, cette catégorie est choisie par l'utilisateur à la création du compte.
+        - name: sub_pc
+          description: >
+            Identifiant pro connect.
+
+      - name: logs_actionlog
+        description: >
+          Table contenant les connexions des utilisateurs sur les derniers trois mois
+
 
