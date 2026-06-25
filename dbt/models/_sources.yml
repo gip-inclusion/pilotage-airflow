@@ -768,3 +768,1183 @@ sources:
             Table avec les données brutes du questionnaire de Fagerh provenant de
             https://grist.numerique.gouv.fr/o/gipinclusion/adcjAbtXzq25/fagerh
 
+  - name: rdv_insertion
+    schema: raw_rdvi
+    description: >
+      Données brutes issues de l'application rdv-insertion.
+
+      rdv-insertion est une application qui permet aux départements français de gérer le suivi des
+      bénéficiaires du RSA et plus généralement des usagers dans un parcours d'insertion.
+
+      L'application s'interface avec RDV-Solidarités pour la gestion des rendez-vous.
+
+      Architecture générale :
+      - Les départements contiennent des organisations.
+      - Les users sont suivis dans des organisations.
+      - Un follow_up est créé pour chaque motif_category sur un user.
+      - Des invitations sont envoyées pour prendre des rendez-vous.
+      - Les rdvs sont créés, avec des participations pour chaque usager.
+      - Les agents sont rattachés aux organisations via des agent_roles.
+
+      Points d'attention pour l'analyse :
+      - Beaucoup de tables ont un champ rdv_solidarites_*_id et last_webhook_update_received_at car
+        elles sont synchronisées depuis RDV-Solidarités via webhooks.
+      - Les users et motifs utilisent deleted_at pour le soft delete.
+      - Le champ nir est encrypté.
+      - Certains champs sont polymorphiques, comme statable, structure et created_from_structure.
+      - Les modifications de certains modèles critiques sont tracées dans versions.
+
+    tables:
+      - name: users
+        description: >
+          Représente les usagers suivis dans l'application, souvent des bénéficiaires du RSA.
+
+          Rôle : centralise toutes les informations sur les usagers.
+
+          Relations :
+          - Appartient à plusieurs organisations via users_organisations.
+          - A plusieurs follow_ups, un par catégorie de motif.
+          - A plusieurs invitations.
+          - A plusieurs participations aux RDV.
+          - A plusieurs tags via tag_users.
+          - A plusieurs orientations.
+        columns:
+          - name: rdv_solidarites_user_id
+            description: >
+              ID de l'usager dans RDV-Solidarités, utilisé pour la synchronisation.
+          - name: first_name
+            description: >
+              Prénom de l'usager.
+          - name: last_name
+            description: >
+              Nom de l'usager.
+          - name: birth_name
+            description: >
+              Nom de naissance de l'usager.
+          - name: birth_date
+            description: >
+              Date de naissance de l'usager.
+          - name: title
+            description: >
+              Civilité de l'usager, par exemple monsieur ou madame.
+          - name: email
+            description: >
+              Email de contact de l'usager.
+          - name: phone_number
+            description: >
+              Numéro de téléphone de contact de l'usager.
+          - name: address
+            description: >
+              Adresse de contact de l'usager.
+          - name: affiliation_number
+            description: >
+              Numéro d'allocataire CAF.
+          - name: department_internal_id
+            description: >
+              ID de l'usager dans le système d'information du département.
+          - name: france_travail_id
+            description: >
+              Identifiant France Travail de l'usager.
+          - name: nir
+            description: >
+              Numéro de sécurité sociale de l'usager. Champ encrypté.
+          - name: role
+            description: >
+              Rôle de l'usager, par exemple demandeur ou conjoint.
+          - name: rights_opening_date
+            description: >
+              Date d'ouverture des droits RSA.
+          - name: deleted_at
+            description: >
+              Date de suppression logique de l'usager, utilisée pour le RGPD.
+          - name: created_through
+            description: >
+              Source de création de l'usager, par exemple rdv_insertion_upload_page ou
+              rdv_solidarites_webhook.
+          - name: created_from_structure_type
+            description: >
+              Type de structure d'origine de création de l'usager. Champ polymorphique :
+              Department ou Organisation.
+          - name: created_from_structure_id
+            description: >
+              ID de la structure d'origine de création de l'usager. Champ polymorphique :
+              Department ou Organisation.
+
+      - name: organisations
+        description: >
+          Représente les structures qui suivent les usagers, comme les conseils départementaux,
+          France Travail, les SIAE ou d'autres structures.
+
+          Rôle : structure organisationnelle qui regroupe agents, usagers et configuration.
+
+          Relations :
+          - Appartient à un department.
+          - A plusieurs agents via agent_roles.
+          - A plusieurs users via users_organisations.
+          - A plusieurs category_configurations.
+          - A plusieurs motifs, lieux et rdvs.
+        columns:
+          - name: rdv_solidarites_organisation_id
+            description: >
+              ID de l'organisation dans RDV-Solidarités.
+          - name: name
+            description: >
+              Nom de l'organisation.
+          - name: department_id
+            description: >
+              Département de rattachement.
+          - name: organisation_type
+            description: >
+              Type de l'organisation. Valeurs possibles : conseil_departemental, delegataire_rsa,
+              france_travail, siae, autre.
+          - name: email
+            description: >
+              Email de contact de l'organisation.
+          - name: phone_number
+            description: >
+              Numéro de téléphone de contact de l'organisation.
+          - name: safir_code
+            description: >
+              Code SAFIR pour France Travail.
+          - name: slug
+            description: >
+              Identifiant court utilisé pour repérer l'organisation dans les fichiers d'import.
+          - name: website
+            description: >
+              Site web de l'organisation.
+          - name: archived_at
+            description: >
+              Date d'archivage de l'organisation si elle est inactive.
+          - name: data_retention_duration_in_months
+            description: >
+              Durée de conservation des données, en mois, pour le RGPD.
+          - name: display_in_stats
+            description: >
+              Indique si l'organisation doit être incluse dans les statistiques.
+
+      - name: departments
+        description: >
+          Représente les départements français.
+
+          Rôle : niveau administratif supérieur qui regroupe les organisations d'un territoire.
+        columns:
+          - name: name
+            description: >
+              Nom du département.
+          - name: number
+            description: >
+              Numéro du département, par exemple 75 ou 93.
+          - name: capital
+            description: >
+              Préfecture du département.
+          - name: region
+            description: >
+              Région administrative du département.
+          - name: email
+            description: >
+              Email de contact départemental.
+          - name: phone_number
+            description: >
+              Numéro de téléphone de contact départemental.
+          - name: parcours_enabled
+            description: >
+              Indique si le module parcours est activé pour le département.
+          - name: disable_ft_webhooks
+            description: >
+              Indique si les webhooks France Travail sont désactivés pour le département.
+
+      - name: follow_ups
+        description: >
+          Table centrale du métier.
+
+          Représente le suivi d'un usager pour une catégorie de motif donnée.
+
+          Rôle : suit l'état d'avancement d'un usager dans son parcours, par exemple orientation ou
+          accompagnement.
+
+          Relations :
+          - Appartient à un user.
+          - Appartient à une motif_category.
+          - A plusieurs invitations.
+          - A plusieurs participations.
+        columns:
+          - name: user_id
+            description: >
+              Usager suivi.
+          - name: motif_category_id
+            description: >
+              Catégorie de motif du suivi, par exemple orientation RSA ou accompagnement RSA.
+          - name: status
+            description: >
+              Statut du suivi. Valeurs possibles : not_invited, invitation_pending, rdv_pending,
+              rdv_needs_status_update, rdv_noshow, rdv_revoked, rdv_excused, rdv_seen, closed.
+          - name: closed_at
+            description: >
+              Date de clôture du suivi.
+
+      - name: invitations
+        description: >
+          Représente une invitation envoyée à un usager pour qu'il prenne rendez-vous.
+
+          Rôle : trace les invitations SMS, email ou courrier avec leur lien de prise de RDV.
+
+          Relations :
+          - Appartient à un user.
+          - Appartient à un follow_up.
+          - Appartient à un department.
+          - Associée à plusieurs organisations.
+        columns:
+          - name: user_id
+            description: >
+              Usager invité.
+          - name: follow_up_id
+            description: >
+              Suivi concerné par l'invitation.
+          - name: format
+            description: >
+              Format de l'invitation. Valeurs possibles : sms, email, postal.
+          - name: link
+            description: >
+              URL de prise de RDV sur RDV-Solidarités.
+          - name: rdv_solidarites_token
+            description: >
+              Token d'authentification RDV-Solidarités.
+          - name: uuid
+            description: >
+              Identifiant court utilisé dans l'URL publique.
+          - name: expires_at
+            description: >
+              Date d'expiration de l'invitation.
+          - name: clicked
+            description: >
+              Indique si l'usager a cliqué sur le lien.
+          - name: trigger
+            description: >
+              Déclencheur de l'invitation. Valeurs possibles : manual, reminder.
+          - name: delivery_status
+            description: >
+              Statut de livraison de l'invitation.
+          - name: sms_provider
+            description: >
+              Fournisseur SMS utilisé pour les invitations SMS.
+          - name: last_brevo_webhook_received_at
+            description: >
+              Date du dernier webhook Brevo reçu.
+          - name: rdv_with_referents
+            description: >
+              Indique si l'invitation concerne un RDV avec référent.
+          - name: rdv_solidarites_lieu_id
+            description: >
+              Lieu pré-sélectionné dans le lien de prise de RDV.
+          - name: help_phone_number
+            description: >
+              Numéro d'aide affiché à l'usager.
+
+      - name: rdvs
+        description: >
+          Représente un rendez-vous créé dans RDV-Solidarités.
+
+          Rôle : synchronise les RDV depuis RDV-Solidarités pour le suivi local.
+
+          Relations :
+          - A plusieurs participations.
+          - A plusieurs users via participations.
+          - Appartient à une organisation.
+          - Appartient à un motif.
+          - Appartient à un lieu, optionnellement.
+          - A plusieurs agents via agents_rdvs.
+        columns:
+          - name: rdv_solidarites_rdv_id
+            description: >
+              ID du RDV dans RDV-Solidarités.
+          - name: starts_at
+            description: >
+              Date et heure de début du RDV.
+          - name: duration_in_min
+            description: >
+              Durée du RDV en minutes.
+          - name: organisation_id
+            description: >
+              Organisation concernée par le RDV.
+          - name: motif_id
+            description: >
+              Motif du RDV.
+          - name: lieu_id
+            description: >
+              Lieu du RDV. Peut être vide si le RDV est à distance.
+          - name: status
+            description: >
+              Statut du RDV.
+          - name: cancelled_at
+            description: >
+              Date d'annulation du RDV.
+          - name: created_by
+            description: >
+              Origine de création du RDV, par exemple agent, user ou prescripteur.
+          - name: context
+            description: >
+              Contexte ou notes du RDV.
+          - name: address
+            description: >
+              Adresse du RDV.
+          - name: visio_url
+            description: >
+              URL de visioconférence pour les RDV à distance.
+          - name: uuid
+            description: >
+              Identifiant utilisé dans les URLs publiques.
+          - name: time_zone
+            description: >
+              Fuseau horaire du RDV.
+          - name: users_count
+            description: >
+              Nombre de participants au RDV.
+          - name: max_participants_count
+            description: >
+              Nombre maximum de participants pour les RDV collectifs.
+
+      - name: participations
+        description: >
+          Table de jonction enrichie entre users et rdvs.
+
+          Rôle : lie un usager à un RDV avec son statut de participation.
+
+          Relations :
+          - Appartient à un user.
+          - Appartient à un rdv.
+          - Appartient à un follow_up.
+          - A plusieurs notifications.
+        columns:
+          - name: user_id
+            description: >
+              Usager participant au RDV.
+          - name: rdv_id
+            description: >
+              Rendez-vous concerné.
+          - name: follow_up_id
+            description: >
+              Suivi associé à la participation.
+          - name: status
+            description: >
+              Statut de la participation. Valeurs possibles : unknown, excused, seen, noshow, revoked.
+          - name: rdv_solidarites_participation_id
+            description: >
+              ID de la participation dans RDV-Solidarités.
+          - name: convocable
+            description: >
+              Indique s'il s'agit d'une convocation obligatoire.
+          - name: created_by_type
+            description: >
+              Type de créateur du RDV, par exemple Agent, User ou Prescripteur.
+          - name: created_by_agent_prescripteur
+            description: >
+              Indique si le RDV a été créé par un agent prescripteur.
+          - name: france_travail_id
+            description: >
+              ID France Travail de l'usager.
+
+      - name: agents
+        description: >
+          Représente les professionnels utilisant l'application.
+
+          Rôle : compte utilisateur des agents, comme les travailleurs sociaux ou conseillers.
+
+          Relations :
+          - A plusieurs agent_roles, un par organisation.
+          - A plusieurs organisations via agent_roles.
+          - A plusieurs referent_assignations.
+          - A plusieurs rdvs via agents_rdvs.
+        columns:
+          - name: rdv_solidarites_agent_id
+            description: >
+              ID de l'agent dans RDV-Solidarités.
+          - name: email
+            description: >
+              Email de l'agent, unique et utilisé comme identifiant de connexion.
+          - name: first_name
+            description: >
+              Prénom de l'agent.
+          - name: last_name
+            description: >
+              Nom de l'agent.
+          - name: super_admin
+            description: >
+              Indique si l'agent est super-administrateur.
+          - name: last_sign_in_at
+            description: >
+              Date de dernière connexion de l'agent.
+          - name: cgu_accepted_at
+            description: >
+              Date d'acceptation des CGU par l'agent.
+
+      - name: agent_roles
+        description: >
+          Table de jonction enrichie entre agents et organisations.
+
+          Rôle : définit les droits d'un agent dans une organisation.
+        columns:
+          - name: agent_id
+            description: >
+              Agent concerné par le rôle.
+          - name: organisation_id
+            description: >
+              Organisation concernée par le rôle.
+          - name: access_level
+            description: >
+              Niveau d'accès de l'agent. Valeurs possibles : basic, admin.
+          - name: authorized_to_export_csv
+            description: >
+              Droit d'export CSV. Ce droit est automatiquement à true pour les admins.
+          - name: rdv_solidarites_agent_role_id
+            description: >
+              ID du rôle agent dans RDV-Solidarités.
+
+      - name: motif_categories
+        description: >
+          Représente les grandes catégories de RDV, par exemple orientation RSA ou accompagnement RSA.
+
+          Rôle : classification des types de suivis.
+        columns:
+          - name: rdv_solidarites_motif_category_id
+            description: >
+              ID de la catégorie de motif dans RDV-Solidarités.
+          - name: name
+            description: >
+              Nom complet de la catégorie de motif.
+          - name: short_name
+            description: >
+              Nom court unique de la catégorie de motif.
+          - name: motif_category_type
+            description: >
+              Type de catégorie de motif. Valeurs possibles : rsa_orientation, rsa_accompagnement,
+              siae, autre.
+          - name: template_id
+            description: >
+              Template de messages associé à la catégorie de motif.
+
+      - name: motifs
+        description: >
+          Représente les motifs de RDV spécifiques dans RDV-Solidarités.
+
+          Rôle : type précis de RDV, par exemple entretien d'orientation ou atelier CV.
+        columns:
+          - name: rdv_solidarites_motif_id
+            description: >
+              ID du motif dans RDV-Solidarités.
+          - name: organisation_id
+            description: >
+              Organisation propriétaire du motif.
+          - name: motif_category_id
+            description: >
+              Catégorie de rattachement du motif.
+          - name: name
+            description: >
+              Nom du motif.
+          - name: location_type
+            description: >
+              Type de lieu du RDV. Valeurs possibles : public_office pour présentiel, phone pour
+              téléphone, home pour domicile.
+          - name: bookable_by
+            description: >
+              Indique qui peut réserver le motif. Valeurs possibles : agents,
+              agents_and_prescripteurs, agents_and_prescripteurs_and_invited_users, everyone.
+          - name: collectif
+            description: >
+              Indique si le motif correspond à un RDV collectif ou individuel.
+          - name: follow_up
+            description: >
+              Indique si le motif est un motif de suivi avec référent. Ne pas confondre avec la table
+              follow_ups de rdv-insertion.
+          - name: deleted_at
+            description: >
+              Date de suppression logique du motif.
+          - name: instruction_for_rdv
+            description: >
+              Instructions pour le RDV.
+
+      - name: category_configurations
+        description: >
+          Table centrale de configuration.
+
+          Lie une organisation à une catégorie de motif avec sa configuration.
+
+          Rôle : paramétrage des invitations et suivis pour un binôme organisation/catégorie.
+        columns:
+          - name: organisation_id
+            description: >
+              Organisation concernée par la configuration.
+          - name: motif_category_id
+            description: >
+              Catégorie de motif concernée par la configuration.
+          - name: file_configuration_id
+            description: >
+              Configuration des imports CSV associée.
+          - name: invitation_formats
+            description: >
+              Formats d'invitation autorisés, par exemple sms, email ou postal.
+          - name: convene_user
+            description: >
+              Indique si l'organisation peut convoquer obligatoirement l'usager.
+          - name: number_of_days_before_invitations_expire
+            description: >
+              Durée de validité des invitations, en jours.
+          - name: invite_to_user_organisations_only
+            description: >
+              Indique si les invitations sont limitées aux organisations de l'usager.
+          - name: rdv_with_referents
+            description: >
+              Indique si les RDV sont pris avec les référents.
+          - name: phone_number
+            description: >
+              Numéro de téléphone de contact utilisé pour la configuration.
+          - name: email_to_notify_no_available_slots
+            description: >
+              Email de notification lorsqu'il n'y a pas de créneaux disponibles.
+          - name: email_to_notify_rdv_changes
+            description: >
+              Email de notification des changements de RDV.
+          - name: template_overrides
+            description: >
+              Surcharges des templates de messages. Dans l'application, plusieurs champs peuvent suivre
+              un pattern de type template_*_override.
+
+      - name: lieux
+        description: >
+          Représente les lieux physiques où se déroulent les RDV.
+
+          Rôle : adresses des permanences, agences ou autres lieux de rendez-vous.
+        columns:
+          - name: rdv_solidarites_lieu_id
+            description: >
+              ID du lieu dans RDV-Solidarités.
+          - name: organisation_id
+            description: >
+              Organisation propriétaire du lieu.
+          - name: name
+            description: >
+              Nom du lieu.
+          - name: address
+            description: >
+              Adresse complète du lieu.
+          - name: phone_number
+            description: >
+              Numéro de téléphone du lieu.
+
+      - name: archives
+        description: >
+          Représente l'archivage d'un usager dans une organisation.
+
+          Rôle : indique qu'un usager n'est plus suivi par une organisation.
+        columns:
+          - name: user_id
+            description: >
+              Usager archivé.
+          - name: organisation_id
+            description: >
+              Organisation dans laquelle l'usager est archivé.
+          - name: archiving_reason
+            description: >
+              Raison de l'archivage.
+
+      - name: orientations
+        description: >
+          Représente une orientation d'un usager vers une organisation sur une période.
+
+          Rôle : suit les orientations RSA, notamment qui suit qui et quand.
+        columns:
+          - name: user_id
+            description: >
+              Usager orienté.
+          - name: organisation_id
+            description: >
+              Organisation d'orientation.
+          - name: agent_id
+            description: >
+              Agent référent. Champ optionnel.
+          - name: orientation_type_id
+            description: >
+              Type d'orientation.
+          - name: starts_at
+            description: >
+              Date de début de l'orientation.
+          - name: ends_at
+            description: >
+              Date de fin de l'orientation. Une valeur nulle indique une orientation en cours.
+
+      - name: orientation_types
+        description: >
+          Représente les types d'orientations possibles dans un département.
+
+          Rôle : classification des orientations, par exemple accompagnement socio-professionnel.
+        columns:
+          - name: name
+            description: >
+              Nom du type d'orientation.
+          - name: casf_category
+            description: >
+              Catégorie CASF, liée au Code de l'Action Sociale et des Familles.
+          - name: department_id
+            description: >
+              Département concerné par le type d'orientation.
+
+      - name: post_rdv_orientations
+        description: >
+          Représente une orientation décidée à l'issue d'un RDV, par exemple le résultat d'un entretien
+          d'orientation.
+
+          Rôle : lie une participation au type d'orientation retenu lors du RDV.
+        columns:
+          - name: participation_id
+            description: >
+              Participation concernée. Une seule orientation est possible par participation.
+          - name: orientation_type_id
+            description: >
+              Type d'orientation retenu à l'issue du RDV.
+
+      - name: tags
+        description: >
+          Représente les tags ou étiquettes à appliquer aux usagers.
+
+          Rôle : permet de catégoriser les usagers, par exemple QPV, jeune ou senior.
+
+          Relations :
+          - Associé à plusieurs users via tag_users.
+          - Associé à plusieurs organisations via tag_organisations.
+        columns:
+          - name: value
+            description: >
+              Valeur du tag.
+
+      - name: notifications
+        description: >
+          Représente les notifications envoyées aux usagers concernant leurs RDV de convocation.
+
+          Rôle : trace les SMS, emails et courriers de rappel, confirmation ou annulation de RDV.
+        columns:
+          - name: participation_id
+            description: >
+              Participation concernée par la notification.
+          - name: event
+            description: >
+              Type d'événement. Valeurs possibles : participation_created, participation_updated,
+              participation_cancelled, participation_reminder.
+          - name: format
+            description: >
+              Format de la notification. Valeurs possibles : sms, email, postal.
+          - name: rdv_solidarites_rdv_id
+            description: >
+              ID du RDV dans RDV-Solidarités.
+          - name: delivery_status
+            description: >
+              Statut de livraison de la notification.
+          - name: sms_provider
+            description: >
+              Fournisseur SMS utilisé pour les notifications SMS.
+
+      - name: user_list_uploads
+        description: >
+          Représente un import de fichier CSV ou Excel d'usagers.
+
+          Rôle : trace les imports en masse d'usagers.
+        columns:
+          - name: agent_id
+            description: >
+              Agent ayant réalisé l'import.
+          - name: structure_type
+            description: >
+              Type de structure concernée par l'import. Champ polymorphique : Department ou Organisation.
+          - name: structure_id
+            description: >
+              ID de la structure concernée par l'import. Champ polymorphique : Department ou Organisation.
+          - name: category_configuration_id
+            description: >
+              Configuration utilisée si l'import est réalisé avec invitation.
+          - name: file_name
+            description: >
+              Nom du fichier importé.
+
+      - name: user_list_upload_user_rows
+        description: >
+          Représente chaque ligne d'un fichier importé.
+
+          Rôle : stocke temporairement les données avant validation et création.
+        columns:
+          - name: user_list_upload_id
+            description: >
+              Import parent.
+          - name: first_name
+            description: >
+              Prénom de l'usager présent dans la ligne d'import.
+          - name: last_name
+            description: >
+              Nom de l'usager présent dans la ligne d'import.
+          - name: email
+            description: >
+              Email de l'usager présent dans la ligne d'import.
+          - name: matching_user_id
+            description: >
+              Usager correspondant trouvé.
+          - name: cnaf_data
+            description: >
+              Données de l'usager provenant du fichier de données de contact de la CNAF.
+          - name: assigned_organisation_id
+            description: >
+              Organisation assignée à l'usager.
+          - name: selected_for_invitation
+            description: >
+              Indique si la ligne a été sélectionnée pour invitation.
+          - name: selected_for_user_save
+            description: >
+              Indique si la ligne a été sélectionnée pour sauvegarde de l'usager.
+
+      - name: user_list_upload_user_save_attempts
+        description: >
+          Représente les tentatives de création ou de mise à jour d'usagers depuis un import.
+        columns:
+          - name: user_row_id
+            description: >
+              Ligne d'import concernée.
+          - name: user_id
+            description: >
+              Usager créé ou mis à jour.
+          - name: success
+            description: >
+              Indique si la tentative de sauvegarde a réussi.
+          - name: error_type
+            description: >
+              Type d'erreur rencontré lors de la sauvegarde.
+          - name: service_errors
+            description: >
+              Messages d'erreur retournés par le service.
+
+      - name: user_list_upload_invitation_attempts
+        description: >
+          Représente les tentatives d'invitation depuis un import.
+        columns:
+          - name: user_row_id
+            description: >
+              Ligne d'import concernée.
+          - name: invitation_id
+            description: >
+              Invitation créée.
+          - name: format
+            description: >
+              Format d'invitation utilisé.
+          - name: success
+            description: >
+              Indique si la tentative d'invitation a réussi.
+          - name: service_errors
+            description: >
+              Messages d'erreur retournés par le service.
+
+      - name: user_list_upload_creneaux_snapshots
+        description: >
+          Capture le nombre de créneaux disponibles au moment d'un import, afin d'informer l'agent avant
+          l'envoi des invitations.
+        columns:
+          - name: user_list_upload_id
+            description: >
+              Import concerné.
+          - name: number_of_creneaux_available
+            description: >
+              Nombre de créneaux disponibles au moment de l'import.
+
+      - name: file_configurations
+        description: >
+          Représente la configuration de mapping des colonnes pour les imports CSV ou Excel.
+
+          Rôle : définit quelle colonne du fichier correspond à quel champ usager.
+        columns:
+          - name: sheet_name
+            description: >
+              Nom de l'onglet Excel.
+          - name: created_by_agent_id
+            description: >
+              Agent créateur de la configuration.
+          - name: first_name_column
+            description: >
+              Colonne du fichier correspondant au prénom de l'usager.
+          - name: last_name_column
+            description: >
+              Colonne du fichier correspondant au nom de l'usager.
+          - name: email_column
+            description: >
+              Colonne du fichier correspondant à l'email de l'usager.
+
+      - name: templates
+        description: >
+          Représente les templates de messages pour les invitations et notifications.
+
+          Rôle : textes types utilisés dans les communications.
+        columns:
+          - name: model
+            description: >
+              Nom du modèle.
+          - name: rdv_title
+            description: >
+              Titre du RDV.
+          - name: rdv_title_by_phone
+            description: >
+              Titre du RDV téléphonique.
+          - name: rdv_purpose
+            description: >
+              Objet du RDV.
+          - name: user_designation
+            description: >
+              Désignation de l'usager.
+          - name: rdv_subject
+            description: >
+              Sujet du RDV.
+          - name: custom_sentence
+            description: >
+              Phrase personnalisée.
+          - name: punishable_warning
+            description: >
+              Avertissement sur les sanctions.
+
+      - name: messages_configurations
+        description: >
+          Configuration des en-têtes et signatures des messages par organisation.
+
+          Rôle : personnalisation des communications.
+        columns:
+          - name: organisation_id
+            description: >
+              Organisation concernée. Peut être vide si la configuration est au niveau département.
+          - name: direction_names
+            description: >
+              Noms des directions.
+          - name: sender_city
+            description: >
+              Ville émettrice.
+          - name: letter_sender_name
+            description: >
+              Nom de l'expéditeur du courrier.
+          - name: signature_lines
+            description: >
+              Lignes de signature.
+          - name: sms_sender_name
+            description: >
+              Nom d'expéditeur SMS.
+          - name: logos_to_display
+            description: >
+              Logos à afficher dans les communications.
+
+      - name: dpa_agreements
+        description: >
+          Représente l'acceptation du DPA, Data Processing Agreement, par une organisation.
+
+          Rôle : conformité RGPD.
+        columns:
+          - name: organisation_id
+            description: >
+              Organisation ayant accepté le DPA.
+          - name: agent_id
+            description: >
+              Agent ayant accepté le DPA.
+          - name: agent_email
+            description: >
+              Email de l'agent ayant accepté le DPA.
+          - name: agent_full_name
+            description: >
+              Nom complet de l'agent ayant accepté le DPA.
+
+      - name: api_calls
+        description: >
+          Trace les appels reçus sur l'API de rdv-insertion.
+
+          Rôle : audit et suivi d'usage.
+        columns:
+          - name: agent_id
+            description: >
+              Agent à l'origine de l'appel. Champ optionnel.
+          - name: controller_name
+            description: >
+              Nom du contrôleur appelé.
+          - name: action_name
+            description: >
+              Nom de l'action appelée.
+          - name: http_method
+            description: >
+              Méthode HTTP de la requête.
+          - name: path
+            description: >
+              Chemin de la requête HTTP.
+          - name: host
+            description: >
+              Hôte de la requête HTTP.
+
+      - name: csv_exports
+        description: >
+          Trace les exports CSV effectués par les agents.
+        columns:
+          - name: agent_id
+            description: >
+              Agent exportateur.
+          - name: structure_type
+            description: >
+              Type de structure concernée par l'export. Champ polymorphique.
+          - name: structure_id
+            description: >
+              ID de la structure concernée par l'export. Champ polymorphique.
+          - name: kind
+            description: >
+              Type d'export.
+          - name: request_params
+            description: >
+              Paramètres de la requête utilisée pour l'export.
+          - name: purged_at
+            description: >
+              Date de purge du fichier exporté.
+
+      - name: stats
+        description: >
+          Statistiques calculées pour un département ou une organisation.
+
+          Rôle : cache des métriques de performance. Table polymorphique sur statable.
+        columns:
+          - name: statable_type
+            description: >
+              Type de ressource concernée par les statistiques. Valeurs possibles : Department, Organisation.
+          - name: statable_id
+            description: >
+              ID de la ressource concernée par les statistiques.
+          - name: users_count
+            description: >
+              Nombre d'usagers.
+          - name: rdvs_count
+            description: >
+              Nombre de RDV.
+          - name: rate_of_autonomous_users
+            description: >
+              Taux d'usagers autonomes.
+          - name: created_at
+            description: >
+              Date de création de l'enregistrement de statistiques.
+
+      - name: versions
+        description: >
+          Historique des modifications.
+
+          Rôle : audit trail des changements sur certains modèles, via la gem paper_trail.
+
+      - name: webhook_endpoints
+        description: >
+          Endpoints webhook pour notifier des systèmes externes.
+        columns:
+          - name: organisation_id
+            description: >
+              Organisation concernée. Peut être vide si l'endpoint est global.
+          - name: url
+            description: >
+              URL du webhook.
+          - name: secret
+            description: >
+              Secret de signature du webhook.
+          - name: subscriptions
+            description: >
+              Événements souscrits.
+          - name: signature_type
+            description: >
+              Type de signature, par exemple HMAC.
+
+      - name: webhook_receipts
+        description: >
+          Trace les webhooks envoyés depuis rdv-insertion.
+        columns:
+          - name: webhook_endpoint_id
+            description: >
+              Endpoint webhook concerné.
+          - name: resource_model
+            description: >
+              Modèle de la ressource concernée par le webhook.
+          - name: resource_id
+            description: >
+              ID de la ressource concernée par le webhook.
+          - name: timestamp
+            description: >
+              Date d'envoi du webhook.
+
+      - name: blocked_users
+        description: >
+          Usagers dont le lien d'invitation renvoyait vers des créneaux indisponibles.
+
+          Les usagers sont récupérés tous les soirs et insérés dans cette table si l'usager n'a pas
+          déjà été inséré les 30 derniers jours.
+        columns:
+          - name: user_id
+            description: >
+              Usager bloqué.
+
+      - name: blocked_invitations_counters
+        description: >
+          Nombre des invitations dont le lien renvoie vers des créneaux indisponibles par organisation.
+
+          Cette table est calculée tous les soirs.
+
+      - name: category_configuration_creneau_availabilities
+        description: >
+          Suivi historisé du nombre de créneaux disponibles pour une configuration.
+
+          Chaque enregistrement correspond à un relevé et la table est indexée sur created_at.
+        columns:
+          - name: category_configuration_id
+            description: >
+              Configuration concernée.
+          - name: number_of_creneaux_available
+            description: >
+              Nombre de créneaux disponibles.
+          - name: number_of_pending_invitations
+            description: >
+              Nombre d'invitations en attente.
+
+      - name: parcours_documents
+        description: >
+          Documents uploadés dans le module parcours, comme les contrats ou diagnostics.
+        columns:
+          - name: user_id
+            description: >
+              Usager concerné par le document.
+          - name: department_id
+            description: >
+              Département concerné par le document.
+          - name: agent_id
+            description: >
+              Agent créateur du document.
+          - name: type
+            description: >
+              Type de document. Valeurs STI possibles : Diagnostic, Contract.
+          - name: document_date
+            description: >
+              Date du document.
+
+      - name: referent_assignations
+        description: >
+          Lie un usager à ses agents référents.
+        columns:
+          - name: user_id
+            description: >
+              Usager concerné.
+          - name: agent_id
+            description: >
+              Agent référent.
+
+      - name: address_geocodings
+        description: >
+          Résultat du géocodage des adresses des usagers via l'API Adresse.
+        columns:
+          - name: user_id
+            description: >
+              Usager concerné par le géocodage.
+          - name: latitude
+            description: >
+              Latitude de l'adresse géocodée.
+          - name: longitude
+            description: >
+              Longitude de l'adresse géocodée.
+          - name: post_code
+            description: >
+              Code postal de l'adresse géocodée.
+          - name: city
+            description: >
+              Ville de l'adresse géocodée.
+          - name: city_code
+            description: >
+              Code commune de l'adresse géocodée.
+          - name: street
+            description: >
+              Rue de l'adresse géocodée.
+          - name: house_number
+            description: >
+              Numéro de voie de l'adresse géocodée.
+
+      - name: cookies_consents
+        description: >
+          Choix de consentement cookies des agents.
+
+      - name: super_admin_authentication_requests
+        description: >
+          Demandes d'authentification renforcée en tant que super-admin.
+
+      - name: user_list_upload_processing_logs
+        description: >
+          Log des temps de traitement d'une liste d'usagers.
+
+          Cette table trace les temps de traitement liés à la sauvegarde d'usagers et aux invitations.
+
+      - name: users_organisations
+        description: >
+          Table de jonction simple.
+
+          Lie les users aux organisations qui les suivent.
+        columns:
+          - name: user_id
+            description: >
+              Usager concerné.
+          - name: organisation_id
+            description: >
+              Organisation qui suit l'usager.
+
+      - name: invitations_organisations
+        description: >
+          Table de jonction simple.
+
+          Lie une invitation aux organisations concernées.
+        columns:
+          - name: invitation_id
+            description: >
+              Invitation concernée.
+          - name: organisation_id
+            description: >
+              Organisation concernée par l'invitation.
+
+      - name: agents_rdvs
+        description: >
+          Table de jonction simple.
+
+          Lie les agents aux RDV auxquels ils participent.
+        columns:
+          - name: agent_id
+            description: >
+              Agent participant au RDV.
+          - name: rdv_id
+            description: >
+              RDV concerné.
+
+      - name: tag_users
+        description: >
+          Table de jonction simple.
+
+          Lie les tags aux users.
+        columns:
+          - name: tag_id
+            description: >
+              Tag appliqué à l'usager.
+          - name: user_id
+            description: >
+              Usager concerné par le tag.
+
+      - name: tag_organisations
+        description: >
+          Table de jonction simple.
+
+          Lie les tags aux organisations qui les rendent disponibles.
+        columns:
+          - name: tag_id
+            description: >
+              Tag rendu disponible.
+          - name: organisation_id
+            description: >
+              Organisation qui rend le tag disponible.
+
+      - name: active_storage_attachments
+        description: >
+          Table standard ActiveStorage pour la gestion des fichiers, comme les logos ou les fichiers CSV.
+
+      - name: active_storage_blobs
+        description: >
+          Table standard ActiveStorage pour la gestion des fichiers, comme les logos ou les fichiers CSV.
+
+      - name: active_storage_variant_records
+        description: >
+          Table standard ActiveStorage pour la gestion des fichiers, comme les logos ou les fichiers CSV.
