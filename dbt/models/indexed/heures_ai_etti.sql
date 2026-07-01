@@ -1,12 +1,3 @@
-{{ config(
-    materialized = 'table',
-    indexes=[
-      {'columns': ['emi_pph_id'], 'type' : 'btree', 'unique' : False},
-      {'columns': ['emi_ctr_id'], 'type' : 'btree', 'unique' : False},
-      {'columns': ['emi_afi_id'], 'type' : 'btree', 'unique' : False},
-    ]
- ) }}
-
 select
     {{ pilo_star(ref('etat_mensuel_heures_travaillees_sorties'), relation_alias='ems') }},
     {{ pilo_star(ref('motif_sorties_salaries'), relation_alias='sorties') }}

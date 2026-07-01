@@ -1,5 +1,4 @@
 {{ config(
-    materialized = 'table',
     indexes=[
       {'columns': ['contrat_id_ctr', 'contrat_id_pph'], 'type' : 'btree', 'unique' : False},
     ]
