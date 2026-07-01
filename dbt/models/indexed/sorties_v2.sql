@@ -1,7 +1,5 @@
 {{ config(
-    materialized = 'table',
     indexes=[
-      {'columns': ['emi_pph_id'], 'unique' : False},
       {'columns': ['af_numero_annexe_financiere'], 'unique' : False},
     ]
  ) }}

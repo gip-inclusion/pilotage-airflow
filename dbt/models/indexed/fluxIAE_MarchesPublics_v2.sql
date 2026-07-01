@@ -1,10 +1,3 @@
-{{ config(
-    materialized = 'table',
-    indexes=[
-      {'columns': ['mpu_af_id'], 'type' : 'btree', 'unique' : False},
-    ]
- ) }}
-
 with ranked_data as (
     select
         mpu_af_id,

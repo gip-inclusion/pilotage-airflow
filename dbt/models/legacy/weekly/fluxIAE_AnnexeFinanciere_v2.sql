@@ -9,12 +9,7 @@ L'objectif est de retravailler les variables de la table fluxIAE_AnnexeFinancier
 
 */
 
- {{ config(
-    materialized = 'table',
-    indexes=[
-      {'columns': ['af_id_annexe_financiere'], 'type' : 'btree', 'unique' : False},
-    ]
- ) }}
+{{ config(materialized = 'table') }}
 
 with "AnnexeFinanciere_v1" as (
     select

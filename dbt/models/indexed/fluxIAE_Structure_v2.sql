@@ -1,10 +1,3 @@
-{{ config(
-    materialized = 'table',
-    indexes=[
-      {'columns': ['structure_id_siae'], 'type' : 'btree', 'unique' : False},
-    ]
- ) }}
-
 select distinct -- parfois l'ASP introduit des doublons, ici les élimine
     -- l'ASP préconise l'utilisation de l'adresse administrative pour récupérer la commune de la structure
     {{ pilo_star(source('fluxIAE', 'fluxIAE_Structure')) }},

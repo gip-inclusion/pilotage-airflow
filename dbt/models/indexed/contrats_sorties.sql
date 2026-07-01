@@ -1,13 +1,3 @@
-{{ config(
-    materialized = 'table',
-    indexes=[
-      {'columns': ['emi_pph_id'], 'type' : 'btree', 'unique' : False},
-      {'columns': ['emi_ctr_id'], 'type' : 'btree', 'unique' : False},
-      {'columns': ['emi_afi_id'], 'type' : 'btree', 'unique' : False},
-    ]
- ) }}
-
-
 select distinct
     emi.emi_pph_id,
     emi.emi_afi_id,
