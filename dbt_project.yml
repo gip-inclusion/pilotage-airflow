@@ -33,11 +33,14 @@ models:
       +materialized: ephemeral
     indexed:
       +materialized: table
+      +post-hook: ["{{ index_join_keys() }}"]
     legacy:
       +materialized: table
+      +post-hook: ["{{ index_join_keys() }}"]
     marts:
       +schema: public
       +materialized: table
+      +post-hook: ["{{ index_join_keys() }}"]
       data_inclusion:
         +schema: data_inclusion
     reporting:
@@ -46,6 +49,7 @@ models:
     intermediate:
       +schema: intermediate
       +materialized: table
+      +post-hook: ["{{ index_join_keys() }}"]
     staging:
       +schema: staging
       +materialized: view
@@ -53,6 +57,7 @@ models:
       +schema: monrecap
       marts:
         +materialized: table
+        +post-hook: ["{{ index_join_keys() }}"]
       staging:
         +materialized: view
 

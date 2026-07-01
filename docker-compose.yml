@@ -16,6 +16,9 @@ services:
   postgres:
     container_name: pilotage_postgres
     image: postgres:17
+    # Default /dev/shm is 64MB; parallel query workers exhaust it and fail with
+    # "could not resize shared memory segment ... No space left on device".
+    shm_size: 256mb
     # Disable some safety switches for a faster postgres: https://www.postgresql.org/docs/current/non-durability.html
     command: -c fsync=off -c full_page_writes=off -c synchronous_commit=off
     environment:
