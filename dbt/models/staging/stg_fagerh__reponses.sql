@@ -305,7 +305,11 @@ renamed as (
         {{ clean_integer('entree_sans_emploi_plus2ans__espo') }} as entree_sans_emploi_plus2ans__espo,
         {{ clean_integer('entree_sans_emploi_plus2ans__esrp') }} as entree_sans_emploi_plus2ans__esrp,
         {{ clean_integer('entree_sans_emploi_plus2ans__ueros') }} as entree_sans_emploi_plus2ans__ueros,
-        {{ clean_text('es_departement') }} as es_departement,
+        case
+            when {{ clean_text('es_departement') }} ~ '^[0-9]$'
+                then lpad({{ clean_text('es_departement') }}, 2, '0')
+            else upper({{ clean_text('es_departement') }})
+        end as es_departement,
         {{ clean_text('es_nom') }} as es_nom,
         {{ clean_text('finess_json') }} as finess_json,
         {{ clean_text('finess_main') }} as finess_main,
