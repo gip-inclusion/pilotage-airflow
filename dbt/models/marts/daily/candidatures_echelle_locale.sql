@@ -21,6 +21,7 @@ select
     candidatures.code_commune_prescripteur              as prescripteur_code_commune,
     candidatures.ville_prescripteur                     as prescripteur_ville,
     candidatures."région"                               as prescripteur_region,
+    candidatures.numero_departement_insee               as prescripteur_numero_departement,
     candidatures."nom_département_insee"                as prescripteur_nom_departement,
     candidatures.nom_departement_complet                as prescripteur_departement,
     candidatures.nom_arrondissement                     as prescripteur_arrondissement,
