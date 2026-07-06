@@ -99,7 +99,14 @@ aiohttp==3.12.15 \
     --hash=sha256:fc49c4de44977aa8601a00edbf157e9a421f227aa7eb477d9e3df48343311065 \
     --hash=sha256:fd736ed420f4db2b8148b52b46b88ed038d0354255f9a73196b7bbce3ea97545 \
     --hash=sha256:fe086edf38b2222328cdf89af0dde2439ee173b8ad7cb659b4e4c6f385b2be3d
-    # via apache-airflow-providers-http
+    # via
+    #   aiohttp-jinja2
+    #   apache-airflow-providers-http
+    #   connexion
+aiohttp-jinja2==1.6 \
+    --hash=sha256:0df405ee6ad1b58e5a068a105407dc7dcc1704544c559f1938babde954f945c7 \
+    --hash=sha256:a3a7ff5264e5bca52e8ae547bbfd0761b72495230d438d05b6c0915be619b0e2
+    # via connexion
 aiosignal==1.4.0 \
     --hash=sha256:053243f8b92b990551949e63930a839ff0cf0b0ebbe0597b0f3fb19e1a0fe82e \
     --hash=sha256:f47eecd9468083c2029cc99945502cb7708b082c232f9aca65da147157b251c7
@@ -124,9 +131,9 @@ anyio==4.11.0 \
     --hash=sha256:0287e96f4d26d4149305414d4e3bc32f0dcd0862365a4bddea19d7a1ec38c4fc \
     --hash=sha256:82a8d0b81e318cc5ce71a5f1f8b5c4e63619620b63141ef8c995fa0db95a57c4
     # via httpx
-apache-airflow==2.11.0 \
-    --hash=sha256:252ae1a2f3d75547bb35907ac6abe6a105d02eaab265434ca587b5757940ce08 \
-    --hash=sha256:e3449d46916be2cf7e6068b86dbd958577306e22407e6493ef2ae83a0c73a424
+apache-airflow==2.11.1 \
+    --hash=sha256:235e3b0702dc8d19d63dbff776a0b1a6dd147d7ca97d9074d181a47f2630343f \
+    --hash=sha256:fd67b8cffffcd653034a3d7e4b52652d254d01bad32fcd9a516273bc7f99ccab
     # via
     #   -r requirements/base.in
     #   apache-airflow-providers-amazon
@@ -167,9 +174,9 @@ apache-airflow-providers-common-sql==1.28.1 \
     #   apache-airflow-providers-amazon
     #   apache-airflow-providers-slack
     #   apache-airflow-providers-sqlite
-apache-airflow-providers-fab==1.5.3 \
-    --hash=sha256:0b1352e16266f40aa1037af316fd3abcc3852ca49b033acac9f9cad60e5f9764 \
-    --hash=sha256:bb4d879fb9bf9bca7c0f103e1dc9d1fa25efe02e2c4536f4d60c789786fb1f89
+apache-airflow-providers-fab==1.5.4 \
+    --hash=sha256:3884d1f57f61e9fe13b47e699b58edbe7fe79cc0c10b228516f27271aa1237e3 \
+    --hash=sha256:637c47f61728c99ec4d73cf80e4072c4f9f9afe762d2aedc30edf40119cecb77
     # via apache-airflow
 apache-airflow-providers-ftp==3.13.2 \
     --hash=sha256:2574f041b42a6c6952142392f4540434a6c7ec6ee3760fd5b6b5990e0aac4709 \
@@ -310,6 +317,7 @@ blinker==1.9.0 \
     --hash=sha256:ba0efaa9080b619ff2f3459d1d500c57bddea4a6b424b60a91141db6fd2f08bc
     # via
     #   apache-airflow
+    #   flask
     #   streamlit
 boto3==1.40.41 \
     --hash=sha256:02eac942aaa9f3a1c8a11f77e6f971b41c125973888f80f3eb177c2f21ad7a01 \
@@ -681,9 +689,9 @@ configupdater==3.2 \
     --hash=sha256:0f65a041627d7693840b4dd743581db4c441c97195298a29d075f91b79539df2 \
     --hash=sha256:9fdac53831c1b062929bf398b649b87ca30e7f1a735f3fbf482072804106306b
     # via apache-airflow
-connexion==2.14.2 \
-    --hash=sha256:a73b96a0e07b16979a42cde7c7e26afe8548099e352cf350f80c57185e0e0b36 \
-    --hash=sha256:dbc06f52ebeebcf045c9904d570f24377e8bbd5a6521caef15a06f634cf85646
+connexion==2.15.1 \
+    --hash=sha256:01b7b5afa27b3e7007fdf4eb6eb3f82a46f7656a4416110b13c08f54efbd9c98 \
+    --hash=sha256:ff489f9dcd384aa53c53149e88d0a777f07660b98cf6488003cdcd270928c93b
     # via apache-airflow
 cron-descriptor==2.0.6 \
     --hash=sha256:3a1c0d837c0e5a32e415f821b36cf758eb92d510e6beff8fbfe4fa16573d93d6 \
@@ -846,9 +854,9 @@ faker==37.8.0 \
     --hash=sha256:090bb5abbec2b30949a95ce1ba6b20d1d0ed222883d63483a0d4be4a970d6fb8 \
     --hash=sha256:b08233118824423b5fc239f7dd51f145e7018082b4164f8da6a9994e1f1ae793
     # via -r requirements/dev.in
-flask==2.2.5 \
-    --hash=sha256:58107ed83443e86067e41eff4631b058178191a355886f8e479e347fa1285fdf \
-    --hash=sha256:edee9b0a7ff26621bd5a8c10ff484ae28737a2410d99b0bb9a6850c7fb977aa0
+flask==2.3.3 \
+    --hash=sha256:09c347a92aa7ff4a8e7f3206795f30d826654baf38b873d0744cd571ca609efc \
+    --hash=sha256:f69fcd559dc907ed196ab9df0e48471709175e696d6e698dd4dbe940f96ce66b
     # via
     #   apache-airflow
     #   apache-airflow-providers-fab
@@ -862,9 +870,9 @@ flask==2.2.5 \
     #   flask-session
     #   flask-sqlalchemy
     #   flask-wtf
-flask-appbuilder==4.5.3 \
-    --hash=sha256:2f3f953b8134bed02ed0236ab7e85e6c354b1b3680069d76dfadc017eb05c561 \
-    --hash=sha256:9223db6c43939f8646fc6458d949ea4d5de182e8455bdfb0010bb37359d96ccf
+flask-appbuilder==4.5.4 \
+    --hash=sha256:3f51207b1379475773df8043391433f55f1cff8476b2f08a7bd9f30302da5ed9 \
+    --hash=sha256:eed98f23b13ce893b5030714f51d1464189a6fbadcb4adfdbe0bf7ca7a00092e
     # via apache-airflow-providers-fab
 flask-babel==2.0.0 \
     --hash=sha256:e6820a052a8d344e178cdd36dd4bb8aea09b4bda3d5f9fa9f008df2c7f2f5468 \
@@ -890,10 +898,12 @@ flask-login==0.6.3 \
     # via
     #   apache-airflow-providers-fab
     #   flask-appbuilder
-flask-session==0.5.0 \
-    --hash=sha256:1619bcbc16f04f64e90f8e0b17145ba5c9700090bb1294e889956c1282d58631 \
-    --hash=sha256:190875e6aebf2953c6803d42379ef3b934bc209ef8ef006f97aecb08f5aaeb86
-    # via apache-airflow
+flask-session==0.8.0 \
+    --hash=sha256:20e045eb01103694e70be4a49f3a80dbb1b57296a22dc6f44bbf3f83ef0742ff \
+    --hash=sha256:5dae6e9ddab334f8dc4dea4305af37851f4e7dc0f484caf3351184001195e3b7
+    # via
+    #   apache-airflow
+    #   apache-airflow-providers-fab
 flask-sqlalchemy==2.5.1 \
     --hash=sha256:2bda44b43e7cacb15d4e05ff3cc1f8bc97936cc464623424102bfc2c35e95912 \
     --hash=sha256:f12c3d4cc5cc7fdcc148b9527ea05671718c3ea45d50c7e732cceb33f574b390
@@ -1327,15 +1337,16 @@ itsdangerous==2.2.0 \
     --hash=sha256:e0050c0b7da1eea53ffaf149c0cfbb5c6e2e2b69c4bef22c81fa6eb73e5f6173
     # via
     #   apache-airflow
-    #   connexion
     #   flask
     #   flask-wtf
 jinja2==3.1.6 \
     --hash=sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d \
     --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
     # via
+    #   aiohttp-jinja2
     #   altair
     #   apache-airflow
+    #   connexion
     #   dbt-common
     #   dbt-core
     #   dbt-semantic-interfaces
@@ -1679,6 +1690,7 @@ markupsafe==3.0.3 \
     --hash=sha256:fed51ac40f757d41b7c48425901843666a6677e3e8eb0abcff09e4ba6e664f50
     # via
     #   apache-airflow
+    #   connexion
     #   jinja2
     #   mako
     #   werkzeug
@@ -1787,6 +1799,57 @@ msgpack==1.1.1 \
     --hash=sha256:f5be6b6bc52fad84d010cb45433720327ce886009d862f46b26d4d154001994b \
     --hash=sha256:f6d58656842e1b2ddbe07f43f56b10a60f2ba5826164910968f5933e5178af75
     # via mashumaro
+msgspec==0.21.1 \
+    --hash=sha256:0d03867786e5d7ba25d666df4b11320c27170f4aeafcb8e3a8b0a50a4fb742ca \
+    --hash=sha256:0d1009f6715f5bff3b54d4ff5c7428ad96197e0534e1645b8e9b955890c84664 \
+    --hash=sha256:0d2cc73df6058d811a126ac3a8ad63a4dfa210c82f9cf5a004802eaf4712de90 \
+    --hash=sha256:15f523d51c00ebad412213bfe9f06f0a50ec2b93e0c19e824a2d267cabb48ea2 \
+    --hash=sha256:1bf17cbd7b28a5dffc7e764c654eed8ccde5e0f1de7970628608304640d4ce4e \
+    --hash=sha256:21995e74b5c598c2e004110ad66ec7f1b8c20bf2bcf3b2de8fd9a3094422d3ff \
+    --hash=sha256:2313508e394b0d208f8f56892ca9b2799e2561329de9763b19619595a6c0f72c \
+    --hash=sha256:344c7cd0eaed1fb81d7959f99100ef71ec9b536881a376f11b9a6c4803365697 \
+    --hash=sha256:38fe93e86b61328fe544cb7fd871fad5a27c8734bfda90f65e5dbe288ae50f61 \
+    --hash=sha256:3cb779ea0c35bc807ff941d415875c1f69ca0be91a2e907ab99a171811d86a9a \
+    --hash=sha256:3d6b9dc50948eaf65df54d2fd0ff66e6d8c32f116037209ee861810eb9b676cb \
+    --hash=sha256:42bb1241e0750c1a4346f2aa84db26c5ffd99a4eb3a954927d9f149ff2f42898 \
+    --hash=sha256:4692b7c1609155708c4418f88e92f63c13fdf08aa095c84bae82bad75b53389b \
+    --hash=sha256:48943e278b3854c2f89f955ddc6f9f430d3f0784b16e47d10604ee0463cd21f5 \
+    --hash=sha256:49880fd20fdbcfe1b793f07dd83f12572bab679c9800352c8b2240289aa46a06 \
+    --hash=sha256:4e47390360583ba3d5c6cb44cf0a9f61b0a06a899d3c2c00627cedebb2e2884b \
+    --hash=sha256:5102c7e9b3acff82178449b85006d96310e690291bb1ea0142f1b24bcb8aabcb \
+    --hash=sha256:52c5e21930942302394429c5a582ce7e6b62c7f983b3760834c2ce107e0dd6df \
+    --hash=sha256:5666b1b560b97b6ec2eb3fca8a502298ebac56e13bbca1f88523538ce83d01ea \
+    --hash=sha256:5d2d4116ebe3035a78d9ec76e99a9d64e5fa6d44fe61a9c5de7fd1acf54bcc69 \
+    --hash=sha256:5f8e9dfcd98419cf7568808470c4317a3fb30bef0e3715b568730a2b272a20d7 \
+    --hash=sha256:6129f0cca52992e898fd5344187f7c8127b63d810b2fd73e36fca73b4c6475ee \
+    --hash=sha256:628aaa35c74950a8c59da330d7e98917e1c7188f983745782027748ee4ca573e \
+    --hash=sha256:68604db36b3b4dd9bf160e436e12798a4738848144cea1aca1cb984011eb160f \
+    --hash=sha256:6badc03b9725352219cca017bfe71c61f2fbd0fb5982b410ac17c97c213deb30 \
+    --hash=sha256:72d9cd03241b8b2edb2e12dcc66c500fa480d8cbd71a8bac105809d468882064 \
+    --hash=sha256:740fbf1c9d59992ca3537d6fbe9ebbf9eaf726a65fbf31448e0ecbc710697a63 \
+    --hash=sha256:764173717a01743f007e9f74520ed281f24672c604514f7d76c1c3a10e8edb66 \
+    --hash=sha256:846758412e9518252b2ac9bffd6f0e54d9ff614f5f9488df7749f81ff5c80920 \
+    --hash=sha256:8bc666331c35fcce05a7cd2d6221adbe0f6058f8e750711413d22793c080ac6a \
+    --hash=sha256:92d89dfad13bd1ea640dc3e37e724ed380da1030b272bdf5ecafb983c3ad7c75 \
+    --hash=sha256:a9aa659ebb0101b1cbc31461212b87e341d961f0ab0772aaf068a99e001ec4aa \
+    --hash=sha256:abbb39d65681fa24ed394e01af3d59d869068324f900c61d06062b7fb9980f2f \
+    --hash=sha256:ae0162e22849a5e91eaad907766525107523b0daea3df267a9fcb5ba4e0936ae \
+    --hash=sha256:b504b6e7f7a22a24b27232b73034421692147865162daaec9f3bf62439007c87 \
+    --hash=sha256:c6faffe5bb644ec884052679af4dfd776d4b5ca90e4a7ec7e7e319e4e6b93a6e \
+    --hash=sha256:d3124010b3815451494c85ff345e693cb9fe5889cfcbbef39ed8622e0e72319c \
+    --hash=sha256:d4248cf0b6129b7d230eacd493c17cc2d4f3989f3bb7f633a928a85b7dcfa251 \
+    --hash=sha256:d4ab834a054c6f0cbeef6df9e7e1b33d5f1bc7b86dea1d2fd7cad003873e783d \
+    --hash=sha256:d8b8578e4c83b14ceea4cef0d0b747e31d9330fe4b03b2b2ad4063866a178f93 \
+    --hash=sha256:dd677e3001fdfed9186de72eab434da2976303cd5eb9550921d3d0c3e3e168ce \
+    --hash=sha256:ed2ab278200e743a1d2610a4e0c8fc74f6cecb8548544cdec43f927bd9265238 \
+    --hash=sha256:ee9e3f11fa94603f7d673bf795cfa31b549c4a2c723bc39b45beb1e7f5a3fb99 \
+    --hash=sha256:ef3ec2296248d1f8b9231acb051b6d471dfde8f21819e86c9adaaa9f42918521 \
+    --hash=sha256:f041a2279f31e3a53319005e4d60ba77c085cfcbe394cdc7ce803c2d01fe9449 \
+    --hash=sha256:f60800e6299b798142dc40b0644da77ceac5ea0568be58228417eae14135c847 \
+    --hash=sha256:f667b90b37fad734a91671abd68e0d7f4d066862771b87e91c53996dcb7a9027 \
+    --hash=sha256:f7b27d1a8ead2b6f5b0c4f2d07b8be1ccfcc041c8a0e704781edebe3ae13c484 \
+    --hash=sha256:fab48eb45fdbfbdb2c0edfec00ffc53b6b6085beefc6b50b61e01659f9f8757f
+    # via flask-session
 multidict==6.6.4 \
     --hash=sha256:01368e3c94032ba6ca0b78e7ccb099643466cf24f8dc8eefcfdc0571d56e58f9 \
     --hash=sha256:01d0959807a451fe9fdd4da3e139cb5b77f7328baf2140feeaf233e1d777b729 \
@@ -2071,10 +2134,6 @@ parsedatetime==2.6 \
     --hash=sha256:4cb368fbb18a0b7231f4d76119165451c8d2e35951455dfee97c62a87b04d455 \
     --hash=sha256:cb96edd7016872f58479e35879294258c71437195760746faffedb692aef000b
     # via agate
-pathlib-abc==0.5.1 \
-    --hash=sha256:96bfbcc9828bc2d5f7d53e6c3e66314773dd6c119dad46ab6de20bb869dc6324 \
-    --hash=sha256:bec9a9954728ea21092f8a1168b59cd6f380a0c3503e466e0c2ac9c7c2623564
-    # via universal-pathlib
 pathspec==0.12.1 \
     --hash=sha256:a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08 \
     --hash=sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712
@@ -2947,6 +3006,10 @@ python-dateutil==2.9.0.post0 \
     #   pendulum
     #   pyathena
     #   sagemaker-studio
+python-multipart==0.0.32 \
+    --hash=sha256:be54b7f3fa167bb83e4fcd936b887b708f4e57fe75911c02aebf53efaf8d938e \
+    --hash=sha256:ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23
+    # via connexion
 python-nvd3==0.16.0 \
     --hash=sha256:0115887289b3f751716ddd05c7b53ac5f05e71201e52496decdac453a50dcf7e
     # via apache-airflow
@@ -3832,9 +3895,9 @@ unidecode==1.4.0 \
     --hash=sha256:c3c7606c27503ad8d501270406e345ddb480a7b5f38827eafe4fa82a137f0021 \
     --hash=sha256:ce35985008338b676573023acc382d62c264f307c8f7963733405add37ea2b23
     # via -r requirements/base.in
-universal-pathlib==0.3.0 \
-    --hash=sha256:4f997ffc5210a4bfba1a7deeab40b836a2fa53b8e32fc7e6aef84592ee9ded59 \
-    --hash=sha256:5643d62584254457473f30b4f02127a7d40d7a7d902cefd8838a7350c99e41a4
+universal-pathlib==0.2.6 \
+    --hash=sha256:50817aaeaa9f4163cb1e76f5bdf84207fa05ce728b23fd779479b3462e5430ac \
+    --hash=sha256:700dec2b58ef34b87998513de6d2ae153b22f083197dfafb8544744edabd1b18
     # via apache-airflow
 urllib3==2.5.0 \
     --hash=sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760 \
@@ -3881,9 +3944,9 @@ watchtower==3.4.0 \
     --hash=sha256:5eac65cbf2a7350bb43c3518485230a6135ed7dec7ccb88468828d68ab9fea26 \
     --hash=sha256:7d3c116aff72a73ce8f6fc0addd1d0daa04d3f9d53d87cedca3a5a65a264bf7d
     # via apache-airflow-providers-amazon
-werkzeug==2.2.3 \
-    --hash=sha256:2e1ccc9417d4da358b9de6f174e3ac094391ea1d4fbef2d667865d819dfd0afe \
-    --hash=sha256:56433961bc1f12533306c624f3be5e744389ac61d722175d543e1751285da612
+werkzeug==3.1.8 \
+    --hash=sha256:63a77fb8892bf28ebc3178683445222aa500e48ebad5ec77b0ad80f8726b1f50 \
+    --hash=sha256:9bad61a4268dac112f1c5cd4630a56ede601b6ed420300677a869083d70a4c44
     # via
     #   apache-airflow
     #   connexion
