@@ -17,6 +17,7 @@ select
 
     -- nom_département_insee est recalculé depuis dim_commune
     -- et doit être utilisé comme référence géographique.
+    dim_commune.code_departement_insee                              as numero_departement_insee,
     dim_commune.nom_departement                                     as "nom_département_insee",
     dim_commune.nom_departement_complet,
     dim_commune.nom_arrondissement,
