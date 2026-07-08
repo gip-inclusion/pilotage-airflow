@@ -8,6 +8,9 @@ from airflow.operators import bash
 from dags.common import db, dbt, default_dag_args, matomo, slack
 
 
+# Valeurs reprises des scripts actes_metier de Pierre : site et segments Matomo
+# utilisés pour compter les visites des pages de résultats de recherche Emplois,
+# avec la dimension personnalisée 4 pour le drill down par département
 ID_SITE_EMPLOIS = matomo.PROJECTS_SITE_ID["emplois"]
 EMPLOYERS_RESULTS_SEGMENT = "pageUrl=@/search/employers/results"
 SERVICES_RESULTS_SEGMENT = "pageUrl=@/search/services/results"
@@ -93,6 +96,54 @@ def closed_months_to_fetch(months_to_fetch=MONTHS_TO_FETCH):
     return [first_month.add(months=i).date() for i in range(months_to_fetch)]
 
 
+def fetch_actes_metier_matomo_data_for_site(
+    matomo_base_url,
+    token,
+    site_id,
+    monthly_segments,
+    department_segment,
+    department_dimension_id,
+    months,
+    fetched_at,
+):
+    monthly_visits = []
+    department_visits = []
+
+    for month in months:
+        monthly_visits.extend(
+            {
+                "month": month,
+                "id_site": site_id,
+                "segment": segment,
+                "nb_visits": matomo.get_monthly_visits(matomo_base_url, token, site_id, segment, month),
+                "fetched_at": fetched_at,
+            }
+            for segment in monthly_segments
+        )
+
+        department_visits.extend(
+            {
+                "month": month,
+                "id_site": site_id,
+                "segment": department_segment,
+                "dimension_id": department_dimension_id,
+                "department_label": row["department_label"],
+                "nb_visits": row["nb_visits"],
+                "fetched_at": fetched_at,
+            }
+            for row in matomo.get_monthly_custom_dimension_visits(
+                matomo_base_url,
+                token,
+                site_id,
+                department_segment,
+                month,
+                department_dimension_id,
+            )
+        )
+
+    return monthly_visits, department_visits
+
+
 with DAG(
     "actes_metier_matomo",
     schedule="@monthly",
@@ -106,40 +157,16 @@ with DAG(
         token = Variable.get("MATOMO_ACTES_METIER_TOKEN")
         fetched_at = pendulum.now("UTC").naive()
 
-        monthly_visits = []
-        department_visits = []
-
-        for month in closed_months_to_fetch():
-            monthly_visits.extend(
-                {
-                    "month": month,
-                    "id_site": ID_SITE_EMPLOIS,
-                    "segment": segment,
-                    "nb_visits": matomo.get_monthly_visits(matomo_base_url, token, ID_SITE_EMPLOIS, segment, month),
-                    "fetched_at": fetched_at,
-                }
-                for segment in (EMPLOYERS_RESULTS_SEGMENT, SERVICES_RESULTS_SEGMENT)
-            )
-
-            department_visits.extend(
-                {
-                    "month": month,
-                    "id_site": ID_SITE_EMPLOIS,
-                    "segment": EMPLOYERS_RESULTS_SEGMENT,
-                    "dimension_id": DEPARTMENT_DIMENSION_ID,
-                    "department_label": row["department_label"],
-                    "nb_visits": row["nb_visits"],
-                    "fetched_at": fetched_at,
-                }
-                for row in matomo.get_monthly_custom_dimension_visits(
-                    matomo_base_url,
-                    token,
-                    ID_SITE_EMPLOIS,
-                    EMPLOYERS_RESULTS_SEGMENT,
-                    month,
-                    DEPARTMENT_DIMENSION_ID,
-                )
-            )
+        monthly_visits, department_visits = fetch_actes_metier_matomo_data_for_site(
+            matomo_base_url,
+            token,
+            site_id=ID_SITE_EMPLOIS,
+            monthly_segments=(EMPLOYERS_RESULTS_SEGMENT, SERVICES_RESULTS_SEGMENT),
+            department_segment=EMPLOYERS_RESULTS_SEGMENT,
+            department_dimension_id=DEPARTMENT_DIMENSION_ID,
+            months=closed_months_to_fetch(),
+            fetched_at=fetched_at,
+        )
 
         with db.connection_engine().begin() as conn:
             conn.execute(sqlalchemy.text(CREATE_TABLES_SQL))

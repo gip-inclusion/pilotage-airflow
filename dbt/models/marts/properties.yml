@@ -130,12 +130,18 @@ models:
               - departement
     columns:
       - name: mois
+        description: >
+          Mois des visites Matomo agrégées.
         tests:
           - not_null
       - name: source
+        description: >
+          Produit auquel l'acte métier est rattaché. Pour ce modèle Matomo, la valeur est toujours `emplois`.
         tests:
           - not_null
       - name: type_acte
+        description: >
+          Type d'acte métier reconstruit à partir des visites Matomo.
         tests:
           - not_null
           - accepted_values:
@@ -143,21 +149,48 @@ models:
                 values:
                   - "Recherche d’offre d’emploi"
                   - "Recherche d’offre de service, hors emploi solidaire"
+      - name: categorie_acte
+        description: >
+          Catégorie métier de l'acte. Pour les actes Matomo de recherche, la valeur est toujours `Support`.
+        tests:
+          - not_null
       - name: nombre_actes
+        description: >
+          Nombre de visites Matomo interprété comme nombre d'actes métier. Pour les recherches d'offres d'emploi,
+          le total Matomo est decomposé par département ; pour les recherches de services, le total reste rattaché
+          au département `Inconnu`.
         tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
       - name: north_star
+        description: >
+          Indique si l'acte est comptabilisé dans la déclinaison North Star du référentiel des actes métier PDI.
+          Pour les actes Matomo de recherche, cette valeur est toujours `false`.
         tests:
           - not_null
       - name: north_star_70
+        description: >
+          Variante héritée du modèle commun des actes métier. Non applicable aux actes Matomo de recherche,
+          donc toujours `false`.
+        tests:
+          - not_null
+      - name: traite
+        description: >
+          Indicateur hérité du modèle commun des actes métier pour les actes traités. Non applicable aux visites
+          Matomo de recherche, donc toujours `false`.
         tests:
           - not_null
       - name: type_structure
+        description: >
+          Type de structure associé à l'acte métier. Cette information n'est pas disponible dans les données
+          Matomo utilisées ici, donc la valeur est toujours `Inconnu`.
         tests:
           - not_null
       - name: departement
+        description: >
+          Département associé à la recherche d'offre d'emploi lorsque la dimension personnalisée Matomo le permet.
+          La valeur est `Inconnu` quand le département n'est pas disponible ou pour les recherches de services.
         tests:
           - not_null

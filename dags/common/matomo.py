@@ -52,6 +52,10 @@ def _to_int(value):
     return int(float(value))
 
 
+def _format_custom_dimension_visit(row):
+    return {"department_label": row.get("label") or "", "nb_visits": _to_int(row.get("nb_visits"))}
+
+
 def get_monthly_visits(matomo_base_url, token, site_id, segment, month):
     data = _request_matomo_api(
         matomo_base_url,
@@ -80,7 +84,7 @@ def get_monthly_custom_dimension_visits(matomo_base_url, token, site_id, segment
     if isinstance(data, dict):
         data = data.get("subtable") or data.get("reportData") or []
 
-    return [{"department_label": row.get("label") or "", "nb_visits": _to_int(row.get("nb_visits"))} for row in data]
+    return [_format_custom_dimension_visit(row) for row in data]
 
 
 def get_visits_per_campaign_from_matomo(matomo_base_url, token):
