@@ -405,6 +405,18 @@ sources:
         description: >
           Table générée par une tâche périodique côté Les Emplois de l'Inclusion et qui permet de remonter les
           visites sur les tableaux de bord publics du Pilotage.
+
+  - name: raw_matomo
+    schema: raw
+    description: >
+      Tables brutes Matomo ingerees par les DAGs du pilotage.
+    tables:
+      - name: matomo__actes_metier_matomo_monthly_visits
+        description: >
+          Visites mensuelles Matomo des pages de recherche Emplois necessaires aux actes metier.
+      - name: matomo__actes_metier_matomo_monthly_department_visits
+        description: >
+          Repartition par dimension personnalisee departement des visites mensuelles Matomo de la recherche d'offres d'emploi.
   - name: monrecap
     schema: monrecap
     description: >

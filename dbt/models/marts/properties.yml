@@ -106,3 +106,58 @@ models:
         description: >
           Score de qualité de la fiche structure dans Data Inclusion.
 
+  - name: matomo__actes_metier
+    description: >
+      Table finale reutilisable des actes metier Emplois calcules depuis Matomo.
+
+      **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
+      Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
+      avec l'équipe data.**
+
+    config:
+      tags: ["matomo-actes-metier"]
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - mois
+              - source
+              - type_acte
+              - north_star
+              - north_star_70
+              - type_structure
+              - departement
+    columns:
+      - name: mois
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+      - name: type_acte
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - "Recherche d’offre d’emploi"
+                  - "Recherche d’offre de service, hors emploi solidaire"
+      - name: nombre_actes
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: north_star
+        tests:
+          - not_null
+      - name: north_star_70
+        tests:
+          - not_null
+      - name: type_structure
+        tests:
+          - not_null
+      - name: departement
+        tests:
+          - not_null
