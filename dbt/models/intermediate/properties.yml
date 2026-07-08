@@ -215,3 +215,21 @@ models:
         description: >
           Nombre de codes postaux distincts associés à la commune.
 
+  - name: int_matomo__actes_metier
+    description: >
+      Reproduction en dbt de la logique Matomo des actes metier Emplois bases sur les recherches.
+
+      **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
+      Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
+      avec l'équipe data.**
+
+    config:
+      tags: ["matomo-actes-metier"]
+
+    columns:
+      - name: nombre_actes
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+

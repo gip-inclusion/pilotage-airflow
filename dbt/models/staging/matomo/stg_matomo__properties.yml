@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: stg_matomo__monthly_visits
+    description: >
+      Normalisation des visites mensuelles Matomo des recherches Emplois necessaires aux actes metier.
+
+      **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
+      Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
+      avec l'équipe data.**
+
+    config:
+      tags: ["matomo-actes-metier"]
+
+
+    columns:
+      - name: mois
+        tests:
+          - not_null
+      - name: nb_visits
+        tests:
+          - not_null
+
+  - name: stg_matomo__monthly_department_visits
+    description: >
+      Normalisation de la dimension departement Matomo pour la recherche d'offres d'emploi.
+
+      **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
+      Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
+      avec l'équipe data.**
+
+    config:
+      tags: ["matomo-actes-metier"]
+
+
+    columns:
+      - name: mois
+        tests:
+          - not_null
+      - name: departement
+        tests:
+          - not_null
