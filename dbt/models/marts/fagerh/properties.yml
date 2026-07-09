@@ -347,12 +347,17 @@ models:
       Il ne contient pas les données d'activité des prestations. Il ne contient pas non plus les publics accompagnés, les métiers
       ou les ETP par dispositif. Ces sujets sont traités dans d'autres modèles.
 
+      Le modèle inclut les réponses validées et non validées. Le statut de validation est exposé dans la colonne `is_response_completed` pour permettre un filtrage explicite dans les analyses.
+
     columns:
       - name: uuid
         description: Identifiant unique de la réponse au questionnaire.
         data_tests:
           - not_null
           - unique
+
+      - name: is_response_completed
+        description: Indique si la réponse au questionnaire a été validée.
 
       - name: finess
         description: Numéro FINESS de l'établissement.
