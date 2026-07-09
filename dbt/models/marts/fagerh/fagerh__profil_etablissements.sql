@@ -9,6 +9,7 @@ final as (
 
     select
         uuid,
+        is_response_completed,
         finess,
         establishment_name,
         departement,
@@ -41,8 +42,6 @@ final as (
         shared_kitchen_open_weekend
 
     from etablissements
-
-    where is_response_completed is true
 
 )
 
