@@ -1,0 +1,20 @@
+select
+    id,
+    user_id,
+    follow_up_id,
+    department_id,
+    format,
+    link,
+    rdv_solidarites_token,
+    uuid,
+    expires_at::timestamp                     as expires_at,
+    clicked::boolean                          as clicked,
+    delivery_status,
+    sms_provider,
+    last_brevo_webhook_received_at::timestamp as last_brevo_webhook_received_at,
+    rdv_with_referents::boolean               as rdv_with_referents,
+    rdv_solidarites_lieu_id,
+    help_phone_number,
+    created_at::timestamp                     as created_at,
+    origin
+from {{ source('rdv_insertion', 'invitations') }}

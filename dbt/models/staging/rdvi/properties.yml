@@ -1,0 +1,294 @@
+version: 2
+
+models:
+  - name: stg_rdvi__departments
+    description: >
+      Représente les départements français.
+
+      Rôle : niveau administratif supérieur qui regroupe les organisations d'un territoire.
+
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique du département dans rdv-insertion.
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: Nom du département.
+      - name: number
+        description: Numéro du département, par exemple 75 ou 93.
+      - name: capital
+        description: Préfecture du département.
+      - name: region
+        description: Région administrative du département.
+      - name: email
+        description: Email de contact départemental.
+      - name: phone_number
+        description: Numéro de téléphone de contact départemental.
+      - name: parcours_enabled
+        description: Indique si le module parcours est activé pour le département.
+      - name: disable_ft_webhooks
+        description: Indique si les webhooks France Travail sont désactivés pour le département.
+
+  - name: stg_rdvi__follow_ups
+    description: >
+      Table centrale du métier.
+
+      Représente le suivi d'un usager pour une catégorie de motif donnée.
+
+      Rôle : suit l'état d'avancement d'un usager dans son parcours, par exemple orientation ou
+      accompagnement.
+
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique du suivi dans rdv-insertion.
+        tests:
+          - not_null
+          - unique
+      - name: user_id
+        description: Usager suivi.
+      - name: motif_category_id
+        description: >
+          Catégorie de motif du suivi, par exemple orientation RSA ou accompagnement RSA.
+      - name: status
+        description: >
+          Statut du suivi. Valeurs possibles : not_invited, invitation_pending,
+          rdv_pending, rdv_needs_status_update, rdv_noshow, rdv_revoked, rdv_excused,
+          rdv_seen, closed.
+      - name: closed_at
+        description: Date de clôture du suivi.
+
+  - name: stg_rdvi__invitations
+    description: >
+      Représente une invitation envoyée à un usager pour qu'il prenne rendez-vous.
+
+      Rôle : trace les invitations SMS, email ou courrier avec leur lien de prise de RDV.
+
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique de l'invitation dans rdv-insertion.
+        tests:
+          - not_null
+          - unique
+      - name: user_id
+        description: Usager invité.
+      - name: follow_up_id
+        description: Suivi concerné par l'invitation.
+      - name: department_id
+        description: Identifiant du département de rattachement de l'invitation.
+      - name: format
+        description: "Format de l'invitation. Valeurs possibles : sms, email, postal."
+      - name: link
+        description: URL de prise de RDV sur RDV-Solidarités.
+      - name: rdv_solidarites_token
+        description: Token d'authentification RDV-Solidarités.
+      - name: uuid
+        description: Identifiant court utilisé dans l'URL publique.
+      - name: expires_at
+        description: Date d'expiration de l'invitation.
+      - name: clicked
+        description: Indique si l'usager a cliqué sur le lien.
+      - name: delivery_status
+        description: Statut de livraison de l'invitation.
+      - name: sms_provider
+        description: Fournisseur SMS utilisé pour les invitations SMS.
+      - name: last_brevo_webhook_received_at
+        description: Date du dernier webhook Brevo reçu.
+      - name: rdv_with_referents
+        description: Indique si l'invitation concerne un RDV avec référent.
+      - name: rdv_solidarites_lieu_id
+        description: Lieu pré-sélectionné dans le lien de prise de RDV.
+      - name: help_phone_number
+        description: Numéro d'aide affiché à l'usager.
+      - name: created_at
+        description: Date de création de l'invitation.
+        tests:
+          - not_null
+      - name: origin
+        description: >
+          Origine de l'invitation. Valeurs possibles : legacy_triggered_by_agent,
+          legacy_triggered_by_periodic_job, reminder, user_list_upload.
+
+  - name: stg_rdvi__invitations_organisations
+    description: >
+      Table de jonction simple.
+
+      Lie une invitation aux organisations concernées.
+
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: invitation_id
+        description: Invitation concernée.
+      - name: organisation_id
+        description: Organisation concernée par l'invitation.
+
+  - name: stg_rdvi__motif_categories
+    description: >
+      Représente les grandes catégories de RDV, par exemple orientation RSA ou accompagnement RSA.
+
+      Rôle : classification des types de suivis.
+
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique de la catégorie de motif dans rdv-insertion.
+        tests:
+          - not_null
+          - unique
+      - name: rdv_solidarites_motif_category_id
+        description: ID de la catégorie de motif dans RDV-Solidarités.
+      - name: name
+        description: Nom complet de la catégorie de motif.
+      - name: short_name
+        description: Nom court unique de la catégorie de motif.
+      - name: motif_category_type
+        description: >
+          Type de catégorie de motif. Valeurs possibles : rsa_orientation,
+          rsa_accompagnement, siae, autre.
+      - name: template_id
+        description: Template de messages associé à la catégorie de motif.
+
+  - name: stg_rdvi__organisations
+    description: >
+      Représente les structures qui suivent les usagers, comme les conseils départementaux,
+      France Travail, les SIAE ou d'autres structures.
+
+      Rôle : structure organisationnelle qui regroupe agents, usagers et configuration.
+
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique de l'organisation dans rdv-insertion.
+        tests:
+          - not_null
+          - unique
+      - name: rdv_solidarites_organisation_id
+        description: ID de l'organisation dans RDV-Solidarités.
+      - name: name
+        description: Nom de l'organisation.
+      - name: department_id
+        description: Département de rattachement.
+      - name: organisation_type
+        description: >
+          Type de l'organisation. Valeurs possibles : conseil_departemental,
+          delegataire_rsa, france_travail, siae, autre.
+      - name: email
+        description: Email de contact de l'organisation.
+      - name: phone_number
+        description: Numéro de téléphone de contact de l'organisation.
+      - name: safir_code
+        description: Code SAFIR pour France Travail.
+      - name: slug
+        description: Identifiant court utilisé pour repérer l'organisation dans les fichiers d'import.
+      - name: website
+        description: Site web de l'organisation.
+      - name: archived_at
+        description: Date d'archivage de l'organisation si elle est inactive.
+      - name: data_retention_duration_in_months
+        description: Durée de conservation des données, en mois, pour le RGPD.
+      - name: display_in_stats
+        description: Indique si l'organisation doit être incluse dans les statistiques.
+
+  - name: stg_rdvi__participations
+    description: >
+      Table de jonction enrichie entre users et rdvs.
+
+      Rôle : lie un usager à un RDV avec son statut de participation.
+
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique de la participation dans rdv-insertion.
+      - name: user_id
+        description: Usager participant au RDV.
+      - name: rdv_id
+        description: Rendez-vous concerné.
+      - name: follow_up_id
+        description: Suivi associé à la participation.
+      - name: status
+        description: >
+          Statut de la participation. Valeurs possibles : unknown, excused, seen,
+          noshow, revoked.
+      - name: rdv_solidarites_participation_id
+        description: ID de la participation dans RDV-Solidarités.
+      - name: convocable
+        description: Indique s'il s'agit d'une convocation obligatoire.
+      - name: created_by_type
+        description: Type de créateur du RDV, par exemple Agent, User ou Prescripteur.
+      - name: created_by_agent_prescripteur
+        description: Indique si le RDV a été créé par un agent prescripteur.
+      - name: france_travail_id
+        description: ID France Travail de l'usager.
+
+  - name: stg_rdvi__rdvs
+    description: >
+      Représente un rendez-vous créé dans RDV-Solidarités.
+
+      Rôle : synchronise les RDV depuis RDV-Solidarités pour le suivi local.
+
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique du rendez-vous dans rdv-insertion.
+        tests:
+          - not_null
+          - unique
+      - name: rdv_solidarites_rdv_id
+        description: ID du RDV dans RDV-Solidarités.
+      - name: starts_at
+        description: Date et heure de début du RDV.
+      - name: duration_in_min
+        description: Durée du RDV en minutes.
+      - name: organisation_id
+        description: Organisation concernée par le RDV.
+      - name: motif_id
+        description: Motif du RDV.
+      - name: lieu_id
+        description: Lieu du RDV. Peut être vide si le RDV est à distance.
+      - name: status
+        description: Statut du RDV.
+      - name: cancelled_at
+        description: Date d'annulation du RDV.
+      - name: created_by
+        description: Origine de création du RDV, par exemple agent, user ou prescripteur.
+      - name: context
+        description: Contexte ou notes du RDV.
+      - name: address
+        description: Adresse du RDV.
+      - name: visio_url
+        description: URL de visioconférence pour les RDV à distance.
+      - name: uuid
+        description: Identifiant utilisé dans les URLs publiques.
+      - name: time_zone
+        description: Fuseau horaire du RDV.
+      - name: users_count
+        description: Nombre de participants au RDV.
+      - name: max_participants_count
+        description: Nombre maximum de participants pour les RDV collectifs.

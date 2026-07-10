@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: int_rdvi__actes_metiers
+    description: >
+      Ce modèle compte, par mois, le nombre d'invitations envoyées depuis rdv-insertion. Les résultats sont détaillés par type d'acte,
+      type de structure, département et statut north star. Il reprend dans dbt le calcul qui était auparavant fait par le fetcher Python
+      `fetch_rdvi`.
+
+      **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
+      Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
+      avec l'équipe data.**
+    config:
+      tags:
+        - actes-metier
+        - rdv-insertion
+    columns:
+      - name: mois
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - rdvi
+      - name: type_acte
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Invitation à un RDV d’orientation
+                  - Invitation à un RDV d’accompagnement
+                  - Invitation à un Entretien SIAE
+                  - Invitation à un Autre RDV
+      - name: categorie_acte
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Accompagnement
+      - name: north_star
+        tests:
+          - not_null
+      - name: north_star_70
+        tests:
+          - not_null
+      - name: traite
+        tests:
+          - not_null
+      - name: type_structure
+        tests:
+          - not_null
+      - name: departement
+        tests:
+          - not_null
+      - name: nombre_actes
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - mois
+              - source
+              - type_acte
+              - north_star
+              - north_star_70
+              - traite
+              - type_structure
+              - departement

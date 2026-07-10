@@ -1028,9 +1028,10 @@ sources:
           - name: clicked
             description: >
               Indique si l'usager a cliqué sur le lien.
-          - name: trigger
+          - name: origin
             description: >
-              Déclencheur de l'invitation. Valeurs possibles : manual, reminder.
+              Origine de l'invitation. Valeurs possibles : legacy_triggered_by_agent,
+              legacy_triggered_by_periodic_job, reminder, user_list_upload.
           - name: delivery_status
             description: >
               Statut de livraison de l'invitation.
