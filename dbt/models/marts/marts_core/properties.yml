@@ -292,3 +292,61 @@ models:
         description: >
           Numéro FINESS de l'établissement juridique auquel l'ESAT est rattaché.
           Ce champ permet de relier la dimension ESAT au modèle `int_esat__legal_entities`.
+
+  - name: fct_imer
+    config:
+      tags:
+        - imer
+    description: >
+      Table de faits des intentions de mise en relation (IMER) effectuées sur les Emplois de l'Inclusion.
+      L'id_structure de data inclusion est récupéré dans cette table afin de faciliter la jointure dans la table suivante.
+      Une ligne correspond à une intention de mise en relation.
+      à partir de stg_emplois__imer.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_emplois__imer')
+    columns:
+      - name: id
+        description: Identifiant unique de l'intention de mise en relation.
+        tests:
+          - not_null
+          - unique
+      - name: date
+        description: Date à laquelle l'intention de mise en relation a été enregistrée.
+        tests:
+          - not_null
+      - name: user_session
+        description: Identifiant de la session de l'utilisateur à l'origine de l'intention.
+      - name: user_kind
+        description: Type d'utilisateur à l'origine de l'intention.
+      - name: user_id
+        description: Identifiant de l'utilisateur à l'origine de l'intention.
+      - name: user_prescriber_organization_id
+        description: Identifiant de l'organisation prescriptrice de l'utilisateur.
+      - name: user_company_id
+        description: Identifiant de la structure prescriptrice..
+      - name: source_structure_id
+        description: Identifiant source data inclusion de la structure ciblée par l'intention de mise en relation.
+      - name: structure_id
+        description: Identifiant unique de data inclusion de la structure ciblée par l'intention de mise en relation.
+      - name: kind
+        description: >
+          Type de l'intention de mise en relation.
+        tests:
+          - accepted_values:
+              values:
+                - service_ext_link
+                - service_orientation
+                - service_contact
+                - structure_contact
+      - name: service_id
+        description: Identifiant du service concerné par l'intention.
+      - name: source
+        description: Source du service concerné par l'intention.
+      - name: external_link
+        description: Lien externe associé à l'intention de mise en relation.
+      - name: orientation_id
+        description: >
+          Identifiant de l'orientation. Renseigné uniquement lorsqu'une orientation a eu lieu.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière synchronisation de cette ligne dans Metabase.

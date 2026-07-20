@@ -239,3 +239,103 @@ models:
       - name: no_answer_rate
         description: >
           Pourcentage d'ESAT sans réponse trouvée.
+
+
+  - name: rpt_imer
+    config:
+      tags:
+        - imer
+    description: >
+      Table de reporting large des intentions de mise en relation (IMER) sur les Emplois de l'Inclusion.
+
+      Une ligne correspond à une intention de mise en relation, enrichie des informations
+      de la structure et du service data inclusion ciblés, de l'organisation prescriptrice
+      et de la structure employeuse de l'utilisateur, ainsi que de leur localisation.
+
+    columns:
+      - name: id
+        description: Identifiant unique de l'intention de mise en relation.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('fct_imer_orientation')
+              field: id
+      - name: date
+        description: Date à laquelle l'intention de mise en relation a été enregistrée.
+        tests:
+          - not_null
+      - name: user_session
+        description: Identifiant de la session de l'utilisateur à l'origine de l'intention.
+      - name: user_kind
+        description: Type d'utilisateur à l'origine de l'intention.
+      - name: user_id
+        description: Identifiant de l'utilisateur à l'origine de l'intention.
+      - name: user_prescriber_organization_id
+        description: Identifiant de l'organisation prescriptrice.
+      - name: user_company_id
+        description: Identifiant de la structure prescriptrice.
+      - name: structure_id
+        description: Identifiant de la structure ciblée par l'intention de mise en relation.
+      - name: kind
+        description: >
+          Type de l'intention de mise en relation.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - service_ext_link
+                - service_orientation
+                - service_contact
+                - structure_contact
+      - name: service_id
+        description: Identifiant du service concerné par l'intention.
+      - name: source
+        description: Source du service concerné par l'intention.
+      - name: orientation_id
+        description: >
+          Identifiant de l'orientation. Renseigné uniquement lorsqu'une orientation a eu lieu.
+      - name: di_nom_structure
+        description: Nom de la structure concernée par l'intention.
+      - name: di_siret_structure
+        description: SIRET de la structure concernée par l'intention.
+      - name: di_structure_code_commune
+        description: Code INSEE de la concernée par l'intention.
+      - name: di_structure_region
+        description: Région de la structure concernée par l'intention.
+      - name: di_structure_code_departement
+        description: Code INSEE du département de la structure concernée par l'intention.
+      - name: di_structure_nom_departement
+        description: Nom du département de la structure concernée par l'intention.
+      - name: di_services_nom
+        description: Nom du service concerné par l'intention.
+      - name: di_services_thematiques
+        description: Thématiques du service concerné par l'intention.
+      - name: di_services_region
+        description: Région du service concerné par l'intention.
+      - name: di_services_code_departement
+        description: Code INSEE du département du service concerné par l'intention.
+      - name: di_services_nom_departement
+        description: Nom du département du service concerné par l'intention.
+      - name: organization_nom
+        description: Nom de l'organisation prescriptrice.
+      - name: organization_type
+        description: Type de l'organisation prescriptrice.
+      - name: organization_region
+        description: Région de l'organisation prescriptrice.
+      - name: organization_numero_departement
+        description: Numéro de département INSEE de l'organisation prescriptrice.
+      - name: organization_nom_departement
+        description: Nom du département de l'organisation prescriptrice.
+      - name: company_nom
+        description: Nom de la structure prescriptrice.
+      - name: company_type
+        description: Type de la structure prescriptrice.
+      - name: company_region
+        description: Région de la structure prescriptrice.
+      - name: company_numero_departement
+        description: Numéro de département de la structure prescriptrice.
+      - name: company_nom_departement
+        description: Nom du département de la structure prescriptrice.
+      - name: company_source
+        description: Source de la structure prescriptrice.
