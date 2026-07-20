@@ -17,6 +17,9 @@ models:
     description: >
       Ce DAG recupere depuis Matomo les visites mensuelles des pages de recherche Emplois necessaires aux actes metier,
       sur les 14 derniers mois fermes. Il alimente les tables raw utilisees par dbt pour calculer les actes metier Matomo.
+  - name: dora
+    description: >
+      Ce DAG lance les modèles dbt tagués dora à partir des données déjà déposées dans le schéma raw_dora.
   - name: monrecap
     description: >
       Ce DAG permet de récupérer de manière quotidienne les données de contacts & commandes sur le airtable de monrecap.
@@ -53,5 +56,4 @@ models:
     description: >
       Ce DAG permet de copier (et enventuellement modifier) les tables présentes dans diverses bdd de la PDI, vers une bdd unique.
       Le but est de brancher matometa sur cette unique DB.
-
 

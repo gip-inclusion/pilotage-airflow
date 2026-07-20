@@ -1,0 +1,207 @@
+version: 2
+
+models:
+  - name: int_dora__imer
+    description: |
+      Table contenant les intentions de mise en relation (mobilisation et orientations)
+    config:
+      tags:
+        - dora
+    columns:
+      - name: event_id
+        description: identifiant de la mise en relation
+        tests:
+          - unique
+          - not_null
+  - name: int_dora__actes_metier
+    description: >
+      Ce modele compte, par mois, les actes metier DORA reconstruits depuis les requetes historiques du fetcher Python
+      des actes metier sur Autometa : orientations, intentions d'orientation iMER, recherches, creations et mises a jour
+      de services et de structures.
+
+      **ATTENTION : ce modele replique volontairement le fetcher Python au plus proche. Certaines tables sont donc
+      appelees directement via `source('dora', ...)` plutot que via les modeles staging/intermediate dbt, notamment
+      `orientations_orientation`, `services_service`, `structures_structure`, `stats_searchview`, `users_user` et
+      `structures_structuremember`. Cette dette est intentionnelle pour la premiere reprise dbt des actes metier, mais
+      elle devra etre revisitée.**
+    config:
+      tags:
+        - actes-metier
+        - dora
+    columns:
+      - name: mois
+        description: >
+          Mois de réalisation de l'acte métier DORA, au format `YYYY-MM`. Le modèle ne conserve que les actes des
+          14 derniers mois complets.
+        tests:
+          - not_null
+      - name: source
+        description: >
+          Produit auquel l'acte métier est rattaché. Pour ce modèle, la valeur est toujours `dora`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - dora
+      - name: type_acte
+        description: >
+          Type d'acte métier DORA reconstruit depuis les tables sources : orientation vers un service, intention
+          d'orientation iMER, recherche d'offre de service, création ou mise à jour d'offre de service, création ou
+          mise à jour de structure.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Orientation vers service
+                  - Intention d’orientation
+                  - Mise à jour offre de service, hors emploi solidaire
+                  - Création ou diffusion offre de service, hors emploi solidaire
+                  - Création structure, hors employeur solidaire
+                  - Mise à jour d’une structure d’offre de service, hors employeur solidaire
+                  - Recherche d’offre de service, hors emploi solidaire
+      - name: categorie_acte
+        description: >
+          Catégorie métier de l'acte dans le référentiel des actes métier PDI. Les orientations vers service sont
+          classées en `Accompagnement`; les intentions d'orientation, recherches, créations et mises à jour sont
+          classées en `Support`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Accompagnement
+                  - Support
+      - name: north_star
+        description: >
+          Indique si l'acte est comptabilisé dans la déclinaison North Star du référentiel des actes métier PDI.
+          Pour DORA, seules les orientations vers service avec un statut `VALIDÉE` ou `REFUSÉE` sont marquées à
+          `true`; tous les autres types d'actes sont à `false`.
+        tests:
+          - not_null
+      - name: north_star_70
+        description: >
+          Variante héritée du modèle commun des actes métier. Pour DORA, elle reprend la même valeur que
+          `north_star` sur les orientations vers service traitées (`VALIDÉE` ou `REFUSÉE`) et vaut `false` pour les
+          autres actes.
+        tests:
+          - not_null
+      - name: traite
+        description: >
+          Indique si l'acte a été traité au sens du référentiel commun. Pour DORA, seules les orientations vers
+          service dont le statut est `VALIDÉE` ou `REFUSÉE` sont considérées comme traitées; les autres actes ne sont
+          pas concernés et valent `false`.
+        tests:
+          - not_null
+      - name: type_structure
+        description: >
+          Type de structure associé à l'acte métier, normalisé à partir de la typologie brute DORA de la structure
+          prescriptrice, de la structure porteuse du service, ou de la structure rattachée à l'utilisateur selon le
+          type d'acte. Les valeurs non reconnues ou absentes sont regroupées dans `Autre`.
+        tests:
+          - not_null
+      - name: departement
+        description: >
+          Département associé à l'acte métier, normalisé au format code INSEE (`01` à `95`, `2A`, `2B`, `971` à
+          `976`). La valeur est `Inconnu` lorsque le département est absent, vide ou non interprétable.
+        tests:
+          - not_null
+      - name: nombre_actes
+        description: >
+          Nombre d'actes métier agrégés au grain mois, source, type d'acte, indicateurs North Star / traité, type de
+          structure et département. Chaque compteur provient d'un `count(*)` sur la table source correspondant au type
+          d'acte, puis d'une somme après normalisation.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - mois
+              - source
+              - type_acte
+              - north_star
+              - north_star_70
+              - traite
+              - type_structure
+              - departement
+  - name: int_dora__mobilisation_to_orientation
+    description:
+      Cette vue associe Ã  chaque mobilisation la premiÃ¨re orientation qui en suit si il y en a une.
+      Une orientation suit une mobilisation si elle a le mÃªme user_id, est faite dans l'heure aprÃ¨s la mobilisation,
+      et concerne le mÃªme service (slug)
+    config:
+      tags:
+        - dora
+    columns:
+      - name: mobilisation_id
+        description: identifiant de la mobilisation
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: identifiant de l'utilisateur Ã  l'origine de la prescription
+        tests:
+          - not_null
+      - name: first_following_orientation_id
+        description: id de la premiÃ¨re orientation qui suit la mobilisation. Peut Ãªtre null si aucune orientation est faite suite Ã  la mobilisation.
+      - name: mobilisation_date
+        description: date de la mobilisation
+        tests:
+          - not_null
+      - name: first_following_orientation_date
+        description: date de la premiÃ¨re orientation qui suit la mobilisation. Peut Ãªtre null si aucune orientation est faite suite Ã  la mobilisation.
+      - name: delay
+        description: temps passÃ© en entre la mobilisation et l'orientation.
+  - name: int_dora__mobilisationevent_user
+    description: |
+      Ã‰vÃ©nements de mobilisation des utilisateurs.
+    config:
+      tags:
+        - dora
+    columns:
+      - name: event_id
+        description: |
+          Identifiant de l'Ã©vÃ©nement de mobilisation
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+  - name: int_dora__orientation_user_service
+    description: |
+      Orientations des utilisateurs vers des services.
+    config:
+      tags:
+        - dora
+      indexes:
+        - columns: [user_id, orientation_creation_date, service_slug]
+    columns:
+      - name: orientation_id
+        description: |
+          Identifiant de l'orientation
+        tests:
+          - unique
+          - not_null
+  - name: int_dora__service_structure
+    description: |
+      Structures de services.
+    config:
+      tags:
+        - dora
+      indexes:
+        - columns: [service_id]
+
+  - name: int_dora__structure_members
+    description: |
+      Membres des structures.
+    config:
+      tags:
+        - dora
+

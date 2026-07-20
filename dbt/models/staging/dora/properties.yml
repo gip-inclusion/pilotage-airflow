@@ -1,0 +1,87 @@
+version: 2
+
+models:
+  - name: stg_dora__user
+    config:
+      tags:
+        - dora
+      indexes:
+        - columns: [id]
+          unique: true
+    columns:
+      - name: id
+        data_tests:
+          - unique
+          - not_null
+
+      - name: department
+        description : >
+          Première valeur présente dans la colonne `departments`.
+
+          Il est possible qu’un même utilisateur soit rattaché à plusieurs départements. Pour gérer cette complexité, on a le modèle
+          `int_user_departments`, avec une ligne par couple utilisateur x département.
+
+
+  - name: stg_dora__structure
+    config:
+      tags:
+        - dora
+      indexes:
+        - columns: [id]
+          unique: true
+    columns:
+      - name: id
+        data_tests:
+          - unique
+          - not_null
+      - name: id_jointure_di
+        description: >
+          id prefixé par "dora--" permettant une jointure facile est immédiate avec les données data inclusion.
+
+
+  - name: stg_dora__orientation
+    config:
+      tags:
+        - dora
+      indexes:
+        - columns: [id]
+          unique: true
+    columns:
+      - name: id
+        data_tests:
+          - unique
+          - not_null
+      - name: prescriber_id
+        data_test:
+          - unique
+
+  - name: stg_dora__mobilisationevent
+    config:
+      tags:
+        - dora
+      indexes:
+        - columns: [id]
+          unique: true
+    columns:
+      - name: id
+        data_tests:
+          - unique
+          - not_null
+
+
+
+  - name: stg_dora__service
+    config:
+      tags:
+        - dora
+      indexes:
+        - columns: [id]
+          unique: true
+    columns:
+      - name: id
+        data_tests:
+          - unique
+          - not_null
+      - name: id_jointure_di
+        description: >
+          id prefixé par "dora--" permettant une jointure facile est immédiate avec les données data inclusion.
