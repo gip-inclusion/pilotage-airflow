@@ -126,6 +126,7 @@ pg_dump:
 		--table="structures_v0" \
 		--table="suivi_visiteurs_tb_publics_v1" \
 		--table="sorties_v2" \
+		--table='raw_emplois.imer_v0' \
 		--file=$(DUMP_DIR)
 	@echo "\n\n### Database dumped successfully. ###\n"
 	rm -rf $(RESTORE_DIR)
@@ -137,6 +138,7 @@ ifneq (,$(findstring clever-cloud,$(PGHOST)))
 else
 	dropdb ${PGDATABASE} || true
 	createdb ${PGDATABASE}
+	psql -d ${PGDATABASE} -c "CREATE SCHEMA IF NOT EXISTS raw_emplois"
 	time pg_restore --format=directory --clean --jobs=4 --verbose --no-owner --no-acl -d ${PGDATABASE} $(RESTORE_DIR) || true
 	@echo "\n\n### Database restored successfully ! ###\n"
 endif
