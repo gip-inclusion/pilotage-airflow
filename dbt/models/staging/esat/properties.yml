@@ -651,6 +651,31 @@ models:
             Champ libre permettant d’apporter des précisions complémentaires ou de
             signaler des questions auxquelles l’ESAT n’a pas pu répondre.
 
+  - name: stg_esat__answer_field_exclusions
+    config:
+      tags:
+        - esat
+    description: >
+      Modèle de staging basé sur la seed `seed_esat__answer_field_exclusions`.
+
+      Il contient les cellules du questionnaire ESAT à neutraliser pour l'analyse, sans supprimer la réponse complète.
+
+    columns:
+      - name: answer_id
+        description: Identifiant de la réponse concernée.
+        tests:
+          - not_null
+      - name: field_name
+        description: Nom de la colonne à neutraliser pour cette réponse.
+        tests:
+          - not_null
+      - name: reason
+        description: Justification métier de la neutralisation.
+        tests:
+          - not_null
+      - name: evidence
+        description: Élément ayant permis d'identifier l'anomalie.
+
   - name: stg_esat__liste_mapped_answers
     config:
       tags:

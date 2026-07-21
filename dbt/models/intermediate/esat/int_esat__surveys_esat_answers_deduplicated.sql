@@ -1,7 +1,7 @@
 with recursive base as (
 
     select *
-    from {{ ref('stg_esat__surveys_esat_answers') }}
+    from {{ ref('int_esat__surveys_esat_answers_cleaned') }}
     where finess_num is not null
 
 ),
