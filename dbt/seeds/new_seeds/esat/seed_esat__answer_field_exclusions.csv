@@ -1,0 +1,16 @@
+answer_id,field_name,reason,evidence
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_previous_mot,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_new,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_ft_job_seekers,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_left_private,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_left_public,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_left_asso,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_cdi,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_cdd,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_interim,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_prof,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_apprentice,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_cpf_used,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_mobility_inclusion_card,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_driving_licence,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle
+019ddf33-e686-75b2-9ea9-73de7b253f61,nb_worker_code,"Valeur 999/9999 incohérente, à neutraliser",Le commentaire indique que la réponse doit être nulle

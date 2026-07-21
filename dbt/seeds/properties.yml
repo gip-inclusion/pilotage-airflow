@@ -126,3 +126,36 @@ seeds:
       column_types:
         establishment_finess_num: text
         answer_id: text
+  - name: seed_esat__answer_field_exclusions
+    description: >
+      Liste des valeurs déclarées dans le questionnaire ESAT à neutraliser pour l'analyse, sans supprimer l'ensemble de la réponse.
+      Chaque ligne identifie une cellule à remplacer par `null` dans les modèles analytiques, avec la raison de cette décision.
+    config:
+      column_types:
+        answer_id: text
+        field_name: text
+        reason: text
+        evidence: text
+    columns:
+      - name: answer_id
+        description: Identifiant de la réponse concernée.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_esat__surveys_esat_answers')
+              field: answer_id
+      - name: field_name
+        description: Nom de la colonne à neutraliser pour cette réponse.
+        tests:
+          - not_null
+      - name: reason
+        description: Justification métier de la neutralisation.
+        tests:
+          - not_null
+      - name: evidence
+        description: Élément ayant permis d'identifier l'anomalie.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - answer_id
+            - field_name

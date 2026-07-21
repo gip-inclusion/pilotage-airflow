@@ -34,6 +34,23 @@ models:
       - name: managing_organization_email
         description: Adresse e-mail de l'établissement juridique.
 
+  - name: int_esat__surveys_esat_answers_cleaned
+    config:
+      tags:
+        - esat
+    description: >
+      Modèle intermédiaire qui applique les neutralisations de cellules déclarées dans `seed_esat__answer_field_exclusions` aux réponses du questionnaire ESAT.
+
+      Il conserve une ligne par réponse et remplace uniquement les valeurs explicitement exclues par `null`, sans modifier la table brute ni le modèle de staging
+      principal.
+
+    columns:
+      - name: answer_id
+        description: Identifiant unique de la réponse au questionnaire.
+        tests:
+          - unique
+          - not_null
+
   - name: int_esat__surveys_esat_answers_deduplicated
     config:
       tags:
