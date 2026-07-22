@@ -326,9 +326,16 @@ models:
       - name: user_company_id
         description: Identifiant de la structure prescriptrice..
       - name: source_structure_id
-        description: Identifiant source data inclusion de la structure ciblée par l'intention de mise en relation.
+        description: >
+            Identifiant source data inclusion de la structure ciblée par l'intention de mise en relation.
+            Si la structure est dupliquée car présente dans plusieurs sources, les différents source_structure_id correspondront à un structure_id.
       - name: structure_id
-        description: Identifiant unique de data inclusion de la structure ciblée par l'intention de mise en relation.
+        description: >
+            Identifiant unique de data inclusion de la structure ciblée par l'intention de mise en relation.
+            C'est un identifiant unique de la structure Data Inclusion consolidée.
+            Il est généré à partir de la source et de l'identifiant de la structure
+            conservée dans la table dédupliquée. Il reste stable tant que cette
+            structure conservée ne change pas. A utiliser lors de la création de modèles.
       - name: kind
         description: >
           Type de l'intention de mise en relation.
