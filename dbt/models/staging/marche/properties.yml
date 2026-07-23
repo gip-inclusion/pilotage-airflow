@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: stg_marche__tenders
+    description: >
+      Vue simple sur `raw_marche.tenders_tender`, avec les colonnes utiles aux actes métier.
+    config:
+      tags:
+        - marche
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_marche__users
+    description: >
+      Vue simple sur `raw_marche.users_user`, avec les colonnes utiles aux actes métier.
+    config:
+      tags:
+        - marche
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_marche__perimeters
+    description: >
+      Vue simple sur `raw_marche.perimeters_perimeter`, avec les colonnes utiles aux actes métier.
+    config:
+      tags:
+        - marche
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_marche__siae_offers
+    description: >
+      Vue simple sur `raw_marche.siaes_siaeoffer`, avec les colonnes utiles aux actes métier.
+    config:
+      tags:
+        - marche
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_marche__siaes
+    description: >
+      Vue simple sur `raw_marche.siaes_siae`, avec les colonnes utiles aux actes métier.
+    config:
+      tags:
+        - marche
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique

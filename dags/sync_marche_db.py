@@ -5,8 +5,9 @@ from pathlib import Path
 
 from airflow import DAG
 from airflow.decorators import task
+from airflow.operators import bash
 
-from dags.common import db, default_dag_args
+from dags.common import db, dbt, default_dag_args
 
 
 DAG_ID = "sync_marche_raw_schema"
@@ -16,6 +17,8 @@ TEMP_SCHEMA = "raw_marche_tmp"
 TARGET_SCHEMA = "raw_marche"
 
 LOCAL_TMP_ROOT = Path("/tmp") / DAG_ID
+
+dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 
 def run_command(command_name, command, env=None):
@@ -92,8 +95,9 @@ ALTER SCHEMA "{TEMP_SCHEMA}" RENAME TO "{TARGET_SCHEMA}";
 with DAG(
     dag_id=DAG_ID,
     schedule="0 5 * * *",
-    **default_dag_args(),
+    **dag_args,
 ) as dag:
+    env_vars = db.connection_envvars()
 
     @task
     def refresh_raw_schema(**context):
@@ -155,4 +159,25 @@ with DAG(
             shutil.rmtree(base_tmp, ignore_errors=True)
             print("END cleanup_tmp_files")
 
-    refresh_raw_schema()
+    dbt_deps = bash.BashOperator(
+        task_id="dbt_deps",
+        bash_command="dbt deps",
+        env=env_vars,
+        append_env=True,
+    )
+
+    dbt_seed = bash.BashOperator(
+        task_id="dbt_seed",
+        bash_command="dbt seed",
+        env=env_vars,
+        append_env=True,
+    )
+
+    dbt_build = bash.BashOperator(
+        task_id="dbt_build",
+        bash_command='dbt build --select "+tag:marche"',
+        env=env_vars,
+        append_env=True,
+    )
+
+    refresh_raw_schema() >> dbt_deps >> dbt_seed >> dbt_build
