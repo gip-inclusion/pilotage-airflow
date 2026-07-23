@@ -1,0 +1,97 @@
+version: 2
+
+models:
+  - name: int_marche__actes_metier
+    description: >
+      Compte les actes métier du Marché par mois : diffusion d'offre inclusive et mise à jour de fiche entreprise.
+    config:
+      tags:
+        - actes-metier
+        - marche
+    columns:
+      - name: mois
+        description: >
+          Mois de l'acte, au format `YYYY-MM`. Le modèle garde les 14 derniers mois complets.
+        tests:
+          - not_null
+      - name: source
+        description: >
+          Toujours `marche`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - marche
+      - name: type_acte
+        description: >
+          Nom de l'acte. Pour `Mise à jour fiche entreprise`, le modèle utilise `siaes_siaeoffer.updated_at`.
+          Comme `updated_at` change à chaque modification, une fiche peut passer d'un ancien mois à un mois plus récent.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Diffusion d’offre inclusive
+                  - Mise à jour fiche entreprise
+      - name: categorie_acte
+        description: >
+          Toujours `Support` pour le Marché.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Support
+      - name: north_star
+        description: >
+          Vaut `true` pour une diffusion d'offre inclusive quand `siae_count > 0`. Vaut `false` sinon.
+        tests:
+          - not_null
+      - name: north_star_70
+        description: >
+          Même valeur que `north_star`.
+        tests:
+          - not_null
+      - name: traite
+        description: >
+          Même valeur que `north_star`.
+        tests:
+          - not_null
+      - name: type_structure
+        description: >
+          Pour une diffusion, vaut `SIAE` si l'auteur est une SIAE, sinon `Autre`. Pour une mise à jour de fiche
+          entreprise, vaut `SIAE`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - SIAE
+                  - Autre
+      - name: departement
+        description: >
+          Code département normalisé. Vaut `Inconnu` si le département est vide ou non reconnu.
+        tests:
+          - not_null
+      - name: nombre_actes
+        description: >
+          Nombre d'actes pour ce grain.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - mois
+              - source
+              - type_acte
+              - north_star
+              - north_star_70
+              - traite
+              - type_structure
+              - departement
