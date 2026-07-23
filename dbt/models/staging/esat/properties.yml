@@ -454,8 +454,8 @@ models:
 
         - name: pct_more_than50
           description: >
-            Nombre de travailleurs et travailleuses de plus de 50 ans ayant travaillé
-            dans l’ESAT en année n-1.
+            Proportion de travailleurs et travailleuses de plus de 50 ans parmi ceux
+            ayant bénéficié d’actions de préparation à la retraite.
 
         # Language accessibility
         - name: documents_falclist
