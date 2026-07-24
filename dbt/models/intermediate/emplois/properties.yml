@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: int_emplois__actes_metier
+    description: >
+      Compte les actes métier Emplois par mois : candidatures, créations et mises à jour d'offres d'emploi,
+      créations d'employeurs solidaires et diagnostics IAE.
+    config:
+      tags:
+        - actes-metier
+    columns:
+      - name: mois
+        description: >
+          Mois de l'acte, au format `YYYY-MM`. Le modèle garde les 14 derniers mois complets.
+        tests:
+          - not_null
+      - name: source
+        description: >
+          Toujours `emplois`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - emplois
+      - name: type_acte
+        description: >
+          Nom de l'acte : candidature, création ou mise à jour d'offre d'emploi, création d'employeur solidaire
+          ou diagnostic IAE.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Candidature auprès d’un employeur solidaire
+                  - Création offre d’emploi
+                  - Mise à jour offre d’emploi
+                  - Création employeur solidaire
+                  - Diagnostic IAE
+      - name: categorie_acte
+        description: >
+          Catégorie de l'acte. Les candidatures et diagnostics sont dans `Accompagnement`; les autres actes
+          sont dans `Support`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Accompagnement
+                  - Support
+      - name: north_star
+        description: >
+          Vaut `true` pour une candidature traitée en moins de 30 jours et pour les créations ou mises à jour
+          d'offres d'emploi. Vaut `false` sinon.
+        tests:
+          - not_null
+      - name: north_star_70
+        description: >
+          Variante de `north_star` à 70 jours pour les candidatures. Pour les autres actes, même valeur que
+          `north_star`.
+        tests:
+          - not_null
+      - name: traite
+        description: >
+          Vaut `true` pour une candidature sortie des statuts de nouvelle candidature, attente ou étude. Pour les
+          créations et mises à jour d'offres d'emploi, vaut `true`; pour les autres actes, vaut `false`.
+        tests:
+          - not_null
+      - name: type_structure
+        description: >
+          Type de structure normalisé depuis le type de prescripteur, d'employeur ou d'auteur du diagnostic.
+          Vaut `Autre` si le type n'est pas reconnu.
+        tests:
+          - not_null
+      - name: departement
+        description: >
+          Code département normalisé. Vaut `Inconnu` si le département est vide ou non reconnu.
+        tests:
+          - not_null
+      - name: nombre_actes
+        description: >
+          Nombre d'actes pour ce grain.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - mois
+              - source
+              - type_acte
+              - north_star
+              - north_star_70
+              - traite
+              - type_structure
+              - departement
