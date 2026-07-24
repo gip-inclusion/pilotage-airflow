@@ -13,10 +13,10 @@ models:
     description: >
       Ce DAG permet de récupérer (de manière hebdomadaire) pour chaque campagne matomo du c0 et chaque produit du gip les visiteurs et leurs actions.
       Mise à disposition de cette table sur metabase pour les statistiques internes du c0.
-  - name: actes_metier_matomo
+  - name: actes_metier
     description: >
       Ce DAG recupere depuis Matomo les visites mensuelles des pages de recherche Emplois necessaires aux actes metier,
-      sur les 14 derniers mois fermes. Il alimente les tables raw utilisees par dbt pour calculer les actes metier Matomo.
+      sur les 14 derniers mois fermes. Il lance ensuite, chaque premier jour du mois a 08:00, les modèles dbt tagués actes-metier.
   - name: dora
     description: >
       Ce DAG lance les modèles dbt tagués dora à partir des données déjà déposées dans le schéma raw_dora.
@@ -56,4 +56,3 @@ models:
     description: >
       Ce DAG permet de copier (et enventuellement modifier) les tables présentes dans diverses bdd de la PDI, vers une bdd unique.
       Le but est de brancher matometa sur cette unique DB.
-

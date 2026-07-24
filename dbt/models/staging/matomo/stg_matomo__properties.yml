@@ -10,7 +10,7 @@ models:
       avec l'équipe data.**
 
     config:
-      tags: ["matomo-actes-metier"]
+      tags: ["actes-metier"]
 
 
     columns:
@@ -30,7 +30,7 @@ models:
       avec l'équipe data.**
 
     config:
-      tags: ["matomo-actes-metier"]
+      tags: ["actes-metier"]
 
 
     columns:
