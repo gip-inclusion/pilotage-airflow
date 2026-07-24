@@ -13,7 +13,6 @@ models:
     config:
       tags:
         - actes-metier
-        - rdv-insertion
     columns:
       - name: mois
         tests:

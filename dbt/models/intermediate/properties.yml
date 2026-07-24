@@ -224,7 +224,7 @@ models:
       avec l'équipe data.**
 
     config:
-      tags: ["matomo-actes-metier"]
+      tags: ["actes-metier"]
 
     columns:
       - name: nombre_actes
@@ -232,4 +232,3 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-

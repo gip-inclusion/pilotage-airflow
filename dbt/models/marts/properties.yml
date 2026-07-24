@@ -115,7 +115,7 @@ models:
       avec l'équipe data.**
 
     config:
-      tags: ["matomo-actes-metier"]
+      tags: ["actes-metier"]
 
     tests:
       - dbt_utils.unique_combination_of_columns:
