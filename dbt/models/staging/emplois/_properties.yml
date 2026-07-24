@@ -1,6 +1,27 @@
 version: 2
 
 models:
+  - name: stg_emplois__fiches_de_poste
+    description: >
+      Fiches de poste publiées sur les Emplois de l'Inclusion.
+    config:
+      tags:
+        - actes-metier
+    columns:
+      - name: id
+        description: Identifiant unique de la fiche de poste.
+        tests:
+          - not_null
+          - unique
+      - name: date_creation
+        description: Date de création de la fiche de poste.
+      - name: date_derniere_modification
+        description: Date de dernière modification de la fiche de poste.
+      - name: type_employeur
+        description: Type de l'employeur porteur de la fiche de poste.
+      - name: departement_employeur
+        description: Département de l'employeur porteur de la fiche de poste.
+
   - name: stg_emplois__imer
     description: >
       Intentions de mise en relation (IMER) effectuées sur les
