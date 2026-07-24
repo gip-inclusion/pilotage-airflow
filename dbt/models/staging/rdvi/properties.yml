@@ -9,7 +9,6 @@ models:
 
     config:
       tags:
-        - actes-metier
         - rdv-insertion
     columns:
       - name: id
@@ -45,7 +44,6 @@ models:
 
     config:
       tags:
-        - actes-metier
         - rdv-insertion
     columns:
       - name: id
@@ -74,7 +72,6 @@ models:
 
     config:
       tags:
-        - actes-metier
         - rdv-insertion
     columns:
       - name: id
@@ -129,7 +126,6 @@ models:
 
     config:
       tags:
-        - actes-metier
         - rdv-insertion
     columns:
       - name: invitation_id
@@ -145,7 +141,6 @@ models:
 
     config:
       tags:
-        - actes-metier
         - rdv-insertion
     columns:
       - name: id
@@ -175,7 +170,6 @@ models:
 
     config:
       tags:
-        - actes-metier
         - rdv-insertion
     columns:
       - name: id
@@ -218,7 +212,6 @@ models:
 
     config:
       tags:
-        - actes-metier
         - rdv-insertion
     columns:
       - name: id
@@ -252,7 +245,6 @@ models:
 
     config:
       tags:
-        - actes-metier
         - rdv-insertion
     columns:
       - name: id

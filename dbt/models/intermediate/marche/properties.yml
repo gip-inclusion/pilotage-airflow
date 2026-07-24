@@ -7,7 +7,6 @@ models:
     config:
       tags:
         - actes-metier
-        - marche
     columns:
       - name: mois
         description: >

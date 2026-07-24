@@ -471,6 +471,19 @@ sources:
         description: >
           Repartition par dimension personnalisee departement des visites mensuelles Matomo de la recherche d'offres d'emploi.
 
+  - name: raw_actes_metier
+    schema: raw
+    description: >
+      Tables brutes utilisées pour reconstruire les actes métier historiques.
+    tables:
+      - name: stats_pdi_actes_metiers_data_inclusion
+        identifier: stats_pdi-actes_metiers-data_inclusion
+        quoting:
+          identifier: true
+        description: >
+          Table brute historique des actes métier data inclusion, utilisée pour répliquer le fetcher
+          `fetch_data_inclusion`.
+
   - name: raw_marche
     schema: raw_marche
     description: >

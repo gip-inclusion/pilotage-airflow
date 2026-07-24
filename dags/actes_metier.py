@@ -145,8 +145,8 @@ def fetch_actes_metier_matomo_data_for_site(
 
 
 with DAG(
-    "actes_metier_matomo",
-    schedule="@monthly",
+    "actes_metier",
+    schedule="0 8 1 * *",
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()
@@ -190,7 +190,7 @@ with DAG(
 
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command='dbt build --select "+tag:matomo-actes-metier"',
+        bash_command='dbt build --select "tag:actes-metier"',
         env=env_vars,
         append_env=True,
     )

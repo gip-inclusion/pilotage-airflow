@@ -45,3 +45,92 @@ models:
           combination_of_columns:
             - source
             - source_structure_id
+
+  - name: int_data_inclusion__actes_metier
+    description: >
+      Compte les actes métier data inclusion par mois : recherche data·inclusion, mise à jour de service
+      et mise à jour de structure.
+
+      **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
+      Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
+      avec l'équipe data.**
+
+    config:
+        tags:
+            - actes-metier
+
+    columns:
+      - name: mois
+        description: >
+          Mois de l'acte, au format `YYYY-MM`. Le modèle garde les 14 derniers mois complets.
+        tests:
+          - not_null
+      - name: source
+        description: Toujours `data-inclusion`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - data-inclusion
+      - name: type_acte
+        description: Type d'acte métier normalisé.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Recherche data·inclusion
+                  - Mise à jour d’une structure d’offre de service, hors employeur solidaire
+                  - Mise à jour offre de service, hors emploi solidaire
+      - name: categorie_acte
+        description: Toujours `Support` pour data inclusion.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Support
+      - name: north_star
+        description: Toujours `false` pour ces actes.
+        tests:
+          - not_null
+      - name: north_star_70
+        description: Toujours `false` pour ces actes.
+        tests:
+          - not_null
+      - name: traite
+        description: Toujours `false` pour ces actes.
+        tests:
+          - not_null
+      - name: type_structure
+        description: >
+          Type de structure déduit du contexte pour les recherches, ou des réseaux porteurs pour les mises à jour.
+          Vaut `Autre` si aucun mapping n'est trouvé.
+        tests:
+          - not_null
+      - name: departement
+        description: Code département normalisé. Vaut `Inconnu` si le département est vide ou non reconnu.
+        tests:
+          - not_null
+      - name: nombre_actes
+        description: Nombre d'actes pour ce grain.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - mois
+              - source
+              - type_acte
+              - north_star
+              - north_star_70
+              - traite
+              - type_structure
+              - departement
