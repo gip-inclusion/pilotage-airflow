@@ -39,6 +39,8 @@ final as (
         prestations.journees_theoriques,
 
         prestations.direct_beneficiaires,
+        prestations.direct_avec_orp_beneficiaires,
+        prestations.direct_sans_orp_beneficiaires,
         prestations.direct_hors_murs_personnes,
         prestations.direct_hors_murs_journees,
 

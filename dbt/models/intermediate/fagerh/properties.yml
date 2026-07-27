@@ -50,6 +50,20 @@ models:
         data_tests:
           - not_null
 
+      - name: direct_beneficiaires
+        description: >
+          Nombre total de bénéficiaires déclarés dans les blocs des prestations directes.
+          Il additionne les bénéficiaires avec ORP CDAPH et sans ORP CDAPH.
+
+      - name: direct_avec_orp_beneficiaires
+        description: >
+          Nombre de bénéficiaires déclaré dans le bloc des prestations directes avec ORP CDAPH.
+
+      - name: direct_sans_orp_beneficiaires
+        description: >
+          Nombre de bénéficiaires déclaré dans le bloc des prestations directes sans ORP CDAPH.
+          Ce champ est notamment utilisé pour certaines évaluations préliminaires hors ORP.
+
   - name: int_fagerh__prestations_publics
 
     config:
