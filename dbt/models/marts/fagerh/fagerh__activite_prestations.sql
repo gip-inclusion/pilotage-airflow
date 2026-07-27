@@ -27,6 +27,11 @@ final as (
         prestations.orp_status,
         prestations.is_reliable_prestation_mapping,
         prestations.is_unmapped_prestation,
+        prestations.prestation_name_detail,
+        prestations.prestation_category_fine,
+        prestations.formation_name,
+        prestations.is_technical_step,
+        prestations.is_emploi_relevant,
 
         prestations.nb_files_active,
         prestations.preaccueil_sans_suite,
@@ -51,7 +56,28 @@ final as (
 
         prestations.direct_presentiel_total,
         prestations.direct_hybride_total,
-        prestations.direct_distanciel_total
+        prestations.direct_distanciel_total,
+
+        prestations.emploi_nb_repondants,
+        prestations.emploi_acces_nb,
+        prestations.emploi_presence_nb,
+        prestations.emploi_acces_cdi,
+        prestations.emploi_acces_cdd_plus6,
+        prestations.emploi_acces_cdd_moins6,
+        prestations.emploi_acces_alternance,
+        prestations.emploi_acces_interim,
+        prestations.emploi_acces_autre,
+
+        coalesce(prestations.emploi_acces_cdi, 0)
+        + coalesce(prestations.emploi_acces_cdd_plus6, 0)                                                        as emploi_durable_nb,
+
+        coalesce(prestations.emploi_acces_cdd_moins6, 0)
+        + coalesce(prestations.emploi_acces_alternance, 0)
+        + coalesce(prestations.emploi_acces_interim, 0)
+        + coalesce(prestations.emploi_acces_autre, 0)                                                            as emploi_autre_nb,
+
+        {{ safe_divide('prestations.emploi_acces_nb', 'prestations.emploi_nb_repondants') }}    as taux_acces_emploi,
+        {{ safe_divide('prestations.emploi_presence_nb', 'prestations.emploi_nb_repondants') }} as taux_presence_emploi
 
     from prestations
 

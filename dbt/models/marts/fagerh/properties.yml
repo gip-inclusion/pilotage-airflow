@@ -14,8 +14,27 @@ models:
       * Il rassemble les informations principales de la prestation, de l'établissement et du département.
       * Il contient aussi les principaux indicateurs d'activité : effectifs actifs, sorties, journées, hébergement, accompagnement hors les murs
       et suspensions.
+      * Il expose les indicateurs emploi et la catégorie fine des parcours utiles au calcul du taux d'accès à l'emploi.
 
-      Il ne contient pas le détail des publics, des préconisations, de l'emploi ou des métiers.
+      Pour calculer les taux d'emploi des formations certifiantes ou professionnalisantes, il faut:
+      * filtrer `is_emploi_relevant = true`.
+      * garder les catégories fines `formation_certifiante`, `formation_accompagnee_certifiante_dfa`,
+      `formation_professionnalisante_non_certifiante` et `formation_accompagnee_professionnalisante_non_certifiante_dfa`.
+      * grouper par la dimension d'analyse souhaitée, par exemple `prestation_category_fine`, `departement` ou `formation_name`.
+      * calculer les taux après agrégation: `sum(emploi_acces_nb) / sum(emploi_nb_repondants)` et
+      `sum(emploi_presence_nb) / sum(emploi_nb_repondants)`.
+      Il ne faut pas moyenner les colonnes `taux_acces_emploi` ou `taux_presence_emploi` ligne par ligne.
+
+      Il ne contient pas le détail des publics, des préconisations ou des métiers.
+
+    tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "emploi_durable_nb + emploi_autre_nb <= emploi_acces_nb"
+          config:
+            severity: warn
+            where: "emploi_acces_nb is not null"
+
     columns:
       - name: uuid
         description: Identifiant unique de la réponse au questionnaire.
@@ -73,6 +92,27 @@ models:
           Cette colonne sert au contrôle qualité.
         data_tests:
           - not_null
+
+      - name: prestation_name_detail
+        description: Libellé détaillé de la prestation dans le wizard FAGERH.
+
+      - name: prestation_category_fine
+        description: >
+          Catégorie fine de parcours issue du libellé détaillé de la prestation.
+          Pour répondre aux demandes sur les formations certifiantes ou professionnalisantes, utiliser les valeurs
+          `formation_certifiante`, `formation_accompagnee_certifiante_dfa`,
+          `formation_professionnalisante_non_certifiante` et `formation_accompagnee_professionnalisante_non_certifiante_dfa`.
+
+      - name: formation_name
+        description: Nom de la formation lorsque la prestation correspond à une formation certifiante ou diplômante.
+
+      - name: is_technical_step
+        description: Indique si la ligne correspond à une étape technique du formulaire.
+
+      - name: is_emploi_relevant
+        description: >
+          Indique si la prestation doit être retenue dans le calcul du taux d'accès à l'emploi par catégorie fine.
+          Les analyses BI sur les taux d'emploi des parcours fins doivent filtrer cette colonne à true.
 
       - name: nb_files_active
         description: >
@@ -135,6 +175,61 @@ models:
 
       - name: direct_distanciel_total
         description: Nombre total de personnes accompagnées en distanciel.
+
+      - name: emploi_nb_repondants
+        description: >
+          Nombre de personnes répondantes au suivi emploi.
+          Ce champ sert de dénominateur aux taux d'emploi. Pour une analyse agrégée, utiliser `sum(emploi_nb_repondants)`.
+
+      - name: emploi_acces_nb
+        description: >
+          Nombre de personnes ayant accédé à l'emploi.
+          Ce champ sert de numérateur au taux d'accès à l'emploi. Pour une analyse agrégée, utiliser `sum(emploi_acces_nb)`.
+
+      - name: emploi_presence_nb
+        description: >
+          Nombre de personnes encore en emploi au moment du suivi.
+          Ce champ sert de numérateur au taux de présence en emploi. Pour une analyse agrégée, utiliser `sum(emploi_presence_nb)`.
+
+      - name: emploi_acces_cdi
+        description: Nombre d'accès à l'emploi en CDI.
+
+      - name: emploi_acces_cdd_plus6
+        description: Nombre d'accès à l'emploi en CDD de plus de 6 mois.
+
+      - name: emploi_acces_cdd_moins6
+        description: Nombre d'accès à l'emploi en CDD de moins de 6 mois.
+
+      - name: emploi_acces_alternance
+        description: Nombre d'accès à l'emploi en alternance.
+
+      - name: emploi_acces_interim
+        description: Nombre d'accès à l'emploi en intérim.
+
+      - name: emploi_acces_autre
+        description: Nombre d'accès à l'emploi dans une autre forme de contrat.
+
+      - name: emploi_durable_nb
+        description: >
+          Nombre d'accès à l'emploi durable, calculé comme CDI plus CDD de plus de 6 mois.
+          Pour une analyse agrégée, utiliser `sum(emploi_durable_nb)`.
+
+      - name: emploi_autre_nb
+        description: >
+          Nombre d'accès à l'emploi hors emploi durable, calculé comme CDD de moins de 6 mois, alternance, intérim et autre.
+          Pour une analyse agrégée, utiliser `sum(emploi_autre_nb)`.
+
+      - name: taux_acces_emploi
+        description: >
+          Taux d'accès à l'emploi de la ligne, calculé comme `emploi_acces_nb / emploi_nb_repondants`.
+          Pour tout résultat agrégé, ne pas moyenner cette colonne: recalculer le taux avec
+          `sum(emploi_acces_nb) / sum(emploi_nb_repondants)`.
+
+      - name: taux_presence_emploi
+        description: >
+          Taux de présence en emploi de la ligne, calculé comme `emploi_presence_nb / emploi_nb_repondants`.
+          Pour tout résultat agrégé, ne pas moyenner cette colonne: recalculer le taux avec
+          `sum(emploi_presence_nb) / sum(emploi_nb_repondants)`.
 
   - name: fagerh__publics_prestations
 
