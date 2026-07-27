@@ -12,6 +12,13 @@ prestation_mapping as (
 
 ),
 
+prestations_details_names as (
+
+    select *
+    from {{ ref('int_fagerh__prestations_details_names') }}
+
+),
+
 prestations as (
 
     select
@@ -66,16 +73,21 @@ prestations_enriched as (
 final as (
 
     select
-        uuid,
-        answer_id,
-        prestation_key,
-        prestation_key_base,
+        prestations_enriched.uuid,
+        prestations_enriched.answer_id,
+        prestations_enriched.prestation_key,
+        prestations_enriched.prestation_key_base,
 
-        prestation_group,
-        prestation_label,
-        orp_status,
-        is_reliable_prestation_mapping,
-        is_unmapped_prestation,
+        prestations_enriched.prestation_group,
+        prestations_enriched.prestation_label,
+        prestations_enriched.orp_status,
+        prestations_enriched.is_reliable_prestation_mapping,
+        prestations_enriched.is_unmapped_prestation,
+        prestations_details_names.conditional_name                                                                    as prestation_name_detail,
+        prestations_details_names.prestation_category_fine,
+        prestations_details_names.formation_name,
+        prestations_details_names.is_technical_step,
+        prestations_details_names.is_emploi_relevant,
 
         (prestation_json ->> 'done')::boolean                                                                         as prestation_done,
         nullif(prestation_json ->> 'fileActive', '')::integer                                                         as nb_files_active,
@@ -191,6 +203,11 @@ final as (
         nullif(prestation_json #>> '{preconisationsBloc,autres_precision}', '')                                       as preco_autres_precision
 
     from prestations_enriched
+
+    left join prestations_details_names
+        on
+            prestations_enriched.uuid = prestations_details_names.uuid
+            and prestations_enriched.prestation_key = prestations_details_names.conditional_id
 
 )
 

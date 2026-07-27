@@ -45,6 +45,21 @@ models:
         data_tests:
           - not_null
 
+      - name: prestation_name_detail
+        description: Libellé détaillé de l'étape conditionnelle dans le wizard FAGERH.
+
+      - name: prestation_category_fine
+        description: Catégorie fine de parcours issue du libellé détaillé de l'étape conditionnelle.
+
+      - name: formation_name
+        description: Nom de la formation lorsque la prestation correspond à une formation certifiante ou diplômante.
+
+      - name: is_technical_step
+        description: Indique si la ligne correspond à une étape technique du formulaire, par exemple la sélection des formations.
+
+      - name: is_emploi_relevant
+        description: Indique si la prestation doit être retenue dans le calcul du taux d'accès à l'emploi par catégorie fine.
+
       - name: prestation_done
         description: Indique si la prestation a été renseignée jusqu'au bout.
         data_tests:
@@ -63,6 +78,64 @@ models:
         description: >
           Nombre de bénéficiaires déclaré dans le bloc des prestations directes sans ORP CDAPH.
           Ce champ est notamment utilisé pour certaines évaluations préliminaires hors ORP.
+
+  - name: int_fagerh__prestations_details_names
+
+    config:
+      tags: ["fagerh"]
+
+    description: >
+      Données de libellés détaillés des prestations, extraites de l'état complet du wizard FAGERH.
+      Le modèle contient une ligne par réponse et par étape conditionnelle déclarée dans `prestations_details_json`.
+      Il permet de relier les prestations à une catégorie fine de parcours et au nom de formation quand il existe.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - uuid
+            - conditional_id
+
+    columns:
+      - name: uuid
+        description: Identifiant unique de la réponse du questionnaire.
+        data_tests:
+          - not_null
+
+      - name: conditional_id
+        description: Identifiant technique de l'étape conditionnelle. Il correspond à la clé de prestation dans `prestations_json`.
+        data_tests:
+          - not_null
+
+      - name: conditional_name
+        description: Libellé complet de l'étape conditionnelle dans le wizard.
+        data_tests:
+          - not_null
+
+      - name: prestation_category_fine
+        description: Catégorie fine utilisée pour analyser le taux d'accès à l'emploi des parcours à visée certifiante.
+        data_tests:
+          - accepted_values:
+              values:
+                - parcours_preparatoire
+                - formation_certifiante
+                - formation_accompagnee_certifiante_dfa
+                - formation_professionnalisante_non_certifiante
+                - formation_accompagnee_professionnalisante_non_certifiante_dfa
+              config:
+                where: "prestation_category_fine is not null"
+
+      - name: formation_name
+        description: Nom de la formation pour les lignes de formation certifiante ou diplômante.
+
+      - name: is_technical_step
+        description: Indique si la ligne correspond à une étape technique du formulaire.
+        data_tests:
+          - not_null
+
+      - name: is_emploi_relevant
+        description: Indique si la ligne est à retenir pour les analyses de taux d'accès à l'emploi par catégorie fine.
+        data_tests:
+          - not_null
 
   - name: int_fagerh__prestations_publics
 
