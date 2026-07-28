@@ -68,6 +68,22 @@ final as (
         prestations.emploi_acces_interim,
         prestations.emploi_acces_autre,
 
+        prestations.preco_emploi_milieu_ordinaire,
+        prestations.preco_entreprise_adaptee,
+        prestations.preco_esat,
+        prestations.preco_creation_entreprise,
+        prestations.preco_maintien_emploi,
+        prestations.preco_formation_droit_commun,
+        prestations.preco_formation_alternance,
+        prestations.preco_formation_esrp_dfa,
+        prestations.preco_espo_specialisee_ueros,
+        prestations.preco_service_accompagnement_social,
+        prestations.preco_vie_sociale,
+        prestations.preco_soins,
+        prestations.preco_emploi_accompagne,
+        prestations.preco_autres,
+        prestations.preco_autres_precision,
+
         coalesce(prestations.emploi_acces_cdi, 0)
         + coalesce(prestations.emploi_acces_cdd_plus6, 0)                                                        as emploi_durable_nb,
 

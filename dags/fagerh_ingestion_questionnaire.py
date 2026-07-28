@@ -70,13 +70,6 @@ with DAG(
         append_env=True,
     )
 
-    dbt_seed = bash.BashOperator(
-        task_id="dbt_seed",
-        bash_command="dbt seed",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
         bash_command='dbt build --select "+tag:fagerh"',
@@ -86,4 +79,4 @@ with DAG(
 
     loaded = load_raw_csv_to_db()
 
-    loaded >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_build
+    loaded >> dbt_debug >> dbt_deps >> dbt_build

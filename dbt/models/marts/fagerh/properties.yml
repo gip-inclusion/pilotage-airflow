@@ -25,7 +25,7 @@ models:
       `sum(emploi_presence_nb) / sum(emploi_nb_repondants)`.
       Il ne faut pas moyenner les colonnes `taux_acces_emploi` ou `taux_presence_emploi` ligne par ligne.
 
-      Il ne contient pas le détail des publics, des préconisations ou des métiers.
+      Il ne contient pas le détail des publics ou des métiers.
 
     tests:
       - dbt_utils.expression_is_true:
@@ -208,6 +208,81 @@ models:
 
       - name: emploi_acces_autre
         description: Nombre d'accès à l'emploi dans une autre forme de contrat.
+
+      - name: preco_emploi_milieu_ordinaire
+        description: >
+          Nombre de préconisations vers l'emploi en milieu ordinaire déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_emploi_milieu_ordinaire)`.
+
+      - name: preco_entreprise_adaptee
+        description: >
+          Nombre de préconisations vers l'entreprise adaptée déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_entreprise_adaptee)`.
+
+      - name: preco_esat
+        description: >
+          Nombre de préconisations vers un ESAT déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_esat)`.
+
+      - name: preco_creation_entreprise
+        description: >
+          Nombre de préconisations vers la création d'entreprise déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_creation_entreprise)`.
+
+      - name: preco_maintien_emploi
+        description: >
+          Nombre de préconisations vers le maintien en emploi déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_maintien_emploi)`.
+
+      - name: preco_formation_droit_commun
+        description: >
+          Nombre de préconisations vers une formation de droit commun déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_formation_droit_commun)`.
+
+      - name: preco_formation_alternance
+        description: >
+          Nombre de préconisations vers une formation en alternance déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_formation_alternance)`.
+
+      - name: preco_formation_esrp_dfa
+        description: >
+          Nombre de préconisations vers une formation ESRP ou DFA déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_formation_esrp_dfa)`.
+
+      - name: preco_espo_specialisee_ueros
+        description: >
+          Nombre de préconisations vers une ESPO spécialisée ou une UEROS déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_espo_specialisee_ueros)`.
+
+      - name: preco_service_accompagnement_social
+        description: >
+          Nombre de préconisations vers un service d'accompagnement social déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_service_accompagnement_social)`.
+
+      - name: preco_vie_sociale
+        description: >
+          Nombre de préconisations liées à la vie sociale déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_vie_sociale)`.
+
+      - name: preco_soins
+        description: >
+          Nombre de préconisations vers les soins déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_soins)`.
+
+      - name: preco_emploi_accompagne
+        description: >
+          Nombre de préconisations vers l'emploi accompagné déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_emploi_accompagne)`.
+
+      - name: preco_autres
+        description: >
+          Nombre d'autres préconisations déclarées à l'issue de la prestation.
+          Pour une analyse agrégée, utiliser `sum(preco_autres)`.
+
+      - name: preco_autres_precision
+        description: >
+          Précision textuelle associée aux autres préconisations déclarées à l'issue de la prestation.
+          Ce champ descriptif ne doit pas être agrégé comme une métrique.
 
       - name: emploi_durable_nb
         description: >
