@@ -5,6 +5,37 @@ models:
     config:
       tags: ["fagerh"]
     description: Une ligne par réponse et par prestation renseignée dans le JSON des prestations. Le modèle extrait les principaux indicateurs d'activité et ajoute une classification métier de la prestation à partir de la seed `seed_fagerh__prestation_mapping`.
+    tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              mdph_epe_participations is not distinct from
+              case
+                when mdph_epe_origine_participations is null and mdph_epe_limitrophes_participations is null then null
+                else coalesce(mdph_epe_origine_participations, 0) + coalesce(mdph_epe_limitrophes_participations, 0)
+              end
+          config:
+            severity: warn
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              mdph_cdaph_participations is not distinct from
+              case
+                when mdph_cdaph_origine_participations is null and mdph_cdaph_limitrophes_participations is null then null
+                else coalesce(mdph_cdaph_origine_participations, 0) + coalesce(mdph_cdaph_limitrophes_participations, 0)
+              end
+          config:
+            severity: warn
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              mdph_groupes_travail_participations is not distinct from
+              case
+                when mdph_groupes_travail_origine_participations is null and mdph_groupes_travail_limitrophes_participations is null then null
+                else coalesce(mdph_groupes_travail_origine_participations, 0) + coalesce(mdph_groupes_travail_limitrophes_participations, 0)
+              end
+          config:
+            severity: warn
     columns:
       - name: uuid
         description: Identifiant unique de la réponse du questionnaire.
@@ -78,6 +109,60 @@ models:
         description: >
           Nombre de bénéficiaires déclaré dans le bloc des prestations directes sans ORP CDAPH.
           Ce champ est notamment utilisé pour certaines évaluations préliminaires hors ORP.
+
+      - name: mdph_epe_origine_participations
+        description: >
+          Nombre de participations aux EPE avec la MDPH du territoire de l'établissement.
+          Ce champ vient de `indirect.rows.epe.origine` dans le JSON de la prestation.
+          Il est renseigné seulement pour la prestation `indirectes-participations-mdph`.
+
+      - name: mdph_epe_limitrophes_participations
+        description: >
+          Nombre de participations aux EPE avec des MDPH des territoires voisins.
+          Ce champ vient de `indirect.rows.epe.limitrophes` dans le JSON de la prestation.
+          Il est renseigné seulement pour la prestation `indirectes-participations-mdph`.
+
+      - name: mdph_epe_participations
+        description: >
+          Total des participations aux EPE.
+          Il additionne `mdph_epe_origine_participations` et `mdph_epe_limitrophes_participations`.
+          C'est un compteur de participations, pas un compteur de personnes ni de journées.
+
+      - name: mdph_cdaph_origine_participations
+        description: >
+          Nombre de participations aux CDAPH avec la MDPH du territoire de l'établissement.
+          Ce champ vient de `indirect.rows.cdaph.origine` dans le JSON de la prestation.
+          Il est renseigné seulement pour la prestation `indirectes-participations-mdph`.
+
+      - name: mdph_cdaph_limitrophes_participations
+        description: >
+          Nombre de participations aux CDAPH avec des MDPH des territoires voisins.
+          Ce champ vient de `indirect.rows.cdaph.limitrophes` dans le JSON de la prestation.
+          Il est renseigné seulement pour la prestation `indirectes-participations-mdph`.
+
+      - name: mdph_cdaph_participations
+        description: >
+          Total des participations aux CDAPH.
+          Il additionne `mdph_cdaph_origine_participations` et `mdph_cdaph_limitrophes_participations`.
+          C'est un compteur de participations, pas un compteur de personnes ni de journées.
+
+      - name: mdph_groupes_travail_origine_participations
+        description: >
+          Nombre de participations aux groupes de travail de la MDPH du territoire de l'établissement.
+          Ce champ vient de `indirect.rows.groupes_travail.origine` dans le JSON de la prestation.
+          Il est renseigné seulement pour la prestation `indirectes-participations-mdph`.
+
+      - name: mdph_groupes_travail_limitrophes_participations
+        description: >
+          Nombre de participations aux groupes de travail avec des MDPH des territoires voisins.
+          Ce champ vient de `indirect.rows.groupes_travail.limitrophes` dans le JSON de la prestation.
+          Il est renseigné seulement pour la prestation `indirectes-participations-mdph`.
+
+      - name: mdph_groupes_travail_participations
+        description: >
+          Total des participations aux groupes de travail de la MDPH.
+          Il additionne `mdph_groupes_travail_origine_participations` et `mdph_groupes_travail_limitrophes_participations`.
+          C'est un compteur de participations, pas un compteur de personnes ni de journées.
 
   - name: int_fagerh__prestations_details_names
 

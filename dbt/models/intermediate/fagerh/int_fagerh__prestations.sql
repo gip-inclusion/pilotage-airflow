@@ -121,6 +121,66 @@ final as (
         nullif(prestation_json #>> '{directAvecOrp,row,hebergees_nuitees}', '')::integer                              as direct_hebergees_nuitees,
         nullif(prestation_json #>> '{sortiesBloc,nb}', '')::integer                                                   as sorties_nb,
 
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-participations-mdph'
+                then nullif(prestation_json #>> '{indirect,rows,epe,origine}', '')::integer
+        end                                                                                                           as mdph_epe_origine_participations,
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-participations-mdph'
+                then nullif(prestation_json #>> '{indirect,rows,epe,limitrophes}', '')::integer
+        end                                                                                                           as mdph_epe_limitrophes_participations,
+        case
+            when prestations_enriched.prestation_key_base != 'indirectes-participations-mdph'
+                then null
+            when
+                nullif(prestation_json #>> '{indirect,rows,epe,origine}', '') is null
+                and nullif(prestation_json #>> '{indirect,rows,epe,limitrophes}', '') is null
+                then null
+            else
+                coalesce(nullif(prestation_json #>> '{indirect,rows,epe,origine}', '')::integer, 0)
+                + coalesce(nullif(prestation_json #>> '{indirect,rows,epe,limitrophes}', '')::integer, 0)
+        end                                                                                                           as mdph_epe_participations,
+
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-participations-mdph'
+                then nullif(prestation_json #>> '{indirect,rows,cdaph,origine}', '')::integer
+        end                                                                                                           as mdph_cdaph_origine_participations,
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-participations-mdph'
+                then nullif(prestation_json #>> '{indirect,rows,cdaph,limitrophes}', '')::integer
+        end                                                                                                           as mdph_cdaph_limitrophes_participations,
+        case
+            when prestations_enriched.prestation_key_base != 'indirectes-participations-mdph'
+                then null
+            when
+                nullif(prestation_json #>> '{indirect,rows,cdaph,origine}', '') is null
+                and nullif(prestation_json #>> '{indirect,rows,cdaph,limitrophes}', '') is null
+                then null
+            else
+                coalesce(nullif(prestation_json #>> '{indirect,rows,cdaph,origine}', '')::integer, 0)
+                + coalesce(nullif(prestation_json #>> '{indirect,rows,cdaph,limitrophes}', '')::integer, 0)
+        end                                                                                                           as mdph_cdaph_participations,
+
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-participations-mdph'
+                then nullif(prestation_json #>> '{indirect,rows,groupes_travail,origine}', '')::integer
+        end                                                                                                           as mdph_groupes_travail_origine_participations,
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-participations-mdph'
+                then nullif(prestation_json #>> '{indirect,rows,groupes_travail,limitrophes}', '')::integer
+        end                                                                                                           as mdph_groupes_travail_limitrophes_participations,
+        case
+            when prestations_enriched.prestation_key_base != 'indirectes-participations-mdph'
+                then null
+            when
+                nullif(prestation_json #>> '{indirect,rows,groupes_travail,origine}', '') is null
+                and nullif(prestation_json #>> '{indirect,rows,groupes_travail,limitrophes}', '') is null
+                then null
+            else
+                coalesce(nullif(prestation_json #>> '{indirect,rows,groupes_travail,origine}', '')::integer, 0)
+                + coalesce(nullif(prestation_json #>> '{indirect,rows,groupes_travail,limitrophes}', '')::integer, 0)
+        end                                                                                                           as mdph_groupes_travail_participations,
+
         nullif(prestation_json #>> '{sortiesBloc,raisons,depart_volontaire}', '')::integer                            as sorties_depart_volontaire,
         nullif(prestation_json #>> '{sortiesBloc,raisons,sante}', '')::integer                                        as sorties_sante,
         nullif(prestation_json #>> '{sortiesBloc,raisons,reorientation}', '')::integer                                as sorties_reorientation,

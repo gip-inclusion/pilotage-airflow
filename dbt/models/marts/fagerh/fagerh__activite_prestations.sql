@@ -52,6 +52,16 @@ final as (
         prestations.direct_hebergees_personnes,
         prestations.direct_hebergees_nuitees,
 
+        prestations.mdph_epe_origine_participations,
+        prestations.mdph_epe_limitrophes_participations,
+        prestations.mdph_epe_participations,
+        prestations.mdph_cdaph_origine_participations,
+        prestations.mdph_cdaph_limitrophes_participations,
+        prestations.mdph_cdaph_participations,
+        prestations.mdph_groupes_travail_origine_participations,
+        prestations.mdph_groupes_travail_limitrophes_participations,
+        prestations.mdph_groupes_travail_participations,
+
         prestations.suspensions_nb,
 
         prestations.direct_presentiel_total,
