@@ -46,11 +46,22 @@ final as (
         prestations.direct_beneficiaires,
         prestations.direct_avec_orp_beneficiaires,
         prestations.direct_sans_orp_beneficiaires,
+        prestations.direct_pec_beneficiaires,
+        prestations.info_personnes_collectives_journees,
+        prestations.info_personnes_collectives_personnes,
+        prestations.info_personnes_individuelles_personnes,
         prestations.direct_hors_murs_personnes,
         prestations.direct_hors_murs_journees,
 
         prestations.direct_hebergees_personnes,
         prestations.direct_hebergees_nuitees,
+
+        prestations.information_partenaires_collective_journees,
+        prestations.information_partenaires_collective_nb_partenaires,
+        prestations.information_partenaires_individuelle_nb_partenaires,
+        prestations.information_organismes_formation_collective_journees,
+        prestations.information_organismes_formation_collective_nb_organismes,
+        prestations.information_organismes_formation_individuelle_nb_organismes,
 
         prestations.mdph_epe_origine_participations,
         prestations.mdph_epe_limitrophes_participations,

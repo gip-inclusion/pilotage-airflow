@@ -36,6 +36,48 @@ models:
               end
           config:
             severity: warn
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              info_personnes_collectives_personnes is not distinct from
+              case
+                when info_personnes_collectives_boeth is null and info_personnes_collectives_non_boeth is null and info_personnes_collectives_sans_statut is null then null
+                else coalesce(info_personnes_collectives_boeth, 0) + coalesce(info_personnes_collectives_non_boeth, 0) + coalesce(info_personnes_collectives_sans_statut, 0)
+              end
+          config:
+            severity: warn
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              info_personnes_individuelles_personnes is not distinct from
+              case
+                when info_personnes_individuelles_boeth is null and info_personnes_individuelles_non_boeth is null and info_personnes_individuelles_sans_statut is null then null
+                else coalesce(info_personnes_individuelles_boeth, 0) + coalesce(info_personnes_individuelles_non_boeth, 0) + coalesce(info_personnes_individuelles_sans_statut, 0)
+              end
+          config:
+            severity: warn
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              (
+                information_partenaires_collective_journees is null
+                and information_partenaires_collective_nb_partenaires is null
+                and information_partenaires_individuelle_nb_partenaires is null
+              )
+              or prestation_key_base = 'indirectes-informations-partenaires'
+          config:
+            severity: warn
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: >
+              (
+                information_organismes_formation_collective_journees is null
+                and information_organismes_formation_collective_nb_organismes is null
+                and information_organismes_formation_individuelle_nb_organismes is null
+              )
+              or prestation_key_base = 'indirectes-informations-organisme-de-formation'
+          config:
+            severity: warn
     columns:
       - name: uuid
         description: Identifiant unique de la réponse du questionnaire.
@@ -99,7 +141,8 @@ models:
       - name: direct_beneficiaires
         description: >
           Nombre total de bénéficiaires déclarés dans les blocs des prestations directes.
-          Il additionne les bénéficiaires avec ORP CDAPH et sans ORP CDAPH.
+          Il additionne les bénéficiaires avec ORP CDAPH, les bénéficiaires PEC sans ORP CDAPH,
+          et les personnes reçues en information collective ou individuelle quand elles sont dans le JSON.
 
       - name: direct_avec_orp_beneficiaires
         description: >
@@ -109,6 +152,80 @@ models:
         description: >
           Nombre de bénéficiaires déclaré dans le bloc des prestations directes sans ORP CDAPH.
           Ce champ est notamment utilisé pour certaines évaluations préliminaires hors ORP.
+
+      - name: direct_pec_beneficiaires
+        description: >
+          Nombre de bénéficiaires du bloc PEC sans ORP CDAPH.
+          Ce champ sert de détail technique pour les évaluations préliminaires.
+
+      - name: info_personnes_collectives_journees
+        description: >
+          Nombre de journées passées en informations collectives à destination des personnes.
+          Ce champ vient de `directSansOrp.rows.info_personnes_collectives.journees`.
+
+      - name: info_personnes_collectives_boeth
+        description: >
+          Nombre de personnes BOETH reçues en informations collectives à destination des personnes.
+
+      - name: info_personnes_collectives_non_boeth
+        description: >
+          Nombre de personnes non BOETH reçues en informations collectives à destination des personnes.
+
+      - name: info_personnes_collectives_sans_statut
+        description: >
+          Nombre de personnes sans statut déclaré reçues en informations collectives à destination des personnes.
+
+      - name: info_personnes_collectives_personnes
+        description: >
+          Total des personnes reçues en informations collectives à destination des personnes.
+          Il additionne BOETH, non BOETH et sans statut.
+
+      - name: info_personnes_individuelles_boeth
+        description: >
+          Nombre de personnes BOETH reçues en rencontres individuelles d'information.
+
+      - name: info_personnes_individuelles_non_boeth
+        description: >
+          Nombre de personnes non BOETH reçues en rencontres individuelles d'information.
+
+      - name: info_personnes_individuelles_sans_statut
+        description: >
+          Nombre de personnes sans statut déclaré reçues en rencontres individuelles d'information.
+
+      - name: info_personnes_individuelles_personnes
+        description: >
+          Total des personnes reçues en rencontres individuelles d'information.
+          Il additionne BOETH, non BOETH et sans statut.
+
+      - name: information_partenaires_collective_journees
+        description: >
+          Nombre de journées passées en information collective à destination des partenaires.
+          Ce champ est renseigné seulement pour la prestation `indirectes-informations-partenaires`.
+
+      - name: information_partenaires_collective_nb_partenaires
+        description: >
+          Nombre de partenaires concernés par l'information collective à destination des partenaires.
+          Ce champ est renseigné seulement pour la prestation `indirectes-informations-partenaires`.
+
+      - name: information_partenaires_individuelle_nb_partenaires
+        description: >
+          Nombre de partenaires concernés par l'information individuelle à destination des partenaires.
+          Ce champ est renseigné seulement pour la prestation `indirectes-informations-partenaires`.
+
+      - name: information_organismes_formation_collective_journees
+        description: >
+          Nombre de journées passées en information collective à destination des organismes de formation.
+          Ce champ est renseigné seulement pour la prestation `indirectes-informations-organisme-de-formation`.
+
+      - name: information_organismes_formation_collective_nb_organismes
+        description: >
+          Nombre d'organismes de formation concernés par l'information collective.
+          Ce champ est renseigné seulement pour la prestation `indirectes-informations-organisme-de-formation`.
+
+      - name: information_organismes_formation_individuelle_nb_organismes
+        description: >
+          Nombre d'organismes de formation concernés par l'information individuelle.
+          Ce champ est renseigné seulement pour la prestation `indirectes-informations-organisme-de-formation`.
 
       - name: mdph_epe_origine_participations
         description: >

@@ -96,10 +96,98 @@ final as (
         nullif(prestation_json ->> 'sortiesAvantTerme', '')::integer                                                  as sorties_avant_terme,
         nullif(prestation_json ->> 'sortiesTerme', '')::integer                                                       as sorties_terme,
         nullif(prestation_json ->> 'sorties', '')::integer                                                            as sorties,
-        nullif(prestation_json ->> 'journees', '')::numeric                                                           as journees,
+        case
+            when
+                nullif(prestation_json ->> 'journees', '') is null
+                and (
+                    prestations_enriched.prestation_key_base != 'directes-hors-orp-cdaph-informations-aux-personnes'
+                    or nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,journees}', '') is null
+                )
+                and (
+                    prestations_enriched.prestation_key_base != 'indirectes-informations-partenaires'
+                    or nullif(prestation_json #>> '{indirect,rows,part_collectives,journees}', '') is null
+                )
+                and (
+                    prestations_enriched.prestation_key_base != 'indirectes-informations-organisme-de-formation'
+                    or nullif(prestation_json #>> '{indirect,rows,of_collectives,journees}', '') is null
+                )
+                then null
+            else
+                coalesce(nullif(prestation_json ->> 'journees', '')::numeric, 0)
+                + case
+                    when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                        then coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,journees}', '')::numeric, 0)
+                    else 0
+                end
+                + case
+                    when prestations_enriched.prestation_key_base = 'indirectes-informations-partenaires'
+                        then coalesce(nullif(prestation_json #>> '{indirect,rows,part_collectives,journees}', '')::numeric, 0)
+                    else 0
+                end
+                + case
+                    when prestations_enriched.prestation_key_base = 'indirectes-informations-organisme-de-formation'
+                        then coalesce(nullif(prestation_json #>> '{indirect,rows,of_collectives,journees}', '')::numeric, 0)
+                    else 0
+                end
+        end                                                                                                           as journees,
         nullif(prestation_json ->> 'journeesTheoriques', '')::numeric                                                 as journees_theoriques,
         nullif(prestation_json #>> '{directAvecOrp,row,beneficiaires}', '')::integer                                  as direct_avec_orp_beneficiaires,
         nullif(prestation_json #>> '{directSansOrp,rows,pec,beneficiaires}', '')::integer                             as direct_sans_orp_beneficiaires,
+        nullif(prestation_json #>> '{directSansOrp,rows,pec,beneficiaires}', '')::integer                             as direct_pec_beneficiaires,
+        case
+            when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,journees}', '')::numeric
+        end                                                                                                           as info_personnes_collectives_journees,
+        case
+            when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,boeth}', '')::integer
+        end                                                                                                           as info_personnes_collectives_boeth,
+        case
+            when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,non_boeth}', '')::integer
+        end                                                                                                           as info_personnes_collectives_non_boeth,
+        case
+            when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,sans_statut}', '')::integer
+        end                                                                                                           as info_personnes_collectives_sans_statut,
+        case
+            when prestations_enriched.prestation_key_base != 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then null
+            when
+                nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,boeth}', '') is null
+                and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,non_boeth}', '') is null
+                and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,sans_statut}', '') is null
+                then null
+            else
+                coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,boeth}', '')::integer, 0)
+                + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,non_boeth}', '')::integer, 0)
+                + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,sans_statut}', '')::integer, 0)
+        end                                                                                                           as info_personnes_collectives_personnes,
+        case
+            when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,boeth}', '')::integer
+        end                                                                                                           as info_personnes_individuelles_boeth,
+        case
+            when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,non_boeth}', '')::integer
+        end                                                                                                           as info_personnes_individuelles_non_boeth,
+        case
+            when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,sans_statut}', '')::integer
+        end                                                                                                           as info_personnes_individuelles_sans_statut,
+        case
+            when prestations_enriched.prestation_key_base != 'directes-hors-orp-cdaph-informations-aux-personnes'
+                then null
+            when
+                nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,boeth}', '') is null
+                and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,non_boeth}', '') is null
+                and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,sans_statut}', '') is null
+                then null
+            else
+                coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,boeth}', '')::integer, 0)
+                + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,non_boeth}', '')::integer, 0)
+                + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,sans_statut}', '')::integer, 0)
+        end                                                                                                           as info_personnes_individuelles_personnes,
         nullif(prestation_json #>> '{directAvecOrp,row,discontinue_personnes}', '')::integer                          as direct_discontinue_personnes,
 
         nullif(prestation_json #>> '{directAvecOrp,row,presentiel_total}', '')::integer                               as direct_presentiel_total,
@@ -120,6 +208,32 @@ final as (
 
         nullif(prestation_json #>> '{directAvecOrp,row,hebergees_nuitees}', '')::integer                              as direct_hebergees_nuitees,
         nullif(prestation_json #>> '{sortiesBloc,nb}', '')::integer                                                   as sorties_nb,
+
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-informations-partenaires'
+                then nullif(prestation_json #>> '{indirect,rows,part_collectives,journees}', '')::numeric
+        end                                                                                                           as information_partenaires_collective_journees,
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-informations-partenaires'
+                then nullif(prestation_json #>> '{indirect,rows,part_collectives,partenaires_total}', '')::integer
+        end                                                                                                           as information_partenaires_collective_nb_partenaires,
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-informations-partenaires'
+                then nullif(prestation_json #>> '{indirect,rows,part_individuelles,partenaires}', '')::integer
+        end                                                                                                           as information_partenaires_individuelle_nb_partenaires,
+
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-informations-organisme-de-formation'
+                then nullif(prestation_json #>> '{indirect,rows,of_collectives,journees}', '')::numeric
+        end                                                                                                           as information_organismes_formation_collective_journees,
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-informations-organisme-de-formation'
+                then nullif(prestation_json #>> '{indirect,rows,of_collectives,partenaires_total}', '')::integer
+        end                                                                                                           as information_organismes_formation_collective_nb_organismes,
+        case
+            when prestations_enriched.prestation_key_base = 'indirectes-informations-organisme-de-formation'
+                then nullif(prestation_json #>> '{indirect,rows,of_individuelles,partenaires}', '')::integer
+        end                                                                                                           as information_organismes_formation_individuelle_nb_organismes,
 
         case
             when prestations_enriched.prestation_key_base = 'indirectes-participations-mdph'
@@ -236,10 +350,32 @@ final as (
             when
                 nullif(prestation_json #>> '{directAvecOrp,row,beneficiaires}', '') is null
                 and nullif(prestation_json #>> '{directSansOrp,rows,pec,beneficiaires}', '') is null
+                and (
+                    prestations_enriched.prestation_key_base != 'directes-hors-orp-cdaph-informations-aux-personnes'
+                    or (
+                        nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,boeth}', '') is null
+                        and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,non_boeth}', '') is null
+                        and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,sans_statut}', '') is null
+                        and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,boeth}', '') is null
+                        and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,non_boeth}', '') is null
+                        and nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,sans_statut}', '') is null
+                    )
+                )
                 then null
             else
                 coalesce(nullif(prestation_json #>> '{directAvecOrp,row,beneficiaires}', '')::integer, 0)
                 + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,pec,beneficiaires}', '')::integer, 0)
+                + case
+                    when prestations_enriched.prestation_key_base = 'directes-hors-orp-cdaph-informations-aux-personnes'
+                        then
+                            coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,boeth}', '')::integer, 0)
+                            + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,non_boeth}', '')::integer, 0)
+                            + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_collectives,sans_statut}', '')::integer, 0)
+                            + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,boeth}', '')::integer, 0)
+                            + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,non_boeth}', '')::integer, 0)
+                            + coalesce(nullif(prestation_json #>> '{directSansOrp,rows,info_personnes_individuelles,sans_statut}', '')::integer, 0)
+                    else 0
+                end
         end                                                                                                           as direct_beneficiaires,
         prestation_json -> 'visitedBlocks'                                                                            as visited_blocks,
 
