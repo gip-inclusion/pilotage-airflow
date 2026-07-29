@@ -25,6 +25,14 @@ models:
       `sum(emploi_presence_nb) / sum(emploi_nb_repondants)`.
       Il ne faut pas moyenner les colonnes `taux_acces_emploi` ou `taux_presence_emploi` ligne par ligne.
 
+      Pour analyser les participations MDPH en BI, filtrer si besoin `prestation_label = 'Participations MDPH'`, puis sommer
+      les colonnes `mdph_*_participations`.
+
+      Attention : ces colonnes comptent des participations, pas des personnes et pas des journées. Il ne faut pas les additionner
+      avec `nb_files_active`, `direct_beneficiaires`, `journees` ou les autres indicateurs d'activité des prestations directes.
+      Pour les indicateurs MDPH demandés, ne pas utiliser `journees` : les nombres sont stockés dans les colonnes dédiées
+      `mdph_epe_participations`, `mdph_cdaph_participations` et `mdph_groupes_travail_participations`.
+
       Il ne contient pas le détail des publics ou des métiers.
 
     tests:
@@ -163,6 +171,63 @@ models:
 
       - name: direct_hebergees_nuitees
         description: Nombre total de nuitées déclarées pour les personnes hébergées.
+
+      - name: mdph_epe_origine_participations
+        description: >
+          Nombre de participations aux EPE avec la MDPH du territoire de l'établissement.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle ne compte pas des personnes reçues et elle ne doit pas être mélangée avec `journees` ou `nb_files_active`.
+
+      - name: mdph_epe_limitrophes_participations
+        description: >
+          Nombre de participations aux EPE avec des MDPH des territoires voisins.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle ne compte pas des personnes reçues et elle ne doit pas être mélangée avec `journees` ou `nb_files_active`.
+
+      - name: mdph_epe_participations
+        description: >
+          Nombre de participations aux EPE de la MDPH.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle additionne les participations avec la MDPH du territoire et les MDPH des territoires voisins.
+          C'est un compteur de participations, pas un compteur de personnes ni de journées.
+
+      - name: mdph_cdaph_origine_participations
+        description: >
+          Nombre de participations aux CDAPH avec la MDPH du territoire de l'établissement.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle ne compte pas des personnes reçues et elle ne doit pas être mélangée avec `journees` ou `nb_files_active`.
+
+      - name: mdph_cdaph_limitrophes_participations
+        description: >
+          Nombre de participations aux CDAPH avec des MDPH des territoires voisins.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle ne compte pas des personnes reçues et elle ne doit pas être mélangée avec `journees` ou `nb_files_active`.
+
+      - name: mdph_cdaph_participations
+        description: >
+          Nombre de participations aux CDAPH.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle additionne les participations avec la MDPH du territoire et les MDPH des territoires voisins.
+          C'est un compteur de participations, pas un compteur de personnes ni de journées.
+
+      - name: mdph_groupes_travail_origine_participations
+        description: >
+          Nombre de participations aux groupes de travail de la MDPH du territoire de l'établissement.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle ne compte pas des personnes reçues et elle ne doit pas être mélangée avec `journees` ou `nb_files_active`.
+
+      - name: mdph_groupes_travail_limitrophes_participations
+        description: >
+          Nombre de participations aux groupes de travail avec des MDPH des territoires voisins.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle ne compte pas des personnes reçues et elle ne doit pas être mélangée avec `journees` ou `nb_files_active`.
+
+      - name: mdph_groupes_travail_participations
+        description: >
+          Nombre de participations aux groupes de travail de la MDPH.
+          Cette colonne est renseignée seulement sur les lignes `Participations MDPH`.
+          Elle additionne les participations avec la MDPH du territoire et les MDPH des territoires voisins.
+          C'est un compteur de participations, pas un compteur de personnes ni de journées.
 
       - name: suspensions_nb
         description: Nombre de personnes ayant connu une suspension de parcours.
