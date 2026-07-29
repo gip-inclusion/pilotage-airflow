@@ -33,6 +33,22 @@ models:
       Pour les indicateurs MDPH demandés, ne pas utiliser `journees` : les nombres sont stockés dans les colonnes dédiées
       `mdph_epe_participations`, `mdph_cdaph_participations` et `mdph_groupes_travail_participations`.
 
+      Pour les évaluations préliminaires, on veut garder le libellé commun `Évaluations préliminaires` dans les graphiques.
+      Il faut quand même lire les indicateurs avec leurs unités:
+      * `direct_beneficiaires` compte les personnes reçues ou concernées.
+      * `journees` compte seulement les journées réellement déclarées, par exemple les informations collectives.
+      * `sorties` ne doit pas être inventé: si la colonne est vide ou à 0, il n'y a pas de sorties à afficher.
+      Les colonnes `direct_pec_beneficiaires`, `info_personnes_collectives_*` et `info_personnes_individuelles_*`
+      servent à expliquer le détail du total.
+
+      Pour l'information collective à destination des partenaires, utiliser
+      `information_partenaires_collective_nb_partenaires` pour le nombre de partenaires concernés et
+      `information_partenaires_collective_journees` pour le nombre de journées.
+      Pour l'information collective à destination des organismes de formation, utiliser
+      `information_organismes_formation_collective_nb_organismes` et
+      `information_organismes_formation_collective_journees`.
+      Ces colonnes ne sont pas des personnes reçues.
+
       Il ne contient pas le détail des publics ou des métiers.
 
     tests:
@@ -141,7 +157,11 @@ models:
         description: Nombre de sorties définitives au terme de la prestation.
 
       - name: journees
-        description: Nombre de journées réalisées.
+        description: >
+          Nombre de journées réalisées.
+          Pour les évaluations préliminaires et certaines prestations indirectes, cette colonne inclut aussi les journées
+          collectives déclarées dans les sous-blocs du formulaire.
+          Elle ne transforme jamais des heures en journées.
 
       - name: journees_theoriques
         description: Nombre de journées théoriques.
@@ -149,7 +169,9 @@ models:
       - name: direct_beneficiaires
         description: >
           Nombre total de bénéficiaires déclarés dans les blocs des prestations directes.
-          Il additionne les bénéficiaires avec ORP CDAPH et sans ORP CDAPH.
+          Pour les évaluations préliminaires, cette colonne peut aussi inclure les personnes reçues en information collective
+          ou en rencontre individuelle d'information.
+          Elle ne doit pas être mélangée avec `nb_files_active`.
 
       - name: direct_avec_orp_beneficiaires
         description: >
@@ -159,6 +181,26 @@ models:
         description: >
           Nombre de bénéficiaires déclaré dans le bloc des prestations directes sans ORP CDAPH.
           Ce champ est notamment utilisé pour certaines évaluations préliminaires hors ORP.
+
+      - name: direct_pec_beneficiaires
+        description: >
+          Nombre de bénéficiaires du bloc PEC sans ORP CDAPH.
+          Dans le dashboard, ce champ sert surtout à expliquer une partie de `direct_beneficiaires` pour les évaluations préliminaires.
+
+      - name: info_personnes_collectives_journees
+        description: >
+          Nombre de journées passées en informations collectives à destination des personnes.
+          Cette valeur entre aussi dans `journees`.
+
+      - name: info_personnes_collectives_personnes
+        description: >
+          Nombre de personnes reçues en informations collectives à destination des personnes.
+          Cette valeur entre aussi dans `direct_beneficiaires`.
+
+      - name: info_personnes_individuelles_personnes
+        description: >
+          Nombre de personnes reçues en rencontres individuelles d'information.
+          Cette valeur entre aussi dans `direct_beneficiaires`.
 
       - name: direct_hors_murs_personnes
         description: Nombre de personnes accompagnées hors les murs.
@@ -171,6 +213,38 @@ models:
 
       - name: direct_hebergees_nuitees
         description: Nombre total de nuitées déclarées pour les personnes hébergées.
+
+      - name: information_partenaires_collective_journees
+        description: >
+          Nombre de journées passées en information collective à destination des partenaires.
+          Pour répondre à la demande métier, sommer cette colonne sur les lignes `Informations partenaires`.
+
+      - name: information_partenaires_collective_nb_partenaires
+        description: >
+          Nombre de partenaires concernés par l'information collective à destination des partenaires.
+          C'est le compteur à utiliser pour "nombre de partenaires concernés".
+          Ce n'est pas un nombre de personnes reçues.
+
+      - name: information_partenaires_individuelle_nb_partenaires
+        description: >
+          Nombre de partenaires concernés par l'information individuelle à destination des partenaires.
+          Ce compteur est séparé des informations collectives.
+
+      - name: information_organismes_formation_collective_journees
+        description: >
+          Nombre de journées passées en information collective à destination des organismes de formation.
+          Pour répondre à la demande métier, sommer cette colonne sur les lignes `Informations organismes formation`.
+
+      - name: information_organismes_formation_collective_nb_organismes
+        description: >
+          Nombre d'organismes de formation concernés par l'information collective.
+          C'est le compteur à utiliser pour "nombre d'organismes de formation concernés".
+          Ce n'est pas un nombre de personnes reçues.
+
+      - name: information_organismes_formation_individuelle_nb_organismes
+        description: >
+          Nombre d'organismes de formation concernés par l'information individuelle.
+          Ce compteur est séparé des informations collectives.
 
       - name: mdph_epe_origine_participations
         description: >
