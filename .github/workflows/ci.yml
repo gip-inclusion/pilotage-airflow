@@ -54,6 +54,7 @@ jobs:
       with:
         enable-cache: true
         cache-dependency-glob: "requirements/dev.txt"
+        prune-cache: true
     - name: 📥 Install Python dependencies
       run: |
         make venv
