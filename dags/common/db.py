@@ -153,14 +153,16 @@ class DBConnection:
         with self.engine.connect() as conn:
             yield from pd.read_sql_query(query, conn, chunksize=chunksize)
 
-    def to_sql(self, df, table, schema, if_exists="replace"):
+    def to_sql(self, df, table, schema, if_exists="replace", dtype=None):
         df = df.convert_dtypes(convert_string=False, convert_floating=False)
         for col in df.select_dtypes(include=["timedelta64"]):
             df[col] = df[col].astype("int64")
 
         if if_exists == "replace":
+            # `dtype` pins the column types of the created table: the destination is built from the first
+            # chunk alone, and a column that happens to be all-NULL there would otherwise land as `text`.
             with self.engine.begin() as conn:
-                df.head(0).to_sql(name=table, con=conn, schema=schema, if_exists="replace", index=False)
+                df.head(0).to_sql(name=table, con=conn, schema=schema, if_exists="replace", index=False, dtype=dtype)
 
         with closing(self.engine.raw_connection()) as raw_conn:
             with raw_conn.cursor() as cur:

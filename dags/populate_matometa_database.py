@@ -3,6 +3,7 @@ import hmac
 import json
 import logging
 
+import sqlalchemy
 from airflow import DAG
 from airflow.decorators import task
 from airflow.models import Variable
@@ -55,6 +56,18 @@ TABLES_DORA = [
 
 COLS_TO_ANONYMIZE = ["hash_nir", "hash_numéro_pass_iae"]
 
+# The destination table is created from the first chunk only, so a column that is all-NULL there would be
+# created as `text` and silently break joins. `collaborations` is ordered by membership kind, which makes
+# its first chunk all-employer: `id_organisation` and `id_institution` are empty for the whole chunk.
+COLUMN_TYPES = {
+    "collaborations": {
+        "id_utilisateur": sqlalchemy.BigInteger,
+        "id_structure": sqlalchemy.BigInteger,
+        "id_organisation": sqlalchemy.BigInteger,
+        "id_institution": sqlalchemy.BigInteger,
+    },
+}
+
 
 def get_hmac_secret():
     return Variable.get("MATOMETA_HMAC_SECRET").encode()
@@ -85,7 +98,13 @@ def sync_tables(table_names, src_schema, dest_schema, from_db=None):
                         )
                         logger.info("Anonymized column %s in table %s.", col, table)
 
-                dst_db.to_sql(chunk, table=table, schema=dest_schema, if_exists="replace" if i == 0 else "append")
+                dst_db.to_sql(
+                    chunk,
+                    table=table,
+                    schema=dest_schema,
+                    if_exists="replace" if i == 0 else "append",
+                    dtype=COLUMN_TYPES.get(table),
+                )
                 logger.info("Exported %d rows to %s.%s", len(chunk), dest_schema, table)
                 del chunk
 
