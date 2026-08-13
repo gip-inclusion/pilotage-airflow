@@ -1515,22 +1515,26 @@ models:
   - name: utilisateurs
     description: >
       Table des utilisateurs professionnels inscrits sur la plateforme Emplois de
-      l'Inclusion. Chaque ligne représente un utilisateur pro : employeur (membre
-      d'une SIAE), prescripteur (membre d'une organisation prescriptrice) ou
-      inspecteur du travail.
+      l'Inclusion : employeurs (membres d'une SIAE), prescripteurs (membres d'une
+      organisation prescriptrice) et inspecteurs du travail.
       Les candidats (demandeurs d'emploi) ne sont pas dans cette table —
       voir `les_emplois.candidats`.
-      Selon le type, l'utilisateur est rattaché à une structure (`id_structure`),
-      une organisation (`id_organisation`) ou une institution (`id_institution`) —
-      ces trois clés sont mutuellement exclusives dans la majorité des cas.
-      Volumétrie : ~105 550 utilisateurs (77 608 prescripteurs, 26 891 employeurs,
-      1 052 inspecteurs du travail). Mise à jour : quotidienne.
+      L'utilisateur est rattaché à une structure (`id_structure`), une organisation
+      (`id_organisation`) ou une institution (`id_institution`).
+      Des doublons sont présents : il y a une ligne par rattachement, donc un
+      utilisateur membre de plusieurs structures ou organisations a plusieurs
+      lignes. Les utilisateurs sans rattachement ont leurs trois clés nulles.
+      Volumétrie (août 2026) : 105 853 lignes pour 91 565 utilisateurs distincts,
+      dont 6 602 utilisateurs présents sur plusieurs lignes (jusqu'à 344 lignes
+      pour un même compte) et 16 223 lignes sans rattachement.
+      Mise à jour : quotidienne.
       Pour les analyses cross-produits impliquant d'autres services (Dora, RDV-i…),
       utiliser `datalake.pdi_base_unique_tous_les_pros`.
     columns:
       - name: id
         description: >
-          Identifiant unique de l'utilisateur (entier). Clé primaire de la table.
+          Identifiant de l'utilisateur (entier). Non unique dans cette table :
+          voir les doublons décrits ci-dessus.
           Référencé dans `public.candidatures_echelle_locale.id_utilisateur_origine_candidature`.
 
       - name: email
@@ -1586,6 +1590,25 @@ models:
           Clé étrangère vers `les_emplois.institutions.id`.
           Renseigné pour les inspecteurs du travail et certains prescripteurs
           institutionnels (~966 lignes).
+
+      - name: administrateur
+        description: >
+          Entier 0/1 (et non un booléen) : l'utilisateur est-il administrateur de
+          la structure, de l'organisation ou de l'institution de cette ligne ?
+          Filtrer avec `administrateur = 1` ; `where administrateur` échoue.
+          Le flag porte sur le rattachement, pas sur l'utilisateur : un utilisateur
+          peut être administrateur d'une organisation et simple membre d'une autre.
+          Null pour les utilisateurs sans aucun rattachement, comme les trois clés.
+          Seuls les rattachements actifs sont exportés depuis les Emplois.
+          À ne pas confondre avec les administrateurs de la plateforme (agents
+          de l'équipe des Emplois), qui ne figurent pas dans cette table.
+          Source : `collaborations.administrateur`.
+        tests:
+          # Les Emplois convertit ses booléens en 0/1 à l'export, ce dont dépendent
+          # la documentation et toutes les requêtes sur cette colonne. Ce test alerte
+          # si cette convention change en amont.
+          - accepted_values:
+              values: [0, 1]
 
   - name: utilisateurs_jamais_venus
     description: >

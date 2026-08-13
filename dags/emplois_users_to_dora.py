@@ -25,11 +25,17 @@ with DAG("emplois_users_to_dora", schedule="@weekly", **dag_args) as dag:
             logger.info("Retrieved %d lines for Les-Emplois users.", len(les_emplois_users))
 
         cleaned_data = les_emplois_users.dropna(subset=["email"])
-        data_to_store = cleaned_data.drop(["nom", "prenom"], axis=1).rename(
-            columns={
-                "dernière_connexion": "derniere_connexion",
-                "date_mise_à_jour_metabase": "date_mise_a_jour_metabase",
-            }
+        # `administrateur` is exposed for le Pilotage only; Dora's schema stays as it is.
+        # Tolerate its absence: this DAG is weekly, so it may run before `dbt run` adds the column.
+        data_to_store = (
+            cleaned_data.drop(["nom", "prenom"], axis=1)
+            .drop(columns=["administrateur"], errors="ignore")
+            .rename(
+                columns={
+                    "dernière_connexion": "derniere_connexion",
+                    "date_mise_à_jour_metabase": "date_mise_a_jour_metabase",
+                }
+            )
         )
 
         user = Variable.get("DORA_PROD_PGUSER")
