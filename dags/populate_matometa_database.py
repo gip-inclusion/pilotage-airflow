@@ -25,6 +25,7 @@ TABLES_EMPLOI = [
     "pass_agréments",
     "suspensions_pass",
     "suivi_auto_prescription",
+    "collaborations",
 ]
 TABLES_ASP = [
     "fluxIAE_Structure_v2",

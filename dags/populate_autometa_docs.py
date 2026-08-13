@@ -33,6 +33,7 @@ TABLES_TO_UPDATE_AND_COPY = (
     "barometre",
     "structures_v1",
     "services_v1",
+    "collaborations",
 )
 
 TABLES_TO_COPY = (
