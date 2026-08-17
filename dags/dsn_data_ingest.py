@@ -4,9 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 import paramiko
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Variable
+from airflow.sdk import DAG, Variable, task
 from slugify import slugify
 
 from dags.common import db, default_dag_args, s3

@@ -1,6 +1,6 @@
 import pandas as pd
 import requests
-from airflow.models import Variable
+from airflow.sdk import Variable
 
 
 def connection_airtable(table_name):

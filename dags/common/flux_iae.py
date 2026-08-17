@@ -467,7 +467,7 @@ def save_fluxiae_view(import_directory, view_name, *, chunk_size=20_000):
     )
     with MetabaseDatabaseCursor3() as (cursor, conn):
         rows_count = 0
-        for counter, batch in enumerate(batched(rows, chunk_size), start=1):
+        for counter, batch in enumerate(batched(rows, chunk_size, strict=False), start=1):
             with cursor.copy(
                 sql.SQL("COPY {table_name} FROM STDIN WITH (FORMAT BINARY)").format(
                     table_name=sql.Identifier(new_table_name),

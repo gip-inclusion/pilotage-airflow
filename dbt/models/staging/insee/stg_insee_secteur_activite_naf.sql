@@ -4,5 +4,5 @@ with src_naf as (
 
 select
     btrim(("NAF 2025 divisions")::text) as code_secteur_activite,
-    btrim(("Intitulés")::text)         as secteur_activite
+    btrim(("Intitulés")::text)          as secteur_activite
 from src_naf

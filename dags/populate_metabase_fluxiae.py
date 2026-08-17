@@ -4,10 +4,8 @@ import shutil
 import subprocess
 import tempfile
 
-import airflow
-from airflow.decorators import task
-from airflow.models import Variable
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
+from airflow.providers.standard.operators.trigger_dagrun import TriggerDagRunOperator
+from airflow.sdk import DAG, Variable, task
 
 from dags.common import default_dag_args, s3, slack
 from dags.common.flux_iae import get_fluxiae_df, get_fluxiae_referential_filenames, save_fluxiae_view, store_df
@@ -15,7 +13,7 @@ from dags.common.flux_iae import get_fluxiae_df, get_fluxiae_referential_filenam
 
 logger = logging.getLogger(__name__)
 
-with airflow.DAG(
+with DAG(
     **default_dag_args(),
     dag_id="populate_metabase_fluxiae",
     schedule="0 13 * * 1",

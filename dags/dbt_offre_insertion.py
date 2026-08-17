@@ -1,12 +1,12 @@
-import airflow
-from airflow.operators import bash
+from airflow.providers.standard.operators import bash
+from airflow.sdk import DAG
 
 from dags.common import db, dbt, default_dag_args, slack
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-with airflow.DAG(
+with DAG(
     dag_id="dbt_offre_insertion",
     schedule=None,
     **dag_args,

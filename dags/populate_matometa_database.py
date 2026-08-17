@@ -3,9 +3,7 @@ import hmac
 import json
 import logging
 
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Variable
+from airflow.sdk import DAG, Variable, task
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -78,9 +76,9 @@ def sync_tables(table_names, src_schema, dest_schema, from_db=None):
                 for col in COLS_TO_ANONYMIZE:
                     if col in chunk.columns:
                         chunk[col] = chunk[col].map(
-                            lambda x, s=secret: hmac.new(s, str(x).encode(), hashlib.sha256).hexdigest()
-                            if x is not None
-                            else None
+                            lambda x, s=secret: (
+                                hmac.new(s, str(x).encode(), hashlib.sha256).hexdigest() if x is not None else None
+                            )
                         )
                         logger.info("Anonymized column %s in table %s.", col, table)
 

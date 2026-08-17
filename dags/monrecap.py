@@ -3,12 +3,11 @@ from pathlib import Path
 
 import pandas as pd
 import sqlalchemy.types as types
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Param, Variable
-from airflow.operators import bash
-from airflow.utils.trigger_rule import TriggerRule
-from sqlalchemy.ext.declarative import declarative_base
+from airflow.providers.standard.operators import bash
+from airflow.sdk import DAG, Param, Variable, task
+from airflow.task.trigger_rule import TriggerRule
+from sqlalchemy import text
+from sqlalchemy.orm import declarative_base
 
 from dags.common import airtable, db, dbt, default_dag_args, departments, gsheet, slack
 from dags.common.monrecap.helpers import convert_date_columns
@@ -52,8 +51,8 @@ with DAG(
     @task.skip_if(lambda context: not context["params"]["drop_baro"])
     @task
     def drop_barometre_table():
-        con = db.connection_engine()
-        con.execute("""drop table if exists monrecap.raw_barometre cascade;""")
+        with db.connection_engine().begin() as con:
+            con.execute(text("""drop table if exists monrecap.raw_barometre cascade;"""))
 
     @task
     def import_barometre(model, data_spec):
@@ -64,12 +63,15 @@ with DAG(
     def monrecap_airtable(**kwargs):
         con = db.connection_engine()
         # Need to drop these tables and the views created with them in order to be able to run the table_data.to_sql()
-        con.execute(
-            """drop table if exists monrecap."Commandes_v0" cascade;
+        with con.begin() as connection:
+            connection.execute(
+                text(
+                    """drop table if exists monrecap."Commandes_v0" cascade;
                     drop table if exists monrecap.barometre cascade;
                     drop table if exists monrecap.contacts_non_commandeurs_v0 cascade;
                     drop table if exists monrecap.Contacts_v0 cascade"""
-        )
+                )
+            )
 
         table_mapping = {
             "Commandes": "Commandes_v0",

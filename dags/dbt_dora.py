@@ -1,5 +1,5 @@
-from airflow import DAG
-from airflow.operators import bash
+from airflow.providers.standard.operators import bash
+from airflow.sdk import DAG
 
 from dags.common import db, dbt, default_dag_args, slack
 

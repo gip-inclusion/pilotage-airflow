@@ -4,8 +4,8 @@ import textwrap
 from contextlib import closing
 
 import sqlalchemy
-from airflow.models import Variable
 from airflow.providers.ssh.hooks import ssh
+from airflow.sdk import Variable
 from furl import furl
 from sqlalchemy import create_engine
 from sqlalchemy.sql.ddl import CreateSchema
@@ -199,7 +199,7 @@ def drop_view(view_name):
 
 def create_schema(schema_name):
     # TODO: Use an Airflow Connection
-    with connection_engine().connect() as connection:
+    with connection_engine().begin() as connection:
         if not connection.dialect.has_schema(connection, schema_name):
             connection.execute(CreateSchema(schema_name))
 
