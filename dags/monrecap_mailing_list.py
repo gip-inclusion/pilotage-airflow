@@ -3,11 +3,10 @@ import time
 from pathlib import Path
 
 import pandas as pd
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Variable
+from airflow.sdk import DAG, Variable, task
 from pyairtable import Table
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import text
+from sqlalchemy.orm import declarative_base
 
 from dags.common import db, dbt, default_dag_args, gsheet, slack
 from dags.common.tasks import create_models
@@ -68,8 +67,8 @@ with DAG(
 
     @task
     def drop_mailing_table():
-        with db.connection_engine().connect() as con:
-            con.execute("""drop table if exists monrecap.mailing_list_others_aap cascade;""")
+        with db.connection_engine().begin() as con:
+            con.execute(text("""drop table if exists monrecap.mailing_list_others_aap cascade;"""))
 
     @task
     def import_mailing(model, df):

@@ -1,6 +1,4 @@
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Variable
+from airflow.sdk import DAG, Variable, task
 
 from dags.common import db, default_dag_args, slack
 

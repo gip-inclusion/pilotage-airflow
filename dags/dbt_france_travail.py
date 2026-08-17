@@ -1,14 +1,12 @@
-import airflow
-from airflow.decorators import task
-from airflow.models.param import Param
-from airflow.operators import bash
+from airflow.providers.standard.operators import bash
+from airflow.sdk import DAG, Param, task
 
 from dags.common import db, dbt, default_dag_args, slack
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-with airflow.DAG(
+with DAG(
     dag_id="dbt_france_travail",
     schedule=None,
     params={

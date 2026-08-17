@@ -1,11 +1,9 @@
 import logging
 
-from airflow.decorators import task
-from airflow.models import Connection
-from airflow.operators.python import get_current_context
+from airflow.exceptions import AirflowNotFoundException
 from airflow.providers.slack.hooks.slack_webhook import SlackWebhookHook
+from airflow.sdk import BaseHook, get_current_context, task
 from airflow.utils import timezone
-from airflow.utils.session import create_session
 
 
 logger = logging.getLogger(__name__)
@@ -16,11 +14,12 @@ SLACK_CONN_ID = "slack_webhook"
 
 
 def _call_webhook(text):
-    with create_session() as session:
-        if session.query(Connection).filter(Connection.conn_id == SLACK_CONN_ID).count():
-            return SlackWebhookHook(slack_webhook_conn_id=SLACK_CONN_ID).send_text(text)
-        else:
-            logger.info("Connection %s is not configured, slack notifications are noop.", SLACK_CONN_ID)
+    try:
+        BaseHook.get_connection(SLACK_CONN_ID)
+    except AirflowNotFoundException:
+        logger.info("Connection %s is not configured, slack notifications are noop.", SLACK_CONN_ID)
+        return None
+    return SlackWebhookHook(slack_webhook_conn_id=SLACK_CONN_ID).send_text(text)
 
 
 def task_fail_alert(context):

@@ -5,7 +5,7 @@ import time
 
 import httpx
 import pandas as pd
-from airflow.models import Variable
+from airflow.sdk import Variable
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session

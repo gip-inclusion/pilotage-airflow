@@ -1,9 +1,7 @@
 import logging
 
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Variable
 from airflow.providers.ssh.hooks import ssh
+from airflow.sdk import DAG, Variable, task
 
 from dags.common import db, dbt, default_dag_args, slack
 

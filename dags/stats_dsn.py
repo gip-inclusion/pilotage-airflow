@@ -9,9 +9,7 @@ import numpy as np
 import pandas as pd
 import paramiko
 import py7zr
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Param, Variable
+from airflow.sdk import DAG, Param, Variable, task
 
 from dags.common import dbt, default_dag_args, s3, slack
 from dags.common.anonymize_sensible_data import decrypt_content

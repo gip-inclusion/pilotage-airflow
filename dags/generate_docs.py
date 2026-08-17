@@ -3,12 +3,10 @@ import mimetypes
 import os
 import pathlib
 
-import airflow
-from airflow.decorators import task
-from airflow.models import Variable
-from airflow.operators import bash
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
+from airflow.providers.standard.operators import bash
+from airflow.sdk import DAG, Variable, task
 
 from dags.common import db, dbt, default_dag_args
 
@@ -17,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-with airflow.DAG(
+with DAG(
     dag_id="generate_docs",
     schedule="@daily",
     **dag_args,
