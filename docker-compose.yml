@@ -1,3 +1,32 @@
+x-airflow-common: &airflow-common
+  image: pilotage/airflow
+  build:
+    context: .
+  # The image entrypoint is the production one, use the upstream one here.
+  entrypoint: ["/usr/bin/dumb-init", "--", "/entrypoint"]
+  env_file:
+    - .env-base
+    - .env
+  environment: &airflow-common-environment
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://postgres:password@postgres:5432/airflow
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-api-server:8080/execution/
+    AIRFLOW__API_AUTH__JWT_SECRET: USE_IN_DEVELOPMENT_ONLY
+    AIRFLOW_CONN_LOG_CONNECTION: aws:///?__extra__=%7B%22endpoint_url%22%3A+%22http%3A%2F%2Fminio:9000%22%2C+%22aws_access_key_id%22%3A+%22minioadmin%22%2C+%22aws_secret_access_key%22%3A+%22minioadmin%22%2C+%22config_kwargs%22%3A+%7B%22request_checksum_calculation%22%3A+%22when_required%22%2C+%22response_checksum_validation%22%3A+%22when_required%22%7D%7D
+    AIRFLOW_CONN_S3_DOCS: aws:///?__extra__=%7B%22endpoint_url%22%3A+%22http%3A%2F%2Fminio:9000%22%2C+%22aws_access_key_id%22%3A+%22minioadmin%22%2C+%22aws_secret_access_key%22%3A+%22minioadmin%22%2C+%22config_kwargs%22%3A+%7B%22request_checksum_calculation%22%3A+%22when_required%22%2C+%22response_checksum_validation%22%3A+%22when_required%22%7D%7D
+    AIRFLOW__LOGGING__REMOTE_LOGGING: "True"
+    AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER: s3://airflow/logs
+    AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID: log_connection
+    AIRFLOW__LOGGING__ENCRYPT_S3_LOGS: "False"
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./dbt:/opt/airflow/dbt
+  restart: unless-stopped
+  depends_on: &airflow-common-depends-on
+    postgres:
+      condition: service_healthy
+    airflow-init:
+      condition: service_completed_successfully
+
 services:
   minio:
     image: minio/minio
@@ -12,6 +41,17 @@ services:
       - "127.0.0.1:${MINIO_ADMIN_PORT_ON_DOCKER_HOST:-9001}:9001"
     volumes:
       - minio_data:/data
+
+  minio_init:
+    image: minio/mc
+    container_name: pilotage_minio_init
+    depends_on:
+      - minio
+    entrypoint: /bin/bash -c
+    command:
+      - |
+        mc alias set minio http://minio:9000 minioadmin minioadmin
+        mc mb --ignore-existing minio/airflow minio/les-emplois minio/pilotage
 
   postgres:
     container_name: pilotage_postgres
@@ -32,32 +72,76 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/initdb.d:/docker-entrypoint-initdb.d
     restart: unless-stopped
+    healthcheck:
+      test: pg_isready
+      interval: 5s
+      retries: 5
     ports:
       - "127.0.0.1:${POSTGRES_PORT_ON_DOCKER_HOST:-5432}:5432"
 
-  airflow:
-    container_name: pilotage_airflow
-    env_file: .env
-    environment:
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql://postgres:password@postgres:5432/airflow
-      - AIRFLOW_CONN_LOG_CONNECTION=aws:///?__extra__=%7B%22endpoint_url%22%3A+%22http%3A%2F%2Fminio:9000%22%2C+%22aws_access_key_id%22%3A+%22minioadmin%22%2C+%22aws_secret_access_key%22%3A+%22minioadmin%22%2C+%22config_kwargs%22%3A+%7B%22request_checksum_calculation%22%3A+%22when_required%22%2C+%22response_checksum_validation%22%3A+%22when_required%22%7D%7D
-      - AIRFLOW_CONN_S3_DOCS=aws:///?__extra__=%7B%22endpoint_url%22%3A+%22http%3A%2F%2Fminio:9000%22%2C+%22aws_access_key_id%22%3A+%22minioadmin%22%2C+%22aws_secret_access_key%22%3A+%22minioadmin%22%2C+%22config_kwargs%22%3A+%7B%22request_checksum_calculation%22%3A+%22when_required%22%2C+%22response_checksum_validation%22%3A+%22when_required%22%7D%7D
-      - AIRFLOW__LOGGING__REMOTE_LOGGING=True
-      - AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER=s3://airflow/logs
-      - AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID=log_connection
-      - AIRFLOW__LOGGING__ENCRYPT_S3_LOGS=False
+  airflow-init:
+    <<: *airflow-common
+    container_name: pilotage_airflow_init
+    restart: "no"
+    command:
+      - bash
+      - -c
+      - |
+        airflow db migrate
+        airflow fab-db migrate
+        airflow variables import dag-variables.json
+        airflow users create \
+            --role Admin \
+            --email admin@example.com \
+            --firstname admin \
+            --lastname admin \
+            --username admin \
+            --password password
     depends_on:
-      - postgres
-      - minio
-    build:
-      context: .
-    restart: unless-stopped
+      postgres:
+        condition: service_healthy
+      minio_init:
+        condition: service_completed_successfully
+
+  airflow-api-server:
+    <<: *airflow-common
+    container_name: pilotage_airflow
+    command: api-server
     ports:
       - "127.0.0.1:${AIRFLOW_PORT_ON_DOCKER_HOST:-8080}:8080"
-    volumes:
-      - ./custom-dev-entrypoint.sh:/entrypoint.sh
-      - ./dags:/opt/airflow/dags
-      - ./dbt:/opt/airflow/dbt
+
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: pilotage_airflow_scheduler
+    command: scheduler
+    healthcheck:
+      test: airflow jobs check --job-type SchedulerJob --local
+      interval: 10s
+      timeout: 20s
+      retries: 5
+      start_period: 30s
+
+  airflow-dag-processor:
+    <<: *airflow-common
+    container_name: pilotage_airflow_dag_processor
+    command: dag-processor
+    healthcheck:
+      test: airflow jobs check --job-type DagProcessorJob --local
+      interval: 10s
+      timeout: 20s
+      retries: 5
+      start_period: 30s
+
+  airflow-triggerer:
+    <<: *airflow-common
+    container_name: pilotage_airflow_triggerer
+    command: triggerer
+    healthcheck:
+      test: airflow jobs check --job-type TriggererJob --local
+      interval: 10s
+      timeout: 20s
+      retries: 5
+      start_period: 30s
 
   lemarche_mie:
     build: streamlit_apps/lemarche_mie
