@@ -29,7 +29,10 @@ with airflow.DAG(
 
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command='dbt build --select "+tag:imer"',
+        # `cautious` évite de lancer les tests dont tous les modèles parents ne sont pas
+        # dans la sélection (ex: le test equal_rowcount de stg_structures, qui référence
+        # `structures` sans que stg_structures soit construit ici).
+        bash_command='dbt build --select "+tag:imer" --indirect-selection cautious',
         env=env_vars,
         append_env=True,
     )
