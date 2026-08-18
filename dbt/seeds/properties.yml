@@ -126,6 +126,13 @@ seeds:
       column_types:
         establishment_finess_num: text
         answer_id: text
+  - name: seed_esat__forced_no_answer
+    description: >
+      Liste des ESAT à considérer explicitement comme sans réponse au questionnaire, même si une règle automatique pourrait trouver une réponse candidate.
+    config:
+      column_types:
+        establishment_finess_num: text
+        reason: text
   - name: seed_esat__answer_field_exclusions
     description: >
       Liste des valeurs déclarées dans le questionnaire ESAT à neutraliser pour l'analyse, sans supprimer l'ensemble de la réponse.
