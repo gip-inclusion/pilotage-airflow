@@ -42,7 +42,14 @@ mapped_answers as (
 
 ),
 
-candidate_matches as (
+forced_no_answer as (
+
+    select finess_num
+    from {{ ref('stg_esat__forced_no_answer') }}
+
+),
+
+candidate_matches_raw as (
 
     select
         esat.finess_num,
@@ -97,6 +104,16 @@ candidate_matches as (
             = survey_answers.managing_organization_finess
             or esat.managing_organization_finess
             = any(survey_answers.duplicate_group_finess_nums)
+
+),
+
+candidate_matches as (
+
+    select candidate_matches_raw.*
+    from candidate_matches_raw
+    left join forced_no_answer
+        on candidate_matches_raw.finess_num = forced_no_answer.finess_num
+    where forced_no_answer.finess_num is null
 
 ),
 

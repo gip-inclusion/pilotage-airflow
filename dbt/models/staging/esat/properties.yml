@@ -676,6 +676,28 @@ models:
       - name: evidence
         description: Élément ayant permis d'identifier l'anomalie.
 
+  - name: stg_esat__forced_no_answer
+    config:
+      tags:
+        - esat
+    description: >
+      Modèle de staging basé sur la seed `seed_esat__forced_no_answer`.
+
+      Il contient les ESAT à considérer explicitement comme sans réponse au questionnaire, même si une règle automatique pourrait trouver une réponse candidate.
+
+    columns:
+      - name: finess_num
+        description: Numéro FINESS de l'ESAT à forcer comme sans réponse.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('dim_esat')
+              field: finess_num
+
+      - name: reason
+        description: Justification métier de l'exclusion.
+
   - name: stg_esat__liste_mapped_answers
     config:
       tags:
