@@ -33,7 +33,7 @@ from {{ ref('fluxIAE_ContratMission_v2') }} as ctr
 left join {{ ref('eph_heures_travail_contrat') }} as emi
     on ctr.contrat_id_ctr = emi.emi_ctr_id
 left join {{ source("fluxIAE", "fluxIAE_RefFormeContrat") }} as rfc
-    on ctr.contrat_format_contrat_code = rfc.rfc_id
+    on ctr.contrat_format_contrat_id = rfc.rfc_id
 left join {{ ref('fluxIAE_RefMotifSort_v2') }} as motif_sortie
     on emi.emi_motif_sortie_id = motif_sortie.rms_id
 left join {{ ref("fluxIAE_RefCategorieSort_v2") }} as categorie_sortie
