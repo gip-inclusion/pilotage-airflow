@@ -4,6 +4,7 @@ from airflow.models.param import Param
 from airflow.operators import bash
 
 from dags.common import db, dbt, default_dag_args, slack
+from dags.common.anonymize_sensitive_columns import DAILY_TABLES_TO_ANONYMIZE, anonymize_nir
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -67,4 +68,13 @@ with airflow.DAG(
         append_env=True,
     )
 
-    (params_check() >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_test >> slack.success_notifying_task())
+    (
+        params_check()
+        >> anonymize_nir(DAILY_TABLES_TO_ANONYMIZE)
+        >> dbt_debug
+        >> dbt_deps
+        >> dbt_seed
+        >> dbt_run
+        >> dbt_test
+        >> slack.success_notifying_task()
+    )

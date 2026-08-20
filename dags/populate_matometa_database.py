@@ -1,11 +1,8 @@
-import hashlib
-import hmac
 import json
 import logging
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.models import Variable
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -52,16 +49,8 @@ TABLES_DORA = [
     "stats_structureview",
 ]
 
-COLS_TO_ANONYMIZE = ["hash_nir", "hash_numéro_pass_iae"]
-
-
-def get_hmac_secret():
-    return Variable.get("MATOMETA_HMAC_SECRET").encode()
-
 
 def sync_tables(table_names, src_schema, dest_schema, from_db=None):
-    secret = get_hmac_secret()
-
     with db.DBConnection(db_url_variable="MATOMETA_DB_URL_SECRET", ssh_conn_id="matometa_scalingo_ssh") as dst_db:
         for table in table_names:
             query = f'SELECT * FROM "{src_schema}"."{table}";'
@@ -74,15 +63,6 @@ def sync_tables(table_names, src_schema, dest_schema, from_db=None):
                 for col in chunk.columns:
                     if chunk[col].dtype == object:
                         chunk[col] = chunk[col].map(lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x)
-
-                for col in COLS_TO_ANONYMIZE:
-                    if col in chunk.columns:
-                        chunk[col] = chunk[col].map(
-                            lambda x, s=secret: hmac.new(s, str(x).encode(), hashlib.sha256).hexdigest()
-                            if x is not None
-                            else None
-                        )
-                        logger.info("Anonymized column %s in table %s.", col, table)
 
                 dst_db.to_sql(chunk, table=table, schema=dest_schema, if_exists="replace" if i == 0 else "append")
                 logger.info("Exported %d rows to %s.%s", len(chunk), dest_schema, table)
