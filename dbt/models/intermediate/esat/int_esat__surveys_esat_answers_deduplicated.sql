@@ -84,7 +84,7 @@ scored as (
             + {{ completeness_case('retirement_preparation_actions') }}
             + {{ completeness_case('uaat_inscription') }}
             + {{ completeness_case('retirement_preparation_nb_workers') }}
-            + {{ completeness_case('pct_more_than50') }}
+            + {{ completeness_case('nb_worker_more_than_50') }}
             + {{ completeness_case('documents_falclist') }}
             + {{ completeness_case('has_worker_delegate') }}
             + {{ completeness_case('worker_delegate_formation') }}
@@ -321,7 +321,7 @@ select
     retirement_preparation_actions,
     uaat_inscription,
     retirement_preparation_nb_workers,
-    pct_more_than50,
+    nb_worker_more_than_50,
     documents_falclist,
     has_worker_delegate,
     worker_delegate_formation,

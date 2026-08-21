@@ -121,7 +121,7 @@ final as (
         all_answers.retirement_preparation_actions,
         all_answers.uaat_inscription,
         all_answers.retirement_preparation_nb_workers,
-        all_answers.pct_more_than50,
+        all_answers.nb_worker_more_than_50,
         all_answers.documents_falclist,
         all_answers.has_worker_delegate,
         all_answers.worker_delegate_formation,

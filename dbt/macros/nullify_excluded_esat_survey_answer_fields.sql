@@ -88,7 +88,7 @@
         'retirement_preparation_actions',
         'uaat_inscription',
         'retirement_preparation_nb_workers',
-        'pct_more_than50',
+        'nb_worker_more_than_50',
         'documents_falclist',
         'has_worker_delegate',
         'worker_delegate_formation',
