@@ -11,7 +11,7 @@ final as (
         answer_id,
         completeness_score
     from source
-    where completeness_score > 10
+    where completeness_score >= 80
 
 )
 

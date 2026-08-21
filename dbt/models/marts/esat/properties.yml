@@ -643,10 +643,10 @@ models:
           Nombre de travailleurs et travailleuses ayant bénéficié d'actions de préparation
           à la retraite.
 
-      - name: pct_more_than50
+      - name: nb_worker_more_than_50
         description: >
-          Proportion de travailleurs et travailleuses de plus de 50 ans parmi ceux ayant
-          bénéficié d'actions de préparation à la retraite.
+          Nombre de travailleurs de plus de 50 ans ayant travaillé dans l'ESAT
+          en année n-1.
 
       - name: documents_falclist
         description: >

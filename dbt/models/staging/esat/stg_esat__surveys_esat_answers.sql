@@ -113,7 +113,7 @@ renamed as (
         retirement_preparation_actions,
         uaat_inscription,
         retirement_preparation_nb_workers,
-        pct_more_than50,
+        pct_more_than50                      as nb_worker_more_than_50,
 
         -- Language accessibility
         documents_falclist,
