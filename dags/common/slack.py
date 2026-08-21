@@ -42,6 +42,22 @@ def task_success_alert(context):
     )
 
 
+def task_warning_alert(context):
+    dr = context.get("dag_run")
+    duration = (timezone.utcnow() - dr.start_date).total_seconds()
+    return _call_webhook(
+        f"""
+    :airflow: :warning: Airflow DAG terminé. *dag*={dr.dag_id} *duration_seconds*={duration}. Certaines
+    tâches ont pu échouer, vérifier le détail dans Airflow.
+    """
+    )
+
+
 @task
 def success_notifying_task(**kwargs):
     task_success_alert(get_current_context())
+
+
+@task
+def warning_notifying_task(**kwargs):
+    task_warning_alert(get_current_context())

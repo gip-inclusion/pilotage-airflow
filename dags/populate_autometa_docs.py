@@ -2,14 +2,15 @@ import logging
 
 from airflow import DAG
 from airflow.decorators import task
+from airflow.utils.trigger_rule import TriggerRule
 from sqlalchemy import text
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, default_dag_args, slack
 
 
 logger = logging.getLogger(__name__)
 
-dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
+dag_args = default_dag_args()
 
 TABLES_TO_UPDATE_AND_COPY = (
     "candidats",
@@ -52,75 +53,119 @@ TABLES_TO_COPY = (
 )
 
 
-def get_table_ids(conn):
-    # Returns (pilotage_rows_id, autometa_rows_id) pairs for tables present in both databases (db_id 2 and 18).
-    rows = conn.execute(
+def get_table_id_pair(conn, table_name):
+    """
+    Return the pair of table ids for one table.
+
+    The first id corresponds to the table in pilotage.
+    The second id corresponds to the matching table in autometa.
+
+    If the table is not present in both databases, return None.
+    """
+    row = conn.execute(
         text("""
-            select array_agg(id order by db_id) as ids
+            select
+                max(id) filter (where db_id = 2) as pilotage_table_id,
+                max(id) filter (where db_id = 18) as autometa_table_id
             from metabase_table
-            where name = any(:names) and db_id in (2, 18)
-            group by name
-            having count(distinct db_id) > 1
+            where name = :table_name
+                and db_id in (2, 18)
         """),
-        {"names": list(TABLES_TO_UPDATE_AND_COPY)},
-    ).fetchall()
-    return [(row.ids[0], row.ids[1]) for row in rows]
+        {"table_name": table_name},
+    ).fetchone()
+
+    if not row or not row.pilotage_table_id or not row.autometa_table_id:
+        return None
+
+    return row.pilotage_table_id, row.autometa_table_id
+
+
+def update_table_description(conn, pilotage_table_id, autometa_table_id):
+    """
+    Copy one table description from pilotage to the matching autometa table.
+    """
+    conn.execute(
+        text("""
+            update metabase_table as autometa_rows
+            set description = pilotage_rows.description
+            from metabase_table as pilotage_rows
+            where
+                pilotage_rows.id = :pilotage_table_id
+                and autometa_rows.id = :autometa_table_id
+        """),
+        {
+            "pilotage_table_id": pilotage_table_id,
+            "autometa_table_id": autometa_table_id,
+        },
+    )
+
+
+def update_field_descriptions(conn, pilotage_table_id, autometa_table_id):
+    """
+    Copy column descriptions from one pilotage table to the matching autometa table.
+
+    Columns are matched by name.
+    Null descriptions from pilotage are ignored.
+    """
+    conn.execute(
+        text("""
+            update metabase_field as autometa_rows
+            set description = pilotage_rows.description
+            from metabase_field as pilotage_rows
+            where
+                pilotage_rows.table_id = :pilotage_table_id
+                and autometa_rows.table_id = :autometa_table_id
+                and autometa_rows.name = pilotage_rows.name
+                and pilotage_rows.description is not null
+        """),
+        {
+            "pilotage_table_id": pilotage_table_id,
+            "autometa_table_id": autometa_table_id,
+        },
+    )
 
 
 with DAG("populate_autometa_docs", schedule="0 4 * * *", **dag_args) as dag:
 
     @task
-    def update_table_description():
-        # Copies table descriptions from pilotage_mb to autometa_mb for tables in TABLES_TO_UPDATE_AND_COPY.
+    def update_metabase_descriptions(table_name):
+        """
+        Copy table and column descriptions from pilotage to autometa for one table.
+        """
         with db.DBConnection(db_url_variable="METABASE_DB_URL_SECRET") as pilo_db, pilo_db.engine.begin() as conn:
-            table_pair_id = get_table_ids(conn)
+            table_id_pair = get_table_id_pair(conn, table_name)
 
-            if not table_pair_id:
-                logger.info("No matching table pairs found, skipping.")
+            if not table_id_pair:
+                logger.warning("No matching table pair found for %s, skipping.", table_name)
                 return
 
-            tables_id = ", ".join(f"({src}, {dest})" for src, dest in table_pair_id)
-            conn.execute(
-                text(f"""
-                    update metabase_table as autometa_rows
-                    set description = pilotage_rows.description
-                    from metabase_table as pilotage_rows
-                    inner join (values {tables_id}) as id_pairs (src_id, dest_id)
-                        on pilotage_rows.id = id_pairs.src_id
-                    where autometa_rows.id = id_pairs.dest_id
-                """)
+            pilotage_table_id, autometa_table_id = table_id_pair
+
+            update_table_description(
+                conn=conn,
+                pilotage_table_id=pilotage_table_id,
+                autometa_table_id=autometa_table_id,
             )
-            logger.info("Updated descriptions for %d tables.", len(table_pair_id))
 
-    @task
-    def update_field_description():
-        # Copies column descriptions from pilotage_mb to autometa_mb, matching by table and column name.
-        with db.DBConnection(db_url_variable="METABASE_DB_URL_SECRET") as pilo_db, pilo_db.engine.begin() as conn:
-            table_pair_id = get_table_ids(conn)
-
-            if not table_pair_id:
-                logger.info("No matching table pairs found, skipping.")
-                return
-
-            tables_id = ", ".join(f"({src}, {dest})" for src, dest in table_pair_id)
-            conn.execute(
-                text(f"""
-                    update metabase_field as autometa_rows
-                    set description = pilotage_rows.description
-                    from metabase_field as pilotage_rows
-                    inner join (values {tables_id}) as id_pairs (src_id, dest_id)
-                        on pilotage_rows.table_id = id_pairs.src_id
-                    where
-                        autometa_rows.table_id = id_pairs.dest_id
-                        and autometa_rows.name = pilotage_rows.name
-                        and pilotage_rows.description is not null
-                """)
+            update_field_descriptions(
+                conn=conn,
+                pilotage_table_id=pilotage_table_id,
+                autometa_table_id=autometa_table_id,
             )
-            logger.info("Updated field descriptions for %d table pairs.", len(table_pair_id))
+
+            logger.info(
+                "Updated table and field descriptions for %s. pilotage_table_id=%s, autometa_table_id=%s",
+                table_name,
+                pilotage_table_id,
+                autometa_table_id,
+            )
 
     @task
     def copy_doc_tables():
-        # Exports table and column metadata from pilotage_mb to documentation.doc_autometa_tables (in the autometa db)
+        """
+        Export table and column metadata from pilotage_mb to documentation.doc_autometa_tables
+        in the autometa db.
+        """
         table_names = ", ".join(f"'{name}'" for name in TABLES_TO_UPDATE_AND_COPY + TABLES_TO_COPY)
         query = f"""
             select
@@ -148,4 +193,8 @@ with DAG("populate_autometa_docs", schedule="0 4 * * *", **dag_args) as dag:
                 )
                 logger.info("Exported %d rows to documentation.doc_autometa_tables", len(chunk))
 
-    update_table_description() >> update_field_description() >> copy_doc_tables() >> slack.success_notifying_task()
+    update_tasks = update_metabase_descriptions.expand(table_name=TABLES_TO_UPDATE_AND_COPY)
+
+    copy_task = copy_doc_tables.override(trigger_rule=TriggerRule.ALL_DONE)()
+
+    update_tasks >> copy_task >> slack.warning_notifying_task()
