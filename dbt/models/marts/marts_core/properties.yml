@@ -350,3 +350,87 @@ models:
           Identifiant de l'orientation. Renseigné uniquement lorsqu'une orientation a eu lieu.
       - name: date_mise_a_jour_metabase
         description: Date de la dernière synchronisation de cette ligne dans Metabase.
+
+  - name: fct_orientations
+    config:
+      tags:
+        - imer
+        - dora
+    description: >
+      Table de faits des orientations DORA. Une ligne correspond à une orientation.
+      Certaines orientations sont créées directement dans DORA. D'autres sont créées depuis
+      Les Emplois. Les colonnes `prescriber_*` servent à retrouver la structure qui a prescrit
+      l'orientation.
+    columns:
+      - name: id
+        description: Identifiant canonique de l'orientation DORA.
+        tests:
+          - unique
+          - not_null
+      - name: origin_source
+        description: >
+          Origine applicative de l'orientation. Indique si l'orientation vient de DORA ou a été
+          créée depuis Les Emplois.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - emplois
+                  - dora
+      - name: emplois_sync_uid
+        description: >
+          UID de synchronisation Les Emplois, renseigné pour les orientations d'origine Les Emplois.
+      - name: creation_date
+        description: Date de création de l'orientation.
+        tests:
+          - not_null
+      - name: processing_date
+        description: Date de traitement de l'orientation.
+      - name: status
+        description: Statut de traitement de l'orientation dans DORA.
+      - name: prescriber_id
+        description: >
+          Identifiant du prescripteur DORA, renseigné pour les orientations DORA natives.
+          Clé de jointure vers `dim_dora__users.id`.
+      - name: prescriber_di_structure_id
+        description: >
+          Identifiant Data Inclusion de la structure du prescripteur. C'est la colonne à utiliser
+          pour analyser les orientations par structure. Elle peut être vide si la structure source
+          n'existe pas dans Data Inclusion.
+          Clé de jointure vers `dim_data_inclusion__structures.structure_id`.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_data_inclusion__structures')
+                field: structure_id
+      - name: prescriber_dora_structure_id
+        description: >
+          Identifiant de la structure du prescripteur dans DORA. Cette colonne est remplie pour les
+          orientations créées dans DORA. Elle sert à garder l'identifiant source de la structure DORA.
+      - name: prescriber_emplois_structure_id
+        description: >
+          Identifiant de la structure du prescripteur dans Les Emplois. Cette colonne est remplie pour
+          les orientations créées depuis Les Emplois. Elle sert à garder l'identifiant source de
+          la structure dans Les Emplois.
+      - name: oriented_di_service_id
+        description: >
+          Identifiant Data Inclusion du service vers lequel le bénéficiaire est orienté. C'est la colonne
+          à utiliser pour analyser les orientations par service Data Inclusion. Pour les services DORA,
+          elle est remplie seulement si le service existe dans `dim_data_inclusion__services`. Pour les
+          services déjà transmis avec un identifiant Data Inclusion, elle garde l'identifiant source reçu
+          par DORA. Attention : certains de ces identifiants source n'existent pas dans
+          `dim_data_inclusion__services`. Il ne faut donc pas ajouter de test `relationships` sur cette
+          colonne.
+      - name: oriented_dora_service_id
+        description: >
+          Identifiant du service orienté dans DORA. Cette colonne est remplie quand l'orientation pointe
+          vers un service DORA. Elle sert à garder l'identifiant source du service DORA.
+      - name: emplois_beneficiary_id
+        description: >
+          Identifiant du bénéficiaire transmis par Les Emplois. Correspond à
+          `stg_dora__emplois_orientation_data.beneficiary_id`.
+      - name: emplois_prescriber_id
+        description: >
+          Identifiant du prescripteur transmis par Les Emplois. Correspond à
+          `stg_dora__emplois_orientation_data.prescriber_id`.

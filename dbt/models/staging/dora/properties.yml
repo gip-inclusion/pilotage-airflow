@@ -39,6 +39,29 @@ models:
           id prefixé par "dora--" permettant une jointure facile est immédiate avec les données data inclusion.
 
 
+  - name: stg_dora__structure_member
+    description: >
+      Table de correspondance entre les utilisateurs et leur structures de rattachement pour les utilisateurs rattachés.
+    config:
+      tags:
+        - dora
+
+    columns:
+      - name: id
+        data_tests:
+          - unique
+          - not_null
+      - name: structure_id
+        data_tests:
+          - not_null
+      - name: user_id
+        data_tests:
+          - not_null
+      - name: is_admin
+        description: >
+          L'utilisateur a tous les droits sur la structure.
+
+
   - name: stg_dora__orientation
     config:
       tags:
@@ -85,3 +108,43 @@ models:
       - name: id_jointure_di
         description: >
           id prefixé par "dora--" permettant une jointure facile est immédiate avec les données data inclusion.
+
+
+  - name: stg_dora__emplois_orientation_data
+    config:
+      tags:
+        - dora
+        - imer
+    description: >
+      Donnees Les Emplois associees aux orientations DORA creees via l'API Les Emplois
+      ou depuis un JWT Emplois. La colonne orientation_id pointe vers stg_dora__orientation.id,
+      tandis que emplois_sync_uid est l'identifiant expose dans l'export iMER Les Emplois.
+    columns:
+      - name: orientation_id
+        description: Identifiant de l'orientation associée, clé primaire de la table orientations_orientation.
+        data_tests:
+          - unique
+          - not_null
+      - name: emplois_sync_uid
+        description: UID de synchronisation avec Les Emplois (unique).
+        data_tests:
+          - unique
+          - not_null
+      - name: beneficiary_id
+        description: Identifiant du bénéficiaire côté Les Emplois.
+      - name: structure_id
+        description: Identifiant de la structure côté Les Emplois.
+      - name: structure_name
+        description: Nom de la structure côté Les Emplois.
+      - name: structure_siret
+        description: SIRET de la structure côté Les Emplois.
+      - name: prescriber_id
+        description: Identifiant du prescripteur côté Les Emplois (peut être vide).
+      - name: prescriber_email
+        description: Email du prescripteur transmis par Les Emplois.
+      - name: prescriber_first_name
+        description: Prenom du prescripteur transmis par Les Emplois.
+      - name: prescriber_last_name
+        description: Nom du prescripteur transmis par Les Emplois.
+      - name: prescriber_phone
+        description: Telephone du prescripteur transmis par Les Emplois.

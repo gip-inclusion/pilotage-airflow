@@ -821,6 +821,37 @@ sources:
         description: >
           Table contenant les connexions des utilisateurs sur les derniers trois mois
 
+      - name: orientations_emploisorientationdata
+        description: |
+          Données Les Emplois associées à une orientation créée via l'API Les Emplois ou depuis un JWT Emplois.
+          Relation un-à-un avec orientations_orientation (orientation_id est la clé primaire).
+        columns:
+          - name: orientation_id
+            description: |
+              Identifiant de l'orientation associée, clé primaire de la table orientations_orientation.
+          - name: emplois_sync_uid
+            description: |
+              UID de synchronisation avec Les Emplois (unique).
+          - name: beneficiary_id
+            description: |
+              Identifiant du bénéficiaire côté Les Emplois.
+          - name: structure_id
+            description: |
+              Identifiant de la structure côté Les Emplois.
+          - name: structure_name
+            description: |
+              Nom de la structure côté Les Emplois.
+          - name: structure_siret
+            description: |
+              SIRET de la structure côté Les Emplois.
+          - name: prescriber_id
+            description: |
+              Identifiant du prescripteur côté Les Emplois (peut être vide).
+          - name: prescriber_email
+          - name: prescriber_first_name
+          - name: prescriber_last_name
+          - name: prescriber_phone
+
   - name: raw
     schema: raw
     description: "Tables contenant des données brutes"
