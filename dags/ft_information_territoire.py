@@ -1,7 +1,6 @@
 import logging
 
-from airflow import DAG
-from airflow.decorators import task
+from airflow.sdk import DAG, task
 
 from dags.common import default_dag_args, slack
 from dags.common.france_travail import api as ft_api_helpers

@@ -3,7 +3,7 @@ import logging
 
 import httpx
 import pandas as pd
-from airflow.models import Variable
+from airflow.sdk import Variable
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 

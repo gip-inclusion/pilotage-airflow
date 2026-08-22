@@ -1,7 +1,7 @@
 [project]
 name = "pilotage-airflow"
 dynamic = ["version"]
-requires-python = "==3.12.*"
+requires-python = "==3.14.*"
 
 [tool.sqlfluff.core]
 dialect = "postgres"
@@ -41,12 +41,6 @@ additional_allowed_characters = "àéè '-"
 line-length = 119
 
 [tool.ruff.lint]
-ignore = [
-    "AIR301",  # Reactivate on 3.0+ migration https://docs.astral.sh/ruff/rules/airflow3-removal/
-    "AIR302",  # Reactivate on 3.0+ migration https://docs.astral.sh/ruff/rules/airflow3-moved-to-provider/
-    "AIR311",  # Reactivate on 3.0+ migration https://docs.astral.sh/ruff/rules/airflow3-suggested-update/
-    "AIR312",  # Reactivate on 3.0+ migration https://docs.astral.sh/ruff/rules/airflow3-suggested-to-move-to-provider/
-]
 # see prefixes in https://docs.astral.sh/ruff/rules/
 select = [
     "F",  # pyflakes

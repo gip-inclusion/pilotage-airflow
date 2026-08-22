@@ -1,7 +1,6 @@
 import logging
 
-from airflow import DAG
-from airflow.decorators import task
+from airflow.sdk import DAG, task
 from sqlalchemy import text
 
 from dags.common import db, dbt, default_dag_args, slack

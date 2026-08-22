@@ -1,9 +1,7 @@
 from pathlib import Path
 
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Variable
-from sqlalchemy.ext.declarative import declarative_base
+from airflow.sdk import DAG, Variable, task
+from sqlalchemy.orm import declarative_base
 
 from dags.common import dbt, default_dag_args, gsheet
 from dags.common.tasks import create_models

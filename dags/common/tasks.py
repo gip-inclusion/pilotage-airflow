@@ -1,5 +1,5 @@
-from airflow.decorators import task
-from airflow.utils.trigger_rule import TriggerRule
+from airflow.sdk import task
+from airflow.task.trigger_rule import TriggerRule
 
 from dags.common import db
 

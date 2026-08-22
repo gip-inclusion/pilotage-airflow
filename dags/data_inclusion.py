@@ -3,10 +3,8 @@ import logging
 import httpx
 import pandas as pd
 import sqlalchemy
-from airflow import DAG
-from airflow.decorators import task
-from airflow.models import Variable
-from airflow.operators import bash
+from airflow.providers.standard.operators import bash
+from airflow.sdk import DAG, Variable, task
 from sqlalchemy.dialects import postgresql
 
 from dags.common import db, dbt, default_dag_args, slack
@@ -52,14 +50,16 @@ with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
 
     @task
     def drop_tables():
-        con = db.connection_engine()
-        con.execute(
-            f"""
-            drop table if exists {DB_SCHEMA}.raw_di_services cascade;
-            drop table if exists {DB_SCHEMA}.raw_di_structures_deduplicated cascade;
-            drop table if exists {DB_SCHEMA}.raw_di_structures cascade;
-            """
-        )
+        with db.connection_engine().begin() as con:
+            con.execute(
+                sqlalchemy.text(
+                    f"""
+                    drop table if exists {DB_SCHEMA}.raw_di_services cascade;
+                    drop table if exists {DB_SCHEMA}.raw_di_structures_deduplicated cascade;
+                    drop table if exists {DB_SCHEMA}.raw_di_structures cascade;
+                    """
+                )
+            )
 
     @task
     def import_structures(**kwargs):

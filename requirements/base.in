@@ -1,6 +1,6 @@
 # Airflow
 # ------------------------------------------------------------------------------
-apache-airflow[amazon,sentry,slack,ssh]==2.11.1  # https://github.com/apache/airflow
+apache-airflow[amazon,fab,postgres,sentry,slack,ssh]==3.3.1  # https://github.com/apache/airflow
 
 # DBT
 # ------------------------------------------------------------------------------
@@ -11,8 +11,7 @@ dbt-postgres  # https://github.com/dbt-labs/dbt-postgres
 # ------------------------------------------------------------------------------
 ftputil  # https://ftputil.sschwarzer.net/
 openpyxl # https://pypi.org/project/openpyxl/
-# Pandas 2.2 break DataFrame.to_sql() for SQLAlchemy<=2.0, pinning until we move to it
-pandas<2.2  # https://github.com/pandas-dev/pandas
+pandas  # https://github.com/pandas-dev/pandas
 # Pin paramiko to not break apache-airflow-provider-ssh which import the `DSSKey` symbol
 paramiko<4.0.0  # https://github.com/paramiko/paramiko
 psycopg[binary] # https://www.psycopg.org/
@@ -21,10 +20,6 @@ pyairtable # https://pyairtable.readthedocs.io/en/stable/
 unidecode  # https://pypi.org/project/Unidecode/
 furl #https://github.com/gruns/furl
 
-
-# Transitional pinning
-# ------------------------------------------------------------------------------
-flask-limiter!=3.13  # 2025-09-16: flask-appbuilder | ModuleNotFoundError: No module named 'flask_limiter.wrappers'
 
 # Streamlit apps
 # ------------------------------------------------------------------------------

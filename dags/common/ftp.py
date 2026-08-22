@@ -1,4 +1,4 @@
-from airflow.models import Variable
+from airflow.sdk import Variable
 
 
 def bucket_connection():

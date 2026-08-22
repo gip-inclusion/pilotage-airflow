@@ -3,9 +3,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from airflow import DAG
-from airflow.decorators import task
-from airflow.operators import bash
+from airflow.providers.standard.operators import bash
+from airflow.sdk import DAG, task
 
 from dags.common import db, dbt, default_dag_args
 
