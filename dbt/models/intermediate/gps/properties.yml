@@ -1,11 +1,10 @@
 version: 2
 
 models:
-  - name: int_rdvi__actes_metiers
+  - name: int_gps__actes_metier
     description: >
-      Ce modèle compte, par mois, le nombre d'invitations envoyées depuis rdv-insertion. Les résultats sont détaillés par type d'acte,
-      type de structure, département et statut north star. Il reprend dans dbt le calcul qui était auparavant fait par le fetcher Python
-      `fetch_rdvi`.
+      Compte les actes métier GPS par mois. Le modèle reprend la logique du fetcher Python.
+      Il distingue les consultations et les mises à jour de groupes de suivi.
 
       **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
       Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
@@ -15,48 +14,59 @@ models:
         - actes-metier
     columns:
       - name: mois
+        description: >
+          Mois de l'acte, au format `YYYY-MM`. Le modèle garde les 14 derniers mois complets.
         tests:
           - not_null
       - name: source
+        description: Toujours `GPS`.
         tests:
           - not_null
           - accepted_values:
               arguments:
                 values:
-                  - rdvi
+                  - GPS
       - name: type_acte
+        description: Type d'acte GPS.
         tests:
           - not_null
           - accepted_values:
               arguments:
                 values:
-                  - Invitation à un RDV d’orientation
-                  - Invitation à un RDV d’accompagnement
-                  - Invitation à un Entretien SIAE
-                  - Invitation à un Autre RDV
+                  - Consultation groupe de suivi
+                  - Mise à jour groupe de suivi
       - name: categorie_acte
+        description: Toujours `Support` pour GPS.
         tests:
           - not_null
           - accepted_values:
               arguments:
                 values:
-                  - Accompagnement
+                  - Support
       - name: north_star
+        description: Toujours `false` pour ces actes.
         tests:
           - not_null
       - name: north_star_70
+        description: Toujours `false` pour ces actes.
         tests:
           - not_null
       - name: traite
+        description: Toujours `false` pour ces actes.
         tests:
           - not_null
       - name: type_structure
+        description: >
+          Type de structure normalisé depuis le type d'organisation de l'utilisateur.
+          Vaut `Autre` si le type n'est pas reconnu.
         tests:
           - not_null
       - name: departement
+        description: Code département normalisé. Vaut `Inconnu` si le département est vide ou non reconnu.
         tests:
           - not_null
       - name: nombre_actes
+        description: Nombre d'actes pour ce grain.
         tests:
           - not_null
           - dbt_utils.accepted_range:

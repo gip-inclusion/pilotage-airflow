@@ -27,7 +27,6 @@ models:
     config:
       tags:
         - actes-metier
-        - dora
     columns:
       - name: mois
         description: >

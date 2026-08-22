@@ -1,11 +1,10 @@
 version: 2
 
 models:
-  - name: int_rdvi__actes_metiers
+  - name: int_monrecap__actes_metier
     description: >
-      Ce modèle compte, par mois, le nombre d'invitations envoyées depuis rdv-insertion. Les résultats sont détaillés par type d'acte,
-      type de structure, département et statut north star. Il reprend dans dbt le calcul qui était auparavant fait par le fetcher Python
-      `fetch_rdvi`.
+      Compte les actes métier Mon Récap par mois. Le modèle reprend la logique du fetcher Python.
+      Il transforme les carnets expédiés en actes de distribution et de remplissage.
 
       **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
       Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
@@ -15,48 +14,61 @@ models:
         - actes-metier
     columns:
       - name: mois
+        description: >
+          Mois de l'acte, au format `YYYY-MM`. Le modèle garde les 14 derniers mois complets.
         tests:
           - not_null
       - name: source
+        description: Toujours `monrecap`.
         tests:
           - not_null
           - accepted_values:
               arguments:
                 values:
-                  - rdvi
+                  - monrecap
       - name: type_acte
+        description: Type d'acte Mon Récap.
         tests:
           - not_null
           - accepted_values:
               arguments:
                 values:
-                  - Invitation à un RDV d’orientation
-                  - Invitation à un RDV d’accompagnement
-                  - Invitation à un Entretien SIAE
-                  - Invitation à un Autre RDV
+                  - Distribution carnet Mon Récap
+                  - Remplissage carnet Mon Récap
       - name: categorie_acte
+        description: >
+          `Accompagnement` pour la distribution. `Support` pour le remplissage.
         tests:
           - not_null
           - accepted_values:
               arguments:
                 values:
                   - Accompagnement
+                  - Support
       - name: north_star
+        description: Toujours `false` pour ces actes.
         tests:
           - not_null
       - name: north_star_70
+        description: Toujours `false` pour ces actes.
         tests:
           - not_null
       - name: traite
+        description: Toujours `false` pour ces actes.
         tests:
           - not_null
       - name: type_structure
+        description: >
+          Type de structure normalisé depuis le type de structure de la commande.
+          Vaut `Autre` si le type n'est pas reconnu.
         tests:
           - not_null
       - name: departement
+        description: Code département normalisé. Vaut `Inconnu` si le département est vide ou non reconnu.
         tests:
           - not_null
       - name: nombre_actes
+        description: Nombre d'actes pour ce grain.
         tests:
           - not_null
           - dbt_utils.accepted_range:

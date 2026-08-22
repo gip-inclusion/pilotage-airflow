@@ -219,3 +219,38 @@ models:
         description: Score de qualité de la fiche structure.
       - name: doublons
         description: Liste des doublons identifiés pour cette structure.
+
+  - name: stg_actes_metier__data_inclusion
+    description: >
+      Vue simple sur la table brute historique des actes métier data inclusion.
+
+    config:
+        tags:
+            - actes-metier
+
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('raw_actes_metier', 'stats_pdi_actes_metiers_data_inclusion')
+
+    columns:
+      - name: mois
+        description: Mois de comptabilisation de l'acte métier.
+      - name: type_acte_raw
+        description: Type d'acte brut dans la table source.
+        tests:
+          - not_null
+      - name: contexte_acte
+        description: Contexte applicatif utilisé pour rattacher les recherches à un type de structure.
+      - name: reseaux_porteurs
+        description: Réseaux porteurs utilisés pour rattacher les mises à jour à un type de structure.
+      - name: raw_departement
+        description: Département brut avant normalisation.
+      - name: nombre_actes_metier
+        description: Nombre d'actes métier fourni par la source.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true

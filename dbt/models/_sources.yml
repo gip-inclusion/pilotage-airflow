@@ -470,6 +470,40 @@ sources:
       - name: matomo__actes_metier_matomo_monthly_department_visits
         description: >
           Repartition par dimension personnalisee departement des visites mensuelles Matomo de la recherche d'offres d'emploi.
+
+  - name: raw_actes_metier
+    schema: raw
+    description: >
+      Tables brutes utilisées pour reconstruire les actes métier historiques.
+    tables:
+      - name: stats_pdi_actes_metiers_data_inclusion
+        identifier: stats_pdi-actes_metiers-data_inclusion
+        quoting:
+          identifier: true
+        description: >
+          Table brute historique des actes métier data inclusion, utilisée pour répliquer le fetcher
+          `fetch_data_inclusion`.
+
+  - name: raw_marche
+    schema: raw_marche
+    description: >
+      Tables brutes du Marché, chargées par le DAG `sync_marche_raw_schema`.
+    tables:
+      - name: tenders_tender
+        description: >
+          Utilisée pour compter les diffusions d'offre inclusive.
+      - name: users_user
+        description: >
+          Utilisée pour connaître le type de l'auteur d'une diffusion.
+      - name: perimeters_perimeter
+        description: >
+          Utilisée pour rattacher une diffusion à un département.
+      - name: siaes_siaeoffer
+        description: >
+          Utilisée pour compter les mises à jour de fiche entreprise.
+      - name: siaes_siae
+        description: >
+          Utilisée pour rattacher une fiche entreprise à un département.
   - name: monrecap
     schema: monrecap
     description: >
