@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 
-with DAG("populate_autometa_docs", schedule="0 4 * * *", **dag_args) as dag:
+with DAG("copy_metabase_docs_to_pilotage", schedule="0 4 * * *", **dag_args) as dag:
 
     @task
     def copy_doc_tables():
