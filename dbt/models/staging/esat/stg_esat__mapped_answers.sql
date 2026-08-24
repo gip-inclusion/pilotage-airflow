@@ -6,6 +6,6 @@ with mapped_answers as (
 )
 
 select
-    trim(establishment_finess_num::text) as finess_num,
-    trim(answer_id::text)                as answer_id
+    lpad(nullif(trim(establishment_finess_num::text), ''), 9, '0') as finess_num,
+    nullif(trim(answer_id::text), '')                              as answer_id
 from mapped_answers
