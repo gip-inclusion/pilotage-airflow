@@ -698,7 +698,7 @@ models:
       - name: reason
         description: Justification métier de l'exclusion.
 
-  - name: stg_esat__liste_mapped_answers
+  - name: stg_esat__mapped_answers
     config:
       tags:
         - esat
@@ -725,5 +725,5 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('esat__survey_answers_core')
+              to: ref('stg_esat__surveys_esat_answers')
               field: answer_id
