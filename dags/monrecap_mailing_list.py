@@ -1,4 +1,3 @@
-import re
 import time
 from pathlib import Path
 
@@ -47,11 +46,7 @@ with DAG(
         df = df.rename(columns=variables_dict)
         df = df[variables_dict.values()]
 
-        df["email_pro"] = (
-            df["email_pro"]
-            .astype(str)
-            .apply(lambda x: re.findall(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", x))
-        )
+        df["email_pro"] = df["email_pro"].astype(str).str.findall(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
         df_exploded = df.explode("email_pro")
         df_exploded["email_pro"] = df_exploded["email_pro"].fillna("")
 
