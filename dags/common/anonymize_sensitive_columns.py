@@ -3,6 +3,7 @@ import hmac
 import logging
 
 import sqlalchemy
+from airflow.exceptions import AirflowSkipException
 from airflow.sdk import Variable, task
 
 from dags.common import db
@@ -59,7 +60,10 @@ def _anonymize_column(conn, secret, table, column):
 
 
 @task
-def anonymize_nir(tables):
+def anonymize_nir(tables, params=None):
+    if not (params or {}).get("anonymize_nir", True):
+        raise AirflowSkipException("Anonymization disabled through the anonymize_nir param")
+
     secret = get_hmac_secret()
 
     with db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET_local") as emplois_db:

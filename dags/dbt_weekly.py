@@ -10,7 +10,10 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 with DAG(
     dag_id="dbt_weekly",
     schedule=None,
-    params={"full_refresh": Param(False, type="boolean")},
+    params={
+        "full_refresh": Param(False, type="boolean"),
+        "anonymize_nir": Param(True, type="boolean"),
+    },
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()
@@ -18,6 +21,8 @@ with DAG(
     dbt_debug = bash.BashOperator(
         task_id="dbt_debug",
         bash_command="dbt debug",
+        # keep going when the upstream anonymization task is skipped
+        trigger_rule="none_failed",
         env=env_vars,
         append_env=True,
     )
