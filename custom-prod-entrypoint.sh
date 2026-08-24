@@ -30,13 +30,9 @@ fi
 
 
 if [[ "$AIRFLOW_SUPERUSER_PASSWORD" != "" ]]; then
-    airflow users create \
-        --role Admin \
-        --email airflow-admin@inclusion.beta.gouv.fr \
-        --firstname admin \
-        --lastname admin \
-        --username admin \
-        --password "${AIRFLOW_SUPERUSER_PASSWORD}"
+
+    PASSWORD_FILE="/tmp/airflow/simple_auth_manager_passwords.json.generated"
+    echo "{\"admin\": \"${AIRFLOW_SUPERUSER_PASSWORD}\"}" > "${PASSWORD_FILE}"
 fi
 
 exec /entrypoint "standalone"
