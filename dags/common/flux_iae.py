@@ -19,6 +19,7 @@ from dags.common.db import MetabaseDatabaseCursor3
 
 PANDA_DATAFRAME_TO_PSQL_TYPES_MAPPING = {
     np.int64: "bigint",
+    str: "text",
     np.object_: "text",
     np.float64: "double precision",
     np.bool_: "boolean",
