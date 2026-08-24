@@ -20,8 +20,7 @@ with DAG(
 ) as dag:
 
     @task
-    def create_work_directory(*, task_instance, **kwargs):
-        dag_run = task_instance.get_dagrun()
+    def create_work_directory(*, dag_run, **kwargs):
         return tempfile.mkdtemp(prefix=f"{dag_run.dag_id}_", suffix=f"_{dag_run.run_id}")
 
     @task
