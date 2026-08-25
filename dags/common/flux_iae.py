@@ -160,6 +160,22 @@ def get_old_table_name(table_name):
     return f"z_old_{table_name}"
 
 
+def salarie_pii_hashes(row) -> list[str]:
+    """Hash the (first name, last name, birth date) triplet, when all three are known."""
+    birth_date = pd.to_datetime(row["salarie_date_naissance"], dayfirst=True, errors="coerce")
+    if pd.isna(birth_date) or pd.isna(row["salarie_prenom"]) or pd.isna(row["salarie_nom_usage"]):
+        return []
+    return [
+        hash_content(
+            normalize_sensible_data(
+                (row["salarie_prenom"], NormalizationKind.NAME),
+                (row["salarie_nom_usage"], NormalizationKind.NAME),
+                (birth_date.date(), NormalizationKind.DATE),
+            )
+        )
+    ]
+
+
 def anonymize_fluxiae_df(df):
     """
     Drop and/or anonymize sensitive data in fluxIAE dataframe.
@@ -174,25 +190,7 @@ def anonymize_fluxiae_df(df):
         df["nir_chiffré"] = df["salarie_nir"].apply(encrypt_content)
 
     if {"salarie_prenom", "salarie_nom_usage", "salarie_date_naissance"} <= set(df.columns.tolist()):
-        df["salarie_PII_hashes"] = df.apply(
-            lambda row: (
-                [
-                    hash_content(
-                        normalize_sensible_data(
-                            (row["salarie_prenom"], NormalizationKind.NAME),
-                            (row["salarie_nom_usage"], NormalizationKind.NAME),
-                            (
-                                (pd.to_datetime(row["salarie_date_naissance"], dayfirst=True, errors="coerce").date()),
-                                NormalizationKind.DATE,
-                            ),
-                        )
-                    )
-                ]
-                if not pd.isna(pd.to_datetime(row["salarie_date_naissance"], dayfirst=True, errors="coerce"))
-                else []
-            ),
-            axis=1,
-        )
+        df["salarie_PII_hashes"] = df.apply(salarie_pii_hashes, axis=1)
 
     # Any column having any of these keywords inside its name will be dropped.
     # E.g. if `courriel` is a deletable keyword, then columns named `referent_courriel`,
