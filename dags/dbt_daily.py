@@ -1,14 +1,18 @@
+import pendulum
 from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG, Param, task
 
 from dags.common import db, dbt, default_dag_args, slack
 
 
-dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
+dag_args = default_dag_args() | {
+    "default_args": dbt.get_default_args(),
+    "start_date": pendulum.datetime(2026, 8, 26, tz="Europe/Paris"),
+}
 
 with DAG(
     dag_id="dbt_daily",
-    schedule=None,
+    schedule="30 0 * * *",  # matches the end of the emplois update
     params={
         "full_refresh": Param(False, type="boolean"),
     },
