@@ -12,7 +12,6 @@ with DAG(
     schedule=None,
     params={
         "full_refresh": Param(False, type="boolean"),
-        "anonymize_nir": Param(True, type="boolean"),
     },
     **dag_args,
 ) as dag:
@@ -21,8 +20,6 @@ with DAG(
     dbt_debug = bash.BashOperator(
         task_id="dbt_debug",
         bash_command="dbt debug",
-        # keep going when the upstream anonymization task is skipped
-        trigger_rule="none_failed",
         env=env_vars,
         append_env=True,
     )
