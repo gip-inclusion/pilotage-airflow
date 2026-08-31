@@ -20,6 +20,9 @@ pyairtable # https://pyairtable.readthedocs.io/en/stable/
 unidecode  # https://pypi.org/project/Unidecode/
 furl #https://github.com/gruns/furl
 
+# Linting
+# ------------------------------------------------------------------------------
+sqlparse>=0.6.0 # https://github.com/andialbrecht/sqlparse
 
 # Streamlit apps
 # ------------------------------------------------------------------------------
