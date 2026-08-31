@@ -106,6 +106,40 @@ sources:
       - name: cap_structures
       - name: codes_rome
       - name: collaborations
+        description: >
+          Rattachements des utilisateurs professionnels à leur structure employeuse,
+          organisation prescriptrice ou institution. Une ligne par rattachement :
+          un utilisateur membre de plusieurs organisations a plusieurs lignes, et
+          la table n'a pas de clé primaire propre.
+          Seuls les rattachements actifs sont exportés depuis les Emplois.
+          C'est la table à utiliser pour répondre à « qui administre l'organisation X ? ».
+          Ne pas la joindre à `utilisateurs` sur `id_utilisateur = id` : cette
+          dernière compte déjà une ligne par rattachement, et la jointure
+          multiplierait les lignes.
+        columns:
+          - name: id_utilisateur
+            description: >
+              Identifiant de l'utilisateur rattaché. Correspond à
+              `utilisateurs.id`, qui n'y est pas unique (voir ci-dessus).
+          - name: administrateur
+            description: >
+              Entier 0/1 (et non un booléen) : l'utilisateur est-il administrateur
+              de la structure, de l'organisation ou de l'institution de cette ligne ?
+          - name: id_structure
+            description: >
+              Identifiant de la structure employeuse. Clé étrangère vers
+              `structures.id`. Null pour les autres types de rattachement.
+          - name: id_organisation
+            description: >
+              Identifiant de l'organisation prescriptrice. Clé étrangère vers
+              `organisations.id`. Null pour les autres types de rattachement.
+          - name: id_institution
+            description: >
+              Identifiant de l'institution.
+          - name: date_mise_à_jour_metabase
+            description: >
+              Date de la dernière synchronisation de cette ligne.
+
       - name: communes  # Cities
       - name: critères_iae
       - name: departements
