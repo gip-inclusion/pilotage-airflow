@@ -6,7 +6,7 @@ requires-python = "==3.14.*"
 [tool.sqlfluff.core]
 dialect = "postgres"
 # FIXME: In the long run we should include "references.consistent,references.from,references.qualification" rules.
-exclude_rules = "ambiguous.distinct,layout.long_lines,references.special_chars,convention.left_join,references.consistent,references.from,references.qualification"
+exclude_rules = "ambiguous.distinct,layout.long_lines,references.special_chars,convention.left_join,references.consistent,references.from,references.qualification,references.quoting"
 templater = "dbt"
 max_line_length = 119
 
@@ -36,6 +36,11 @@ capitalisation_policy = "lower"
 
 [tool.sqlfluff.rules.references.special_chars]
 additional_allowed_characters = "àéè '-"
+
+[tool.sqlfluff.rules.references.keywords]
+# `source` became a Postgres unreserved keyword in sqlfluff 4.x; it is a
+# long-standing column name across the project.
+ignore_words = "source"
 
 [tool.ruff]
 line-length = 119

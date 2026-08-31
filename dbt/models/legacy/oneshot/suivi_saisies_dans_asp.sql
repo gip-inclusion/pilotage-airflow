@@ -106,5 +106,5 @@ left join saisie_actualisee
     on
         saisies.structure_id_siae = saisie_actualisee.structure_id_siae
         and saisies.structure_siret_actualise = saisie_actualisee.structure_siret_actualise
-        and saisies.af_id_annexe_financiere = saisies.af_id_annexe_financiere
+        and saisies.af_id_annexe_financiere = saisies.af_id_annexe_financiere  -- noqa: ST10
         and saisies.af_numero_annexe_financiere = saisie_actualisee.af_numero_annexe_financiere

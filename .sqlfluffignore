@@ -1,2 +1,4 @@
 dbt/target/
 dbt/macros/
+# Raw SQL query embedded in a DAG, not a dbt model
+dags/common/stats_dsn/raw_data_query.sql

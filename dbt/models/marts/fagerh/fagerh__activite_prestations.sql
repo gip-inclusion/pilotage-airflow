@@ -85,12 +85,12 @@ final as (
         prestations.preco_autres_precision,
 
         coalesce(prestations.emploi_acces_cdi, 0)
-        + coalesce(prestations.emploi_acces_cdd_plus6, 0)                                                        as emploi_durable_nb,
+        + coalesce(prestations.emploi_acces_cdd_plus6, 0)                                       as emploi_durable_nb,
 
         coalesce(prestations.emploi_acces_cdd_moins6, 0)
         + coalesce(prestations.emploi_acces_alternance, 0)
         + coalesce(prestations.emploi_acces_interim, 0)
-        + coalesce(prestations.emploi_acces_autre, 0)                                                            as emploi_autre_nb,
+        + coalesce(prestations.emploi_acces_autre, 0)                                           as emploi_autre_nb,
 
         {{ safe_divide('prestations.emploi_acces_nb', 'prestations.emploi_nb_repondants') }}    as taux_acces_emploi,
         {{ safe_divide('prestations.emploi_presence_nb', 'prestations.emploi_nb_repondants') }} as taux_presence_emploi
