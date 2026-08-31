@@ -1,19 +1,21 @@
 with imer as (
     select
         id,
+        origin_source,
+        source_imer_id,
         date,
         user_session,
         user_kind,
         user_id,
         user_prescriber_organization_id,
         user_company_id,
-        structure_id,
-        source_structure_id,
+        target_structure_source_id,
+        target_di_structure_id,
         kind,
         service_id,
         source,
         orientation_id
-    from {{ ref('fct_imer') }}
+    from {{ ref('fct_dora__imer') }}
 ),
 
 communes as (
@@ -76,14 +78,16 @@ company as (
 
 select
     imer.id,
+    imer.origin_source,
+    imer.source_imer_id,
     imer.date,
     imer.user_session,
     imer.user_kind,
     imer.user_id,
     imer.user_prescriber_organization_id,
     imer.user_company_id,
-    imer.structure_id,
-    imer.source_structure_id,
+    imer.target_structure_source_id,
+    imer.target_di_structure_id,
     imer.kind,
     imer.service_id,
     imer.source,
@@ -111,7 +115,7 @@ select
     company.company_nom_departement,
     company.company_source
 from imer
-left join structures on imer.structure_id = structures.di_structure_id
+left join structures on imer.target_di_structure_id = structures.di_structure_id
 left join services on imer.service_id = services.di_services_id
 left join organization on imer.user_prescriber_organization_id = organization.organization_id
 left join company on imer.user_company_id = company.company_id

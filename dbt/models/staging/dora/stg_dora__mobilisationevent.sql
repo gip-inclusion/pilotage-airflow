@@ -8,7 +8,7 @@ src_di_events as (
 
 events as (
     select
-        'dora-' || src.id              as id,
+        'dora-' || src.id                          as id,
         src.path,
         src.date,
         src.anonymous_user_hash,
@@ -20,9 +20,11 @@ events as (
         src.is_structure_member,
         src.user_kind,
         src.structure_department,
-        cast(src.structure_id as text) as structure_id,
+        'dora'                                     as structure_source,
+        cast(src.structure_id as text)             as structure_id,
+        'dora--' || cast(src.structure_id as text) as structure_id_di_source,
         src.user_id,
-        false                          as is_di
+        false                                      as is_di
 
     from src_events as src
 
@@ -44,7 +46,9 @@ di_events as (
             as is_structure_member,
         src.user_kind,
         src.structure_department,
+        'data_inclusion'               as structure_source,
         cast(src.structure_id as text) as structure_id,
+        cast(src.structure_id as text) as structure_id_di_source,
         src.user_id,
         true                           as is_di
     from src_di_events as src

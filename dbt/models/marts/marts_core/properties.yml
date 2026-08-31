@@ -293,67 +293,302 @@ models:
           Numéro FINESS de l'établissement juridique auquel l'ESAT est rattaché.
           Ce champ permet de relier la dimension ESAT au modèle `int_esat__legal_entities`.
 
-  - name: fct_imer
+  - name: fct_dora__imer
     config:
       tags:
         - imer
     description: >
-      Table de faits des intentions de mise en relation (IMER) effectuées sur les Emplois de l'Inclusion.
-      L'id_structure de data inclusion est récupéré dans cette table afin de faciliter la jointure dans la table suivante.
-      Une ligne correspond à une intention de mise en relation.
-      à partir de stg_emplois__imer.
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: ref('stg_emplois__imer')
+      Table de faits des intentions de mise en relation (IMER). Une ligne correspond à une IMER,
+      qu'elle vienne des Emplois ou de DORA.
+
+      La clé du mart est `id`. L'identifiant reçu dans la source reste disponible dans
+      `source_imer_id` pour auditer les données.
+
+      Attention : plusieurs colonnes gardent l'identifiant reçu dans la source d'origine, comme
+      `source_imer_id` et `user_id`. Elles peuvent donc mélanger des identifiants Emplois et DORA.
+      Il ne faut pas les utiliser seules pour faire une jointure. Pour revenir à une source, il faut
+      toujours filtrer avec `origin_source` en plus de l'identifiant.
     columns:
       - name: id
-        description: Identifiant unique de l'intention de mise en relation.
+        description: >
+          Identifiant unique de l'IMER dans ce mart. C'est la clé à utiliser pour identifier une
+          ligne de `fct_dora__imer`, quelle que soit sa source.
         tests:
           - not_null
           - unique
+      - name: origin_source
+        description: >
+          Source de l'IMER. La valeur est `emplois` quand la ligne vient des Emplois, et `dora`
+          quand elle vient des événements DORA. La valeur `dora-data-inclusion` distingue les IMER
+          DORA qui mobilisent un service Data Inclusion.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - emplois
+                  - dora
+                  - dora-data-inclusion
+      - name: source_imer_id
+        description: >
+          Identifiant de l'IMER dans sa source d'origine. Cette colonne peut contenir des IDs
+          Emplois ou des IDs DORA. Elle sert surtout à contrôler les données ou à revenir à la
+          source. Elle n'est pas unique toute seule dans tous les systèmes : pour faire une jointure
+          vers une source, il faut toujours utiliser `origin_source` avec `source_imer_id`.
+        tests:
+          - not_null
       - name: date
         description: Date à laquelle l'intention de mise en relation a été enregistrée.
         tests:
           - not_null
       - name: user_session
-        description: Identifiant de la session de l'utilisateur à l'origine de l'intention.
+        description: >
+          Identifiant de session reçu côté Emplois. Cette information n'existe pas pour les IMER
+          DORA et reste donc vide quand `origin_source = 'dora'`.
       - name: user_kind
-        description: Type d'utilisateur à l'origine de l'intention.
+        description: >
+          Type d'utilisateur à l'origine de l'intention, tel qu'il est reçu dans la source. Les
+          valeurs peuvent venir du référentiel Emplois ou du référentiel DORA selon `origin_source`.
       - name: user_id
-        description: Identifiant de l'utilisateur à l'origine de l'intention.
+        description: >
+          Identifiant source de l'utilisateur à l'origine de l'intention. Quand `origin_source =
+          'emplois'`, c'est un identifiant utilisateur Emplois. Quand `origin_source = 'dora'`,
+          c'est un identifiant utilisateur DORA. Il ne faut donc pas faire une jointure unique avec
+          cette colonne seule : il faut choisir la table utilisateur selon `origin_source`. Pour les
+          lignes DORA, les structures de rattachement de l'utilisateur se retrouvent via
+          `int_dora__structure_members`, mais cette relation peut être 1:N et multiplier les lignes.
       - name: user_prescriber_organization_id
-        description: Identifiant de l'organisation prescriptrice de l'utilisateur.
+        description: >
+          Identifiant de l'organisation prescriptrice côté Emplois. Il est rempli uniquement pour
+          les lignes Emplois et reste vide pour les lignes DORA.
       - name: user_company_id
-        description: Identifiant de la structure prescriptrice..
-      - name: source_structure_id
         description: >
-            Identifiant source data inclusion de la structure ciblée par l'intention de mise en relation.
-            Si la structure est dupliquée car présente dans plusieurs sources, les différents source_structure_id correspondront à un structure_id.
-      - name: structure_id
+          Identifiant de la structure employeuse côté Emplois. Il est rempli uniquement pour les
+          lignes Emplois et reste vide pour les lignes DORA.
+      - name: target_structure_source_id
         description: >
-            Identifiant unique de data inclusion de la structure ciblée par l'intention de mise en relation.
-            C'est un identifiant unique de la structure Data Inclusion consolidée.
-            Il est généré à partir de la source et de l'identifiant de la structure
-            conservée dans la table dédupliquée. Il reste stable tant que cette
-            structure conservée ne change pas. A utiliser lors de la création de modèles.
+          Identifiant de la structure ciblée avec son espace de noms. Pour DORA, il vaut `dora--<id>`;
+          pour Data Inclusion, l'identifiant Data Inclusion reçu; pour Emplois, l'identifiant source
+          Emplois. Son espace de noms se déduit de `origin_source`.
+      - name: target_di_structure_id
+        description: >
+          Identifiant canonique Data Inclusion de la structure ciblée par l'intention de mise en
+          relation, quand on le retrouve depuis la structure cible reçue dans l'événement. Si ce
+          mapping direct n'aboutit pas, on peut le compléter depuis le service mobilisé.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_data_inclusion__structures')
+                field: structure_id
       - name: kind
         description: >
           Type de l'intention de mise en relation.
         tests:
           - accepted_values:
-              values:
-                - service_ext_link
-                - service_orientation
-                - service_contact
-                - structure_contact
+              arguments:
+                values:
+                  - service_ext_link
+                  - service_orientation
+                  - service_contact
+                  - structure_contact
+                  - mobilisation
       - name: service_id
-        description: Identifiant du service concerné par l'intention.
+        description: >
+          Identifiant Data Inclusion du service concerné par l'intention, quand on le retrouve.
+          Il garde le format Data Inclusion avec espace de noms, par exemple `dora--<uuid>`
+          ou `soliguide--<id>`. Pour DORA, il vient d'abord du service confirmé de l'orientation
+          liée à la mobilisation, puis du service reconstruit depuis la mobilisation. Les services
+          reconstruits depuis les mobilisations sont gardés uniquement s'ils existent dans
+          `dim_data_inclusion__services`.
       - name: source
-        description: Source du service concerné par l'intention.
+        description: >
+          Source du service concerné par l'intention. Cette colonne décrit le service ciblé, pas
+          forcément la source de l'IMER. Pour savoir si la ligne vient des Emplois ou de DORA, il
+          faut utiliser `origin_source`.
       - name: external_link
         description: Lien externe associé à l'intention de mise en relation.
       - name: orientation_id
-        description: >
-          Identifiant de l'orientation. Renseigné uniquement lorsqu'une orientation a eu lieu.
+        description: |
+          Identifiant de l'orientation dans `fct_dora__orientations`, quand l'IMER est liée à
+          une orientation.
+
+          - Pour une IMER Emplois, on retrouve cette orientation à partir de l'identifiant
+            reçu dans la source Emplois.
+          - Pour une IMER DORA, c'est la première orientation retrouvée après la
+            mobilisation.
+          - Pour les mobilisations DORA, on utilise la règle déjà présente côté DORA :
+            même utilisateur, même service via le slug, et orientation créée dans l'heure
+            qui suit.
+          - Cette colonne sert à joindre le mart des orientations.
+          - Il ne faut pas l'utiliser pour dédoublonner les IMER, car une même orientation
+            peut être liée à plusieurs lignes d'IMER.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('fct_dora__orientations')
+                field: id
       - name: date_mise_a_jour_metabase
         description: Date de la dernière synchronisation de cette ligne dans Metabase.
+
+  - name: fct_dora__orientations
+    config:
+      tags:
+        - imer
+        - dora
+    description: >
+      Table de faits des orientations DORA. Une ligne correspond à une orientation.
+      Certaines orientations sont créées directement dans DORA, d'autres viennent des Emplois.
+
+      Pour les services, on reçoit parfois un identifiant DORA, parfois un identifiant Data Inclusion.
+      Ce mart expose les deux quand c'est possible. Il garde aussi quelques libellés pour lire les
+      orientations sans refaire toutes les jointures.
+
+      Ce n'est donc pas une table de faits complètement pure. Les identifiants et les dimensions
+      Data Inclusion ne sont pas toujours stables dans le temps, donc on garde aussi des noms ici.
+      Les orientations restent ainsi lisibles même quand une jointure ne retrouve plus la ligne attendue.
+    columns:
+      - name: id
+        description: Identifiant canonique de l'orientation DORA.
+        tests:
+          - unique
+          - not_null
+      - name: origin_source
+        description: |
+          Origine qu'on retient pour lire l'orientation :
+          - Orientation purement DORA : `prescriber_id_dora` IS NOT NULL.
+          - Orientation DORA venant des Emplois par flux JWT : `prescriber_id_dora` IS NOT NULL et une
+            ligne dans `orientations_emploisorientationdata` correspond à l'orientation.
+          - Orientation venant directement des Emplois via l'API : `prescriber_id_dora` IS NULL et une
+            ligne dans `orientations_emploisorientationdata` correspond à l'orientation.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - emplois
+                  - dora
+      - name: emplois_sync_uid
+        description: >
+          UID de synchronisation transmis par Les Emplois, quand l'orientation a une ligne dans les données
+          Emplois.
+      - name: creation_date
+        description: Date de création de l'orientation.
+        tests:
+          - not_null
+      - name: processing_date
+        description: Date de traitement de l'orientation.
+      - name: status
+        description: Statut de traitement de l'orientation dans DORA.
+      - name: requirements
+        description: >
+          Prérequis ou conditions indiqués dans DORA pour l'orientation. Liste reprise depuis
+          `stg_dora__orientation.requirements`. Pas de détail DORA plus précis dans dbt.
+      - name: situation
+        description: >
+          Situations ou publics indiqués dans DORA pour l'orientation. Liste reprise depuis
+          `stg_dora__orientation.situation`. Pas de détail DORA plus précis dans dbt.
+      - name: beneficiary_contact_preferences
+        description: >
+          Préférences de contact indiquées dans DORA pour l'orientation. Liste reprise depuis
+          `stg_dora__orientation.beneficiary_contact_preferences`, avec des valeurs comme `TELEPHONE`,
+          `EMAIL`, `REFERENT` ou `AUTRE`. Pas de détail DORA plus précis dans dbt.
+      - name: beneficiary_availability
+        description: >
+          Date reprise telle quelle depuis `stg_dora__orientation.beneficiary_availability`.
+      - name: orientation_reasons
+        description: >
+          Raisons de l'orientation renseignées dans DORA. La colonne est reprise depuis
+          `stg_dora__orientation.orientation_reasons`. C'est un champ texte libre très variable ; dans le
+          staging, les chaînes vides sont remplacées par `NULL`. Pas de détail DORA plus précis dans dbt.
+      - name: duration_weekly_hours
+        description: >
+          Durée hebdomadaire en heures reprise depuis `stg_dora__orientation.duration_weekly_hours`.
+      - name: duration_weeks
+        description: >
+          Durée en semaines reprise depuis `stg_dora__orientation.duration_weeks`.
+      - name: query_expires_at
+        description: >
+          Date d'expiration de la demande d'orientation, reprise depuis
+          `stg_dora__orientation.query_expires_at`.
+      - name: last_reminder_email_sent
+        description: >
+          Date du dernier email de relance envoyé pour cette orientation, reprise depuis
+          `stg_dora__orientation.last_reminder_email_sent`.
+      - name: data_protection_commitment
+        description: >
+          Booléen repris depuis `stg_dora__orientation.data_protection_commitment`.
+      - name: is_anonymized
+        description: >
+          Booléen repris depuis `stg_dora__orientation.is_anonymized`.
+      - name: prescriber_id_dora
+        description: >
+          Identifiant du prescripteur côté DORA. Il est rempli pour les orientations DORA, y compris celles
+          créées depuis Les Emplois via le flux JWT. On peut le joindre à `dim_dora__users.id`.
+      - name: prescriber_id_emplois
+        description: >
+          Identifiant du prescripteur transmis par Les Emplois. Il correspond à
+          `stg_dora__emplois_orientation_data.prescriber_id`.
+      - name: prescriber_structure_id_di
+        description: >
+          Identifiant Data Inclusion de la structure prescriptrice. C'est la colonne à utiliser si on veut
+          analyser les orientations par structure Data Inclusion. Elle peut rester vide si la structure
+          source n'existe pas dans le mapping Data Inclusion courant. En théorie, on aimerait tester la
+          relation avec `dim_data_inclusion__structures`, mais cette dimension n'est pas historisée :
+          certaines structures peuvent apparaître ou disparaître selon la version disponible.
+
+      - name: prescriber_structure_id_dora
+        description: >
+          Identifiant de la structure prescriptrice côté DORA. Il est rempli pour les orientations classées
+          en `dora`.
+      - name: prescriber_structure_id_emplois
+        description: >
+          Identifiant de la structure prescriptrice côté Les Emplois. Il est rempli pour les orientations
+          classées en `emplois`.
+      - name: prescriber_structure_name
+        description: >
+          Nom de la structure prescriptrice. On l'ajoute directement dans le mart parce que les dimensions
+          Data Inclusion ne sont pas historisées et que les jointures ne sont pas toujours stables dans le
+          temps. Côté API Les Emplois, le nom vient de
+          `stg_dora__emplois_orientation_data.structure_name`. Côté DORA, y compris pour le flux JWT
+          Emplois, il vient de l'état courant de `stg_dora__structure.name`. La colonne peut rester vide,
+          par exemple si une orientation DORA n'a pas de structure prescriptrice renseignée.
+      - name: prescriber_structure_siret
+        description: >
+          SIRET de la structure prescriptrice. Même logique que pour le nom : on le garde ici pour faciliter
+          la lecture et éviter de dépendre uniquement de jointures Data Inclusion non historisées. Côté API
+          Les Emplois, il vient de `stg_dora__emplois_orientation_data.structure_siret`. Côté DORA, y
+          compris pour le flux JWT Emplois, il vient de l'état courant de `stg_dora__structure.siret`.
+          La colonne peut rester vide, par exemple si une orientation DORA n'a pas de structure
+          prescriptrice, ou si la structure DORA existe sans SIRET.
+      - name: oriented_service_id_di
+        description: >
+          Identifiant Data Inclusion du service vers lequel la personne est orientée. C'est la colonne à
+          utiliser pour analyser les orientations par service Data Inclusion. Pour les services DORA, elle
+          est remplie seulement si on retrouve le service dans `dim_data_inclusion__services`. Si
+          l'orientation porte déjà un identifiant Data Inclusion, on garde l'identifiant reçu dans DORA.
+          Comme la dimension Data Inclusion n'est pas historisée, on ne met pas de test de relation strict.
+      - name: oriented_service_id_dora
+        description: >
+          Identifiant du service orienté côté DORA. Il est rempli quand l'orientation pointe vers un service
+          DORA.
+      - name: oriented_service_name
+        description: >
+          Nom du service orienté, prêt à lire dans le mart. On prend d'abord le nom Data Inclusion reçu dans
+          l'orientation, puis le nom DORA dans `dim_dora__services`, puis le nom source historisé dans
+          l'orientation si besoin. On garde ce libellé dans le fact parce que les dimensions de services ne
+          sont pas assez stables pour tout récupérer après coup.
+      - name: oriented_service_structure_name
+        description: >
+          Nom de la structure qui porte le service orienté. On prend d'abord le nom Data Inclusion reçu dans
+          l'orientation, puis le nom DORA disponible dans `dim_dora__services`. La colonne peut rester vide,
+          par exemple si le service Data Inclusion n'est plus dans la version disponible de la dimension.
+      - name: oriented_service_code_commune_insee
+        description: >
+          Code commune INSEE du service orienté. On l'utilise pour joindre une dimension commune et analyser
+          la géographie. On prend d'abord le code commune dans `dim_data_inclusion__services`, puis le
+          `city_code` du service DORA dans `dim_dora__services`. La colonne peut rester vide si on ne
+          retrouve pas le service dans les dimensions disponibles.
+      - name: emplois_beneficiary_id
+        description: >
+          Identifiant du bénéficiaire transmis par Les Emplois. Il correspond à
+          `stg_dora__emplois_orientation_data.beneficiary_id`.

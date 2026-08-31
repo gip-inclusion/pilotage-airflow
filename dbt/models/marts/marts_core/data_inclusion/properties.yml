@@ -150,6 +150,9 @@ models:
     config:
       tags:
         - data-inclusion
+      indexes:
+        - columns: [service_id]
+          unique: true
 
     columns:
       - name: service_id

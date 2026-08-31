@@ -246,61 +246,113 @@ models:
       tags:
         - imer
     description: >
-      Table de reporting large des intentions de mise en relation (IMER) sur les Emplois de l'Inclusion.
+      Table de reporting large des intentions de mise en relation (IMER), avec les lignes
+      qui viennent des Emplois et celles qui viennent de DORA.
 
       Une ligne correspond à une intention de mise en relation, enrichie des informations
-      de la structure et du service data inclusion ciblés, de l'organisation prescriptrice
-      et de la structure employeuse de l'utilisateur, ainsi que de leur localisation.
+      de la structure et du service Data Inclusion ciblés quand on les retrouve. Pour les lignes
+      Emplois, elle reprend aussi les informations de l'organisation prescriptrice et de la structure
+      employeuse de l'utilisateur.
+      Comme dans `fct_dora__imer`, certaines colonnes gardent l'identifiant de la source d'origine :
+      par exemple `source_imer_id` et `user_id`. Il faut donc toujours les lire avec
+      `origin_source` avant de faire une jointure vers une table source.
 
     columns:
       - name: id
-        description: Identifiant unique de l'intention de mise en relation.
+        description: Identifiant unique de l'IMER dans le mart.
         tests:
           - not_null
           - unique
           - relationships:
-              to: ref('fct_imer_orientation')
-              field: id
+              arguments:
+                to: ref('fct_dora__imer')
+                field: id
+      - name: origin_source
+        description: >
+          Source de l'IMER. La valeur est `emplois` quand la ligne vient des Emplois, et `dora`
+          quand elle vient des événements DORA. La valeur `dora-data-inclusion` distingue les IMER
+          DORA qui mobilisent un service Data Inclusion.
+      - name: source_imer_id
+        description: >
+          Identifiant de l'IMER dans sa source d'origine. Cette colonne mélange des IDs Emplois
+          et des IDs DORA. Il ne faut pas faire de jointure avec cette colonne seule : pour revenir
+          à une source, il faut toujours utiliser `origin_source` avec `source_imer_id`.
       - name: date
         description: Date à laquelle l'intention de mise en relation a été enregistrée.
         tests:
           - not_null
       - name: user_session
-        description: Identifiant de la session de l'utilisateur à l'origine de l'intention.
+        description: >
+          Identifiant de session reçu côté Emplois. Cette information reste vide pour les lignes
+          DORA.
       - name: user_kind
-        description: Type d'utilisateur à l'origine de l'intention.
+        description: >
+          Type d'utilisateur à l'origine de l'intention, tel qu'il est reçu dans la source.
       - name: user_id
-        description: Identifiant de l'utilisateur à l'origine de l'intention.
+        description: >
+          Identifiant source de l'utilisateur à l'origine de l'intention. Quand `origin_source =
+          'emplois'`, c'est un identifiant utilisateur Emplois. Quand `origin_source = 'dora'`,
+          c'est un identifiant utilisateur DORA. Il ne faut donc pas faire une jointure unique avec
+          cette colonne seule : il faut choisir la table utilisateur selon `origin_source`. Pour les
+          lignes DORA, les structures de rattachement de l'utilisateur se retrouvent via
+          `int_dora__structure_members`, mais cette relation peut être 1:N et multiplier les lignes.
       - name: user_prescriber_organization_id
-        description: Identifiant de l'organisation prescriptrice.
+        description: >
+          Identifiant de l'organisation prescriptrice côté Emplois. Il reste vide pour les lignes
+          DORA.
       - name: user_company_id
-        description: Identifiant de la structure prescriptrice.
-      - name: structure_id
-        description: Identifiant de la structure ciblée par l'intention de mise en relation.
+        description: >
+          Identifiant de la structure employeuse côté Emplois. Il reste vide pour les lignes DORA.
+      - name: target_structure_source_id
+        description: >
+          Identifiant de la structure ciblée avec son espace de noms. Pour DORA, il vaut `dora--<id>`;
+          pour Data Inclusion, l'identifiant Data Inclusion reçu; pour Emplois, l'identifiant source
+          Emplois. Son espace de noms se déduit de `origin_source`.
+      - name: target_di_structure_id
+        description: >
+          Identifiant canonique Data Inclusion de la structure ciblée par l'intention de mise en
+          relation, quand on le retrouve depuis la structure cible reçue dans l'événement. Si ce
+          mapping direct n'aboutit pas, on peut le compléter depuis le service mobilisé.
       - name: kind
         description: >
           Type de l'intention de mise en relation.
         tests:
           - not_null
           - accepted_values:
-              values:
-                - service_ext_link
-                - service_orientation
-                - service_contact
-                - structure_contact
+              arguments:
+                values:
+                  - service_ext_link
+                  - service_orientation
+                  - service_contact
+                  - structure_contact
+                  - mobilisation
       - name: service_id
-        description: Identifiant du service concerné par l'intention.
-      - name: source
-        description: Source du service concerné par l'intention.
-      - name: orientation_id
         description: >
-          Identifiant de l'orientation. Renseigné uniquement lorsqu'une orientation a eu lieu.
+          Identifiant Data Inclusion du service concerné par l'intention, quand on le retrouve.
+          Il garde le format Data Inclusion avec espace de noms, par exemple `dora--<uuid>`
+          ou `soliguide--<id>`. Pour DORA, il vient d'abord du service confirmé de l'orientation
+          liée à la mobilisation, puis du service reconstruit depuis la mobilisation. Les services
+          reconstruits depuis les mobilisations sont gardés uniquement s'ils existent dans
+          `dim_data_inclusion__services`.
+      - name: source
+        description: >
+          Source du service concerné par l'intention. Cette colonne décrit le service ciblé, pas
+          forcément la source de l'IMER. Pour savoir si la ligne vient des Emplois ou de DORA, il
+          faut utiliser `origin_source`.
+      - name: orientation_id
+        description: |
+          Identifiant de l'orientation dans `fct_dora__orientations`, quand l'IMER est liée à
+          une orientation.
+
+          - Sur une IMER DORA, c'est la première orientation retrouvée après la mobilisation.
+          - Cette colonne sert à joindre les orientations.
+          - Il ne faut pas l'utiliser pour dédoublonner les IMER.
       - name: di_nom_structure
         description: Nom de la structure concernée par l'intention.
       - name: di_siret_structure
         description: SIRET de la structure concernée par l'intention.
       - name: di_structure_code_commune
-        description: Code INSEE de la concernée par l'intention.
+        description: Code INSEE de la structure concernée par l'intention.
       - name: di_structure_region
         description: Région de la structure concernée par l'intention.
       - name: di_structure_code_departement

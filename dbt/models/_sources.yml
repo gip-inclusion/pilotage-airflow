@@ -666,6 +666,13 @@ sources:
       - name: stats_dimobilisationevent
         description: >
           Événements de mobilisation (visualisation de fiche service ou d'informations de contact) sur les services data inclusion.
+        columns:
+        - name: structure_id
+          description: >
+            Identifiant de la structure qui porte le service Data Inclusion mobilisé, tel qu'il est reçu
+            dans l'événement DORA. Ce n'est pas la structure de rattachement de l'utilisateur qui réalise
+            l'événement. Cet identifiant n'est pas directement l'identifiant canonique dédupliqué de
+            `dim_data_inclusion__structures`.
 
       - name: stats_dimobilisationevent_categories
         description: >
@@ -693,7 +700,9 @@ sources:
             Identifiant du service concerné, clé primaire de la table service.
         - name: structure_id
           description: >
-            Identifiant de la structure concernée, clé primaire de la table structure.
+            Identifiant de la structure DORA qui porte le service mobilisé, clé primaire de
+            `structures_structure`. Ce n'est pas la structure de rattachement de l'utilisateur qui
+            réalise l'événement.
         - name: user_id
           description: >
             Si non vide, id de l'utilisateur connecté ayant réalisé la mobilisation.
@@ -820,6 +829,37 @@ sources:
       - name: logs_actionlog
         description: >
           Table contenant les connexions des utilisateurs sur les derniers trois mois
+
+      - name: orientations_emploisorientationdata
+        description: |
+          Données Les Emplois associées à une orientation créée via l'API Les Emplois ou depuis un JWT Emplois.
+          Relation un-à-un avec orientations_orientation (orientation_id est la clé primaire).
+        columns:
+          - name: orientation_id
+            description: |
+              Identifiant de l'orientation associée, clé primaire de la table orientations_orientation.
+          - name: emplois_sync_uid
+            description: |
+              UID de synchronisation avec Les Emplois (unique).
+          - name: beneficiary_id
+            description: |
+              Identifiant du bénéficiaire côté Les Emplois.
+          - name: structure_id
+            description: |
+              Identifiant de la structure côté Les Emplois.
+          - name: structure_name
+            description: |
+              Nom de la structure côté Les Emplois.
+          - name: structure_siret
+            description: |
+              SIRET de la structure côté Les Emplois.
+          - name: prescriber_id
+            description: |
+              Identifiant du prescripteur côté Les Emplois (peut être vide).
+          - name: prescriber_email
+          - name: prescriber_first_name
+          - name: prescriber_last_name
+          - name: prescriber_phone
 
   - name: raw
     schema: raw

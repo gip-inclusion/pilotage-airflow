@@ -23,6 +23,17 @@ models:
 
 
   - name: stg_dora__structure
+    description: >
+      Staging des structures DORA, au plus proche de la source.
+
+      Avant, dans l'historique du repo DORA, ce staging retirait les structures obsolètes
+      avec un filtre `where not is_obsolete`. On a enlevé ce filtre ici parce que le
+      staging n'est pas le bon endroit pour cacher des lignes de la source. Ce filtre
+      pouvait faire perdre des infos plus loin, par exemple dans les tables de services
+      comme `dim_dora__services`, où les colonnes de structure pouvaient rester vides.
+
+      Pour travailler volontairement sans les structures obsolètes, utilise plutôt
+      `int_dora__structure_non_obsolete`.
     config:
       tags:
         - dora
@@ -36,7 +47,30 @@ models:
           - not_null
       - name: id_jointure_di
         description: >
-          id prefixé par "dora--" permettant une jointure facile est immédiate avec les données data inclusion.
+          ID préfixé par "dora--", utilisé pour joindre les données Data Inclusion.
+
+
+  - name: stg_dora__structure_member
+    description: >
+      Table de correspondance entre les utilisateurs et leurs structures de rattachement.
+    config:
+      tags:
+        - dora
+
+    columns:
+      - name: id
+        data_tests:
+          - unique
+          - not_null
+      - name: structure_id
+        data_tests:
+          - not_null
+      - name: user_id
+        data_tests:
+          - not_null
+      - name: is_admin
+        description: >
+          L'utilisateur a tous les droits sur la structure.
 
 
   - name: stg_dora__orientation
@@ -56,6 +90,10 @@ models:
           - unique
 
   - name: stg_dora__mobilisationevent
+    description: >
+      Staging des événements de mobilisation DORA. Il regroupe les événements sur des services
+      DORA (`stats_mobilisationevent`) et sur des services Data Inclusion
+      (`stats_dimobilisationevent`).
     config:
       tags:
         - dora
@@ -67,6 +105,27 @@ models:
         data_tests:
           - unique
           - not_null
+      - name: structure_source
+        description: >
+          Espace de noms de `structure_id`. La valeur est `dora` pour les événements issus de
+          `stats_mobilisationevent` et `data_inclusion` pour ceux issus de
+          `stats_dimobilisationevent`.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - dora
+                  - data_inclusion
+      - name: structure_id
+        description: >
+          Identifiant de la structure qui porte le service mobilisé, dans le namespace indiqué par
+          `structure_source`. Ce n'est pas la structure de rattachement de l'utilisateur qui réalise
+          l'événement.
+      - name: structure_id_di_source
+        description: >
+          Identifiant normalisé utilisé pour joindre le mapping Data Inclusion. Les événements DORA
+          sont préfixés par `dora--`; les événements Data Inclusion conservent leur identifiant source.
 
 
 
@@ -84,4 +143,44 @@ models:
           - not_null
       - name: id_jointure_di
         description: >
-          id prefixé par "dora--" permettant une jointure facile est immédiate avec les données data inclusion.
+          ID préfixé par "dora--", utilisé pour joindre les données Data Inclusion.
+
+
+  - name: stg_dora__emplois_orientation_data
+    config:
+      tags:
+        - dora
+        - imer
+    description: >
+      Données Les Emplois associées aux orientations DORA créées via l'API Les Emplois
+      ou depuis un JWT Emplois. La colonne orientation_id pointe vers `stg_dora__orientation.id`,
+      tandis que emplois_sync_uid est l'identifiant exposé dans l'export iMER Les Emplois.
+    columns:
+      - name: orientation_id
+        description: Identifiant de l'orientation associée, clé primaire de la table orientations_orientation.
+        data_tests:
+          - unique
+          - not_null
+      - name: emplois_sync_uid
+        description: UID de synchronisation avec Les Emplois (unique).
+        data_tests:
+          - unique
+          - not_null
+      - name: beneficiary_id
+        description: Identifiant du bénéficiaire côté Les Emplois.
+      - name: structure_id
+        description: Identifiant de la structure côté Les Emplois.
+      - name: structure_name
+        description: Nom de la structure côté Les Emplois.
+      - name: structure_siret
+        description: SIRET de la structure côté Les Emplois.
+      - name: prescriber_id
+        description: Identifiant du prescripteur côté Les Emplois (peut être vide).
+      - name: prescriber_email
+        description: Email du prescripteur transmis par Les Emplois.
+      - name: prescriber_first_name
+        description: Prénom du prescripteur transmis par Les Emplois.
+      - name: prescriber_last_name
+        description: Nom du prescripteur transmis par Les Emplois.
+      - name: prescriber_phone
+        description: Téléphone du prescripteur transmis par Les Emplois.
