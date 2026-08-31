@@ -60,3 +60,9 @@ tests:
 
       Le test compare le nombre d'id distincts dans stg_di__structures avec le nombre de source_structure_id distincts dans
       int_di__structure_mapping.
+  - name: test_fct_dora__imer_rowcount_matches_sources
+    description: >
+      Vérifie que fct_dora__imer contient le bon nombre de lignes.
+
+      Le test additionne les lignes des deux sources utilisées pour construire fct_dora__imer : stg_emplois__imer et int_dora__imer.
+      Ce nombre doit être égal au nombre de lignes de fct_dora__imer.

@@ -39,6 +39,7 @@ select
     structures.is_obsolete,
     structures.typology,
     structures.admin_already_invited,
-    'dora--' || structures.id                                             as structure_id_jointure_di,
-    concat('https://dora.inclusion.gouv.fr/structures/', structures.slug) as dora_url
-from {{ source('dora', 'structures_structure') }} as structures
+    structures.structure_id_jointure_di,
+    structures.dora_url
+from {{ ref('stg_dora__structure') }} as structures
+where not structures.is_obsolete
