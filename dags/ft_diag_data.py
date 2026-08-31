@@ -54,7 +54,7 @@ with DAG(
                         sexe TEXT,
                         situation_de_famille TEXT,
                         nombre_enfants_a_charge INT,
-                        structure_accompagnement FLOAT,
+                        structure_accompagnement TEXT,
                         parcours_accompagnement TEXT,
                         defm INT,
                         diag INT,
