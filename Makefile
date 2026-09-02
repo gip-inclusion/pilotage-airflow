@@ -103,6 +103,7 @@ pg_dump:
 	PGDATABASE=${PROD_PGDATABASE} PGHOST=${PROD_PGHOST} PGPORT=${PROD_PGPORT} PGUSER=${PROD_PGUSER} PGPASSWORD=${PROD_PGPASSWORD} \
 		time pg_dump --format=directory --no-owner --no-acl --verbose --jobs=4 \
 		--table='"fluxIAE_"*' \
+		--table='raw_dora.*' \
 		--table='"c1_"*' \
 		--table='"cap_"*' \
 		--table='"gps_"*' \
@@ -126,7 +127,7 @@ pg_dump:
 		--table="structures_v0" \
 		--table="suivi_visiteurs_tb_publics_v1" \
 		--table="sorties_v2" \
-		--table='raw_emplois.imer_v0' \
+		--table='raw_emplois.*' \
 		--file=$(DUMP_DIR)
 	@echo "\n\n### Database dumped successfully. ###\n"
 	rm -rf $(RESTORE_DIR)
@@ -138,7 +139,9 @@ ifneq (,$(findstring clever-cloud,$(PGHOST)))
 else
 	dropdb ${PGDATABASE} || true
 	createdb ${PGDATABASE}
+	psql -d ${PGDATABASE} -c "CREATE EXTENSION IF NOT EXISTS postgis"
 	psql -d ${PGDATABASE} -c "CREATE SCHEMA IF NOT EXISTS raw_emplois"
+	psql -d ${PGDATABASE} -c "CREATE SCHEMA IF NOT EXISTS raw_dora"
 	time pg_restore --format=directory --clean --jobs=4 --verbose --no-owner --no-acl -d ${PGDATABASE} $(RESTORE_DIR) || true
 	@echo "\n\n### Database restored successfully ! ###\n"
 endif
