@@ -1585,7 +1585,11 @@ models:
           Identifiant de l'institution à laquelle est rattaché l'utilisateur.
           Clé étrangère vers `les_emplois.institutions.id`.
           Renseigné pour les inspecteurs du travail et certains prescripteurs
-          institutionnels (~966 lignes).
+          institutionnels.
+
+      - name: administrateur
+        description: >
+          Entier 0/1 (et non un booléen) : l'utilisateur est-il administrateur de la structure, de l'organisation ou de l'institution associée ?
 
   - name: utilisateurs_jamais_venus
     description: >
