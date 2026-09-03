@@ -39,7 +39,7 @@ select
     structures.is_obsolete,
     structures.typology,
     structures.admin_already_invited,
-    structures.id_jointure_di,
+    structures.structure_id_jointure_di,
     structures.dora_url
 from {{ ref('stg_dora__structure') }} as structures
 where not structures.is_obsolete

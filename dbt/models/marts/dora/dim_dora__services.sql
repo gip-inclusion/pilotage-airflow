@@ -5,7 +5,7 @@ with services as (
 
 structures as (
     select *
-    from {{ ref('stg_dora__structure') }}
+    from {{ ref('dim_dora__structures') }}
 ),
 
 final as (
@@ -60,7 +60,7 @@ final as (
         services.publics,
         services.publics_precisions,
         services.kind,
-        services.id_jointure_di,
+        services.service_id_jointure_di,
         services.latitude,
         services.longitude,
         services.update_needed,

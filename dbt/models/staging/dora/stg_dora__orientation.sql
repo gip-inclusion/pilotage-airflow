@@ -30,7 +30,6 @@ select
     is_anonymized,
     nullif(situation_other, '')                   as situation_other,
     nullif(beneficiary_other_contact_method, '')  as beneficiary_other_contact_method,
-    nullif(orientation_reasons, '')               as orientation_reasons,
     nullif(original_service_name, '')             as original_service_name,
     nullif(di_service_id, '')                     as di_service_id,
     nullif(di_service_name, '')                   as di_service_name,

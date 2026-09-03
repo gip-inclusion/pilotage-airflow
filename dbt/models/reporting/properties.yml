@@ -241,21 +241,28 @@ models:
           Pourcentage d'ESAT sans réponse trouvée.
 
 
-  - name: rpt_imer
+  - name: rpt_dora__imer
     config:
       tags:
-        - imer
+        - dora
     description: >
       Table de reporting large des intentions de mise en relation (IMER), avec les lignes
       qui viennent des Emplois et celles qui viennent de DORA.
 
-      Une ligne correspond à une intention de mise en relation, enrichie des informations
-      de la structure et du service Data Inclusion ciblés quand on les retrouve. Pour les lignes
-      Emplois, elle reprend aussi les informations de l'organisation prescriptrice et de la structure
-      employeuse de l'utilisateur.
+      Une ligne correspond à une intention de mise en relation, enrichie avec la meilleure information
+      de structure disponible pour le reporting et avec les informations du service Data Inclusion
+      ciblé quand on les retrouve. Pour les lignes Emplois, elle reprend aussi les informations de
+      l'organisation prescriptrice et de la structure employeuse de l'utilisateur.
       Comme dans `fct_dora__imer`, certaines colonnes gardent l'identifiant de la source d'origine :
       par exemple `source_imer_id` et `user_id`. Il faut donc toujours les lire avec
       `origin_source` avant de faire une jointure vers une table source.
+
+      Les colonnes `target_structure_*` décrivent la structure la plus complète disponible pour
+      l'analyse. Elles utilisent d'abord la structure Data Inclusion canonique retrouvée via
+      `target_di_structure_id`, puis la structure Data Inclusion du service mobilisé, puis la
+      structure DORA retrouvée via `target_structure_source_id`. Pour travailler strictement avec la
+      structure Data Inclusion canonique directe, il faut joindre `target_di_structure_id` à
+      `dim_data_inclusion__structures.structure_id`.
 
     columns:
       - name: id
@@ -307,7 +314,8 @@ models:
         description: >
           Identifiant de la structure ciblée avec son espace de noms. Pour DORA, il vaut `dora--<id>`;
           pour Data Inclusion, l'identifiant Data Inclusion reçu; pour Emplois, l'identifiant source
-          Emplois. Son espace de noms se déduit de `origin_source`.
+          Emplois. Son espace de noms se déduit de `origin_source`. Pour les lignes `origin_source =
+          'dora'`, il peut être joint à `dim_dora__structures.structure_id_jointure_di`.
       - name: target_di_structure_id
         description: >
           Identifiant canonique Data Inclusion de la structure ciblée par l'intention de mise en
@@ -347,18 +355,21 @@ models:
           - Sur une IMER DORA, c'est la première orientation retrouvée après la mobilisation.
           - Cette colonne sert à joindre les orientations.
           - Il ne faut pas l'utiliser pour dédoublonner les IMER.
-      - name: di_nom_structure
-        description: Nom de la structure concernée par l'intention.
-      - name: di_siret_structure
-        description: SIRET de la structure concernée par l'intention.
-      - name: di_structure_code_commune
-        description: Code INSEE de la structure concernée par l'intention.
-      - name: di_structure_region
-        description: Région de la structure concernée par l'intention.
-      - name: di_structure_code_departement
-        description: Code INSEE du département de la structure concernée par l'intention.
-      - name: di_structure_nom_departement
-        description: Nom du département de la structure concernée par l'intention.
+      - name: target_structure_nom
+        description: >
+          Nom de structure le plus complet disponible pour le reporting. Il vient d'abord de la
+          structure Data Inclusion ciblée, puis de la structure Data Inclusion du service mobilisé,
+          puis de la structure DORA.
+      - name: target_structure_siret
+        description: SIRET de la structure retenue pour le reporting.
+      - name: target_structure_code_commune
+        description: Code commune INSEE de la structure retenue pour le reporting.
+      - name: target_structure_region
+        description: Région de la structure retenue pour le reporting.
+      - name: target_structure_code_departement
+        description: Code INSEE du département de la structure retenue pour le reporting.
+      - name: target_structure_nom_departement
+        description: Nom du département de la structure retenue pour le reporting.
       - name: di_services_nom
         description: Nom du service concerné par l'intention.
       - name: di_services_thematiques

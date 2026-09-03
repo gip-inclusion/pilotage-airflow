@@ -15,7 +15,7 @@ dora_structures as (
         id,
         name,
         siret,
-        id_jointure_di
+        structure_id_jointure_di
     from {{ ref('stg_dora__structure') }}
 ),
 
@@ -112,7 +112,7 @@ orientations_enriched as (
     left join dora_structures
         on orientation_sources.prescriber_structure_id = dora_structures.id
     left join structure_source_mapping as dora_prescriber_structure_mapping
-        on dora_structures.id_jointure_di = dora_prescriber_structure_mapping.source_structure_id
+        on dora_structures.structure_id_jointure_di = dora_prescriber_structure_mapping.source_structure_id
     left join structure_source_mapping as emplois_prescriber_structure_mapping
         on
             emplois_prescriber_structure_mapping.source_structure_id
@@ -123,7 +123,7 @@ orientations_enriched as (
         on
             data_inclusion_oriented_service.service_id
             = case
-                when orientation_sources.dora_service_id is not null then dora_oriented_service.id_jointure_di
+                when orientation_sources.dora_service_id is not null then dora_oriented_service.service_id_jointure_di
                 else orientation_sources.direct_di_service_id
             end
 ),

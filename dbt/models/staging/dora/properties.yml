@@ -45,9 +45,9 @@ models:
         data_tests:
           - unique
           - not_null
-      - name: id_jointure_di
+      - name: structure_id_jointure_di
         description: >
-          ID préfixé par "dora--", utilisé pour joindre les données Data Inclusion.
+          ID de structure préfixé par "dora--", utilisé pour joindre les données Data Inclusion.
 
 
   - name: stg_dora__structure_member
@@ -141,41 +141,62 @@ models:
         data_tests:
           - unique
           - not_null
-      - name: id_jointure_di
+      - name: service_id_jointure_di
         description: >
-          ID préfixé par "dora--", utilisé pour joindre les données Data Inclusion.
+          ID de service préfixé par "dora--", utilisé pour joindre les données Data Inclusion.
 
 
   - name: stg_dora__emplois_orientation_data
     config:
       tags:
         - dora
-        - imer
     description: >
       Données Les Emplois associées aux orientations DORA créées via l'API Les Emplois
       ou depuis un JWT Emplois. La colonne orientation_id pointe vers `stg_dora__orientation.id`,
-      tandis que emplois_sync_uid est l'identifiant exposé dans l'export iMER Les Emplois.
+      tandis que les autres identifiants font référence aux tables Les Emplois.
     columns:
       - name: orientation_id
-        description: Identifiant de l'orientation associée, clé primaire de la table orientations_orientation.
+        description: >
+          Identifiant de l'orientation associée, clé primaire de la table `orientations_orientation`.
+          Il n'a pas de correspondance côté Les Emplois.
         data_tests:
           - unique
           - not_null
       - name: emplois_sync_uid
-        description: UID de synchronisation avec Les Emplois (unique).
+        description: >
+          UID de synchronisation avec Les Emplois. Il correspond à `les-emplois.insertion_orientation.id`.
+          Il n'y a pas encore d'export des orientations Les Emplois sur Pilotage.
         data_tests:
           - unique
           - not_null
       - name: beneficiary_id
-        description: Identifiant du bénéficiaire côté Les Emplois.
+        description: >
+          UID du bénéficiaire. Il correspond à `les-emplois.users_user.public_id` et à
+          `pilotage.candidats_v0.uid`.
       - name: structure_id
-        description: Identifiant de la structure côté Les Emplois.
+        description: >
+          UID de la structure côté Les Emplois : organisation prescriptrice ou entreprise. Pour une
+          organisation prescriptrice, il correspond à `les-emplois.prescribers_prescriberorganization.uid`
+          et à `pilotage.organisations_v0.uid`. Pour une entreprise, il correspond à
+          `les-emplois.companies_company.uid` et à `pilotage.structures_v0.uid`.
       - name: structure_name
-        description: Nom de la structure côté Les Emplois.
+        description: >
+          Nom de la structure côté Les Emplois : organisation prescriptrice ou entreprise. Pour une
+          organisation prescriptrice, il correspond à `les-emplois.prescribers_prescriberorganization.brand`
+          ou `les-emplois.prescribers_prescriberorganization.name`, et à `pilotage.organisations_v0.nom`.
+          Pour une entreprise, il correspond à `les-emplois.companies_company.brand` ou
+          `les-emplois.companies_company.name`, et à `pilotage.structures_v0.nom`.
       - name: structure_siret
-        description: SIRET de la structure côté Les Emplois.
+        description: >
+          SIRET de la structure côté Les Emplois : organisation prescriptrice ou entreprise. Pour une
+          organisation prescriptrice, il correspond à `les-emplois.prescribers_prescriberorganization.siret`
+          et à `pilotage.organisations_v0.siret`. Pour une entreprise, il correspond à
+          `les-emplois.companies_company.siret` et à `pilotage.structures_v0.siret`.
       - name: prescriber_id
-        description: Identifiant du prescripteur côté Les Emplois (peut être vide).
+        description: >
+          UID du professionnel, prescripteur ou employeur, côté Les Emplois. Il est vide si l'orientation a
+          été réalisée par JWT, méthode qui n'est plus utilisée depuis début juillet 2026. Il correspond à
+          `les-emplois.users_user.public_id` et à `pilotage.candidats_v0.uid`.
       - name: prescriber_email
         description: Email du prescripteur transmis par Les Emplois.
       - name: prescriber_first_name

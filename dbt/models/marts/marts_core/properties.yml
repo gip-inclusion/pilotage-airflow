@@ -296,7 +296,7 @@ models:
   - name: fct_dora__imer
     config:
       tags:
-        - imer
+        - dora
     description: >
       Table de faits des intentions de mise en relation (IMER). Une ligne correspond à une IMER,
       qu'elle vienne des Emplois ou de DORA.
@@ -370,6 +370,9 @@ models:
           Identifiant de la structure ciblée avec son espace de noms. Pour DORA, il vaut `dora--<id>`;
           pour Data Inclusion, l'identifiant Data Inclusion reçu; pour Emplois, l'identifiant source
           Emplois. Son espace de noms se déduit de `origin_source`.
+          Pour les lignes `origin_source = 'dora'`, c'est la clé à utiliser pour joindre
+          `dim_dora__structures` via `structure_id_jointure_di` et récupérer les informations de
+          structure DORA quand `target_di_structure_id` est vide.
       - name: target_di_structure_id
         description: >
           Identifiant canonique Data Inclusion de la structure ciblée par l'intention de mise en
@@ -433,7 +436,6 @@ models:
   - name: fct_dora__orientations
     config:
       tags:
-        - imer
         - dora
     description: >
       Table de faits des orientations DORA. Une ligne correspond à une orientation.
@@ -469,8 +471,9 @@ models:
                   - dora
       - name: emplois_sync_uid
         description: >
-          UID de synchronisation transmis par Les Emplois, quand l'orientation a une ligne dans les données
-          Emplois.
+          UID de synchronisation avec Les Emplois, quand l'orientation a une ligne dans les données
+          Emplois. Il vient de `stg_dora__emplois_orientation_data.emplois_sync_uid` et correspond à
+          `les-emplois.insertion_orientation.id`.
       - name: creation_date
         description: Date de création de l'orientation.
         tests:
@@ -495,11 +498,6 @@ models:
       - name: beneficiary_availability
         description: >
           Date reprise telle quelle depuis `stg_dora__orientation.beneficiary_availability`.
-      - name: orientation_reasons
-        description: >
-          Raisons de l'orientation renseignées dans DORA. La colonne est reprise depuis
-          `stg_dora__orientation.orientation_reasons`. C'est un champ texte libre très variable ; dans le
-          staging, les chaînes vides sont remplacées par `NULL`. Pas de détail DORA plus précis dans dbt.
       - name: duration_weekly_hours
         description: >
           Durée hebdomadaire en heures reprise depuis `stg_dora__orientation.duration_weekly_hours`.
@@ -526,8 +524,9 @@ models:
           créées depuis Les Emplois via le flux JWT. On peut le joindre à `dim_dora__users.id`.
       - name: prescriber_id_emplois
         description: >
-          Identifiant du prescripteur transmis par Les Emplois. Il correspond à
-          `stg_dora__emplois_orientation_data.prescriber_id`.
+          UID du professionnel, prescripteur ou employeur, transmis par Les Emplois. Il correspond à
+          `stg_dora__emplois_orientation_data.prescriber_id`, à `les-emplois.users_user.public_id` et à
+          `pilotage.candidats_v0.uid`. Il peut être vide pour les orientations réalisées par JWT.
       - name: prescriber_structure_id_di
         description: >
           Identifiant Data Inclusion de la structure prescriptrice. C'est la colonne à utiliser si on veut
@@ -542,8 +541,12 @@ models:
           en `dora`.
       - name: prescriber_structure_id_emplois
         description: >
-          Identifiant de la structure prescriptrice côté Les Emplois. Il est rempli pour les orientations
-          classées en `emplois`.
+          UID de la structure côté Les Emplois. Il vient de
+          `stg_dora__emplois_orientation_data.structure_id`, peut désigner une organisation prescriptrice,
+          auquel cas il correspond à `les-emplois.prescribers_prescriberorganization.uid` et à
+          `pilotage.organisations_v0.uid`, ou une entreprise, auquel cas il correspond à
+          `les-emplois.companies_company.uid` et à `pilotage.structures_v0.uid`. Il est rempli pour les
+          orientations classées en `emplois`.
       - name: prescriber_structure_name
         description: >
           Nom de la structure prescriptrice. On l'ajoute directement dans le mart parce que les dimensions
@@ -590,5 +593,6 @@ models:
           retrouve pas le service dans les dimensions disponibles.
       - name: emplois_beneficiary_id
         description: >
-          Identifiant du bénéficiaire transmis par Les Emplois. Il correspond à
-          `stg_dora__emplois_orientation_data.beneficiary_id`.
+          UID du bénéficiaire transmis par Les Emplois. Il correspond à
+          `stg_dora__emplois_orientation_data.beneficiary_id`, à `les-emplois.users_user.public_id` et à
+          `pilotage.candidats_v0.uid`.

@@ -6,7 +6,7 @@ with src as (
 services as (
     select
         {{ pilo_star(source('dora', 'services_service'), relation_alias='src', except=['geom']) }},
-        'dora--' || src.id               as id_jointure_di,
+        'dora--' || src.id               as service_id_jointure_di,
         st_y(cast(src.geom as geometry)) as latitude,
         st_x(cast(src.geom as geometry)) as longitude,
         case

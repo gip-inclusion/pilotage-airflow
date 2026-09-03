@@ -18,7 +18,6 @@ final as (
         orientations.situation,
         orientations.beneficiary_contact_preferences,
         orientations.beneficiary_availability,
-        orientations.orientation_reasons,
         orientations.duration_weekly_hours,
         orientations.duration_weeks,
         orientations.query_expires_at,

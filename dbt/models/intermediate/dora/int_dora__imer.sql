@@ -22,7 +22,7 @@ data_inclusion_services as (
 dora_services as (
     select distinct on (slug)
         slug,
-        id_jointure_di
+        service_id_jointure_di
     from {{ ref('dim_dora__services') }}
     where slug is not null
     order by
@@ -38,7 +38,7 @@ dora_mobilized_services as (
     inner join dora_services
         on mobilisation_events.mobilized_service_slug = dora_services.slug
     inner join data_inclusion_services
-        on dora_services.id_jointure_di = data_inclusion_services.service_id
+        on dora_services.service_id_jointure_di = data_inclusion_services.service_id
     where mobilisation_events.event_structure_source = 'dora'
 ),
 

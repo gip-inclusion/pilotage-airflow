@@ -23,13 +23,6 @@ with DAG(
         append_env=True,
     )
 
-    dbt_seed = bash.BashOperator(
-        task_id="dbt_seed",
-        bash_command="dbt seed",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
         bash_command='dbt build --select "+tag:dora"',
@@ -37,4 +30,4 @@ with DAG(
         append_env=True,
     )
 
-    dbt_deps >> dbt_seed >> dbt_build >> slack.success_notifying_task()
+    dbt_deps >> dbt_build >> slack.success_notifying_task()

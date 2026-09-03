@@ -82,12 +82,98 @@ models:
         description: >
           Indique si l'utilisateur est rattaché à au moins une structure DORA.
 
+  - name: dim_dora__structures
+    description: >
+      Dimension des structures DORA. Une ligne correspond à une structure DORA présente dans
+      `stg_dora__structure`, y compris les structures obsolètes afin de conserver la possibilité
+      d'enrichir des faits historiques.
+    columns:
+      - name: id
+        description: Identifiant de la structure DORA.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: structure_id_jointure_di
+        description: >
+          Identifiant `dora--<id>` utilisé comme clé de jointure avec les identifiants source
+          Data Inclusion, notamment `fct_dora__imer.target_structure_source_id` pour les lignes DORA.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: name
+        description: Nom de la structure DORA.
+
+      - name: short_desc
+        description: Description courte de la structure DORA.
+
+      - name: full_desc
+        description: Description détaillée de la structure DORA.
+
+      - name: url
+        description: Site web de la structure DORA.
+
+      - name: phone
+        description: Numéro de téléphone de la structure DORA.
+
+      - name: email
+        description: Adresse email de la structure DORA.
+
+      - name: address1
+        description: Première ligne d'adresse de la structure DORA.
+
+      - name: address2
+        description: Complément d'adresse de la structure DORA.
+
+      - name: siret
+        description: SIRET de la structure DORA.
+
+      - name: city_code
+        description: Code commune INSEE de la structure DORA.
+
+      - name: city
+        description: Commune de la structure DORA.
+
+      - name: postal_code
+        description: Code postal de la structure DORA.
+
+      - name: latitude
+        description: Latitude de la structure DORA.
+
+      - name: longitude
+        description: Longitude de la structure DORA.
+
+      - name: department
+        description: Département de la structure DORA.
+
+      - name: parent_id
+        description: Identifiant de la structure parente DORA.
+
+      - name: typology
+        description: Typologie de la structure DORA.
+
+      - name: slug
+        description: Slug de la fiche structure DORA.
+
+      - name: dora_url
+        description: URL de la fiche structure DORA.
+
+      - name: data_inclusion_id
+        description: Identifiant Data Inclusion stocké côté DORA.
+
+      - name: data_inclusion_source
+        description: Source Data Inclusion stockée côté DORA.
+
+      - name: is_obsolete
+        description: Indique si la structure DORA est obsolète.
+
   - name: dim_dora__services
     description: >
       Dimension des services DORA. Une ligne correspond à un service DORA présent dans
       `stg_dora__service`. Elle reprend les attributs du service et ajoute les principales
       informations de la structure DORA qui le porte quand elles sont disponibles dans
-      `stg_dora__structure`. L'objectif est d'avoir une table assez complète pour caractériser un
+      `dim_dora__structures`. L'objectif est d'avoir une table assez complète pour caractériser un
       service DORA sans refaire cette jointure dans chaque modèle consommateur.
     columns:
       - name: id
@@ -136,7 +222,7 @@ models:
       - name: structure_dora_url
         description: URL de la fiche structure DORA.
 
-      - name: id_jointure_di
+      - name: service_id_jointure_di
         description: Identifiant `dora--<id>` utilisé pour tenter la correspondance avec Data Inclusion.
         data_tests:
           - unique
