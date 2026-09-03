@@ -68,7 +68,7 @@ def sync_tables(table_names, src_schema, dest_schema, from_db=None):
                 del chunk
 
 
-with DAG("populate_matometa_db", schedule="@daily", **dag_args) as dag:
+with DAG("populate_matometa_db", schedule="0 10 * * *", **dag_args) as dag:
 
     @task
     def export_emplois_tables():

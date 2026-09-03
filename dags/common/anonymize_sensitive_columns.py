@@ -89,7 +89,7 @@ def _anonymize_table(conn, secret, table, columns):
 def anonymize_nir(tables):
     secret = get_hmac_secret()
 
-    with db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET_local") as emplois_db:
+    with db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET") as emplois_db:
         with emplois_db.engine.begin() as conn:
             targets = _columns_to_anonymize(conn, tables)
 
