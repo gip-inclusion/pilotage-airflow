@@ -85,6 +85,154 @@ sources:
           - name: date_mise_à_jour_metabase
             description: >
               Date de la dernière synchronisation de cette ligne dans Metabase.
+      - name: geiq_assessments
+        description: >
+          Bilans d'exécution des GEIQ. Une ligne par bilan, à l'échelle du GEIQ et pour une
+          année de campagne donnée : conventionnement obtenu, montants accordés et avancement
+          du contrôle réalisé par la DDETS/DREETS.
+        columns:
+          - name: id
+            description: >
+              Identifiant du bilan d'exécution.
+          - name: campaign_year
+            description: >
+              Année sur laquelle porte le bilan d'exécution.
+          - name: state
+            description: >
+              État du bilan d'exécution.
+          - name: label_geiq_id
+            description: >
+              Identifiant du GEIQ dans Label, l'outil de la fédération des GEIQ.
+          - name: label_geiq_name
+            description: >
+              Nom du GEIQ tel que renseigné dans Label.
+          - name: label_geiq_post_code
+            description: >
+              Code postal du GEIQ tel que renseigné dans Label.
+          - name: department
+            description: >
+              Département du GEIQ principal.
+          - name: department_name
+            description: >
+              Nom complet du département du GEIQ principal.
+          - name: region
+            description: >
+              Région du GEIQ principal.
+          - name: conventionned_institutions_departments
+            description: >
+              Départements des DDETS/DREETS ayant conventionné le GEIQ.
+          - name: with_main_geiq
+            description: >
+              Indique si le bilan d'exécution porte sur le GEIQ principal.
+          - name: antenna_nb
+            description: >
+              Nombre d'antennes concernées par le bilan d'exécution.
+          - name: employee_nb
+            description: >
+              Nombre de salarié.e.s concerné.e.s par le bilan d'exécution.
+          - name: convention_amount
+            description: >
+              Montant conventionné, en euros.
+          - name: granted_amount
+            description: >
+              Montant accordé, en euros.
+          - name: advance_amount
+            description: >
+              Montant de l'avance versée, en euros.
+          - name: created_at
+            description: >
+              Date de création du bilan d'exécution.
+          - name: contracts_selection_validated_at
+            description: >
+              Date de validation de la sélection des contrats.
+          - name: submitted_at
+            description: >
+              Date de soumission du bilan d'exécution.
+          - name: grants_selection_validated_at
+            description: >
+              Date de validation de la sélection des aides.
+          - name: decision_validated_at
+            description: >
+              Date de validation de la décision.
+          - name: reviewed_at
+            description: >
+              Date du bilan.
+          - name: final_reviewed_at
+            description: >
+              Date du bilan définitif.
+          - name: reviewed_by_institution_id
+            description: >
+              Identifiant de l'institution ayant réalisé le bilan.
+          - name: final_reviewed_by_institution_id
+            description: >
+              Identifiant de l'institution ayant réalisé le bilan définitif.
+          - name: date_mise_à_jour_metabase
+            description: >
+              Date de la dernière synchronisation de cette ligne dans Metabase.
+              Mise à jour quotidienne.
+      - name: geiq_contracts
+        description: >
+          Contrats des salarié.e.s pris en compte dans les bilans d'exécution des GEIQ.
+          Une ligne par contrat et par année de campagne, avec l'aide présentée par le GEIQ
+          et la décision de la DDETS/DREETS associée.
+          À joindre avec `raw_emplois.geiq_assessments` (sur `assessment_id`).
+        columns:
+          - name: id
+            description: >
+              Identifiant du contrat.
+          - name: assessment_id
+            description: >
+              Identifiant du bilan d'exécution auquel le contrat est rattaché.
+              Clé étrangère vers `raw_emplois.geiq_assessments.id`.
+          - name: employee_id
+            description: >
+              Identifiant du salarié titulaire du contrat.
+          - name: campaign_year
+            description: >
+              Année sur laquelle porte le bilan d'exécution.
+          - name: department
+            description: >
+              Département de l'antenne portant le contrat.
+          - name: department_name
+            description: >
+              Nom complet du département de l'antenne portant le contrat.
+          - name: region
+            description: >
+              Région de l'antenne portant le contrat.
+          - name: start_at
+            description: >
+              Date de début du contrat.
+          - name: planned_end_at
+            description: >
+              Date de fin prévisionnelle du contrat.
+          - name: end_at
+            description: >
+              Date de fin du contrat.
+          - name: nb_days_in_campaign_year
+            description: >
+              Nombre de jours du contrat couverts par l'année de campagne.
+          - name: allowance_requested
+            description: >
+              Aide présentée par le GEIQ au titre de ce contrat.
+          - name: allowance_granted
+            description: >
+              Aide accordée par la DDETS/DREETS au titre de ce contrat.
+          - name: allowance_amount
+            description: >
+              Montant de l'aide potentielle du salarié, en euros : 0, 814 ou 1400.
+          - name: allowance_request_justification_reason
+            description: >
+              Motif dérogatoire justifiant la demande d'aide, renseigné par le GEIQ.
+          - name: allowance_refusal_reason
+            description: >
+              Motif de refus de l'aide, renseigné par la DDETS/DREETS.
+          - name: allowance_granted_previous_year
+            description: >
+              Aide accordée au salarié l'année précédente. Champ issu du modèle Employee.
+          - name: date_mise_à_jour_metabase
+            description: >
+              Date de la dernière synchronisation de cette ligne dans Metabase.
+              Mise à jour quotidienne.
   - name: emplois
     schema: public
     description: >
