@@ -339,3 +339,66 @@ models:
         description: Nom du département de la structure prescriptrice.
       - name: company_source
         description: Source de la structure prescriptrice.
+
+  - name: rpt_geiq__assessments_contracts
+    config:
+      tags:
+        - geiq
+    description: >
+      Modèle de reporting au grain du bilan d'éxecution geiq.
+
+      Une ligne correspond à un bilan, soit un geiq et une année de campagne, éventuellement décliné par
+      antenne. Le modèle reprend toutes les colonnes de fct_geiq__assessments et y ajoute les mesures des
+      contrats du bilan, agrégées depuis fct_geiq__contracts.
+
+      C'est ici que se croisent les deux grains : l'écart entre le montant conventionné et le montant
+      potentiel des contrats retenus, et le taux de réalisation, se lisent sur une seule ligne, sans
+      jointure ni duplication des montants du bilan.
+
+      Les bilans sans aucun contrat sont conservés, avec des mesures de contrats à zéro.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('fct_geiq__assessments')
+    columns:
+      - name: id
+        description: >
+          id unique associé au bilan d'éxecution.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('fct_geiq__assessments')
+              field: id
+      - name: contract_nb
+        description: >
+          nombre de contrats rattachés au bilan, présentés ou non.
+      - name: requested_contract_nb
+        description: >
+          nombre de contrats présentés par le geiq.
+      - name: granted_contract_nb
+        description: >
+          nombre de contrats dont l'aide a été accordée par la DDETS/DREETS. À croiser avec
+          is_final_reviewed pour ne compter que les contrats déclarés éligibles après validation finale.
+      - name: short_derogated_contract_nb
+        description: >
+          nombre de contrats présentés, de moins de 90 jours sur l'année de campagne, assortis du motif
+          dérogatoire de prise en compte de l'accompagnement.
+      - name: requested_allowance_amount
+        description: >
+          montant potentiel des contrats présentés, en euros, soit la somme des aides potentielles des
+          contrats présentés par le geiq.
+      - name: granted_allowance_amount
+        description: >
+          montant potentiel des contrats retenus, en euros, soit la somme des aides potentielles des
+          contrats dont l'aide a été accordée.
+      - name: convention_vs_granted_allowance_gap
+        description: >
+          écart en euros entre le montant potentiel des contrats retenus et le montant conventionné.
+          Négatif lorsque les contrats retenus pèsent moins que le conventionnement.
+      - name: realization_rate
+        description: >
+          taux de réalisation d'un bilan, soit son montant accordé rapporté à son montant conventionné,
+          arrondi au millième. Vaut 0 lorsque le montant conventionné est nul, la division étant sécurisée.
+          Ce taux n'est pas additif : une moyenne de cette colonne sur plusieurs bilans ne donne pas le taux
+          de l'ensemble. Pour un taux agrégé, rapporter la somme des granted_amount à la somme des
+          convention_amount.

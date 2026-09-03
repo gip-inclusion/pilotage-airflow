@@ -1,0 +1,22 @@
+select
+    id,
+    assessment_id,
+    employee_id,
+    campaign_year,
+    department,
+    department_name,
+    region,
+    start_at,
+    planned_end_at,
+    end_at,
+    nb_days_in_campaign_year,
+    allowance_amount,
+    allowance_request_justification_reason,
+    allowance_refusal_reason,
+    date_mise_à_jour_metabase,
+    end_at - start_at                   as real_contract_duration,
+    end_at - planned_end_at             as theoretical_contract_duration,
+    allowance_requested = 1             as is_allowance_requested,
+    allowance_granted = 1               as is_allowance_granted,
+    allowance_granted_previous_year = 1 as is_allowance_granted_previous_year
+from {{ ref('stg_geiq__contracts') }}
