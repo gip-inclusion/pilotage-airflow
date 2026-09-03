@@ -61,11 +61,11 @@ select
     null::BOOLEAN                                                       as "Conseil Consultatif",
     null::BOOLEAN                                                       as "Offre découverte",
     null::BOOLEAN                                                       as "Offre payante (devis validé)",
+    cnm."date du dernier envoi de baro"::DATE                           as "Date d'envoi du dernier baromètre",
+    cnm."date du premier envoi de baro"::DATE                           as "Date d'envoi du premier Baromètre",
     cmd."Source",
     null                                                                as "recup fonction",
-    null                                                                as "Secteur",
-    (cnm."date du dernier envoi de baro")::DATE                         as "Date d'envoi du dernier baromètre",
-    (cnm."date du premier envoi de baro")::DATE                         as "Date d'envoi du premier Baromètre"
+    null                                                                as "Secteur"
 from {{ source('monrecap', 'contacts_non_commandeurs_v0') }} as cnm
 left join {{ ref('stg_commandes_max') }} as cmd
     on cnm.submission_id = cmd."Submission ID"
