@@ -1,0 +1,229 @@
+version: 2
+
+models:
+  - name : dim_dora__users
+    description: >
+      Vue contenant les informations sur les utilisateurs.
+    columns:
+      - name: id
+        description: >
+          Identifiant de l'utilisateur.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: email
+        description: >
+          Adresse email de l'utilisateur.
+
+      - name: last_name
+        description: >
+          Nom de famille de l'utilisateur.
+
+      - name: first_name
+        description: >
+          Prénom de l'utilisateur.
+
+      - name: is_manager
+        description: >
+          Utilisateur qui a les droits de gestionnaire de territoires sur les départements spécifiés.
+
+      - name: departments
+        description: >
+          Liste des départements sur lesquels l'utilisateur a des droits ou un rattachement déclaré.
+
+      - name: date_joined
+        description: >
+          Date de création du compte, que ce soit par l'utilisateur lui-même ou par envoi d'une invitation.
+
+      - name: last_login
+        description: >
+          Date de dernière connexion. Lorsqu'elle est vide, l'utilisateur a été créé suite à un envoi
+          d'invitation par une structure, mais n'a pas encore activé son compte.
+
+      - name: last_service_reminder_email_sent
+        description: >
+          Date du dernier email de rappel envoyé à l'utilisateur au sujet de ses services.
+
+      - name: newsletter
+        description: >
+          Indique si l'utilisateur est inscrit à la newsletter.
+
+      - name: main_activity
+        description: >
+          Champ historique aujourd'hui peu utile et pas toujours fiable, car un accompagnateur peut être offreur.
+          À valider avec le métier : sauf erreur, cette catégorie est choisie par l'utilisateur à la création du compte.
+
+      - name: last_notification_email_sent
+        description: >
+          Date du dernier email de notification envoyé à l'utilisateur. Reprend actuellement la valeur de
+          `last_service_reminder_email_sent`.
+
+      - name: department
+        description: >
+          Première valeur présente dans la colonne `departments`.
+
+          Il est possible qu'un même utilisateur soit rattaché à plusieurs départements. Pour gérer cette complexité,
+          on a le modèle `int_user_departments`, avec une ligne par couple utilisateur x département.
+
+      - name: is_activated
+        description: >
+          Indique si l'utilisateur a activé son compte, déduit de la présence d'une date de dernière connexion.
+
+      - name: user_with_imer
+        description: >
+          Indique si l'utilisateur est présent dans les intentions de mise en relation DORA.
+
+      - name: first_date_as_structure_member
+        description: >
+          Première date de rattachement de l'utilisateur à une structure DORA.
+
+      - name: user_is_structure_member
+        description: >
+          Indique si l'utilisateur est rattaché à au moins une structure DORA.
+
+  - name: dim_dora__structures
+    description: >
+      Dimension des structures DORA. Une ligne correspond à une structure DORA présente dans
+      `stg_dora__structure`, y compris les structures obsolètes afin de conserver la possibilité
+      d'enrichir des faits historiques.
+    columns:
+      - name: id
+        description: Identifiant de la structure DORA.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: structure_id_jointure_di
+        description: >
+          Identifiant `dora--<id>` utilisé comme clé de jointure avec les identifiants source
+          Data Inclusion, notamment `fct_dora__imer.target_structure_source_id` pour les lignes DORA.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: name
+        description: Nom de la structure DORA.
+
+      - name: short_desc
+        description: Description courte de la structure DORA.
+
+      - name: full_desc
+        description: Description détaillée de la structure DORA.
+
+      - name: url
+        description: Site web de la structure DORA.
+
+      - name: phone
+        description: Numéro de téléphone de la structure DORA.
+
+      - name: email
+        description: Adresse email de la structure DORA.
+
+      - name: address1
+        description: Première ligne d'adresse de la structure DORA.
+
+      - name: address2
+        description: Complément d'adresse de la structure DORA.
+
+      - name: siret
+        description: SIRET de la structure DORA.
+
+      - name: city_code
+        description: Code commune INSEE de la structure DORA.
+
+      - name: city
+        description: Commune de la structure DORA.
+
+      - name: postal_code
+        description: Code postal de la structure DORA.
+
+      - name: latitude
+        description: Latitude de la structure DORA.
+
+      - name: longitude
+        description: Longitude de la structure DORA.
+
+      - name: department
+        description: Département de la structure DORA.
+
+      - name: parent_id
+        description: Identifiant de la structure parente DORA.
+
+      - name: typology
+        description: Typologie de la structure DORA.
+
+      - name: slug
+        description: Slug de la fiche structure DORA.
+
+      - name: dora_url
+        description: URL de la fiche structure DORA.
+
+      - name: data_inclusion_id
+        description: Identifiant Data Inclusion stocké côté DORA.
+
+      - name: data_inclusion_source
+        description: Source Data Inclusion stockée côté DORA.
+
+      - name: is_obsolete
+        description: Indique si la structure DORA est obsolète.
+
+  - name: dim_dora__services
+    description: >
+      Dimension des services DORA. Une ligne correspond à un service DORA présent dans
+      `stg_dora__service`. Elle reprend les attributs du service et ajoute les principales
+      informations de la structure DORA qui le porte quand elles sont disponibles dans
+      `dim_dora__structures`. L'objectif est d'avoir une table assez complète pour caractériser un
+      service DORA sans refaire cette jointure dans chaque modèle consommateur.
+    columns:
+      - name: id
+        description: Identifiant du service DORA.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: name
+        description: Nom du service DORA.
+
+      - name: short_desc
+        description: Description courte du service DORA.
+
+      - name: description
+        description: Description détaillée du service DORA.
+
+      - name: status
+        description: Statut de publication du service DORA.
+
+      - name: kind
+        description: Type de service DORA.
+
+      - name: publics
+        description: Publics ciblés par le service DORA.
+
+      - name: dora_url
+        description: URL de la fiche service DORA.
+
+      - name: structure_id
+        description: Identifiant de la structure DORA qui porte le service.
+
+      - name: structure_name
+        description: >
+          Nom de la structure DORA qui porte le service.
+
+      - name: structure_siret
+        description: SIRET de la structure DORA qui porte le service.
+
+      - name: structure_typology
+        description: Typologie de la structure DORA qui porte le service.
+
+      - name: structure_department
+        description: Département de la structure DORA qui porte le service.
+
+      - name: structure_dora_url
+        description: URL de la fiche structure DORA.
+
+      - name: service_id_jointure_di
+        description: Identifiant `dora--<id>` utilisé pour tenter la correspondance avec Data Inclusion.
+        data_tests:
+          - unique
+          - not_null

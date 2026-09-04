@@ -32,7 +32,7 @@ models:
 
     config:
       tags:
-        - imer
+        - dora
     columns:
       - name: id
         description: Identifiant unique de l'intention de mise en relation.

@@ -2,17 +2,69 @@ version: 2
 
 models:
   - name: int_dora__imer
-    description: |
-      Table contenant les intentions de mise en relation (mobilisation et orientations)
+    description: >
+      Intentions de mise en relation DORA conservées pour alimenter `fct_dora__imer`.
+      Avant, ce modèle comptait deux types d'événements comme des IMER : les
+      orientations et les mobilisations. Ce n'est plus le cas, car une orientation
+      DORA génère aussi une mobilisation et créait du double comptage.
+      Maintenant, une IMER DORA correspond uniquement à une mobilisation. Les
+      orientations restent disponibles dans `fct_dora__orientations`.
     config:
       tags:
         - dora
     columns:
       - name: event_id
-        description: identifiant de la mise en relation
+        description: Identifiant de la mise en relation côté DORA.
         tests:
           - unique
           - not_null
+      - name: kind
+        description: >
+          Type d'IMER DORA. Depuis le changement de modèle pour éviter le double comptage,
+          la seule valeur attendue ici est `mobilisation`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - mobilisation
+      - name: orientation_id
+        description: |
+          Identifiant de l'orientation liée à l'IMER, quand il y en a une.
+
+          C'est l'identifiant de la première orientation retrouvée après la mobilisation.
+          Cette orientation vient de `int_dora__mobilisation_to_orientation`. On la retrouve
+          avec la règle métier déjà utilisée dans ce modèle : même utilisateur, même service
+          via le slug, et une orientation créée dans l'heure qui suit la mobilisation.
+          Une même orientation peut apparaître sur plusieurs lignes d'IMER si plusieurs
+          mobilisations lui sont rattachées.
+      - name: origin_source
+        description: >
+          Origine du service mobilisé. Vaut `dora` pour un service DORA et `dora-data-inclusion`
+          pour un service Data Inclusion mobilisé depuis DORA.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - dora
+                  - dora-data-inclusion
+      - name: target_structure_source_id
+        description: >
+          Identifiant de la structure ciblée avec son espace de noms. Les IDs DORA sont préfixés par
+          `dora--`; les IDs Data Inclusion conservent leur valeur source.
+      - name: target_di_structure_id
+        description: >
+          Identifiant canonique Data Inclusion de la structure ciblée. Il reste vide si aucun mapping
+          n'est trouvé.
+      - name: mobilized_service_id
+        description: >
+          Identifiant Data Inclusion du service mobilisé, déjà validé contre
+          `dim_data_inclusion__services`. Pour un événement DORA, il est reconstruit depuis le
+          slug présent dans `event_path`, puis traduit via `dim_dora__services.service_id_jointure_di`.
+          Pour un événement Data Inclusion mobilisé depuis DORA, il est reconstruit depuis
+          `event_path` après suppression du préfixe `di--`. Si le service reconstruit n'existe pas
+          dans `dim_data_inclusion__services`, la colonne reste vide.
   - name: int_dora__actes_metier
     description: >
       Ce modele compte, par mois, les actes metier DORA reconstruits depuis les requetes historiques du fetcher Python
@@ -130,49 +182,63 @@ models:
               - type_structure
               - departement
   - name: int_dora__mobilisation_to_orientation
-    description:
-      Cette vue associe Ã  chaque mobilisation la premiÃ¨re orientation qui en suit si il y en a une.
-      Une orientation suit une mobilisation si elle a le mÃªme user_id, est faite dans l'heure aprÃ¨s la mobilisation,
-      et concerne le mÃªme service (slug)
+    description: >
+      Cette vue associe à chaque mobilisation la première orientation qui la suit, s'il y en a une.
+      Une orientation suit une mobilisation si elle a le même `user_id`, si elle est créée dans
+      l'heure qui suit la mobilisation, et si elle concerne le même service via le slug.
     config:
       tags:
         - dora
     columns:
       - name: mobilisation_id
-        description: identifiant de la mobilisation
+        description: Identifiant de la mobilisation.
         tests:
           - unique
           - not_null
       - name: user_id
-        description: identifiant de l'utilisateur Ã  l'origine de la prescription
+        description: Identifiant de l'utilisateur à l'origine de la prescription.
         tests:
           - not_null
       - name: first_following_orientation_id
-        description: id de la premiÃ¨re orientation qui suit la mobilisation. Peut Ãªtre null si aucune orientation est faite suite Ã  la mobilisation.
+        description: >
+          ID de la première orientation qui suit la mobilisation. Peut être `NULL` si aucune orientation
+          ne suit la mobilisation.
       - name: mobilisation_date
-        description: date de la mobilisation
+        description: Date de la mobilisation.
         tests:
           - not_null
       - name: first_following_orientation_date
-        description: date de la premiÃ¨re orientation qui suit la mobilisation. Peut Ãªtre null si aucune orientation est faite suite Ã  la mobilisation.
+        description: >
+          Date de la première orientation qui suit la mobilisation. Peut être `NULL` si aucune orientation
+          ne suit la mobilisation.
       - name: delay
-        description: temps passÃ© en entre la mobilisation et l'orientation.
+        description: Temps écoulé entre la mobilisation et l'orientation.
   - name: int_dora__mobilisationevent_user
     description: |
-      Ã‰vÃ©nements de mobilisation des utilisateurs.
+      Événements de mobilisation des utilisateurs.
     config:
       tags:
         - dora
     columns:
       - name: event_id
         description: |
-          Identifiant de l'Ã©vÃ©nement de mobilisation
+          Identifiant de l'événement de mobilisation.
         tests:
           - unique
           - not_null
       - name: user_id
         tests:
           - not_null
+      - name: event_structure_source
+        description: >
+          Espace de noms de `event_structure_id`. Cette colonne reprend `structure_source` depuis
+          `stg_dora__mobilisationevent`, avec le préfixe `event_` ajouté lors de la jointure avec
+          les utilisateurs.
+      - name: event_structure_id
+        description: >
+          Identifiant source de la structure qui porte le service mobilisé, dans le namespace indiqué
+          par `event_structure_source`. Cette colonne reprend `structure_id` depuis
+          `stg_dora__mobilisationevent`, avec le préfixe `event_`.
   - name: int_dora__orientation_user_service
     description: |
       Orientations des utilisateurs vers des services.
@@ -188,19 +254,160 @@ models:
         tests:
           - unique
           - not_null
+  - name: int_dora__orientations_enriched
+    description: >
+      Orientations DORA enrichies, avec une ligne par orientation. On garde les orientations qui ont un
+      prescripteur DORA, ou qui sont reliées à une ligne Les Emplois. Ce modèle centralise la logique
+      entre DORA, Les Emplois et Data Inclusion : retrouver les bons identifiants, garder les noms utiles
+      pour lire les données, et ajouter la commune du service orienté quand elle est disponible.
+    config:
+      tags:
+        - dora
+    columns:
+      - name: id
+        description: Identifiant canonique de l'orientation DORA.
+        tests:
+          - unique
+          - not_null
+      - name: origin_source
+        description: |
+          Origine qu'on retient pour choisir les bons champs :
+          - `dora` : l'orientation a un prescripteur DORA (`prescriber_id_dora` renseigné). C'est aussi le
+            cas des orientations DORA créées depuis Les Emplois via le flux JWT.
+          - `emplois` : l'orientation vient directement de l'API Les Emplois. Elle n'a pas de prescripteur
+            DORA, mais elle a une ligne dans `stg_dora__emplois_orientation_data`.
+      - name: emplois_sync_uid
+        description: >
+          UID de synchronisation avec Les Emplois. Il correspond à `les-emplois.insertion_orientation.id`
+          et vient de `stg_dora__emplois_orientation_data.emplois_sync_uid`. Il est rempli dès qu'on a une
+          ligne Les Emplois, même si l'orientation est finalement classée en `dora`.
+      - name: creation_date
+        description: Date de création de l'orientation dans DORA.
+      - name: processing_date
+        description: Date de traitement de l'orientation dans DORA.
+      - name: status
+        description: Statut de traitement de l'orientation dans DORA.
+      - name: prescriber_id_dora
+        description: >
+          Identifiant du prescripteur côté DORA. Il est rempli pour les orientations DORA, y compris celles
+          créées depuis Les Emplois via le flux JWT. Il est vide pour les orientations qui viennent
+          directement de l'API Les Emplois.
+      - name: prescriber_id_emplois
+        description: >
+          UID du professionnel, prescripteur ou employeur, transmis par Les Emplois. Il vient de
+          `stg_dora__emplois_orientation_data.prescriber_id`, correspond à
+          `les-emplois.users_user.public_id` et à `pilotage.candidats_v0.uid`, et peut être vide pour les
+          orientations réalisées par JWT.
+      - name: prescriber_structure_id_di
+        description: >
+          Identifiant Data Inclusion de la structure prescriptrice, quand on le retrouve. Côté
+          `dora`, on passe par `stg_dora__structure.structure_id_jointure_di`. Côté `emplois`, on part de
+          `emplois-de-linclusion--<structure_id>`, construit avec la structure transmise par Les Emplois.
+          La colonne peut rester vide si la structure source n'existe pas dans le mapping Data Inclusion
+          du moment.
+      - name: prescriber_structure_id_dora
+        description: >
+          Identifiant de la structure prescriptrice côté DORA. Il est rempli seulement quand
+          l'orientation est classée en `dora`.
+      - name: prescriber_structure_id_emplois
+        description: >
+          UID de la structure côté Les Emplois, repris depuis
+          `stg_dora__emplois_orientation_data.structure_id`. Il peut désigner une organisation
+          prescriptrice, auquel cas il correspond à `les-emplois.prescribers_prescriberorganization.uid` et
+          à `pilotage.organisations_v0.uid`, ou une entreprise, auquel cas il correspond à
+          `les-emplois.companies_company.uid` et à `pilotage.structures_v0.uid`. Il est rempli seulement
+          quand l'orientation est classée en `emplois`.
+      - name: prescriber_structure_name
+        description: >
+          Nom de la structure prescriptrice, pour pouvoir lire la table sans refaire une jointure. Côté
+          `emplois`, on prend le nom transmis avec l'orientation dans
+          `stg_dora__emplois_orientation_data.structure_name`. Côté `dora`, on prend le nom actuel dans
+          `stg_dora__structure.name`. La colonne peut rester vide, par exemple si une orientation DORA n'a
+          pas de structure prescriptrice renseignée.
+      - name: prescriber_structure_siret
+        description: >
+          SIRET de la structure prescriptrice. Côté `emplois`, on prend le SIRET transmis avec
+          l'orientation dans `stg_dora__emplois_orientation_data.structure_siret`. Côté `dora`, on prend le
+          SIRET actuel dans `stg_dora__structure.siret`. La colonne peut rester vide, par exemple si une
+          orientation DORA n'a pas de structure prescriptrice, ou si la structure DORA existe mais n'a pas
+          de SIRET.
+      - name: oriented_service_id_di
+        description: >
+          Identifiant Data Inclusion du service orienté, quand on le retrouve. Si l'orientation
+          pointe vers un service DORA, on passe par `dim_dora__services.service_id_jointure_di`, puis par
+          `dim_data_inclusion__services.service_id`. Si l'orientation porte déjà un identifiant Data
+          Inclusion, on garde celui qui est reçu dans DORA.
+      - name: oriented_service_id_dora
+        description: >
+          Identifiant du service orienté côté DORA. Il est rempli quand l'orientation pointe vers un service
+          DORA.
+      - name: oriented_service_name
+        description: >
+          Nom du service orienté. On prend d'abord le nom Data Inclusion stocké dans l'orientation, puis le
+          nom du service DORA dans `dim_dora__services`, puis le nom source historisé dans l'orientation.
+      - name: oriented_service_structure_name
+        description: >
+          Nom de la structure qui porte le service orienté. On prend d'abord le nom Data Inclusion stocké
+          dans l'orientation, puis le nom disponible via `dim_dora__services`.
+      - name: oriented_service_code_commune_insee
+        description: >
+          Code commune INSEE du service orienté. On prend d'abord le code commune disponible dans
+          `dim_data_inclusion__services`, puis le code commune du service DORA dans `dim_dora__services`.
+      - name: emplois_beneficiary_id
+        description: >
+          UID du bénéficiaire transmis par Les Emplois. Il vient de
+          `stg_dora__emplois_orientation_data.beneficiary_id` et correspond à
+          `les-emplois.users_user.public_id` et à `pilotage.candidats_v0.uid`.
   - name: int_dora__service_structure
     description: |
-      Structures de services.
+      Services DORA avec leur structure DORA non obsolète.
+
+      Ce modèle garde le comportement historique des usages qui passaient par
+      `stg_dora__structure` quand ce staging filtrait encore les structures obsolètes.
+      Si un service est rattaché à une structure obsolète, il n'est pas gardé ici.
     config:
       tags:
         - dora
       indexes:
         - columns: [service_id]
+    columns:
+      - name: service_service_id_jointure_di
+        description: >
+          ID de service DORA préfixé par `dora--`, utilisé pour joindre les données Data Inclusion.
+      - name: structure_structure_id_jointure_di
+        description: >
+          ID de structure DORA préfixé par `dora--`, utilisé pour joindre les données Data Inclusion.
 
-  - name: int_dora__structure_members
+  - name: int_dora__structure_non_obsolete
     description: |
-      Membres des structures.
+      Structures DORA non obsolètes.
+
+      Ce modèle remplace l'ancien usage de `stg_dora__structure` quand on veut
+      vraiment exclure les structures obsolètes. Avant, le filtre était dans le
+      staging. Maintenant le staging garde toute la source, et c'est ici qu'on filtre.
+
+      Utilise ce modèle quand les obsolètes ne doivent pas entrer dans l'analyse.
+      Pour de l'historique complet, ou pour éviter de perdre des infos dans les
+      jointures downstream, utilise `stg_dora__structure`.
     config:
       tags:
         - dora
 
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: structure_id_jointure_di
+        description: >
+          ID de structure DORA préfixé par `dora--`, utilisé pour joindre les données Data Inclusion.
+
+  - name: int_dora__structure_members
+    description: |
+      Membres des structures DORA non obsolètes.
+
+      Ce modèle garde le comportement historique des usages qui passaient par
+      `stg_dora__structure` quand ce staging filtrait encore les structures obsolètes.
+    config:
+      tags:
+        - dora
