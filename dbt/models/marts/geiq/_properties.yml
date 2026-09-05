@@ -1,0 +1,222 @@
+version: 2
+
+models:
+  - name: fct_geiq__contracts
+    config:
+      tags:
+        - geiq
+    description: >
+      Table de faits au grain du contrat : une ligne par contrat de salarié.e pris en compte dans un bilan
+      d'éxecution geiq. Elle porte les mesures de comptage et les montants potentiels d'aide, ainsi que le
+      contexte du bilan porteur (état, geiq, géographie) nécessaire pour filtrer sans jointure.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('int_geiq__contracts')
+    columns:
+      - name: id
+        description: >
+          id unique associé au contrat.
+        tests:
+          - not_null
+          - unique
+      - name: assessment_id
+        description: >
+          identifiant du bilan d'éxecution auquel le contrat est rattaché.
+        tests:
+          - relationships:
+              to: ref('fct_geiq__assessments')
+              field: id
+      - name: employee_id
+        description: >
+          identifiant du salarié titulaire du contrat. Un même salarié peut porter plusieurs contrats
+          au sein d'un même bilan.
+      - name: campaign_year
+        description: >
+          année de la campagne du bilan d'éxecution sur laquelle porte le contrat.
+      - name: label_geiq_id
+        description: >
+          identifiant du geiq dans Label, repris du bilan porteur pour éviter un double saut de jointure.
+      - name: assessment_state
+        description: >
+          état du bilan d'éxecution porteur.
+      - name: is_assessment_final_reviewed
+        description: >
+          indique si le bilan porteur a fait l'objet d'une validation finale par la DREETS. Indispensable
+          pour isoler les contrats déclarés éligibles après validation finale : allowance_granted est déjà
+          renseigné sur des bilans non finalisés.
+      - name: antenna_department
+        description: >
+          code du département de l'antenne portant le contrat. À ne pas confondre avec geiq_department.
+      - name: antenna_department_name
+        description: >
+          nom complet du département de l'antenne portant le contrat.
+      - name: antenna_region
+        description: >
+          région de l'antenne portant le contrat.
+      - name: geiq_department
+        description: >
+          code du département du geiq principal, repris du bilan porteur. Diffère de antenna_department
+          pour les contrats portés par une antenne implantée dans un autre département.
+      - name: geiq_department_name
+        description: >
+          nom complet du département du geiq principal.
+      - name: geiq_region
+        description: >
+          région du geiq principal.
+      - name: start_at
+        description: >
+          date de début du contrat.
+      - name: planned_end_at
+        description: >
+          date de fin prévisionnelle du contrat.
+      - name: end_at
+        description: >
+          date de fin du contrat. Non renseignée tant que le contrat n'est pas terminé.
+      - name: real_contract_duration
+        description: >
+          durée réelle du contrat en jours, bornes exclues. Nulle tant que end_at n'est pas renseignée.
+      - name: theoretical_contract_duration
+        description: >
+          écart en jours entre la date de fin réelle et la date de fin prévisionnelle. Négatif lorsque le
+          contrat s'est arrêté avant la date prévue. Nul tant que end_at n'est pas renseignée.
+      - name: nb_days_in_campaign_year
+        description: >
+          nombre de jours du contrat couverts par l'année de campagne.
+      - name: allowance_amount
+        description: >
+          montant de l'aide potentielle du salarié, en euros : 0, 814 ou 1400. Sert de base aux montants
+          potentiels présentés et retenus, filtré par is_allowance_requested ou is_allowance_granted.
+        tests:
+          - accepted_values:
+              values:
+                - 0
+                - 814
+                - 1400
+      - name: is_allowance_requested
+        description: >
+          indique si l'aide a été présentée par le geiq au titre de ce contrat.
+      - name: is_allowance_granted
+        description: >
+          indique si l'aide a été accordée par la DDETS/DREETS au titre de ce contrat. À croiser avec
+          is_assessment_final_reviewed pour ne retenir que les décisions définitives.
+      - name: is_allowance_granted_previous_year
+        description: >
+          indique si une aide a été accordée au salarié l'année précédente. Champ issu du modèle Employee.
+      - name: allowance_request_justification_reason
+        description: >
+          motif dérogatoire justifiant la demande d'aide, renseigné par le geiq.
+      - name: allowance_refusal_reason
+        description: >
+          motif de refus de l'aide, renseigné par la DDETS/DREETS.
+      - name: is_short_contract_with_derogation
+        description: >
+          indique un contrat présenté, de moins de 90 jours sur l'année de campagne, et assorti du motif
+          dérogatoire de prise en compte de l'accompagnement.
+      - name: date_mise_à_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.
+
+  - name: fct_geiq__assessments
+    config:
+      tags:
+        - geiq
+    description: >
+      Table de faits au grain du bilan d'éxecution : une ligne par bilan, soit un geiq et une année de
+      campagne, éventuellement décliné par antenne. Attention, le couple geiq et année de campagne n'est
+      pas unique, un même geiq peut porter plusieurs bilans sur une même campagne.
+      Elle porte les montants conventionnés et accordés, seules mesures disponibles à ce grain.
+      Les mesures agrégées des contrats, ainsi que l'écart au conventionnement et le taux de réalisation,
+      sont calculés dans rpt_geiq__assessments.
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('stg_geiq__assessments')
+    columns:
+      - name: id
+        description: >
+          id unique associé au bilan d'éxecution.
+        tests:
+          - not_null
+          - unique
+      - name: campaign_year
+        description: >
+          année de la campagne du bilan d'éxecution.
+      - name: state
+        description: >
+          état du bilan d'éxecution.
+      - name: is_final_reviewed
+        description: >
+          indique si le bilan a fait l'objet d'une validation finale par la DREETS. Équivalent à un
+          final_reviewed_at renseigné. L'état Contrôlé sans mention DREETS n'est pas une validation finale.
+      - name: label_geiq_id
+        description: >
+          identifiant du geiq dans Label, l'outil de la fédération des geiq.
+      - name: label_geiq_name
+        description: >
+          nom du geiq tel que renseigné dans Label.
+      - name: label_geiq_post_code
+        description: >
+          code postal du geiq tel que renseigné dans Label.
+      - name: geiq_department
+        description: >
+          code du département du geiq principal.
+      - name: geiq_department_name
+        description: >
+          nom complet du département du geiq principal.
+      - name: geiq_region
+        description: >
+          région du geiq principal.
+      - name: conventionned_institutions_departments
+        description: >
+          départements des DDETS/DREETS ayant conventionné le geiq. Champ multivalué, un bilan peut en
+          porter plusieurs. Ventiler les montants sur ce champ les compte donc plusieurs fois.
+      - name: with_main_geiq
+        description: >
+          indique si le bilan d'éxecution porte sur le geiq principal.
+      - name: antenna_nb
+        description: >
+          nombre d'antennes concernées par le bilan d'éxecution.
+      - name: employee_nb
+        description: >
+          nombre de salarié.e.s concerné.e.s par le bilan d'éxecution.
+      - name: convention_amount
+        description: >
+          montant conventionné, en euros.
+      - name: granted_amount
+        description: >
+          montant accordé, en euros. Distinct de granted_allowance_amount, qui est la somme des aides
+          potentielles des contrats retenus.
+      - name: advance_amount
+        description: >
+          montant de l'avance versée, en euros.
+      - name: created_at
+        description: >
+          date de création du bilan d'éxecution.
+      - name: contracts_selection_validated_at
+        description: >
+          date de validation de la sélection des contrats.
+      - name: submitted_at
+        description: >
+          date de soumission du bilan d'éxecution.
+      - name: grants_selection_validated_at
+        description: >
+          date de validation de la sélection des aides.
+      - name: decision_validated_at
+        description: >
+          date de validation de la décision.
+      - name: reviewed_at
+        description: >
+          date du bilan.
+      - name: final_reviewed_at
+        description: >
+          date du bilan définitif.
+      - name: reviewed_by_institution_id
+        description: >
+          identifiant de l'institution ayant réalisé le bilan.
+      - name: final_reviewed_by_institution_id
+        description: >
+          identifiant de l'institution ayant réalisé le bilan définitif.
+      - name: date_mise_à_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.

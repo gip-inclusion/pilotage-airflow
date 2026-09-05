@@ -1,0 +1,173 @@
+version: 2
+
+models:
+  - name: stg_geiq__assessments
+    config:
+      tags:
+        - geiq
+    description: >
+      Vue contenant les bilans d'éxecution des geiq. Cette vue contient des informations à l'échelle de la GEIQ.
+      Nous retrouvons en particulier si le bilan d'éxecution a été contrôlé, le nombre de salarié.e.s, ainsi que le conventionnement obtenu par la GEIQ.
+    columns:
+      - name: id
+        description: >
+          id unique associé au bilan d'éxecution
+        tests:
+          - not_null
+          - unique
+      - name: campaign_year
+        description: >
+          année de la campagne du bilan d'éxecution.
+      - name: state
+        description: >
+          état du bilan d'éxecution
+        tests:
+          - accepted_values:
+              values:
+                - Contrôlé (DREETS)
+                - Contrôlé
+                - Envoyé
+                - À compléter
+      - name: label_geiq_id
+        description: >
+          identifiant de la structure GEIQ
+      - name: label_geiq_name
+        description: >
+          nom du GEIQ
+      - name: label_geiq_post_code
+        description: >
+          code postal du GEIQ
+      - name: department
+        description: >
+          code du département du GEIQ principal.
+      - name: department_name
+        description: >
+          nom complet du département du GEIQ principal.
+      - name: region
+        description: >
+          région du GEIQ principal.
+      - name: conventionned_institutions_departments
+        description: >
+          départements des DDETS/DREETS ayant conventionné le GEIQ.
+      - name: with_main_geiq
+        description: >
+          indique si le bilan d'éxecution porte sur le GEIQ principal.
+      - name: antenna_nb
+        description: >
+          nombre d'antennes concernées par le bilan d'éxecution.
+      - name: employee_nb
+        description: >
+          nombre de salarié.e.s concerné.e.s par le bilan d'éxecution.
+      - name: convention_amount
+        description: >
+          montant conventionné, en euros.
+      - name: granted_amount
+        description: >
+          montant accordé, en euros.
+      - name: advance_amount
+        description: >
+          montant de l'avance versée, en euros.
+      - name: created_at
+        description: >
+          date de création du bilan d'éxecution.
+      - name: contracts_selection_validated_at
+        description: >
+          date de validation de la sélection des contrats.
+      - name: submitted_at
+        description: >
+          date de soumission du bilan d'éxecution.
+      - name: grants_selection_validated_at
+        description: >
+          date de validation de la sélection des aides.
+      - name: decision_validated_at
+        description: >
+          date de validation de la décision.
+      - name: reviewed_at
+        description: >
+          date du bilan.
+      - name: final_reviewed_at
+        description: >
+          date du bilan définitif.
+      - name: reviewed_by_institution_id
+        description: >
+          identifiant de l'institution ayant réalisé le bilan.
+      - name: final_reviewed_by_institution_id
+        description: >
+          identifiant de l'institution ayant réalisé le bilan définitif.
+      - name: date_mise_à_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.
+
+  - name: stg_geiq__contracts
+    config:
+      tags:
+        - geiq
+    description: >
+      Vue contenant les contrats des salarié.e.s pris en compte dans les bilans d'éxecution des geiq.
+      Elle propose une ligne par contrat et par année de campagne, avec l'aide présentée par le GEIQ
+      et la décision de la DDETS/DREETS associée.
+    columns:
+      - name: id
+        description: >
+          id unique associé au contrat.
+        tests:
+          - not_null
+      - name: assessment_id
+        description: >
+          identifiant du bilan d'éxecution auquel le contrat est rattaché.
+      - name: employee_id
+        description: >
+          identifiant du salarié titulaire du contrat.
+      - name: campaign_year
+        description: >
+          année de la campagne du bilan d'éxecution sur laquelle porte le contrat.
+      - name: department
+        description: >
+          code du département de l'antenne portant le contrat.
+      - name: department_name
+        description: >
+          nom complet du département de l'antenne portant le contrat.
+      - name: region
+        description: >
+          région de l'antenne portant le contrat.
+      - name: start_at
+        description: >
+          date de début du contrat.
+      - name: planned_end_at
+        description: >
+          date de fin prévisionnelle du contrat.
+      - name: end_at
+        description: >
+          date de fin du contrat.
+      - name: nb_days_in_campaign_year
+        description: >
+          nombre de jours du contrat couverts par l'année de campagne.
+      - name: allowance_requested
+        description: >
+          aide présentée par le GEIQ au titre de ce contrat.
+      - name: allowance_granted
+        description: >
+          aide accordée par la DDETS/DREETS au titre de ce contrat.
+      - name: allowance_amount
+        description: >
+          montant de l'aide potentielle du salarié, en euros : 0, 814 ou 1400.
+        tests:
+          - accepted_values:
+              values:
+                - 0
+                - 814
+                - 1400
+      - name: allowance_request_justification_reason
+        description: >
+          motif dérogatoire justifiant la demande d'aide, renseigné par le GEIQ.
+      - name: allowance_refusal_reason
+        description: >
+          motif de refus de l'aide, renseigné par la DDETS/DREETS.
+      - name: allowance_granted_previous_year
+        description: >
+          aide accordée au salarié l'année précédente. Champ issu du modèle Employee.
+      - name: date_mise_à_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.

@@ -1,0 +1,20 @@
+select
+    id,
+    assessment_id,
+    employee_id,
+    campaign_year,
+    department,
+    department_name,
+    region,
+    start_at,
+    planned_end_at,
+    end_at,
+    nb_days_in_campaign_year,
+    allowance_requested,
+    allowance_granted,
+    allowance_amount,
+    allowance_request_justification_reason,
+    allowance_refusal_reason,
+    allowance_granted_previous_year,
+    date_mise_à_jour_metabase
+from {{ source('raw_emplois', 'geiq_contracts') }}
