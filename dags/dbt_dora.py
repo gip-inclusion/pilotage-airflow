@@ -16,6 +16,13 @@ with DAG(
 ) as dag:
     env_vars = db.connection_envvars()
 
+    dbt_debug = bash.BashOperator(
+        task_id="dbt_debug",
+        bash_command="dbt debug",
+        env=env_vars,
+        append_env=True,
+    )
+
     dbt_deps = bash.BashOperator(
         task_id="dbt_deps",
         bash_command="dbt deps",
@@ -25,9 +32,9 @@ with DAG(
 
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command='dbt build --select "+tag:dora"',
+        bash_command='dbt build --select "+tag:dora" --indirect-selection cautious',
         env=env_vars,
         append_env=True,
     )
 
-    dbt_deps >> dbt_build >> slack.success_notifying_task()
+    dbt_debug >> dbt_deps >> dbt_build >> slack.success_notifying_task()
