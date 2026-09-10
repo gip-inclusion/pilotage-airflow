@@ -1,6 +1,85 @@
 version: 2
 
 models:
+  - name: actes_metier
+    description: >
+      Table finale consolidée des actes métier PDI. Elle agrège les modèles intermédiaires par source au grain commun
+      mois, source, type d'acte, catégorie, indicateurs North Star et traité, type de structure et département.
+
+      **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
+      Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
+      avec l'équipe data.**
+
+    config:
+      tags: ["actes-metier"]
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - mois
+              - source
+              - type_acte
+              - north_star
+              - north_star_70
+              - traite
+              - type_structure
+              - departement
+    columns:
+      - name: mois
+        description: Mois de l'acte métier agrégé, au format `YYYY-MM`.
+        tests:
+          - not_null
+      - name: source
+        description: Produit ou source métier auquel l'acte est rattaché.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - rdvi
+                  - emplois
+                  - GPS
+                  - dora
+                  - monrecap
+                  - marche
+                  - data-inclusion
+      - name: type_acte
+        description: Libellé métier de l'acte dans le référentiel des actes métier PDI.
+        tests:
+          - not_null
+      - name: categorie_acte
+        description: Catégorie métier de l'acte.
+        tests:
+          - not_null
+      - name: north_star
+        description: Indique si l'acte est comptabilisé dans la déclinaison North Star à 30 jours.
+        tests:
+          - not_null
+      - name: north_star_70
+        description: Indique si l'acte est comptabilisé dans la déclinaison North Star à 70 jours.
+        tests:
+          - not_null
+      - name: traite
+        description: Indique si l'acte est considéré comme traité dans la source métier.
+        tests:
+          - not_null
+      - name: type_structure
+        description: Type de structure associé à l'acte métier.
+        tests:
+          - not_null
+      - name: departement
+        description: Département associé à l'acte métier, ou `Inconnu` quand il n'est pas disponible.
+        tests:
+          - not_null
+      - name: nombre_actes
+        description: Nombre d'actes métier agrégés au grain final.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
   - name: data_inclusion__structures_sans_dedupliquer
     description: >
       La table reprend les données de l'API Data Inclusion sans dédupliquer les structures.
