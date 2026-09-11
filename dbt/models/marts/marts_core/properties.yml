@@ -378,11 +378,18 @@ models:
           Identifiant canonique Data Inclusion de la structure ciblée par l'intention de mise en
           relation, quand on le retrouve depuis la structure cible reçue dans l'événement. Si ce
           mapping direct n'aboutit pas, on peut le compléter depuis le service mobilisé.
+          Le test de relation avec `dim_data_inclusion__structures` est configuré en warning car
+          le DAG Data Inclusion reconstruit cette dimension avant que `fct_dora__imer` ne soit
+          recalculée par le DAG DORA. Pendant cet intervalle, la fact table peut encore contenir
+          des identifiants calculés avec le snapshot Data Inclusion précédent.
         tests:
           - relationships:
               arguments:
                 to: ref('dim_data_inclusion__structures')
                 field: structure_id
+              config:
+                severity: warn
+                warn_if: "> 0"
       - name: kind
         description: >
           Type de l'intention de mise en relation.
