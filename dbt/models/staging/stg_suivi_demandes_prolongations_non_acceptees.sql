@@ -40,7 +40,7 @@ select
     across all plots in our dashboards. Using the current day would lead to differences
     between some plots*/
     (demandes_prolong."date_mise_à_jour_metabase" - demandes_prolong.date_de_demande)       as duree_depuis_demande
-from {{ source('emplois', 'demandes_de_prolongation') }} as demandes_prolong
+from {{ source('raw_emplois', 'demandes_de_prolongation') }} as demandes_prolong
 left join {{ ref('stg_organisations') }} as o
     on demandes_prolong.id_organisation_prescripteur = o.id
 left join {{ ref('structures') }} as s

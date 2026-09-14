@@ -14,5 +14,5 @@ select
 from {{ ref("stg_contrats") }} as ctr
 inner join {{ ref("stg_uniques_salarie_id") }} as salarie
     on ctr.contrat_id_pph = salarie.salarie_id
-inner join {{ source('emplois', 'candidats_v0') }} as candidats
+inner join {{ source('raw_emplois', 'candidats_v0') }} as candidats
     on salarie.hash_nir = candidats.hash_nir

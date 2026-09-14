@@ -62,5 +62,5 @@ from
 left join {{ ref('stg_organisations') }} as prescripteurs
     on
         c.id_org_prescripteur = prescripteurs.id
-left join {{ source('emplois','c1_ref_type_prescripteur') }} as organisations_libelles
+left join {{ source('raw_emplois','c1_ref_type_prescripteur') }} as organisations_libelles
     on c.type_org = organisations_libelles.code

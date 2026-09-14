@@ -6,7 +6,7 @@ select
     cp.measured_at::date  as semaine,
     count(distinct cp.id) as visiteurs_uniques
 from
-    {{ source('emplois', 'c1_private_dashboard_visits_v0') }} as cp
+    {{ source('raw_emplois', 'c1_private_dashboard_visits_v0') }} as cp
 left join {{ ref('structures') }} as s
     on cp.department = s."département"
 left join {{ ref('metabase_dashboards') }} as md

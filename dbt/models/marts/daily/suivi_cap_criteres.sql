@@ -34,9 +34,9 @@ select
                 'Non transmis'
     end                 as "état"
 from
-    {{ source('emplois', 'cap_critères_iae') }} as cap_criteres
-left join {{ source('emplois', 'critères_iae') }} as criteres on cap_criteres."id_critère_iae" = criteres.id
-left join {{ source('emplois', 'cap_candidatures') }} as candidatures on cap_criteres.id_cap_candidature = candidatures.id
-left join {{ source('emplois', 'cap_structures') }} as cap_structs on candidatures.id_cap_structure = cap_structs.id
+    {{ source('raw_emplois', 'cap_critères_iae') }} as cap_criteres
+left join {{ source('raw_emplois', 'critères_iae') }} as criteres on cap_criteres."id_critère_iae" = criteres.id
+left join {{ source('raw_emplois', 'cap_candidatures') }} as candidatures on cap_criteres.id_cap_candidature = candidatures.id
+left join {{ source('raw_emplois', 'cap_structures') }} as cap_structs on candidatures.id_cap_structure = cap_structs.id
 left join {{ ref('stg_structures') }} as structs on cap_structs.id_structure = structs.id
-left join {{ source('emplois', 'cap_campagnes') }} as camp on cap_structs.id_cap_campagne = camp.id
+left join {{ source('raw_emplois', 'cap_campagnes') }} as camp on cap_structs.id_cap_campagne = camp.id

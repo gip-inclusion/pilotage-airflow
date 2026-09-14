@@ -59,7 +59,7 @@ cap_struct_counts as (
             end
         ) as float) as nb_attente
     from
-        {{ source('emplois', 'cap_structures') }} as cap_struct
+        {{ source('raw_emplois', 'cap_structures') }} as cap_struct
     group by
         cap_struct.id_cap_campagne,
         cap_struct.id_structure
@@ -82,7 +82,7 @@ select
 from
     cap_struct_counts as cap_struct_cnt
 left join {{ ref('structures') }} as struct on cap_struct_cnt.id_structure = struct.id
-left join {{ source('emplois', 'cap_campagnes') }} as cap_camp on cap_struct_cnt.id_cap_campagne = cap_camp.id
+left join {{ source('raw_emplois', 'cap_campagnes') }} as cap_camp on cap_struct_cnt.id_cap_campagne = cap_camp.id
 left join nb_structures_par_dept as nb_tot_dep on struct."nom_département" = nb_tot_dep."nom_département"
 where struct.active = 1
 group by

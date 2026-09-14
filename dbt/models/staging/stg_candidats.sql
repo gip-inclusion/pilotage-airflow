@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(source('emplois', 'candidats_v0'), relation_alias='candidats') }},
+    {{ pilo_star(source('raw_emplois', 'candidats_v0'), relation_alias='candidats') }},
     grp_strct.groupe                                                        as categorie_structure,
     organisations.type_org,
     coalesce(organisations."région_org", structures."région")               as "région_diag",
@@ -12,7 +12,7 @@ select
         else extract(year from current_date) - (candidats.annee_naissance_selon_nir + 1900)
     end                                                                     as age_selon_nir
 from
-    {{ source('emplois', 'candidats_v0') }} as candidats
+    {{ source('raw_emplois', 'candidats_v0') }} as candidats
 left join
     {{ ref('organisations') }} as organisations
     on candidats.id_auteur_diagnostic_prescripteur = organisations.id

@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(source('emplois','structures_v0'), except=['source', 'ville'], relation_alias='struct') }},
+    {{ pilo_star(source('raw_emplois','structures_v0'), except=['source', 'ville'], relation_alias='struct') }},
     dim_commune.nom_commune     as ville,
     dim_commune.nom_zone_emploi as bassin_d_emploi,
     grp_strct.groupe            as categorie_structure,
@@ -13,7 +13,7 @@ select
         else struct.source
     end                         as source
 from
-    {{ source('emplois','structures_v0') }} as struct
+    {{ source('raw_emplois','structures_v0') }} as struct
 left join
     {{ ref('groupes_structures') }} as grp_strct
     on struct.type = grp_strct.structure
