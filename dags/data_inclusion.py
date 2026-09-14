@@ -2,6 +2,7 @@ import logging
 
 import httpx
 import pandas as pd
+import pendulum
 import sqlalchemy
 from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG, Variable, task
@@ -16,7 +17,10 @@ DB_SCHEMA = "raw_data_inclusion"
 
 logger = logging.getLogger(__name__)
 
-dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
+dag_args = default_dag_args() | {
+    "default_args": dbt.get_default_args(),
+    "start_date": pendulum.datetime(2026, 9, 14, tz="Europe/Paris"),
+}
 
 
 def api_client() -> httpx.Client:
@@ -45,7 +49,7 @@ def get_all_items(path, exclure_doublons=False):
             break
 
 
-with DAG("data_inclusion", schedule="@daily", **dag_args) as dag:
+with DAG("data_inclusion", schedule="0 23 * * *", **dag_args) as dag:
     env_vars = db.connection_envvars()
 
     @task
