@@ -41,20 +41,23 @@ select
     {{ pilo_star(ref('fct_geiq__assessments'), relation_alias='assessments') }},
 
     geiq.geiq_department,
-    departments.nom_departement_complet                                              as geiq_department_name,
-    departments.nom_region                                                           as geiq_region,
+    departments.nom_departement_complet                                                      as geiq_department_name,
+    departments.nom_region                                                                   as geiq_region,
 
-    coalesce(contracts.contract_nb, 0)                                               as contract_nb,
-    coalesce(contracts.requested_contract_nb, 0)                                     as requested_contract_nb,
-    coalesce(contracts.granted_contract_nb, 0)                                       as granted_contract_nb,
-    coalesce(contracts.short_derogated_contract_nb, 0)                               as short_derogated_contract_nb,
-    coalesce(contracts.requested_allowance_amount, 0)                                as requested_allowance_amount,
-    coalesce(contracts.granted_allowance_amount, 0)                                  as granted_allowance_amount,
+    coalesce(contracts.contract_nb, 0)                                                       as contract_nb,
+    coalesce(contracts.requested_contract_nb, 0)                                             as requested_contract_nb,
+    coalesce(contracts.granted_contract_nb, 0)                                               as granted_contract_nb,
+    coalesce(contracts.short_derogated_contract_nb, 0)                                       as short_derogated_contract_nb,
+    coalesce(contracts.requested_allowance_amount, 0)                                        as requested_allowance_amount,
+    coalesce(contracts.granted_allowance_amount, 0)                                          as granted_allowance_amount,
     coalesce(contracts.granted_allowance_amount, 0) - assessments.convention_amount
         as convention_vs_granted_allowance_gap,
+    coalesce(assessments.granted_amount, 0) - assessments.convention_amount
+        as convention_vs_granted_amount_gap,
     {{ safe_divide('assessments.granted_amount', 'assessments.convention_amount') }}
-        as realization_rate
-
+        as realization_rate,
+    {{ safe_divide('contracts.granted_allowance_amount', 'assessments.convention_amount') }}
+        as realization_rate_granted_allowance
 from assessments
 left join geiq
     on

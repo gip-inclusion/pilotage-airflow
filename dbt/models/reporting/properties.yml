@@ -469,6 +469,10 @@ models:
         description: >
           écart en euros entre le montant potentiel des contrats retenus et le montant conventionné.
           Négatif lorsque les contrats retenus pèsent moins que le conventionnement.
+      - name: convention_vs_granted_amount_gap
+        description: >
+          écart en euros entre le montant accordé des contrats retenus et le montant conventionné.
+          Négatif lorsque les contrats retenus pèsent moins que le conventionnement.
       - name: realization_rate
         description: >
           taux de réalisation d'un bilan, soit son montant accordé rapporté à son montant conventionné,
@@ -476,6 +480,12 @@ models:
           Ce taux n'est pas additif : une moyenne de cette colonne sur plusieurs bilans ne donne pas le taux
           de l'ensemble. Pour un taux agrégé, rapporter la somme des granted_amount à la somme des
           convention_amount.
+      - name: realization_rate_granted_allowance
+        description: >
+          taux de réalisation d'un bilan, soit son montant potentiel accordé rapporté à son montant conventionné,
+          arrondi au millième. Vaut 0 lorsque le montant conventionné est nul, la division étant sécurisée.
+          Ce taux n'est pas additif : une moyenne de cette colonne sur plusieurs bilans ne donne pas le taux
+          de l'ensemble.
 
   - name: rpt_geiq__contracts
     config:
