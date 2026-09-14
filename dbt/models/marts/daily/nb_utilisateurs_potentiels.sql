@@ -5,7 +5,7 @@ select
     'institution'                           as type_utilisateur,
     i.type                                  as profil,
     count(*)                                as potentiel
-from {{ source('emplois', 'institutions') }} as i
+from {{ source('raw_emplois', 'institutions') }} as i
 -- DDETS GEIQ ne sont pas dans la cible
 where i.type != 'DDETS GEIQ'
 group by i."région", i."nom_département", i.type
@@ -32,6 +32,6 @@ select
     'siae'                                  as type_utilisateur,
     s.type                                  as profil,
     count(*)                                as potentiel
-from {{ source('emplois', 'structures') }} as s
+from {{ source('raw_emplois', 'structures_v0') }} as s
 where s."nom_département" is not null and s.active = 1 and type in ('ACI', 'AI', 'EI', 'EITI', 'ETTI')
 group by s."région", s."nom_département", s.type

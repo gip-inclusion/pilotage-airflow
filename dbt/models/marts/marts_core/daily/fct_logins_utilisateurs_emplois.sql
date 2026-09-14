@@ -5,7 +5,7 @@
         delete from {{ this }}
         where user_id not in (
             select distinct id
-            from {{ source('emplois', 'utilisateurs_v0') }}
+            from {{ source('raw_emplois', 'utilisateurs_v0') }}
         )
     "
 ) }}
@@ -15,7 +15,7 @@ with source as (
     select distinct
         id                   as user_id,
         "dernière_connexion" as last_login
-    from {{ source('emplois', 'utilisateurs_v0') }}
+    from {{ source('raw_emplois', 'utilisateurs_v0') }}
     where "dernière_connexion" is not null
 
 ),

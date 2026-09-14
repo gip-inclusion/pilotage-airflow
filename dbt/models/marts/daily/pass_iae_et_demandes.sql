@@ -8,7 +8,7 @@ select
     s."région_c1"          as "région_structure"
 from
     {{ source('emplois','pass_agréments') }} as pass
-left join {{ source('emplois', 'demandes_de_prolongation') }} as demandes_prolong
+left join {{ source('raw_emplois', 'demandes_de_prolongation') }} as demandes_prolong
     on pass.id = demandes_prolong."id_pass_agrément"
 left join {{ ref('structures') }} as s
     on pass.id_structure = s.id

@@ -28,9 +28,9 @@ select
     end                         as controlee
 from
     {{ ref('stg_structures') }} as structures
-left join {{ source('emplois', 'cap_structures') }} as cap_structures
+left join {{ source('raw_emplois', 'cap_structures') }} as cap_structures
     on structures.id = cap_structures.id_structure
-left join {{ source('emplois', 'cap_campagnes') }} as cap_campagnes
+left join {{ source('raw_emplois', 'cap_campagnes') }} as cap_campagnes
     on cap_structures.id_cap_campagne = cap_campagnes.id
 left join {{ ref('stg_suivi_cap_reponses_controle') }} as cap_rep
     on cap_structures.id_structure = cap_rep.id_structure and cap_campagnes.id = cap_rep.id_cap_campagne

@@ -1,6 +1,6 @@
 with source_count as (
     select count(distinct id) as cnt
-    from {{ source('emplois', 'utilisateurs_v0') }}
+    from {{ source('raw_emplois', 'utilisateurs_v0') }}
     where "dernière_connexion" is not null
 ),
 

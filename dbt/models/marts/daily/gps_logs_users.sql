@@ -30,5 +30,5 @@ left join {{ ref('structures') }} as s
     on util.id_structure = s.id
 left join {{ ref('organisations') }} as org
     on util.id_organisation = org.id
-left join {{ source('emplois','institutions') }} as instit
+left join {{ source('raw_emplois','institutions') }} as instit
     on util.id_institution = instit.id

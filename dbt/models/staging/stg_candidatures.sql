@@ -86,10 +86,10 @@ select
 from
     {{ source('emplois', 'candidatures') }} as candidatures
 
-left join {{ source('emplois', 'c1_ref_type_contrat') }} as c_type
+left join {{ source('raw_emplois', 'c1_ref_type_contrat') }} as c_type
     on candidatures.type_contrat = c_type.code
 
-left join {{ source('emplois', 'c1_ref_motif_de_refus') }} as motif
+left join {{ source('raw_emplois', 'c1_ref_motif_de_refus') }} as motif
     on candidatures.motif_de_refus = motif.code
 
 left join {{ ref('stg_structures') }} as struct

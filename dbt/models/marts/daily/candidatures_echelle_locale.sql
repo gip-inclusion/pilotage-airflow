@@ -70,5 +70,5 @@ from {{ ref('stg_candidatures') }} as candidatures
 left join {{ ref('candidats') }} as candidats
     on candidatures.id_candidat = candidats.id
 
-left join {{ source('emplois','c1_ref_type_prescripteur') }} as org
+left join {{ source('raw_emplois','c1_ref_type_prescripteur') }} as org
     on candidatures.type_org_prescripteur = org.code

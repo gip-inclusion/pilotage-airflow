@@ -26,8 +26,8 @@ select
     end                                                                                     as reprise_de_stock_ai,
     extract(day from (demandes_prolong.date_traitement - demandes_prolong.date_de_demande)) as delai_traitement,
     (demandes_prolong."date_mise_à_jour_metabase" - demandes_prolong.date_de_demande)       as duree_depuis_demande
-from {{ source('emplois', 'prolongations') }} as prolong
-left join {{ source('emplois', 'demandes_de_prolongation') }} as demandes_prolong
+from {{ source('raw_emplois', 'prolongations') }} as prolong
+left join {{ source('raw_emplois', 'demandes_de_prolongation') }} as demandes_prolong
     on prolong.id = demandes_prolong.id_prolongation
 left join {{ ref('stg_organisations') }} as o
     on prolong.id_organisation_prescripteur = o.id

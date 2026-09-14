@@ -13,4 +13,4 @@ select
             cav.date
     ) as delta
 from
-    {{ source('emplois', 'c1_analytics_v0') }} as cav
+    {{ source('raw_emplois', 'c1_analytics_v0') }} as cav

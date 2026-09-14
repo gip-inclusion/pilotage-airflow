@@ -117,13 +117,13 @@ models:
         Elle sert de base pour ajouter cette information sur la table suivi_cap_structure et permet ainsi le calcul du taux de réponse au contrôle.
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'cap_structures')
+          compare_model: source('raw_emplois', 'cap_structures')
   - name: stg_suivi_demandes_prolongations_acceptees
     description: >
       Vue permettant de récupérer les demandes de prolongation & prolongations acceptées
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'prolongations')
+          compare_model: source('raw_emplois', 'prolongations')
   - name: stg_suivi_demandes_prolongations_non_acceptees
     description: >
       Vue permettant de récupérer les demandes de prolongation non acceptées

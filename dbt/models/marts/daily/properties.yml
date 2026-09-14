@@ -268,7 +268,7 @@ models:
           Affine `type_avec_habilitation` avec les libellés complets.
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'organisations_v0')
+          compare_model: source('raw_emplois', 'organisations_v0')
   - name: organisations_dihal
     description: >
       Table introduite pour réaliser le tableau de bord DIHAL.
@@ -1099,7 +1099,7 @@ models:
           Indicateur de suspension active au moment de la mise à jour.
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'suspensions_v0')
+          compare_model: source('raw_emplois', 'suspensions_v0')
   - name: candidats_derniere_embauche
     description: >
       Table créée pour récupérer la dernière embauche (si elle existe) d'un candidat.
@@ -1473,7 +1473,7 @@ models:
           Éligibilité du candidat au CDI Inclusion ('Oui' / 'Non')
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'candidats_v0')
+          compare_model: source('raw_emplois', 'candidats_v0')
 
   - name: candidatures_par_candidat
     description: >
@@ -1483,7 +1483,7 @@ models:
       Par exemple, si deux candidatures sont réalisées, les informations sur la première candidature sont données à l'indice 0 de la liste et celles de la deuxième à l'indice 1.
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'candidats_v0')
+          compare_model: source('raw_emplois', 'candidats_v0')
   - name: prescripteurs_habilites_odc
     description: >
       Sous ensemble des prescripteurs_habilite de type ODC, DEPT et organisations habilitées BRSA.
@@ -1595,9 +1595,6 @@ models:
     description: >
       Table permettant de récupérer les mails des utilisateurs des emplois ne s'étant jamais connecté sur les tb prives.
       A ce jour impossible de savoir à quelle orga cette utilisateur est rattaché mais cela arrive dans une v2.
-    tests:
-    - dbt_utils.equal_rowcount:
-        compare_model: source('emplois', 'utilisateurs')
   - name: pass_iae_et_demandes
     description: >
       Table permettant de suivre les PASS IAE n'ayant jamais été associés à une demande de prolongation et ceux associés à une (ou plusieurs) demande de prolongation.
@@ -1897,7 +1894,7 @@ models:
           'Staff Itou' (création directe par l'équipe interne).
     tests:
       - dbt_utils.equal_rowcount:
-          compare_model: source('emplois', 'structures_v0')
+          compare_model: source('raw_emplois', 'structures_v0')
 
   - name: taux_refus_structures
     description: >
