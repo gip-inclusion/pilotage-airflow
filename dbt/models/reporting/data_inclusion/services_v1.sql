@@ -2,6 +2,13 @@ with services as (
     select *
     from {{ ref('stg_di__services') }}
 
+),
+
+communes as (
+
+    select *
+    from {{ ref('dim_commune') }}
+
 )
 
 select
@@ -21,7 +28,8 @@ select
     services.publics_precisions,
     services.conditions_acces,
 
-    services.code_insee as code_commune_insee,
+    services.code_insee  as code_commune_insee,
+    communes.nom_commune as commune,
     services.code_postal,
     services.adresse,
     services.complement_adresse,
@@ -43,4 +51,6 @@ select
     services.adresse_certifiee,
     services.score_qualite
 from services
+left join communes
+    on services.code_insee = communes.code_commune_insee
 where source != 'soliguide'
