@@ -2,6 +2,14 @@ version: 2
 
 models:
   - name: stg_dora__user
+    description: >
+      Staging des utilisateurs DORA, au plus proche de la source.
+
+      Avant, ce staging ne gardait que les utilisateurs actifs, valides et non staff
+      avec un filtre `is_active is true and is_valid is true and is_staff is false`.
+      On a enlevé ce filtre ici parce que le staging n'est pas le bon endroit pour
+      cacher des lignes de la source. Pour retrouver volontairement ce périmètre
+      historique, utilise plutôt `int_dora__active_user`.
     config:
       tags:
         - dora
@@ -12,6 +20,21 @@ models:
       - name: id
         data_tests:
           - unique
+          - not_null
+      - name: is_active
+        description: >
+          L'utilisateur a le droit de se connecter à DORA.
+        data_tests:
+          - not_null
+      - name: is_valid
+        description: >
+          L'adresse email de l'utilisateur a été vérifiée.
+        data_tests:
+          - not_null
+      - name: is_staff
+        description: >
+          Utilisateur interne qui a tous les droits.
+        data_tests:
           - not_null
 
       - name: department
@@ -126,6 +149,10 @@ models:
         description: >
           Identifiant normalisé utilisé pour joindre le mapping Data Inclusion. Les événements DORA
           sont préfixés par `dora--`; les événements Data Inclusion conservent leur identifiant source.
+      - name: user_kind
+        description: >
+          Type d'utilisateur reçu dans l'événement de mobilisation. Les chaînes
+          vides reçues depuis la source sont normalisées à NULL.
 
 
 

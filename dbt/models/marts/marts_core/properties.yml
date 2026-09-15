@@ -349,6 +349,14 @@ models:
         description: >
           Type d'utilisateur à l'origine de l'intention, tel qu'il est reçu dans la source. Les
           valeurs peuvent venir du référentiel Emplois ou du référentiel DORA selon `origin_source`.
+      - name: is_logged_imer
+        description: >
+          Dit si l'IMER a été faite par un utilisateur connecté à son compte. Côté DORA, on reprend
+          `int_dora__imer.is_logged`, qui vient de l'événement de mobilisation. Côté
+          Emplois, on regarde `user_kind` : `emplois_anonymous` veut dire non connecté,
+          les autres valeurs veulent dire connecté.
+        tests:
+          - not_null
       - name: user_id
         description: >
           Identifiant source de l'utilisateur à l'origine de l'intention. Quand `origin_source =

@@ -1,10 +1,6 @@
 with src as (
     select *
     from {{ source('dora', 'users_user') }}
-    where
-        is_active is true
-        and is_valid is true
-        and is_staff is false
 ),
 
 final as (
@@ -20,6 +16,9 @@ final as (
         last_service_reminder_email_sent,
         newsletter,
         main_activity,
+        is_active,
+        is_valid,
+        is_staff,
         last_service_reminder_email_sent as last_notification_email_sent,
         departments[1]                   as department,
         last_login is not null           as is_activated

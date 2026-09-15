@@ -295,6 +295,11 @@ models:
       - name: user_kind
         description: >
           Type d'utilisateur à l'origine de l'intention, tel qu'il est reçu dans la source.
+      - name: is_logged_imer
+        description: >
+          Dit si l'IMER a été faite par un utilisateur connecté à son compte.
+        tests:
+          - not_null
       - name: user_id
         description: >
           Identifiant source de l'utilisateur à l'origine de l'intention. Quand `origin_source =
