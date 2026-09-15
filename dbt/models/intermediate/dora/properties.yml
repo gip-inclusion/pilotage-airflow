@@ -9,6 +9,10 @@ models:
       DORA génère aussi une mobilisation et créait du double comptage.
       Maintenant, une IMER DORA correspond uniquement à une mobilisation. Les
       orientations restent disponibles dans `fct_dora__orientations`.
+      La colonne `is_logged` reprend le statut de connexion enregistré sur
+      l'événement de mobilisation. C'est le critère métier utilisé pour distinguer
+      les IMER connectées et non connectées ; il est indépendant de la présence
+      d'un `user_id`.
     config:
       tags:
         - dora
@@ -17,6 +21,12 @@ models:
         description: Identifiant de la mise en relation côté DORA.
         tests:
           - unique
+          - not_null
+      - name: is_logged
+        description: >
+          Indique si l'événement de mobilisation a été réalisé par un utilisateur
+          connecté.
+        tests:
           - not_null
       - name: kind
         description: >
@@ -61,10 +71,38 @@ models:
         description: >
           Identifiant Data Inclusion du service mobilisé, déjà validé contre
           `dim_data_inclusion__services`. Pour un événement DORA, il est reconstruit depuis le
-          slug présent dans `event_path`, puis traduit via `dim_dora__services.service_id_jointure_di`.
+          slug présent dans `stg_dora__mobilisationevent.path`, puis traduit via
+          `dim_dora__services.service_id_jointure_di`.
           Pour un événement Data Inclusion mobilisé depuis DORA, il est reconstruit depuis
-          `event_path` après suppression du préfixe `di--`. Si le service reconstruit n'existe pas
-          dans `dim_data_inclusion__services`, la colonne reste vide.
+          `stg_dora__mobilisationevent.path` après suppression du préfixe `di--`.
+          Si le service reconstruit n'existe pas dans `dim_data_inclusion__services`,
+          la colonne reste vide.
+  - name: int_dora__active_user
+    description: |
+      Utilisateurs DORA actifs, valides et non staff.
+
+      Ce modèle remplace l'ancien usage de `stg_dora__user` quand on veut vraiment
+      exclure les utilisateurs inactifs, invalides ou staff. Avant, le filtre était
+      dans le staging. Maintenant le staging garde toute la source, et c'est ici
+      qu'on filtre.
+
+      Utilise ce modèle pour conserver le comportement historique des jointures
+      d'enrichissement utilisateur.
+    config:
+      tags:
+        - dora
+      indexes:
+        - columns: [id]
+          unique: true
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+    tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "is_active is true and is_valid is true and is_staff is false"
   - name: int_dora__actes_metier
     description: >
       Ce modele compte, par mois, les actes metier DORA reconstruits depuis les requetes historiques du fetcher Python
@@ -183,9 +221,11 @@ models:
               - departement
   - name: int_dora__mobilisation_to_orientation
     description: >
-      Cette vue associe à chaque mobilisation la première orientation qui la suit, s'il y en a une.
-      Une orientation suit une mobilisation si elle a le même `user_id`, si elle est créée dans
-      l'heure qui suit la mobilisation, et si elle concerne le même service via le slug.
+      Correspondance entre une mobilisation réalisée par un utilisateur DORA actif,
+      valide et non staff, et la première orientation retrouvée après cette
+      mobilisation, s'il y en a une. Une orientation suit une mobilisation si elle
+      a le même `user_id`, si elle est créée dans l'heure qui suit la mobilisation,
+      et si elle concerne le même service via le slug.
     config:
       tags:
         - dora
@@ -195,50 +235,42 @@ models:
         tests:
           - unique
           - not_null
-      - name: user_id
-        description: Identifiant de l'utilisateur à l'origine de la prescription.
-        tests:
-          - not_null
-      - name: first_following_orientation_id
+      - name: orientation_id
         description: >
-          ID de la première orientation qui suit la mobilisation. Peut être `NULL` si aucune orientation
-          ne suit la mobilisation.
-      - name: mobilisation_date
-        description: Date de la mobilisation.
+          ID de la première orientation qui suit la mobilisation. Peut être `NULL`
+          si aucune orientation ne suit la mobilisation.
         tests:
-          - not_null
-      - name: first_following_orientation_date
-        description: >
-          Date de la première orientation qui suit la mobilisation. Peut être `NULL` si aucune orientation
-          ne suit la mobilisation.
-      - name: delay
-        description: Temps écoulé entre la mobilisation et l'orientation.
+          - relationships:
+              arguments:
+                to: ref('stg_dora__orientation')
+                field: id
   - name: int_dora__mobilisationevent_user
     description: |
-      Événements de mobilisation des utilisateurs.
+      Correspondance entre les mobilisations DORA et leurs utilisateurs actifs.
+
+      Ce modèle ne garde que les mobilisations dont le `user_id` correspond à un
+      utilisateur présent dans `int_dora__active_user`, donc actif, valide et non
+      staff.
     config:
       tags:
         - dora
     columns:
-      - name: event_id
+      - name: mobilisation_id
         description: |
           Identifiant de l'événement de mobilisation.
         tests:
           - unique
           - not_null
       - name: user_id
+        description: >
+          Identifiant de l'utilisateur actif, valide et non staff qui a réalisé la
+          mobilisation.
         tests:
           - not_null
-      - name: event_structure_source
-        description: >
-          Espace de noms de `event_structure_id`. Cette colonne reprend `structure_source` depuis
-          `stg_dora__mobilisationevent`, avec le préfixe `event_` ajouté lors de la jointure avec
-          les utilisateurs.
-      - name: event_structure_id
-        description: >
-          Identifiant source de la structure qui porte le service mobilisé, dans le namespace indiqué
-          par `event_structure_source`. Cette colonne reprend `structure_id` depuis
-          `stg_dora__mobilisationevent`, avec le préfixe `event_`.
+          - relationships:
+              arguments:
+                to: ref('int_dora__active_user')
+                field: id
   - name: int_dora__orientation_user_service
     description: |
       Orientations des utilisateurs vers des services.

@@ -18,7 +18,7 @@ events as (
         src.is_an_admin,
         src.is_structure_admin,
         src.is_structure_member,
-        src.user_kind,
+        nullif(src.user_kind, '')                  as user_kind,
         src.structure_department,
         'dora'                                     as structure_source,
         cast(src.structure_id as text)             as structure_id,
@@ -44,7 +44,7 @@ di_events as (
             as is_structure_admin,
         false
             as is_structure_member,
-        src.user_kind,
+        nullif(src.user_kind, '')      as user_kind,
         src.structure_department,
         'data_inclusion'               as structure_source,
         cast(src.structure_id as text) as structure_id,

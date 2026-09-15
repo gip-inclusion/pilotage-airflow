@@ -66,3 +66,16 @@ tests:
 
       Le test additionne les lignes des deux sources utilisées pour construire fct_dora__imer : stg_emplois__imer et int_dora__imer.
       Ce nombre doit être égal au nombre de lignes de fct_dora__imer.
+  - name: test_fct_dora__imer_emplois_is_logged_imer_matches_user_kind
+    description: >
+      Vérifie que les IMER Emplois anonymes sont marquées non connectées, et que
+      les autres IMER Emplois sont marquées connectées.
+  - name: test_fct_dora__imer_dora_is_logged_imer_matches_int_dora_imer
+    description: >
+      Vérifie que les volumes DORA de fct_dora__imer par statut de connexion
+      correspondent aux volumes de int_dora__imer.
+  - name: test_int_dora__imer_rowcount_by_is_logged_matches_mobilisationevent
+    description: >
+      Vérifie que int_dora__imer conserve toutes les mobilisations DORA, en
+      retrouvant les mêmes volumes par statut de connexion que
+      stg_dora__mobilisationevent.

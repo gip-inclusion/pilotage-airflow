@@ -1,5 +1,5 @@
 with users as (
-    select * from {{ ref('stg_dora__user') }}
+    select * from {{ ref('int_dora__active_user') }}
 ),
 
 users_with_imer as (

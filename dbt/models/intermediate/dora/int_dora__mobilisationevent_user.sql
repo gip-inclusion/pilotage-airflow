@@ -1,17 +1,18 @@
-with users as (
-    select * from {{ ref('stg_dora__user') }}
+with events as (
+    select * from {{ ref('stg_dora__mobilisationevent') }}
 ),
 
-events as (
-    select * from {{ ref('stg_dora__mobilisationevent') }}
+users as (
+    select * from {{ ref('int_dora__active_user') }}
 ),
 
 final as (
     select
-        {{ dbt_utils.star(relation_alias='events', from=ref('stg_dora__mobilisationevent'), prefix='event_') }},
-        {{ dbt_utils.star(relation_alias='users', from=ref('stg_dora__user'), prefix='user_') }}
+        events.id as mobilisation_id,
+        events.user_id
     from events
-    inner join users on events.user_id = users.id
+    inner join users
+        on events.user_id = users.id
 )
 
 select * from final
