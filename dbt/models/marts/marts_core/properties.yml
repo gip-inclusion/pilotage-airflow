@@ -352,7 +352,7 @@ models:
       - name: is_logged_imer
         description: >
           Dit si l'IMER a été faite par un utilisateur connecté à son compte. Côté DORA, on reprend
-          `int_dora__imer.is_logged`, qui vient de l'événement de mobilisation. Côté
+          `int_dora__imer.is_logged`, qui vient de l'événement source. Côté
           Emplois, on regarde `user_kind` : `emplois_anonymous` veut dire non connecté,
           les autres valeurs veulent dire connecté.
         tests:
@@ -400,7 +400,12 @@ models:
                 warn_if: "> 0"
       - name: kind
         description: >
-          Type de l'intention de mise en relation.
+          Type de l'intention de mise en relation. `service_ext_link`, `service_orientation` et
+          `service_contact` côté Les Emplois correspondent à `mobilisation` côté DORA, mais avec plus
+          de granularité.
+          `structure_contact` représente une vue des informations de contact d'une structure et
+          s'applique à DORA comme aux Emplois.
+
         tests:
           - accepted_values:
               arguments:
@@ -417,7 +422,8 @@ models:
           ou `soliguide--<id>`. Pour DORA, il vient d'abord du service confirmé de l'orientation
           liée à la mobilisation, puis du service reconstruit depuis la mobilisation. Les services
           reconstruits depuis les mobilisations sont gardés uniquement s'ils existent dans
-          `dim_data_inclusion__services`.
+          `dim_data_inclusion__services`. Il reste vide pour les IMER DORA de type
+          `structure_contact`.
       - name: source
         description: >
           Source du service concerné par l'intention. Cette colonne décrit le service ciblé, pas
@@ -437,6 +443,7 @@ models:
           - Pour les mobilisations DORA, on utilise la règle déjà présente côté DORA :
             même utilisateur, même service via le slug, et orientation créée dans l'heure
             qui suit.
+          - Pour les IMER DORA `structure_contact`, cette colonne reste vide.
           - Cette colonne sert à joindre le mart des orientations.
           - Il ne faut pas l'utiliser pour dédoublonner les IMER, car une même orientation
             peut être liée à plusieurs lignes d'IMER.
