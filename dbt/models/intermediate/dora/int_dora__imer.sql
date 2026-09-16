@@ -6,6 +6,15 @@ with mobilisation_events as (
     from {{ ref('stg_dora__mobilisationevent') }}
 ),
 
+structure_info_views as (
+    select *
+    from {{ ref('stg_dora__structureinfosview') }}
+    where
+        is_staff is false
+        and is_structure_member is false
+        and is_structure_admin is false
+),
+
 mobilisation_to_orientation as (
     select * from {{ ref('int_dora__mobilisation_to_orientation') }}
 ),
@@ -62,7 +71,7 @@ confirmed_mobilized_services as (
     select * from data_inclusion_mobilized_services
 ),
 
-imer as (
+mobilisation_imer as (
     select
         mobilisation_events.id                                   as event_id,
         mobilisation_events.date, -- noqa: RF04
@@ -94,6 +103,39 @@ imer as (
         on mobilisation_events.structure_id_di_source = structure_source_mapping.source_structure_id
     left join confirmed_mobilized_services
         on mobilisation_events.id = confirmed_mobilized_services.id
+),
+
+structure_contact_imer as (
+    select
+        structure_info_views.id                     as event_id,
+        structure_info_views.date, -- noqa: RF04
+        structure_info_views.user_id,
+        structure_info_views.is_logged,
+        structure_info_views.user_kind,
+        structure_info_views.is_manager,
+        structure_info_views.structure_id_di_source as target_structure_source_id,
+        structure_source_mapping.structure_id       as target_di_structure_id,
+        false                                       as is_di_service,
+        cast(null as text)                          as mobilized_service_id,
+        'structure_contact'                         as kind,
+        cast(null as text)                          as orientation_id,
+        false                                       as generates_orientation,
+        'dora'                                      as origin_source,
+        coalesce(
+            active_users.main_activity in ('accompagnateur', 'accompagnateur_offreur'),
+            false
+        )                                           as is_prescriber
+    from structure_info_views
+    left join active_users
+        on structure_info_views.user_id = active_users.id
+    left join structure_source_mapping
+        on structure_info_views.structure_id_di_source = structure_source_mapping.source_structure_id
+),
+
+imer as (
+    select * from mobilisation_imer
+    union all
+    select * from structure_contact_imer
 ),
 
 final as (

@@ -7,12 +7,13 @@ models:
       Avant, ce modèle comptait deux types d'événements comme des IMER : les
       orientations et les mobilisations. Ce n'est plus le cas, car une orientation
       DORA génère aussi une mobilisation et créait du double comptage.
-      Maintenant, une IMER DORA correspond uniquement à une mobilisation. Les
+      Maintenant, une IMER DORA correspond à une mobilisation ou à une vue des
+      informations de contact d'une structure (`structure_contact`). Les
       orientations restent disponibles dans `fct_dora__orientations`.
       La colonne `is_logged` reprend le statut de connexion enregistré sur
-      l'événement de mobilisation. C'est le critère métier utilisé pour distinguer
-      les IMER connectées et non connectées ; il est indépendant de la présence
-      d'un `user_id`.
+      l'événement source. C'est le critère métier utilisé pour distinguer les
+      IMER connectées et non connectées ; il est indépendant de la présence d'un
+      `user_id`.
     config:
       tags:
         - dora
@@ -24,20 +25,23 @@ models:
           - not_null
       - name: is_logged
         description: >
-          Indique si l'événement de mobilisation a été réalisé par un utilisateur
+          Indique si l'événement a été réalisé par un utilisateur
           connecté.
         tests:
           - not_null
       - name: kind
         description: >
-          Type d'IMER DORA. Depuis le changement de modèle pour éviter le double comptage,
-          la seule valeur attendue ici est `mobilisation`.
+          Type d'IMER DORA. Les mobilisations correspondent à une consultation
+          de service ; `structure_contact` correspond à une visualisation des
+          informations de contact d'une structure. On a enlevé les `orientations`
+          pour éviter le double comptage.
         tests:
           - not_null
           - accepted_values:
               arguments:
                 values:
                   - mobilisation
+                  - structure_contact
       - name: orientation_id
         description: |
           Identifiant de l'orientation liée à l'IMER, quand il y en a une.
@@ -50,8 +54,9 @@ models:
           mobilisations lui sont rattachées.
       - name: origin_source
         description: >
-          Origine du service mobilisé. Vaut `dora` pour un service DORA et `dora-data-inclusion`
-          pour un service Data Inclusion mobilisé depuis DORA.
+          Origine de l'IMER DORA. Vaut `dora` pour les IMER issues de DORA, y
+          compris les vues de contact structure, et `dora-data-inclusion` pour
+          les mobilisations de services Data Inclusion depuis DORA.
         tests:
           - not_null
           - accepted_values:
@@ -76,7 +81,8 @@ models:
           Pour un événement Data Inclusion mobilisé depuis DORA, il est reconstruit depuis
           `stg_dora__mobilisationevent.path` après suppression du préfixe `di--`.
           Si le service reconstruit n'existe pas dans `dim_data_inclusion__services`,
-          la colonne reste vide.
+          la colonne reste vide. Pour les IMER `structure_contact`, cette colonne
+          reste vide car aucun service n'est mobilisé.
   - name: int_dora__active_user
     description: |
       Utilisateurs DORA actifs, valides et non staff.

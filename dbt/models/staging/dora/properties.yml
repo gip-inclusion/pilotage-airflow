@@ -155,6 +155,45 @@ models:
           vides reçues depuis la source sont normalisées à NULL.
 
 
+  - name: stg_dora__structureinfosview
+    description: >
+      Staging des événements de visualisation des informations de contact d'une
+      structure DORA (`stats_structureinfosview`). Ces événements alimentent les
+      IMER DORA de type `structure_contact`.
+    config:
+      tags:
+        - dora
+    columns:
+      - name: id
+        description: >
+          Identifiant de l'événement dans la table source `stats_structureinfosview`.
+          La clé globale de l'IMER est générée plus loin dans `fct_dora__imer`.
+        data_tests:
+          - unique
+          - not_null
+      - name: is_logged
+        description: >
+          Indique si la visualisation des informations de structure a été faite
+          par un utilisateur connecté.
+        data_tests:
+          - not_null
+      - name: structure_id
+        description: >
+          Identifiant DORA de la structure dont les informations ont été vues.
+      - name: structure_id_di_source
+        description: >
+          Identifiant normalisé en `dora--<structure_id>`, utilisé pour joindre
+          le mapping Data Inclusion et `dim_dora__structures`.
+      - name: raw_structure_source
+        description: >
+          Source de structure reçue dans l'événement brut DORA. Elle est gardée
+          pour audit et n'est pas utilisée comme namespace de l'IMER.
+      - name: user_kind
+        description: >
+          Type d'utilisateur reçu dans l'événement de visualisation. Les chaînes
+          vides reçues depuis la source sont normalisées à NULL.
+
+
 
   - name: stg_dora__service
     config:
