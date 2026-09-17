@@ -113,13 +113,14 @@ models:
     description: >
       Ce modele compte, par mois, les actes metier DORA reconstruits depuis les requetes historiques du fetcher Python
       des actes metier sur Autometa : orientations, intentions d'orientation iMER, recherches, creations et mises a jour
-      de services et de structures.
+      de services et de structures. Les orientations et les iMER proviennent des facts DORA consolidées. Les iMER sont
+      limitées aux profils professionnels DORA, Data Inclusion et Les Emplois retenus pour les actes métier. Tous ces
+      événements restent rattachés au produit `dora` dans le référentiel des actes métier.
 
       **ATTENTION : ce modele replique volontairement le fetcher Python au plus proche. Certaines tables sont donc
       appelees directement via `source('dora', ...)` plutot que via les modeles staging/intermediate dbt, notamment
-      `orientations_orientation`, `services_service`, `structures_structure`, `stats_searchview`, `users_user` et
-      `structures_structuremember`. Cette dette est intentionnelle pour la premiere reprise dbt des actes metier, mais
-      elle devra etre revisitée.**
+      `services_service`, `structures_structure`, `stats_searchview`, `users_user` et `structures_structuremember`.
+      Cette dette est intentionnelle pour la premiere reprise dbt des actes metier, mais elle devra etre revisitée.**
     config:
       tags:
         - actes-metier
@@ -193,19 +194,26 @@ models:
         description: >
           Type de structure associé à l'acte métier, normalisé à partir de la typologie brute DORA de la structure
           prescriptrice, de la structure porteuse du service, ou de la structure rattachée à l'utilisateur selon le
-          type d'acte. Les valeurs non reconnues ou absentes sont regroupées dans `Autre`.
+          type d'acte. Pour les iMER Les Emplois retenues, la valeur est `emplois_organisation` pour les profils
+          `emplois_prescriber` et `emplois_structure` pour les profils `emplois_employer`. Les orientations Les Emplois
+          ont la valeur `Autre`. Les autres valeurs non reconnues ou absentes sont regroupées dans `Autre`.
         tests:
           - not_null
       - name: departement
         description: >
           Département associé à l'acte métier, normalisé au format code INSEE (`01` à `95`, `2A`, `2B`, `971` à
-          `976`). La valeur est `Inconnu` lorsque le département est absent, vide ou non interprétable.
+          `976`). Pour une orientation, il correspond à la commune du service orienté. Pour une iMER, il correspond à
+          la structure ciblée via son identifiant Data Inclusion ; les iMER DORA utilisent le département enregistré
+          dans l'événement en fallback. La valeur est `Inconnu` lorsque le département est absent, vide ou non
+          interprétable.
         tests:
           - not_null
       - name: nombre_actes
         description: >
           Nombre d'actes métier agrégés au grain mois, source, type d'acte, indicateurs North Star / traité, type de
-          structure et département. Chaque compteur provient d'un `count(*)` sur la table source correspondant au type
+          structure et département. Les orientations incluent toutes les lignes de la fact DORA. Les iMER sont limitées
+          aux profils `accompagnateur`, `accompagnateur_offreur`, `offreur`, `emplois_employer` et
+          `emplois_prescriber`. Chaque compteur provient d'un `count(*)` sur la table source correspondant au type
           d'acte, puis d'une somme après normalisation.
         tests:
           - not_null

@@ -84,3 +84,11 @@ tests:
       Vérifie que int_dora__imer conserve les bons volumes par type d'IMER DORA :
       les mobilisations viennent de stg_dora__mobilisationevent et les
       structure_contact viennent des vues de contact structure éligibles.
+  - name: test_int_dora__actes_metier_orientations_match_fct
+    description: >
+      Vérifie que le nombre d'orientations dans les actes métier correspond au nombre de lignes de
+      fct_dora__orientations sur la période retenue.
+  - name: test_int_dora__actes_metier_imer_match_fct
+    description: >
+      Vérifie que le nombre d'iMER dans les actes métier correspond au nombre de lignes de fct_dora__imer sur la période
+      retenue pour les profils accompagnateur, accompagnateur_offreur, offreur, emplois_employer et emplois_prescriber.
