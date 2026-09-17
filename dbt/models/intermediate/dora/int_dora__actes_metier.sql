@@ -13,6 +13,68 @@ with user_struct as (
 
 ),
 
+orientations as (
+
+    select
+        orientations.creation_date,
+        orientations.status,
+        oriented_service_communes.code_departement_insee as raw_departement,
+        case
+            when orientations.origin_source = 'dora' then prescriber_structures.typology
+        end                                              as raw_type_structure
+    from {{ ref('fct_dora__orientations') }} as orientations
+    left join {{ ref('dim_dora__structures') }} as prescriber_structures
+        on orientations.prescriber_structure_id_dora = prescriber_structures.id
+    left join {{ ref('dim_commune') }} as oriented_service_communes
+        on orientations.oriented_service_code_commune_insee = oriented_service_communes.code_commune_insee
+
+),
+
+imer as (
+
+    select
+        imer.date,
+        case
+            when
+                imer.origin_source = 'emplois'
+                and imer.user_prescriber_organization_id is not null
+                then 'emplois_organisation'
+            when
+                imer.origin_source = 'emplois'
+                and imer.user_company_id is not null
+                then 'emplois_structure'
+            when imer.origin_source in ('dora', 'dora-data-inclusion') then user_struct.typology
+        end as raw_type_structure,
+        coalesce(
+            target_structure_communes.code_departement_insee,
+            case
+                when imer.origin_source in ('dora', 'dora-data-inclusion')
+                    then mobilisation_events.structure_department
+            end
+        )   as raw_departement
+    from {{ ref('fct_dora__imer') }} as imer
+    left join user_struct
+        on
+            imer.origin_source in ('dora', 'dora-data-inclusion')
+            and cast(user_struct.user_id as text) = cast(imer.user_id as text)
+    left join {{ ref('dim_data_inclusion__structures') }} as target_structures
+        on imer.target_di_structure_id = target_structures.structure_id
+    left join {{ ref('dim_commune') }} as target_structure_communes
+        on target_structures.code_commune_insee = target_structure_communes.code_commune_insee
+    left join {{ ref('stg_dora__mobilisationevent') }} as mobilisation_events
+        on
+            imer.origin_source in ('dora', 'dora-data-inclusion')
+            and imer.source_imer_id = mobilisation_events.id
+    where imer.user_kind in (
+        'accompagnateur',
+        'accompagnateur_offreur',
+        'offreur',
+        'emplois_employer',
+        'emplois_prescriber'
+    )
+
+),
+
 raw_actes as (
 
     select
@@ -23,20 +85,18 @@ raw_actes as (
         orientations.status in ('VALIDÉE', 'REFUSÉE')                       as north_star,
         orientations.status in ('VALIDÉE', 'REFUSÉE')                       as north_star_70,
         orientations.status in ('VALIDÉE', 'REFUSÉE')                       as traite,
-        structures.typology                                                 as raw_type_structure,
-        coalesce(structures.department, 'Inconnu')                          as raw_departement,
+        orientations.raw_type_structure,
+        coalesce(orientations.raw_departement, 'Inconnu')                   as raw_departement,
         count(*)                                                            as nombre_actes
-    from {{ source('dora', 'orientations_orientation') }} as orientations
-    left join {{ source('dora', 'structures_structure') }} as structures
-        on orientations.prescriber_structure_id = structures.id
+    from orientations
     where
         orientations.creation_date >= date_trunc('month', current_date) - interval '14 months'
         and orientations.creation_date < date_trunc('month', current_date)
     group by
         to_char(date_trunc('month', orientations.creation_date), 'YYYY-MM'),
         orientations.status in ('VALIDÉE', 'REFUSÉE'),
-        structures.typology,
-        coalesce(structures.department, 'Inconnu')
+        orientations.raw_type_structure,
+        coalesce(orientations.raw_departement, 'Inconnu')
 
     union all
 
@@ -48,20 +108,17 @@ raw_actes as (
         false                                              as north_star,
         false                                              as north_star_70,
         false                                              as traite,
-        user_struct.typology                               as raw_type_structure,
-        coalesce(imer.structure_department, 'Inconnu')     as raw_departement,
+        imer.raw_type_structure,
+        coalesce(imer.raw_departement, 'Inconnu')          as raw_departement,
         count(*)                                           as nombre_actes
-    from {{ ref('int_dora__imer') }} as imer
-    left join user_struct
-        on cast(user_struct.user_id as text) = cast(imer.user_id as text)
+    from imer
     where
-        imer.user_kind in ('accompagnateur', 'accompagnateur_offreur', 'offreur')
-        and imer.date >= date_trunc('month', current_date) - interval '14 months'
+        imer.date >= date_trunc('month', current_date) - interval '14 months'
         and imer.date < date_trunc('month', current_date)
     group by
         to_char(date_trunc('month', imer.date), 'YYYY-MM'),
-        user_struct.typology,
-        coalesce(imer.structure_department, 'Inconnu')
+        imer.raw_type_structure,
+        coalesce(imer.raw_departement, 'Inconnu')
 
     union all
 
@@ -217,6 +274,7 @@ normalized as (
             when raw_type_structure in ('CIDFF', 'CSAPA', 'CAARUD', 'PREVENTION', 'OHPD', 'OCASF') then 'TS_SPECIALISES'
             when raw_type_structure in ('CAF', 'MSA') then 'CAF_MSA'
             when raw_type_structure in ('PIJ_BIJ', 'OACAS', 'CAVA') then 'AUTRES_INSERTION'
+            when raw_type_structure in ('emplois_organisation', 'emplois_structure') then raw_type_structure
             when raw_type_structure in ('BUYER', 'PARTNER', 'INDIVIDUAL', 'ADMIN') then 'Autre'
             else 'Autre'
         end as type_structure,
