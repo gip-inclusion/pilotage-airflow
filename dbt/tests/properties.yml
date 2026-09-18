@@ -79,3 +79,11 @@ tests:
       Vérifie que int_dora__imer conserve toutes les mobilisations DORA, en
       retrouvant les mêmes volumes par statut de connexion que
       stg_dora__mobilisationevent.
+  - name: test_int_dora__actes_metier_orientations_match_fct
+    description: >
+      Vérifie que le nombre d'orientations dans les actes métier correspond au nombre de lignes de
+      fct_dora__orientations sur la période retenue.
+  - name: test_int_dora__actes_metier_imer_match_fct
+    description: >
+      Vérifie que le nombre d'iMER dans les actes métier correspond au nombre de lignes de fct_dora__imer sur la période
+      retenue pour les profils accompagnateur, accompagnateur_offreur, offreur, emplois_employer et emplois_prescriber.
