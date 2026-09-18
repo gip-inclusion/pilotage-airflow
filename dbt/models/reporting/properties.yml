@@ -346,7 +346,8 @@ models:
           ou `soliguide--<id>`. Pour DORA, il vient d'abord du service confirmé de l'orientation
           liée à la mobilisation, puis du service reconstruit depuis la mobilisation. Les services
           reconstruits depuis les mobilisations sont gardés uniquement s'ils existent dans
-          `dim_data_inclusion__services`.
+          `dim_data_inclusion__services`. Il reste vide pour les IMER DORA de type
+          `structure_contact`.
       - name: source
         description: >
           Source du service concerné par l'intention. Cette colonne décrit le service ciblé, pas
@@ -358,6 +359,7 @@ models:
           une orientation.
 
           - Sur une IMER DORA, c'est la première orientation retrouvée après la mobilisation.
+          - Sur une IMER DORA `structure_contact`, cette colonne reste vide.
           - Cette colonne sert à joindre les orientations.
           - Il ne faut pas l'utiliser pour dédoublonner les IMER.
       - name: target_structure_nom

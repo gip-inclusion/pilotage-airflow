@@ -76,6 +76,11 @@ tests:
       correspondent aux volumes de int_dora__imer.
   - name: test_int_dora__imer_rowcount_by_is_logged_matches_mobilisationevent
     description: >
-      Vérifie que int_dora__imer conserve toutes les mobilisations DORA, en
-      retrouvant les mêmes volumes par statut de connexion que
-      stg_dora__mobilisationevent.
+      Vérifie que int_dora__imer conserve toutes les IMER DORA, en retrouvant
+      les mêmes volumes par statut de connexion que la somme des mobilisations
+      DORA et des vues de contact structure éligibles.
+  - name: test_int_dora__imer_rowcount_by_kind_matches_sources
+    description: >
+      Vérifie que int_dora__imer conserve les bons volumes par type d'IMER DORA :
+      les mobilisations viennent de stg_dora__mobilisationevent et les
+      structure_contact viennent des vues de contact structure éligibles.
