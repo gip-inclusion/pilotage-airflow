@@ -1,7 +1,7 @@
 with subquery as (
     select distinct cap_candidatures.id_cap_structure
     from {{ source('raw_emplois','cap_critères_iae') }} as cap_criteres_iae
-    inner join cap_candidatures
+    inner join {{ source('raw_emplois','cap_candidatures') }}
         on cap_criteres_iae.id_cap_candidature = cap_candidatures.id
 )
 select

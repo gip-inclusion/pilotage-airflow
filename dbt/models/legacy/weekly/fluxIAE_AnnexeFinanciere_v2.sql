@@ -100,5 +100,5 @@ from
     "AnnexeFinanciere_v4" as af
 left join {{ ref('fluxIAE_Structure_v2') }} as structure
     on af.af_id_structure = structure.structure_id_siae
-left join departements as dept_af
+left join {{ source('raw_emplois', 'departements') }} as dept_af
     on af.num_dep_af = dept_af.code_departement
