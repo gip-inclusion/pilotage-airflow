@@ -17,12 +17,14 @@ TABLES_EMPLOI = [
     "candidatures_echelle_locale",
     "fiches_de_poste_par_candidature",
     "structures",
-    "prolongations",
     "organisations",
     "utilisateurs",
     "pass_agréments",
     "suspensions_pass",
     "suivi_auto_prescription",
+]
+TABLES_RAW_EMPLOI = [
+    "prolongations",
 ]
 TABLES_ASP = [
     "fluxIAE_Structure_v2",
@@ -95,6 +97,11 @@ with DAG("populate_matometa_db", schedule="@daily", **dag_args) as dag:
             sync_tables(TABLES_EMPLOI, src_schema="public", dest_schema="les_emplois", from_db=src_db)
 
     @task
+    def export_raw_emplois_tables():
+        with db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET") as src_db:
+            sync_tables(TABLES_RAW_EMPLOI, src_schema="raw_emplois", dest_schema="les_emplois", from_db=src_db)
+
+    @task
     def export_asp_tables():
         with db.DBConnection(db_url_variable="EMPLOIS_DB_URL_SECRET") as src_db:
             sync_tables(TABLES_ASP, src_schema="public", dest_schema="asp", from_db=src_db)
@@ -121,6 +128,7 @@ with DAG("populate_matometa_db", schedule="@daily", **dag_args) as dag:
 
     (
         export_emplois_tables()
+        >> export_raw_emplois_tables()
         >> export_asp_tables()
         >> export_monrecap_tables()
         >> export_di_tables()
