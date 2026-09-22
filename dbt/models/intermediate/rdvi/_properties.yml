@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: int_rdvi__tous_les_pros
+    description: |
+      Tous les agents rdv-insertion, avec leur organisation de rattachement.
+
+      Une ligne par couple agent / organisation : un agent rattaché à plusieurs organisations via
+      `agent_roles` apparaît plusieurs fois. Reprend la logique de la question Metabase historique
+      sur `rdvi.agents`, construite à partir de `stg_rdvi__agents`, `stg_rdvi__agent_roles`,
+      `stg_rdvi__organisations` et `stg_rdvi__departments`.
+
+      Les colonnes sont alignées sur `int_dora__tous_les_pros` et `int_emplois__tous_les_pros`
+      pour pouvoir empiler les sources. `type_utilisateur` et `type_utilisateur_detail` reprennent
+      tous les deux `organisation_type`, faute d'une distinction plus fine côté rdv-insertion.
+    config:
+      tags:
+        - rdv-insertion
+        - pro_pdi
+    columns:
+      - name: id
+        description: Identifiant de l'agent.
+        tests:
+          - not_null
+      - name: source
+        description: Source des données, toujours `RDV-i`.
+      - name: date_derniere_connexion
+        description: Dernière connexion de l'agent (`agents.last_sign_in_at`).
+      - name: prenom
+        description: >
+          Prénom de l'agent. Les verrous RGPD côté rdv-insertion rendent souvent cette valeur
+          inexploitable (voir commentaire dans le modèle).
+      - name: nom
+        description: >
+          Nom de l'agent. Même remarque que `prenom` : valeur souvent inexploitable.
+      - name: date_inscription
+        description: Date de création du compte de l'agent (`agents.created_at`).
+      - name: email
+        description: Adresse e-mail de l'agent.
+      - name: admin
+        description: >
+          `Oui` si l'agent a le droit d'export CSV sur cette organisation, ou s'il est
+          super-administrateur. `Non` sinon.
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - Oui
+                  - Non
+      - name: type_utilisateur
+        description: Type de l'organisation de rattachement de l'agent.
+      - name: type_utilisateur_detail
+        description: Même valeur que `type_utilisateur`.
+      - name: departement_structure
+        description: Numéro du département de l'organisation de rattachement.
+      - name: type_structure
+        description: Même valeur que `type_utilisateur`.
+      - name: nom_structure
+        description: Nom de l'organisation de rattachement.

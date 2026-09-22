@@ -87,3 +87,56 @@ models:
               - traite
               - type_structure
               - departement
+  - name: int_monrecap__tous_les_pros
+    description: |
+      Tous les contacts professionnels Mon Récap, commandeurs et non commandeurs, avec leur
+      structure de rattachement.
+
+      Reprend la logique de la question Metabase historique sur `monrecap.Contacts`, mais
+      construite directement à partir des deux staging qui alimentent cette table
+      (`stg_contacts_commandeurs` et `stg_contacts_non_commandeurs`) plutôt que du mart
+      `Contacts`. Les lignes dont le département (`Code dpt`) contient une valeur aberrante
+      (`To`, `LI`, `li`, `Do`, `Ch`, `AN`, `[N`) sont exclues, sauf quand il est vide.
+
+      Les colonnes sont alignées sur `int_dora__tous_les_pros` et `int_emplois__tous_les_pros`
+      pour pouvoir empiler les trois sources, à l'exception de `admin`, qui n'a pas
+      d'équivalent côté Mon Récap et n'est donc pas repris ici.
+    config:
+      tags:
+        - pro_pdi
+    columns:
+      - name: id
+        description: Adresse e-mail du contact, utilisée comme identifiant.
+        tests:
+          - not_null
+      - name: source
+        description: Source des données, toujours `MonRécap`.
+      - name: date_derniere_connexion
+        description: >
+          `Date de dernière commande` du contact. Mon Récap ne porte pas de vraie date de
+          connexion, celle-ci est une approximation par l'activité de commande.
+      - name: prenom
+        description: >
+          Vaut `Contact`. Mon Récap ne distingue pas prénom et nom : les deux colonnes portent
+          la même valeur, non découpée.
+      - name: nom
+        description: Vaut `Contact`, comme `prenom` — voir sa description.
+      - name: type_utilisateur
+        description: >
+          Vaut `Type de contact` du contact (ex. commandeur, non commandeur), brut, sans
+          normalisation.
+      - name: date_inscription
+        description: Vaut `Date de première commande` du contact.
+      - name: email
+        description: Adresse e-mail du contact (`EMAIL`), identique à `id`.
+      - name: type_utilisateur_detail
+        description: Toujours `NA`, Mon Récap n'a pas de détail de type d'utilisateur.
+      - name: nom_structure
+        description: Nom de la structure du contact (`STRUCTURE`).
+      - name: type_structure
+        description: Type de structure du contact (`Type de Structure`).
+      - name: departement_structure
+        description: >
+          Département du contact (`Code dpt`). Les valeurs aberrantes historiques (`To`, `LI`,
+          `li`, `Do`, `Ch`, `AN`, `[N`) sont exclues du modèle plutôt que nettoyées — voir la
+          description du modèle.
