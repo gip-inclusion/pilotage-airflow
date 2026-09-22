@@ -85,3 +85,58 @@ models:
               - traite
               - type_structure
               - departement
+  - name: int_gps__tous_les_pros
+    description: |
+      Tous les professionnels GPS ayant au moins une activité enregistrée dans
+      `gps.gps_log_data`, avec leur structure de rattachement.
+
+      Reprend la logique de la question Metabase historique sur `public.utilisateurs`, mais
+      construite directement à partir de `stg_emplois__utilisateurs` et
+      `stg_emplois__collaborations` plutôt que de la mart `utilisateurs`, pour ne pas faire
+      dépendre un modèle intermediate d'une mart. Les colonnes sont alignées sur
+      `int_dora__tous_les_pros` et `int_emplois__tous_les_pros` pour pouvoir empiler les
+      sources, à l'exception de `admin`, qui n'a pas d'équivalent côté GPS.
+
+      Le rattachement retenu pour `type_structure` et `departement_structure` suit cet ordre
+      de priorité : organisation, puis structure, puis institution. Pour `nom_structure`, le
+      choix se fait sur la présence d'un nom non vide plutôt que sur l'identifiant, pour
+      reprendre fidèlement la question Metabase d'origine.
+    config:
+      tags:
+        - gps
+        - pro_pdi
+    columns:
+      - name: id
+        description: Identifiant de l'utilisateur.
+        tests:
+          - not_null
+      - name: source
+        description: Source des données, toujours `GPS`.
+      - name: date_derniere_connexion
+        description: Horodatage de la dernière activité de l'utilisateur dans `gps.gps_log_data`.
+      - name: prenom
+        description: Prénom de l'utilisateur, depuis `stg_emplois__utilisateurs`.
+      - name: nom
+        description: Nom de l'utilisateur, depuis `stg_emplois__utilisateurs`.
+      - name: type_utilisateur
+        description: >
+          Type de l'utilisateur des Emplois. Valeurs possibles : employer, prescriber,
+          labor_inspector.
+      - name: date_inscription
+        description: Horodatage de la première activité de l'utilisateur dans `gps.gps_log_data`.
+      - name: email
+        description: Adresse e-mail de l'utilisateur.
+      - name: type_utilisateur_detail
+        description: Toujours `NA`, GPS ne porte pas cette information.
+      - name: nom_structure
+        description: >
+          Nom de l'organisation, à défaut de la structure, à défaut de l'institution de
+          rattachement. Vaut `NA` si aucun des trois n'a de nom renseigné.
+      - name: type_structure
+        description: >
+          Type de l'organisation, à défaut de la structure, à défaut de l'institution de
+          rattachement.
+      - name: departement_structure
+        description: >
+          Département de l'organisation, à défaut de la structure, à défaut de l'institution de
+          rattachement. Vaut `NA` si aucun des trois n'a de département renseigné.

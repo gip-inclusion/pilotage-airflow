@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_pilotage__visites
+    description: >
+      Visites enregistrées sur les tableaux de bord privés du Pilotage de l'Inclusion,
+      depuis `raw_emplois.c1_private_dashboard_visits_v0`. Une ligne par visite.
+    config:
+      tags:
+        - pilotage
+    columns:
+      - name: id
+        description: Identifiant unique de la visite.
+        tests:
+          - not_null
+          - unique
+      - name: id_utilisateur
+        description: Identifiant de l'utilisateur des Emplois ayant visité le tableau de bord.
+        tests:
+          - not_null
+      - name: type_utilisateur
+        description: >
+          Type de l'utilisateur au moment de la visite. Valeurs possibles : employer, prescriber,
+          labor_inspector, itou_staff, job_seeker.
+      - name: id_tb
+        description: Identifiant Metabase du tableau de bord visité.
+      - name: date_visite
+        description: Horodatage de la visite.
+      - name: departement
+        description: Département de l'utilisateur au moment de la visite.
+      - name: region
+        description: Région de l'utilisateur au moment de la visite.
+      - name: id_structure
+        description: Structure employeuse courante de l'utilisateur au moment de la visite.
+      - name: id_organisation
+        description: Organisation prescriptrice courante de l'utilisateur au moment de la visite.
+      - name: id_institution
+        description: Institution courante de l'utilisateur au moment de la visite.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière synchronisation de la ligne dans Metabase.

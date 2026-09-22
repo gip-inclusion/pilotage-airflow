@@ -457,3 +457,51 @@ models:
     config:
       tags:
         - dora
+
+  - name: int_dora__tous_les_pros
+    description: |
+      Tous les professionnels DORA avec leur structure de rattachement.
+
+      Une ligne par couple utilisateur / structure : un utilisateur rattaché à plusieurs
+      structures apparaît plusieurs fois, et un utilisateur sans structure apparaît une fois
+      avec des valeurs NA. Aucun filtre n'est appliqué sur les utilisateurs (actifs, staff)
+      ni sur les structures (obsolètes).
+    config:
+      tags:
+        - dora
+        - pro_pdi
+    columns:
+      - name: id
+        description: Identifiant de l'utilisateur DORA
+        tests:
+          - not_null
+      - name: source
+        description: Source des données, toujours Dora
+      - name: date_derniere_connexion
+        description: Dernière connexion de l'utilisateur (`users_user.last_login`).
+      - name: prenom
+        description: Prénom de l'utilisateur. Vaut `NA` si vide.
+      - name: nom
+        description: Nom de l'utilisateur. Vaut `NA` si vide.
+      - name: type_utilisateur
+        description: Activité principale de l'utilisateur (`main_activity`). Vaut `NA` si vide.
+      - name: type_utilisateur_detail
+        description: Toujours `NA`, Dora ne porte pas de détail de type d'utilisateur.
+      - name: date_inscription
+        description: Date d'inscription de l'utilisateur (`users_user.date_joined`).
+      - name: email
+        description: Adresse e-mail de l'utilisateur.
+      - name: admin
+        description: Oui si l'utilisateur est gestionnaire, Non sinon
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - Oui
+                  - Non
+      - name: nom_structure
+        description: Nom de la structure de rattachement. Vaut `NA` si l'utilisateur n'en a pas, ou si le nom est vide.
+      - name: type_structure
+        description: Typologie de la structure de rattachement. Vaut `NA` si l'utilisateur n'en a pas, ou si elle est vide.
+      - name: departement_structure
+        description: Département de la structure de rattachement. Vaut `NA` si l'utilisateur n'en a pas, ou s'il est vide.

@@ -142,7 +142,7 @@ with DAG(
 
     dbt_monrecap = bash.BashOperator(
         task_id="dbt_monrecap",
-        bash_command="dbt run --select monrecap",
+        bash_command="dbt run --select staging.monrecap marts.monrecap",
         env=env_vars,
         append_env=True,
     )
