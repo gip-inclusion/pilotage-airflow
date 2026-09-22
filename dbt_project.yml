@@ -41,6 +41,8 @@ models:
       +schema: public
       +materialized: table
       +post-hook: ["{{ index_join_keys() }}"]
+      monrecap:
+        +schema: monrecap
     data_inclusion:
       +schema: data_inclusion
     reporting:
@@ -53,13 +55,8 @@ models:
     staging:
       +schema: staging
       +materialized: view
-    monrecap:
-      +schema: monrecap
-      marts:
-        +materialized: table
-        +post-hook: ["{{ index_join_keys() }}"]
-      staging:
-        +materialized: view
+      monrecap:
+        +schema: monrecap
     reporting:
       +schema : reporting
       +materialized : table

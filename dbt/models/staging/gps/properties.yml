@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: stg_gps__log_data
+    description: >
+      Vue simple sur `gps.gps_log_data`, avec les colonnes utiles pour retrouver la première et
+      la dernière activité GPS d'un utilisateur.
+    config:
+      tags:
+        - gps
+    columns:
+      - name: user_id
+        tests:
+          - not_null

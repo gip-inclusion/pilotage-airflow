@@ -685,6 +685,10 @@ sources:
       - name: siaes_siae
         description: >
           Utilisée pour rattacher une fiche entreprise à un département.
+      - name: siaes_siaeuser
+        description: >
+          Rattachement des utilisateurs du Marché à leurs SIAE. Une SIAE peut avoir plusieurs
+          utilisateurs, et un utilisateur peut être rattaché à plusieurs SIAE.
   - name: monrecap
     schema: monrecap
     description: >

@@ -15,7 +15,8 @@ models:
 
   - name: stg_marche__users
     description: >
-      Vue simple sur `raw_marche.users_user`, avec les colonnes utiles aux actes métier.
+      Vue simple sur `raw_marche.users_user`, avec les colonnes utiles aux actes métier et au
+      recensement des professionnels du Marché.
     config:
       tags:
         - marche
@@ -51,7 +52,8 @@ models:
 
   - name: stg_marche__siaes
     description: >
-      Vue simple sur `raw_marche.siaes_siae`, avec les colonnes utiles aux actes métier.
+      Vue simple sur `raw_marche.siaes_siae`, avec les colonnes utiles aux actes métier et au
+      recensement des professionnels du Marché.
     config:
       tags:
         - marche
@@ -60,3 +62,44 @@ models:
         tests:
           - not_null
           - unique
+      - name: admin_email
+        description: >
+          E-mail administrateur de la SIAE. Utilisé pour repérer les utilisateurs administrateurs
+          d'au moins une SIAE dans `int_marche__tous_les_pros`.
+      - name: department
+        description: >
+          Département de la SIAE. Utilisé comme proxy du département de ses utilisateurs dans
+          `int_marche__tous_les_pros`, qui ne porte pas cette information directement.
+
+  - name: stg_marche__siae_users
+    description: >
+      Vue simple sur `raw_marche.siaes_siaeuser`, le rattachement des utilisateurs du Marché à
+      leurs SIAE. Une SIAE peut avoir plusieurs utilisateurs, et un utilisateur peut être
+      rattaché à plusieurs SIAE.
+    config:
+      tags:
+        - marche
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: siae_id
+        description: >
+          Identifiant de la SIAE. Clé étrangère vers `stg_marche__siaes.id`.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_marche__siaes')
+                field: id
+      - name: user_id
+        description: >
+          Identifiant de l'utilisateur. Clé étrangère vers `stg_marche__users.id`. N'est pas
+          unique dans cette table : un utilisateur peut être rattaché à plusieurs SIAE.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_marche__users')
+                field: id

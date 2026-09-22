@@ -5,6 +5,7 @@ select
     s.type                                     as type_struct,
     s.siret,
     s.active,
+    s.email_authentification,
 
     s.code_commune,
     dim_commune.code_departement_insee         as "département",

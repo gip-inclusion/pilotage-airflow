@@ -77,3 +77,110 @@ models:
           Identifiant de l'orientation. Renseigné uniquement lorsqu'une orientation a eu lieu.
       - name: date_mise_a_jour_metabase
         description: Date de la dernière synchronisation de cette ligne dans Metabase.
+
+  - name: stg_emplois__utilisateurs
+    description: >
+      Utilisateurs professionnels inscrits sur les Emplois de l'Inclusion : employeurs,
+      prescripteurs et inspecteurs du travail. Les candidats ne sont pas dans cette table.
+      Une ligne par utilisateur. Le rattachement à une structure, une organisation ou une
+      institution est porté par `stg_emplois__collaborations`.
+    config:
+      tags:
+        - pro_pdi
+    columns:
+      - name: id
+        description: Identifiant unique de l'utilisateur.
+        tests:
+          - not_null
+          - unique
+      - name: uid
+        description: Identifiant unique universel (UUID) de l'utilisateur.
+        tests:
+          - not_null
+          - unique
+      - name: email
+        description: Adresse e-mail de l'utilisateur. Donnée non publique.
+      - name: type
+        description: >
+          Type de l'utilisateur professionnel. Valeurs possibles : employer, prescriber, labor_inspector.
+      - name: prenom
+        description: Prénom de l'utilisateur.
+      - name: nom
+        description: Nom de famille de l'utilisateur.
+      - name: derniere_connexion
+        description: Horodatage de la dernière connexion de l'utilisateur à la plateforme.
+      - name: date_inscription
+        description: Date d'inscription de l'utilisateur sur la plateforme.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière synchronisation de la ligne dans Metabase.
+
+  - name: stg_emplois__collaborations
+    description: >
+      Rattachements des utilisateurs professionnels à leur structure employeuse, organisation
+      prescriptrice ou institution. Une ligne par rattachement : un utilisateur rattaché à
+      plusieurs organisations apparaît sur plusieurs lignes, et la table n'a pas de clé primaire
+      propre. Seuls les rattachements actifs sont exportés depuis les Emplois.
+    config:
+      tags:
+        - pro_pdi
+    columns:
+      - name: id_utilisateur
+        description: >
+          Identifiant de l'utilisateur rattaché. Correspond à `stg_emplois__utilisateurs.id`
+          et n'est pas unique dans cette table.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_emplois__utilisateurs')
+                field: id
+      - name: administrateur
+        description: >
+          Entier 0/1 (et non un booléen) indiquant si l'utilisateur est administrateur de la
+          structure, de l'organisation ou de l'institution de cette ligne.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - 0
+                  - 1
+                quote: false
+      - name: id_structure
+        description: >
+          Identifiant de la structure employeuse. Null pour les autres types de rattachement.
+      - name: id_organisation
+        description: >
+          Identifiant de l'organisation prescriptrice. Null pour les autres types de rattachement.
+      - name: id_institution
+        description: Identifiant de l'institution. Null pour les autres types de rattachement.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière synchronisation de la ligne dans Metabase.
+
+  - name: stg_emplois__institutions
+    description: >
+      Institutions rattachées aux Emplois de l'Inclusion : DDETS, DREETS, DGEFP, réseaux IAE et
+      autres acteurs institutionnels. Une ligne par institution.
+    config:
+      tags:
+        - pro_pdi
+    columns:
+      - name: id
+        description: Identifiant unique de l'institution.
+        tests:
+          - not_null
+          - unique
+      - name: type
+        description: >
+          Type de l'institution. Par exemple DDETS IAE, DDETS GEIQ, DDETS LOG, DREETS IAE, DREETS GEIQ,
+          Réseau IAE ou DGEFP IAE.
+      - name: nom
+        description: Nom de l'institution.
+      - name: departement
+        description: Code du département de l'institution.
+      - name: nom_departement
+        description: Code et nom du département de l'institution, par exemple 45 - Loiret.
+      - name: region
+        description: Nom de la région de l'institution.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière synchronisation de la ligne dans Metabase.
