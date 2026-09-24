@@ -98,3 +98,59 @@ models:
               - traite
               - type_structure
               - departement
+
+  - name: int_emplois__tous_les_pros
+    description: |
+      Tous les professionnels des Emplois de l'Inclusion avec leur structure, organisation ou
+      institution de rattachement.
+
+      Une ligne par rattachement, comme le modèle `utilisateurs` : un utilisateur rattaché à
+      plusieurs organisations apparaît plusieurs fois. Les colonnes sont alignées sur
+      `int_dora__tous_les_pros` pour pouvoir empiler les deux sources.
+    config:
+      tags:
+        - pro_pdi
+    columns:
+      - name: id
+        description: >
+            Identifiant de l'utilisateur des Emplois.
+            C'est la foire aux doublons parce qu'un utilisateur peut etre rattaché a différentes structures, mais on veut garder ces infos.
+        tests:
+          - not_null
+      - name: source
+        description: Source des données, toujours Les emplois.
+      - name: date_derniere_connexion
+        description: Dernière connexion de l'utilisateur (`utilisateurs_v0.dernière_connexion`).
+      - name: prenom
+        description: Prénom de l'utilisateur. Peut être vide, pas de valeur de repli.
+      - name: nom
+        description: Nom de l'utilisateur. Peut être vide, pas de valeur de repli.
+      - name: type_utilisateur
+        description: >
+          Type de l'utilisateur. Valeurs possibles : employer, prescriber, labor_inspector.
+      - name: date_inscription
+        description: Date d'inscription de l'utilisateur.
+      - name: email
+        description: Adresse e-mail de l'utilisateur.
+      - name: admin
+        description: >
+          Administrateur de la structure/organisation/institution
+      - name: type_utilisateur_detail
+        description: >
+          Employeur pour un employeur, Institution pour un inspecteur du travail. Pour un
+          prescripteur, l'habilitation de son organisation (Prescripteur habilité ou Orienteur)
+        tests:
+          - not_null
+      - name: departement_structure
+        description: >
+          Département de l'organisation, à défaut de la structure employeuse, à défaut de
+          l'institution de rattachement. Peut être vide si l'utilisateur n'a aucun rattachement,
+          ou si le département de celui-ci est vide.
+      - name: type_structure
+        description: >
+          Type de l'organisation, à défaut de la structure employeuse, à défaut de l'institution
+          de rattachement.
+      - name: nom_structure
+        description: >
+          Nom de l'organisation, à défaut de la structure employeuse, à défaut de l'institution
+          de rattachement.

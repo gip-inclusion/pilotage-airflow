@@ -1,6 +1,64 @@
 version: 2
 
 models:
+  - name: stg_rdvi__agents
+    description: >
+      Représente les professionnels utilisant rdv-insertion, comme les travailleurs sociaux ou
+      conseillers.
+
+      Rôle : compte utilisateur de l'agent.
+
+    config:
+      tags:
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique de l'agent dans rdv-insertion.
+        tests:
+          - not_null
+          - unique
+      - name: email
+        description: Email de l'agent, unique et utilisé comme identifiant de connexion.
+      - name: first_name
+        description: Prénom de l'agent.
+      - name: last_name
+        description: Nom de l'agent.
+      - name: super_admin
+        description: Indique si l'agent est super-administrateur.
+      - name: last_sign_in_at
+        description: Date de dernière connexion de l'agent.
+      - name: created_at
+        description: Date de création du compte de l'agent.
+
+  - name: stg_rdvi__agent_roles
+    description: >
+      Table de jonction enrichie entre agents et organisations.
+
+      Rôle : définit les droits d'un agent dans une organisation.
+
+    config:
+      tags:
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique du rôle dans rdv-insertion.
+        tests:
+          - not_null
+          - unique
+      - name: agent_id
+        description: Agent concerné par le rôle.
+        tests:
+          - not_null
+      - name: organisation_id
+        description: Organisation concernée par le rôle.
+        tests:
+          - not_null
+      - name: access_level
+        description: "Niveau d'accès de l'agent. Valeurs possibles : basic, admin."
+      - name: authorized_to_export_csv
+        description: >
+          Droit d'export CSV. Ce droit est automatiquement à true pour les admins.
+
   - name: stg_rdvi__departments
     description: >
       Représente les départements français.

@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: int_pilotage__tous_les_pros
+    description: |
+      Tous les professionnels ayant visité au moins un tableau de bord privé Pilotage, avec leur
+      structure de rattachement.
+
+      Construit comme `int_gps__tous_les_pros` : la base est celle des emplois
+      (`stg_emplois__utilisateurs`, `stg_emplois__collaborations`, `stg_organisations`,
+      `stg_structures`, `stg_emplois__institutions`), avec la même priorité de rattachement
+      (organisation, puis structure, puis institution). Seule la dernière jointure change :
+      elle se fait sur `stg_pilotage__visites`, qui calcule la première et la dernière visite de
+      chaque utilisateur depuis `suivi_utilisateurs_tb_prive_semaine`.
+
+      Les colonnes sont alignées sur `int_dora__tous_les_pros` et `int_emplois__tous_les_pros`
+      pour pouvoir empiler les sources, à l'exception de `admin`, qui n'a pas d'équivalent ici.
+    config:
+      tags:
+        - pilotage
+        - pro_pdi
+    columns:
+      - name: id
+        description: Identifiant de l'utilisateur.
+        tests:
+          - not_null
+      - name: source
+        description: Source des données, toujours `Pilotage`.
+      - name: date_derniere_connexion
+        description: Date de la dernière visite de l'utilisateur sur un tableau de bord privé.
+      - name: prenom
+        description: Prénom de l'utilisateur, depuis `stg_emplois__utilisateurs`.
+      - name: nom
+        description: Nom de l'utilisateur, depuis `stg_emplois__utilisateurs`.
+      - name: type_utilisateur
+        description: >
+          Type de l'utilisateur des Emplois. Valeurs possibles : employer, prescriber,
+          labor_inspector.
+      - name: date_inscription
+        description: Date de la première visite de l'utilisateur sur un tableau de bord privé.
+      - name: email
+        description: Adresse e-mail de l'utilisateur.
+      - name: type_utilisateur_detail
+        description: Toujours `NA`, cette information n'est pas disponible ici.
+      - name: nom_structure
+        description: >
+          Nom de l'organisation, à défaut de la structure, à défaut de l'institution de
+          rattachement. Vaut `NA` si aucun des trois n'a de nom renseigné.
+      - name: type_structure
+        description: >
+          Type de l'organisation, à défaut de la structure, à défaut de l'institution de
+          rattachement.
+      - name: departement_structure
+        description: >
+          Département de l'organisation, à défaut de la structure, à défaut de l'institution de
+          rattachement. Vaut `NA` si aucun des trois n'a de département renseigné.

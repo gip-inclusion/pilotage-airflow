@@ -11,7 +11,7 @@ select
     cnm."LIEN_BARO",
     cmd."Code Postal",
     cnm."Nombre d'envois du baro"                                       as "Nombre d'envois du baromètre",
-    cmd."Type de structure",
+    cmd."Type de structure"                                             as "Type de Structure",
     cnm."Date de première commande",
     null::DATE                                                          as "Date envoi mail Relance J+71",
     null                                                                as "Fonction (recatégorisée)",
