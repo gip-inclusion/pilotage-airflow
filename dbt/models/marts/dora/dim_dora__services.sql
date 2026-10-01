@@ -43,8 +43,6 @@ final as (
         services.last_sync_checksum,
         services.sync_checksum,
         services.status,
-        services.moderation_date,
-        services.moderation_status,
         services.fee_condition_id,
         services.data_inclusion_id,
         services.source_id,
