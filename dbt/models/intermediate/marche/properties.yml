@@ -94,3 +94,73 @@ models:
               - traite
               - type_structure
               - departement
+
+  - name: int_marche__tous_les_pros
+    description: |
+      Tous les professionnels du Marché de l'inclusion, avec leur structure de rattachement.
+
+      Reprend la logique de la question Metabase historique sur `public.users_user`, construite
+      à partir de `stg_marche__users`, `stg_marche__siaes` et `stg_marche__siae_users`. Les
+      colonnes sont alignées sur `int_dora__tous_les_pros` et `int_emplois__tous_les_pros` pour
+      pouvoir empiler les sources.
+
+      Deux filtres métier hérités de la question Metabase sont repris :
+      - les utilisateurs spam (prénom de plus de 15 caractères contenant `nz`) sont exclus ;
+      - les utilisateurs dont l'e-mail est vide, ou dont le `kind` n'est pas reconnu
+        (ni vide, ni `SIAE`, `BUYER`, `PARTNER` ou `INDIVIDUAL`), sont exclus.
+    config:
+      tags:
+        - marche
+        - pro_pdi
+    columns:
+      - name: id
+        description: Identifiant de l'utilisateur du Marché.
+        tests:
+          - not_null
+          - unique
+      - name: source
+        description: Source des données, toujours `Le marché`.
+      - name: date_derniere_connexion
+        description: Dernière connexion de l'utilisateur (`users_user.last_login`).
+      - name: prenom
+        description: Prénom de l'utilisateur. Peut être vide, pas de valeur de repli.
+      - name: nom
+        description: Nom de l'utilisateur. Peut être vide, pas de valeur de repli.
+      - name: type_utilisateur
+        description: >
+          `kind` brut de l'utilisateur : `SIAE`, `BUYER`, `PARTNER`, `INDIVIDUAL`, ou d'autres
+          valeurs non normalisées (ex. `ADMIN`) exclues par le filtre sur `type_structure`.
+      - name: date_inscription
+        description: Date d'inscription de l'utilisateur (`users_user.date_joined`).
+      - name: email
+        description: Adresse e-mail de l'utilisateur. Ne peut pas être vide (filtré en amont).
+      - name: admin
+        description: >
+          `Oui` si l'e-mail de l'utilisateur est l'e-mail administrateur d'au moins une SIAE,
+          `Non` sinon.
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - Oui
+                  - Non
+      - name: type_utilisateur_detail
+        description: >
+          `buyer_kind_detail` de l'utilisateur, ou à défaut son `partner_kind`.
+      - name: departement_structure
+        description: >
+          Le Marché ne porte pas de département au niveau utilisateur. Proxy retenu :
+          département de l'une des SIAE auxquelles l'utilisateur est rattaché
+          (`stg_marche__siae_users`). Vaut `NA` si l'utilisateur n'est rattaché à aucune SIAE, ou
+          si le département de celle-ci est vide.
+          Un utilisateur peut être rattaché à plusieurs SIAE ; dans le rare cas où elles ne sont
+          pas toutes dans le même département (~6 % des utilisateurs rattachés), une seule est
+          retenue arbitrairement.
+      - name: type_structure
+        description: >
+          Type de structure normalisé depuis `kind` : `SIAE`, `Entreprise acheteuse`,
+          `Entreprise partenaire`, `Particulier`, ou `NA` si `kind` est vide.
+        tests:
+          - not_null
+      - name: nom_structure
+        description: Nom de l'entreprise de l'utilisateur (`company_name`), ou `NA` si vide.

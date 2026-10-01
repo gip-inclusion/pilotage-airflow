@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: stg_pilotage__visites
+    description: >
+      Première et dernière visite de chaque utilisateur sur un tableau de bord privé Pilotage,
+      calculées depuis `suivi_utilisateurs_tb_prive_semaine`.
+    config:
+      tags:
+        - pilotage
+    columns:
+      - name: id_utilisateur
+        tests:
+          - not_null
+          - unique

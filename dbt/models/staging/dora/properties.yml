@@ -13,6 +13,7 @@ models:
     config:
       tags:
         - dora
+        - pro_pdi
       indexes:
         - columns: [id]
           unique: true
@@ -60,6 +61,7 @@ models:
     config:
       tags:
         - dora
+        - pro_pdi
       indexes:
         - columns: [id]
           unique: true
@@ -79,6 +81,7 @@ models:
     config:
       tags:
         - dora
+        - pro_pdi
 
     columns:
       - name: id

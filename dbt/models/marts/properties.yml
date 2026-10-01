@@ -1,6 +1,85 @@
 version: 2
 
 models:
+  - name: pdi_base_unique_tous_les_pros
+    description: |
+      Dimension des professionnels de l'inclusion, tous produits confondus : Dora, Les emplois,
+      GPS, Pilotage, Le marché, MonRécap et RDV-i. Empile les sept modèles `int_*__tous_les_pros`
+      (un par produit), avec les mêmes colonnes pour tous.
+
+      Le grain n'est pas parfaitement un professionnel unique : côté Dora, Les emplois, GPS et
+      Pilotage, un utilisateur rattaché à plusieurs structures/organisations apparaît sur
+      plusieurs lignes (une par rattachement). La clé `(id, source)` n'est donc pas garantie
+      unique. `id` est propre à chaque source (l'identifiant utilisateur de Dora n'a aucun
+      rapport avec celui des Emplois) : c'est le couple `(id, source)` qui identifie une ligne,
+      jamais `id` seul. `id` est casté en texte pour uniformiser les types : MonRécap n'a pas
+      d'identifiant natif et utilise un hash de l'e-mail (`dbt_utils.generate_surrogate_key`).
+
+      `admin` vaut `NA` pour GPS, Pilotage et MonRécap, qui ne portent pas cette information.
+
+      Usage typique : analyses cross-produits (ex. nombre de professionnels distincts par
+      département, ou utilisant plusieurs produits). Pour une analyse propre à un seul produit,
+      préférer le modèle intermédiaire correspondant (`int_dora__tous_les_pros`,
+      `int_emplois__tous_les_pros`, etc.), qui documente ses propres subtilités.
+    config:
+      tags:
+        - pro_pdi
+    columns:
+      - name: id
+        description: >
+          Identifiant de l'utilisateur, propre à sa source. Pas unique seul : voir `source`.
+        tests:
+          - not_null
+      - name: source
+        description: Produit d'origine de la ligne.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Dora
+                  - Les emplois
+                  - GPS
+                  - Pilotage
+                  - Le marché
+                  - MonRécap
+                  - RDV-i
+      - name: date_derniere_connexion
+        description: >
+          Dernière activité de l'utilisateur, définie différemment selon la source (connexion,
+          dernière visite, dernière commande...). Voir le modèle intermédiaire correspondant.
+      - name: prenom
+        description: Prénom, tel que porté par la source.
+      - name: nom
+        description: Nom, tel que porté par la source.
+      - name: type_utilisateur
+        description: Type de l'utilisateur, brut, tel que porté par la source.
+      - name: date_inscription
+        description: Date d'inscription ou de première activité, définie différemment selon la source.
+      - name: email
+        description: Adresse e-mail de l'utilisateur.
+      - name: admin
+        description: >
+          `Oui`/`Non` si l'information existe pour la source, `NA` pour GPS, Pilotage et
+          MonRécap. Attention, la définition d'« admin » diffère d'une source à l'autre — voir le
+          modèle intermédiaire correspondant avant de comparer les sources entre elles.
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - Oui
+                  - Non
+                  - NA
+      - name: type_utilisateur_detail
+        description: >
+          Type détaillé de l'utilisateur, ou `NA` quand la source ne porte pas cette information.
+      - name: departement_structure
+        description: Département de la structure/organisation/institution de rattachement, ou `NA`.
+      - name: type_structure
+        description: Type de la structure/organisation/institution de rattachement, ou `NA`.
+      - name: nom_structure
+        description: Nom de la structure/organisation/institution de rattachement, ou `NA`.
+
   - name: actes_metier
     description: >
       Table finale consolidée des actes métier PDI. Elle agrège les modèles intermédiaires par source au grain commun
