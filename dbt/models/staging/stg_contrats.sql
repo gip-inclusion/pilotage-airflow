@@ -16,6 +16,7 @@ select
     structs.nom_region_structure,
     structs.nom_departement_structure,
     structs.code_dept_structure,
+    structs.nom_epci_structure,
     structs.structure_denomination_unique,
     structs.structure_siret_actualise,
     to_date(ctr.contrat_date_sortie_definitive, 'DD/MM/YYYY') as contrat_date_sortie_definitive,
