@@ -12,7 +12,6 @@ final as (
     select
         services.id,
         services.name,
-        services.short_desc,
         services.description,
         services.is_cumulative,
         services.fee_details,
@@ -67,8 +66,7 @@ final as (
         services.dora_url,
         structures.name                  as structure_name,
         structures.siret                 as structure_siret,
-        structures.short_desc            as structure_short_desc,
-        structures.full_desc             as structure_full_desc,
+        structures.description           as structure_description,
         structures.url                   as structure_url,
         structures.phone                 as structure_phone,
         structures.email                 as structure_email,

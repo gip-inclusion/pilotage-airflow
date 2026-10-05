@@ -114,10 +114,7 @@ models:
       - name: name
         description: Nom de la structure DORA.
 
-      - name: short_desc
-        description: Description courte de la structure DORA.
-
-      - name: full_desc
+      - name: description
         description: Description détaillée de la structure DORA.
 
       - name: url
@@ -197,9 +194,6 @@ models:
 
       - name: name
         description: Nom du service DORA.
-
-      - name: short_desc
-        description: Description courte du service DORA.
 
       - name: description
         description: Description détaillée du service DORA.
