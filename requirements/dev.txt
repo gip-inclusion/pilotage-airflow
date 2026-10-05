@@ -3432,10 +3432,11 @@ pygtrie==2.5.0 \
     # via
     #   apache-airflow-core
     #   apache-airflow-task-sdk
-pyjwt==2.13.0 \
-    --hash=sha256:41571c89ca91598c79e8ef18a2d07367d4810fbbd6f637794879baf1b7703423 \
-    --hash=sha256:66adcc2aff09b3f1bbd95fc1e1577df8ac8723c978552fd43304c8a290ac5728
+pyjwt==2.15.1 \
+    --hash=sha256:42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193 \
+    --hash=sha256:4f259e80cdfb6b3fc18a7de51fd1ef9ec79652f25019bae68975ca2468a34df8
     # via
+    #   -r requirements/base.in
     #   apache-airflow-core
     #   apache-airflow-providers-fab
     #   flask-appbuilder
@@ -4351,6 +4352,7 @@ tenacity==9.1.4 \
     --hash=sha256:6095a360c919085f28c6527de529e76a06ad89b23659fa881ae0649b867a9d55 \
     --hash=sha256:adb31d4c263f2bd041081ab33b498309a57c77f9acf2db65aadf0898179cf93a
     # via
+    #   -r requirements/base.in
     #   apache-airflow-core
     #   apache-airflow-task-sdk
     #   pyathena

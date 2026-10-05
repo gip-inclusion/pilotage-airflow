@@ -20,6 +20,7 @@ pyairtable # https://pyairtable.readthedocs.io/en/stable/
 tenacity  # https://github.com/jd/tenacity
 unidecode  # https://pypi.org/project/Unidecode/
 furl #https://github.com/gruns/furl
+PyJWT>=2.15.0 #https://pyjwt.readthedocs.io/en/stable/
 
 # Linting
 # ------------------------------------------------------------------------------
