@@ -177,11 +177,11 @@ anyio==4.14.2 \
     #   starlette
     #   streamlit
     #   watchfiles
-apache-airflow==3.3.1 \
+apache-airflow[amazon,fab,postgres,sentry,slack,ssh]==3.3.1 \
     --hash=sha256:0c047c0a0415b100d2966b35d0f0c191013dc996e7645023178c770296ce8602 \
     --hash=sha256:a62ee9c46b7b8c919a46a88ee9346e0b36bc4ff10d6f9ac7cde5a6165da52164
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   apache-airflow-providers-amazon
     #   apache-airflow-providers-common-compat
     #   apache-airflow-providers-common-io
@@ -264,7 +264,7 @@ apache-airflow-task-sdk==1.3.1 \
     # via
     #   apache-airflow
     #   apache-airflow-core
-apispec==6.10.0 \
+apispec[yaml]==6.10.0 \
     --hash=sha256:0a888555cd4aa5fb7176041be15684154fd8961055e1672e703abf737e8761bf \
     --hash=sha256:8ff23e0de9a0ceb62ff70047241126315bd17b8d0565a567934c0156f4ddbb43
     # via flask-appbuilder
@@ -1024,7 +1024,7 @@ dbt-core==1.12.3 \
     --hash=sha256:3f4ea56be117ec579ae183389ef7107a3969e959ea9efc28f3499e46d089b753 \
     --hash=sha256:d608042c9ff034c0e11d06123a00b79cdf21b12068aac580e90e8326f1872c52
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   dbt-postgres
     #   sqlfluff-templater-dbt
 dbt-core-experimental-parser==2.0.0b1 \
@@ -1051,11 +1051,11 @@ dbt-extractor==0.6.0 \
 dbt-metabase==1.7.5 \
     --hash=sha256:558ff77538745113737445e7631a55bc30a04c649e0a231ed7780b6d2a4e174e \
     --hash=sha256:8c5852dbb2f2598107eb6d5239a5d3d8265aadd07827014e7e5600b368cbb56b
-    # via -r requirements/dev.in
+    # via -r dev.in
 dbt-postgres==1.11.0 \
     --hash=sha256:0a8558e03776231969a9614075eb31eb7daca03bcee1db7bc36f85f027826965 \
     --hash=sha256:b88f994dc2f00150579d62f8ff91af715428a3cfe064e067945359ca4509872c
-    # via -r requirements/base.in
+    # via -r base.in
 dbt-protos==1.0.565 \
     --hash=sha256:130a8333fcd644ba1f00c8377e8f8013b28cca696a6af56037feb55a011f964c \
     --hash=sha256:fabee73a6f98a7eb7e52ab34571ef24d82cce760829e268c7263a5805f3937cf
@@ -1098,14 +1098,14 @@ et-xmlfile==2.0.0 \
 faker==40.36.0 \
     --hash=sha256:754048c76c03afa7de83eee8f4bcee3cf668cbb7d995f54a4e9678db7f110308 \
     --hash=sha256:82b9497d9cfe017048075bcf969298a74b1b6e39f5e4dad1211085d1133f7b62
-    # via -r requirements/dev.in
-fastapi==0.136.3 \
+    # via -r dev.in
+fastapi[standard-no-fastapi-cloud-cli]==0.136.3 \
     --hash=sha256:3d2a69bdf04b7e9f3afa292c3bc7a98816bbfafa10bc9b45f3f3700d2f761620 \
     --hash=sha256:e487fae93ad408e6f47641ee4dfe389864fd7bec92e547ea8498fc13f43e83ab
     # via
     #   apache-airflow-core
     #   cadwyn
-fastapi-cli==0.0.32 \
+fastapi-cli[standard-no-fastapi-cloud-cli]==0.0.32 \
     --hash=sha256:38024d2345275e1b37ce8848727a580d84901b570e96b3256d9d36a9a5039424 \
     --hash=sha256:8dcc286fa32f01bbd3f65dd09cfd5a2540ed5f2230b77db7fd30978d6165f3c4
     # via fastapi
@@ -1165,7 +1165,7 @@ flask-wtf==1.3.0 \
 freezegun==1.5.5 \
     --hash=sha256:ac7742a6cc6c25a2c35e9292dfd554b897b517d2dec26891a2e8debf205cb94a \
     --hash=sha256:cd557f4a75cf074e84bc374249b9dd491eaeacd61376b9eb3c423282211619d2
-    # via -r requirements/dev.in
+    # via -r dev.in
 frozenlist==1.8.0 \
     --hash=sha256:0325024fe97f94c41c08872db482cf8ac4800d80e79222c6b0b7b162d5b13686 \
     --hash=sha256:032efa2674356903cd0261c4317a561a6850f3ac864a63fc1583147fb05a79b0 \
@@ -1310,11 +1310,11 @@ fsspec==2026.7.0 \
 ftputil==5.2.0 \
     --hash=sha256:d882ba51c5035cf8a8fb33240836075606d7629e456ac4bd0e80c0da381eef6d \
     --hash=sha256:dcf34691161318bef64315d3a942d09f2475e66f653b5391a8c7303606acc70e
-    # via -r requirements/base.in
+    # via -r base.in
 furl==2.1.4 \
     --hash=sha256:877657501266c929269739fb5f5980534a41abd6bbabcb367c136d1d3b2a6015 \
     --hash=sha256:da34d0b34e53ffe2d2e6851a7085a05d96922b5b578620a37377ff1dbeeb11c8
-    # via -r requirements/base.in
+    # via -r base.in
 googleapis-common-protos==1.75.1 \
     --hash=sha256:28a1934bcd33b9c9da66ac301a0a4227e3367f095a17d0375cb98f0a09d93b79 \
     --hash=sha256:d3042c6c5a2d4e67113104d6b6818b59b6bd92a197f2a91508e801fe815cf071
@@ -2081,7 +2081,7 @@ marshmallow-sqlalchemy==1.5.0 \
     --hash=sha256:3865232672f3dd38c4d5e4e85fdedce76904200742c3594948a2d11d0af93258 \
     --hash=sha256:e51192c204770645a2fab0d72f44f8789272eef75951f84b1608d6b4b0bfe0e6
     # via flask-appbuilder
-mashumaro==3.17 \
+mashumaro[msgpack]==3.17 \
     --hash=sha256:3964e2c804f62de9e4c58fb985de71dcd716f9507cc18374b1bd5c4f1a1b879b \
     --hash=sha256:de1d8b1faffee58969c7f97e35963a92480a38d4c9858e92e0721efec12258ed
     # via
@@ -2473,7 +2473,7 @@ numpy==2.5.2 \
 openpyxl==3.1.5 \
     --hash=sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2 \
     --hash=sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050
-    # via -r requirements/base.in
+    # via -r base.in
 opentelemetry-api==1.44.0 \
     --hash=sha256:67647e5e9566edcf421166fdf022b3537f818635daa852b289e34604dc6fb33a \
     --hash=sha256:94b98c893a91b88657eaac1e3ba89618cdb85be6918196705354f34728b2cdef
@@ -2596,13 +2596,13 @@ pandas==3.0.5 \
     --hash=sha256:ef01af4d8dc6cd2c8d6c7736f149574ef93fe043811eeb5e445f2647154b5040 \
     --hash=sha256:fa290c16964d4963fbfbc358928239cf3bd755b20e988ce944877def2f44471d
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   streamlit
 paramiko==3.5.1 \
     --hash=sha256:43b9a0501fc2b5e70680388d9346cf252cfb7d00b0667c39e80eb43a408b8f61 \
     --hash=sha256:b2c665bc45b2b215bd7d7f039901b14b067da00f3a11e6640995fd58f2664822
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   apache-airflow-providers-ssh
 parsedatetime==2.6 \
     --hash=sha256:4cb368fbb18a0b7231f4d76119165451c8d2e35951455dfee97c62a87b04d455 \
@@ -2968,11 +2968,11 @@ psutil==7.2.2 \
     #   apache-airflow-task-sdk
     #   py7zr
     #   sagemaker-studio
-psycopg==3.3.4 \
+psycopg[binary]==3.3.4 \
     --hash=sha256:b6bbc25ccf05c8fad3b061d9db2ef0909a555171b84b07f29458a447253d679a \
     --hash=sha256:e21207764952cff81b6b8bdacad9a3939f2793367fdac2987b3aac36a651b5bc
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   apache-airflow-providers-postgres
 psycopg-binary==3.3.4 \
     --hash=sha256:018fbed325936da502feb546642c982dcc4b9ffdea32dfef78dbf3b7f7ad4070 \
@@ -3105,11 +3105,11 @@ psycopg2-binary==2.9.12 \
 py7zr==1.1.3 \
     --hash=sha256:17934a35089e026dec6c72ee275d9b841e646881ef822d618e805c3006661d9a \
     --hash=sha256:8d51894abb38355bf14881088bb97f01fe4cb5b14ebe22f66d6297668c7e1a74
-    # via -r requirements/base.in
+    # via -r base.in
 pyairtable==3.4.2 \
     --hash=sha256:398231594ec0b1c317d2362f403e5741cf4fa948eb546ddfc8a7cc23c9680223 \
     --hash=sha256:6a9174d43800966660547e07d00736b3a0fdef75b5087b76ee8ba0e809c042ee
-    # via -r requirements/base.in
+    # via -r base.in
 pyarrow==24.0.0 \
     --hash=sha256:02b001b3ed4723caa44f6cd1af2d5c86aa2cf9971dacc2ffa55b21237713dfba \
     --hash=sha256:04920d6a71aabd08a0417709efce97d45ea8e6fb733d9ca9ecffb13c67839f68 \
@@ -3436,7 +3436,7 @@ pyjwt==2.15.1 \
     --hash=sha256:42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193 \
     --hash=sha256:4f259e80cdfb6b3fc18a7de51fd1ef9ec79652f25019bae68975ca2468a34df8
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   apache-airflow-core
     #   apache-airflow-providers-fab
     #   flask-appbuilder
@@ -3535,22 +3535,22 @@ pytest==9.1.1 \
     --hash=sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313 \
     --hash=sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c
     # via
-    #   -r requirements/dev.in
+    #   -r dev.in
     #   pytest-mock
     #   pytest-randomly
     #   pytest-subtests
 pytest-mock==3.15.1 \
     --hash=sha256:0a25e2eb88fe5168d535041d09a4529a188176ae608a6d249ee65abc0949630d \
     --hash=sha256:1849a238f6f396da19762269de72cb1814ab44416fa73a8686deac10b0d87a0f
-    # via -r requirements/dev.in
+    # via -r dev.in
 pytest-randomly==4.1.0 \
     --hash=sha256:47f1d9746c3bc3efabd53ae1ebfb8bb385cf3d4df4b505b6d58d9c97a3dfe70f \
     --hash=sha256:f55e89e53367b090c0c053697d7f9d77595543d0e0516c93978b50c0f6b252f9
-    # via -r requirements/dev.in
+    # via -r dev.in
 pytest-subtests==0.15.0 \
     --hash=sha256:cb495bde05551b784b8f0b8adfaa27edb4131469a27c339b80fd8d6ba33f887c \
     --hash=sha256:da2d0ce348e1f8d831d5a40d81e3aeac439fec50bd5251cbb7791402696a9493
-    # via -r requirements/dev.in
+    # via -r dev.in
 python-daemon==3.1.2 \
     --hash=sha256:b906833cef63502994ad48e2eab213259ed9bb18d54fa8774dcba2ff7864cec6 \
     --hash=sha256:f7b04335adc473de877f5117e26d5f1142f4c9f7cd765408f0877757be5afbf4
@@ -4073,7 +4073,7 @@ ruff==0.16.3 \
     --hash=sha256:e80a7d69ca2a6d1c4d352ec91458cdca6e56c83cdbcabd93e4abe1e53591d948 \
     --hash=sha256:fb785f0be25abe69d320415cd4f833b59e17ba7613d9ba6a958023b6bceb0a50 \
     --hash=sha256:fe155130631a2471fd2e14a7a664a4dfbd7194b8229c3d7b2a40b21178639081
-    # via -r requirements/dev.in
+    # via -r dev.in
 s3transfer==0.19.2 \
     --hash=sha256:ba0309fd86be3c27dbf78cdd813c13c5e1df16e5874b99d2535ebbdfb9892993 \
     --hash=sha256:d8168eccca828cbb2cd573675333f3bddd254313a9c42494b84c76b539e8ba25
@@ -4189,19 +4189,13 @@ setproctitle==1.3.7 \
     --hash=sha256:fe5ca35aeec6dc50cabab9bf2d12fbc9067eede7ff4fe92b8f5b99d92e21263f \
     --hash=sha256:ff3c1c32382fb71a200db8bab3df22f32e6ac7ec3170e92fa5b542cf42eed9a2
     # via apache-airflow-core
-setuptools==84.0.0 \
-    --hash=sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670 \
-    --hash=sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73
-    # via
-    #   redshift-connector
-    #   sagemaker-studio
 shellcheck-py==0.11.0.1 \
     --hash=sha256:1b274df81de5b000ff78db433e7328b87e52e3c38481c60f8e488c3095beef05 \
     --hash=sha256:5c620c88901e8f1d3be5934b31ea99e3310065e1245253741eafd0a275c8c9cc \
     --hash=sha256:6b88d0a244c82ed07e06a53e444da841f69330ca59ae15d4a66c391655dae7a0 \
     --hash=sha256:784156289ecb17e91c692cd783ab5152333309588cabb10032a047331c63e759 \
     --hash=sha256:b6a3fee28efda2e16e38d6e6d59faf7224300256456639727370d404730849e8
-    # via -r requirements/dev.in
+    # via -r dev.in
 shellingham==1.5.4 \
     --hash=sha256:7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686 \
     --hash=sha256:8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de
@@ -4231,7 +4225,7 @@ soupsieve==2.9.2 \
     --hash=sha256:4a55d8cf158a9c2e587fa4922f1bbb91d68ac829e2d6f25403a85747c71daf74 \
     --hash=sha256:8089a26fd974ca7a1f30276d3d8492ab266ab15af581642dfe8aa162e0c1c823
     # via beautifulsoup4
-sqlalchemy==2.0.52 \
+sqlalchemy[asyncio]==2.0.52 \
     --hash=sha256:11560064cc4696e772298b6221ede59e646386d9f2a85d549365473b972f7850 \
     --hash=sha256:1b2d9e507a458832adcfbd8af6e2036ddf069b7710b799448542ebccae2dceee \
     --hash=sha256:1b92a1e23ed40022081217b40d2d1feba4f77064e69ef4f39f68bcbbd148452a \
@@ -4299,12 +4293,12 @@ sqlfluff==4.3.0 \
     --hash=sha256:582e12af5101bd1c5bc120cb4a6942dadcfe5e5b1e01406f220dd08f5b3f31dd \
     --hash=sha256:aa647b3721112f1aca581efe8eaa815a332ae214610a0946592f98a19ef1e8cb
     # via
-    #   -r requirements/dev.in
+    #   -r dev.in
     #   sqlfluff-templater-dbt
 sqlfluff-templater-dbt==4.3.0 \
     --hash=sha256:4926aa653ad3a43979ca76220760309c8c93836d910e34b525c6dbe32471c7f6 \
     --hash=sha256:fdef6b6f0164db182974cc8c74b9a57bc72abc029b8d2e425554bead8e34b33e
-    # via -r requirements/dev.in
+    # via -r dev.in
 sqlglot==30.17.0 \
     --hash=sha256:2d6b8def93304fa300f4d20f48e3909e7f436fda56ca1fafd8975f6c561ef62c \
     --hash=sha256:84435ac283a60173da31b5fd7d11a725037a1c3fd6ed1e21fb065de74ddb579f
@@ -4313,7 +4307,7 @@ sqlparse==0.6.0 \
     --hash=sha256:113c35c75365ab9cc9c7231d68c6428fb11c085fc8e9eb1ad659b7ddbf6cd2b9 \
     --hash=sha256:b861c0288ce2fa56209a9a6412d2e066ac664b3873b89c26c9d8415e8e32996f
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   apache-airflow-providers-common-sql
     #   dbt-core
 starlette==1.3.1 \
@@ -4327,7 +4321,7 @@ starlette==1.3.1 \
 streamlit==1.61.1 \
     --hash=sha256:3f0ebf6764c3f938f8107414c9533942fa85a84b57affdaa7727d562210d8ece \
     --hash=sha256:68acf1ff1b6005b19205c2777d832deea0c1edd6fbbf7f43f091b96220e5e35f
-    # via -r requirements/base.in
+    # via -r base.in
 structlog==26.1.0 \
     --hash=sha256:e081a26d6c373e6d201eca24eede26d8ffab07f88f477822e679183428d3d91e \
     --hash=sha256:f63a716cbd1b1291cf7661de7794b455acfa4c43c5bcf1630e6ad5ddc1adb3b7
@@ -4352,7 +4346,7 @@ tenacity==9.1.4 \
     --hash=sha256:6095a360c919085f28c6527de529e76a06ad89b23659fa881ae0649b867a9d55 \
     --hash=sha256:adb31d4c263f2bd041081ab33b498309a57c77f9acf2db65aadf0898179cf93a
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   apache-airflow-core
     #   apache-airflow-task-sdk
     #   pyathena
@@ -4438,14 +4432,14 @@ uc-micro-py==2.0.0 \
 unidecode==1.4.0 \
     --hash=sha256:c3c7606c27503ad8d501270406e345ddb480a7b5f38827eafe4fa82a137f0021 \
     --hash=sha256:ce35985008338b676573023acc382d62c264f307c8f7963733405add37ea2b23
-    # via -r requirements/base.in
+    # via -r base.in
 universal-pathlib==0.3.10 \
     --hash=sha256:4487cbc90730a48cfb64f811d99e14b6faed6d738420cd5f93f59f48e6930bfb \
     --hash=sha256:dfaf2fb35683d2eb1287a3ed7b215e4d6016aa6eaf339c607023d22f90821c66
     # via apache-airflow-core
-urllib3==2.7.0 \
-    --hash=sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c \
-    --hash=sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897
+urllib3==2.8.0 \
+    --hash=sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3 \
+    --hash=sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63
     # via
     #   botocore
     #   pyairtable
@@ -4456,7 +4450,7 @@ uuid6==2025.0.1 \
     --hash=sha256:80530ce4d02a93cdf82e7122ca0da3ebbbc269790ec1cb902481fa3e9cc9ff99 \
     --hash=sha256:cd0af94fa428675a44e32c5319ec5a3485225ba2179eefcf4c3f205ae30a81bd
     # via apache-airflow-core
-uvicorn==0.52.3 \
+uvicorn[standard]==0.52.3 \
     --hash=sha256:116af2710dbf47c80f463cd20ee4884b6662f4c9f227d797ddc7279d2fcc2c7c \
     --hash=sha256:18857b9e6579300be55c91c0a1cfd37d9a2cf0cabea33b88275f199eb73b8b58
     # via
