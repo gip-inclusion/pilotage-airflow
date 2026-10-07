@@ -92,3 +92,6 @@ tests:
     description: >
       Vérifie que le nombre d'iMER dans les actes métier correspond au nombre de lignes de fct_dora__imer sur la période
       retenue pour les profils accompagnateur, accompagnateur_offreur, offreur, emplois_employer et emplois_prescriber.
+  - name: test_rpt_dora__orientations_rowcount_matches_fact
+    description: >
+      Vérifie que rpt_dora__orientations contient le même nombre de lignes que fct_dora__orientations.
