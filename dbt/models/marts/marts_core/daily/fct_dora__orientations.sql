@@ -26,6 +26,7 @@ final as (
         orientations.is_anonymized,
         orientations_enriched.prescriber_id_dora,
         orientations_enriched.prescriber_id_emplois,
+        orientations_enriched.user_kind,
         orientations_enriched.prescriber_structure_id_di,
         orientations_enriched.prescriber_structure_id_dora,
         orientations_enriched.prescriber_structure_id_emplois,

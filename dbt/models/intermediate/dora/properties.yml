@@ -338,6 +338,19 @@ models:
           Identifiant du prescripteur côté DORA. Il est rempli pour les orientations DORA, y compris celles
           créées depuis Les Emplois via le flux JWT. Il est vide pour les orientations qui viennent
           directement de l'API Les Emplois.
+      - name: user_kind
+        description: >
+          Type actuel du professionnel qui réalise la demande d'orientation, pas du bénéficiaire.
+          Pour une orientation d'origine `dora`, on prend uniquement `stg_dora__user.main_activity`.
+          Pour une orientation d'origine `emplois`, on prend uniquement `stg_emplois__utilisateurs.type`.
+          Les jointures utilisent respectivement
+          `prescriber_id_dora = stg_dora__user.id` et `prescriber_id_emplois = stg_emplois__utilisateurs.uid`.
+          Les orientations JWT classées en `dora` utilisent le profil DORA. Les utilisateurs DORA ne
+          sont pas filtrés selon leur statut actuel. Les catégories sources sont conservées sans
+          harmonisation ; les chaînes vides sont traitées comme NULL et le résultat reste NULL si le
+          type de la plateforme d'origine est absent, sans repli vers l'autre plateforme.
+          Le profil n'est pas historisé : sa modification peut changer le type
+          associé aux orientations passées.
       - name: prescriber_id_emplois
         description: >
           UID du professionnel, prescripteur ou employeur, transmis par Les Emplois. Il vient de
