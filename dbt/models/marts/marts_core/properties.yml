@@ -541,6 +541,12 @@ models:
         description: >
           Identifiant du prescripteur côté DORA. Il est rempli pour les orientations DORA, y compris celles
           créées depuis Les Emplois via le flux JWT. On peut le joindre à `dim_dora__users.id`.
+      - name: user_kind
+        description: >
+          Type actuel du professionnel qui réalise la demande, repris du fact : `main_activity`
+          DORA pour les orientations `dora`, y compris le flux JWT, et `type` Emplois pour les
+          orientations `emplois`.
+          Elle décrit le profil actuel,pas celui enregistré au moment de la demande.
       - name: prescriber_id_emplois
         description: >
           UID du professionnel, prescripteur ou employeur, transmis par Les Emplois. Il correspond à

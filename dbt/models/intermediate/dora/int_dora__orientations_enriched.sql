@@ -6,6 +6,23 @@ emplois_orientation_data as (
     select * from {{ ref('stg_dora__emplois_orientation_data') }}
 ),
 
+dora_users as (
+    -- La dimension dim_dora__users ne garde que les utilisateurs actifs, valides et non staff.
+    -- Le staging permet de retrouver le type des auteurs d'orientations historiques même
+    -- s'ils ne remplissent plus ces critères, tant que leur profil existe dans la source.
+    select
+        id,
+        main_activity
+    from {{ ref('stg_dora__user') }}
+),
+
+emplois_users as (
+    select
+        uid,
+        type
+    from {{ ref('stg_emplois__utilisateurs') }}
+),
+
 structure_source_mapping as (
     select * from {{ ref('int_di__structure_source_mapping') }}
 ),
@@ -74,6 +91,10 @@ orientations_enriched as (
         orientation_sources.emplois_beneficiary_id,
         orientation_sources.emplois_prescriber_id as prescriber_id_emplois,
         case
+            when orientation_sources.origin_source = 'emplois' then nullif(emplois_users.type, '')
+            else nullif(dora_users.main_activity, '')
+        end                                       as user_kind,
+        case
             when orientation_sources.origin_source = 'emplois' then emplois_prescriber_structure_mapping.structure_id
             else dora_prescriber_structure_mapping.structure_id
         end                                       as prescriber_structure_id_di,
@@ -109,6 +130,10 @@ orientations_enriched as (
             dora_oriented_service.city_code
         )                                         as oriented_service_code_commune_insee
     from orientation_sources
+    left join dora_users
+        on orientation_sources.prescriber_id = dora_users.id
+    left join emplois_users
+        on orientation_sources.emplois_prescriber_id = emplois_users.uid
     left join dora_structures
         on orientation_sources.prescriber_structure_id = dora_structures.id
     left join structure_source_mapping as dora_prescriber_structure_mapping
@@ -138,6 +163,7 @@ final as (
         status,
         prescriber_id_dora,
         prescriber_id_emplois,
+        user_kind,
         prescriber_structure_id_di,
         prescriber_structure_id_dora,
         prescriber_structure_id_emplois,
