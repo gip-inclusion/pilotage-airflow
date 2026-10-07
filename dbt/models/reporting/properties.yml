@@ -241,6 +241,116 @@ models:
           Pourcentage d'ESAT sans réponse trouvée.
 
 
+  - name: rpt_dora__orientations
+    config:
+      tags:
+        - dora
+    description: >
+      Table de reporting des orientations DORA, créées dans DORA ou reçues des Emplois.
+      Une ligne correspond à une orientation, au même grain que `fct_dora__orientations`.
+      Toutes les colonnes du fact sont conservées sans filtre ni agrégation.
+
+
+    columns:
+      - name: id
+        description: Identifiant canonique de l'orientation DORA, repris du fact.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('fct_dora__orientations')
+                field: id
+      - name: origin_source
+        description: >
+          Origine de l'orientation, reprise du fact : `dora` si un prescripteur DORA est renseigné,
+          y compris pour le flux JWT Emplois ; `emplois` pour les orientations reçues directement
+          via l'API Emplois sans prescripteur DORA.
+      - name: emplois_sync_uid
+        description: UID de synchronisation avec Les Emplois, repris du fact.
+      - name: creation_date
+        description: Date de création de l'orientation, reprise du fact.
+      - name: processing_date
+        description: Date de traitement de l'orientation, reprise du fact.
+      - name: status
+        description: Statut de traitement de l'orientation dans DORA, repris du fact.
+      - name: requirements
+        description: Prérequis ou conditions de l'orientation, repris du fact.
+      - name: situation
+        description: Situations ou publics indiqués pour l'orientation, repris du fact.
+      - name: beneficiary_contact_preferences
+        description: Préférences de contact du bénéficiaire, reprises du fact.
+      - name: beneficiary_availability
+        description: Date de disponibilité du bénéficiaire, reprise du fact.
+      - name: duration_weekly_hours
+        description: Durée hebdomadaire en heures, reprise du fact.
+      - name: duration_weeks
+        description: Durée en semaines, reprise du fact.
+      - name: query_expires_at
+        description: Date d'expiration de la demande d'orientation, reprise du fact.
+      - name: last_reminder_email_sent
+        description: Date du dernier email de relance pour l'orientation, reprise du fact.
+      - name: data_protection_commitment
+        description: Engagement de protection des données, repris du fact.
+      - name: is_anonymized
+        description: Indique si l'orientation est anonymisée, repris du fact.
+      - name: prescriber_id_dora
+        description: Identifiant du professionnel côté DORA, repris du fact.
+      - name: prescriber_id_emplois
+        description: UID du professionnel transmis par Les Emplois, repris du fact.
+      - name: user_kind
+        description: >
+          Type actuel du professionnel qui réalise la demande, repris du fact : `main_activity`
+          DORA pour les orientations `dora`, y compris le flux JWT, et `type` Emplois pour les
+          orientations `emplois`.
+          Elle décrit le profil actuel,pas celui enregistré au moment de la demande.
+      - name: prescriber_structure_id_di
+        description: Identifiant canonique Data Inclusion de la structure prescriptrice, repris du fact.
+      - name: prescriber_structure_id_dora
+        description: Identifiant de la structure prescriptrice côté DORA, repris du fact.
+      - name: prescriber_structure_id_emplois
+        description: UID de l'organisation prescriptrice ou de l'entreprise côté Emplois, repris du fact.
+      - name: prescriber_structure_name
+        description: Nom de la structure prescriptrice, conservé tel quel depuis le fact.
+      - name: prescriber_structure_siret
+        description: SIRET de la structure prescriptrice, conservé tel quel depuis le fact.
+      - name: oriented_service_id_di
+        description: Identifiant Data Inclusion du service de destination, repris du fact.
+      - name: oriented_service_id_dora
+        description: Identifiant DORA du service de destination, repris du fact.
+      - name: oriented_service_name
+        description: Nom du service de destination, conservé tel quel depuis le fact.
+      - name: oriented_service_structure_name
+        description: Nom de la structure qui porte le service de destination, repris du fact.
+      - name: oriented_service_code_commune_insee
+        description: >
+          Code INSEE de la commune du service de destination, repris du fact sans modification.
+          Il sert de clé de jointure avec `dim_commune` pour les colonnes géographiques ajoutées.
+      - name: emplois_beneficiary_id
+        description: Identifiant du bénéficiaire transmis par Les Emplois, repris du fact.
+      - name: oriented_service_nom_commune
+        description: Nom de la commune du service de destination, issu de `dim_commune.nom_commune`.
+        tests:
+          - dbt_utils.not_null_proportion:
+              arguments:
+                at_least: 0.4
+              config:
+                severity: error
+                tags:
+                  - dora
+      - name: oriented_service_code_region_insee
+        description: Code INSEE de la région du service de destination, issu de `dim_commune.code_region_insee`.
+      - name: oriented_service_nom_region
+        description: Nom de la région du service de destination, issu de `dim_commune.nom_region`.
+      - name: oriented_service_code_departement_insee
+        description: >
+          Code INSEE du département du service de destination, issu de `dim_commune.code_departement_insee`.
+      - name: oriented_service_nom_departement
+        description: Nom du département du service de destination, issu de `dim_commune.nom_departement`.
+      - name: oriented_service_nom_departement_complet
+        description: >
+          Code et nom du département du service de destination, issus de `dim_commune.nom_departement_complet`.
+
   - name: rpt_dora__imer
     config:
       tags:
