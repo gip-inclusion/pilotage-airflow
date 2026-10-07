@@ -28,7 +28,6 @@ select
     structures.moderation_status,
     structures.accesslibre_url,
     structures.opening_hours,
-    structures.opening_hours_details,
     structures.data_inclusion_id,
     structures.has_been_edited,
     structures.quick_start_done,
