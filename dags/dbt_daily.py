@@ -12,7 +12,7 @@ dag_args = default_dag_args() | {
 
 with DAG(
     dag_id="dbt_daily",
-    schedule="30 0 * * *",  # matches the end of the emplois update
+    schedule="0 3 * * *",
     params={
         "full_refresh": Param(False, type="boolean"),
     },
