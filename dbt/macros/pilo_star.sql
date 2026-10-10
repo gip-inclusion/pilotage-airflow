@@ -9,7 +9,8 @@
     {%- if env_var('CI', '') -%}
         id
     {%- else -%}
-        {{ dbt_utils.star(table_name, relation_alias, except, prefix, suffix, quote_identifiers) }}
+        {# `is_anonymized` is a technical flag added by the anonymization DAG, never exposed downstream. #}
+        {{ dbt_utils.star(table_name, relation_alias, except + ['is_anonymized'], prefix, suffix, quote_identifiers) }}
     {%- endif -%}
 {% endmacro %}
 
