@@ -1,0 +1,90 @@
+version: 2
+
+models:
+  - name: stg_asp__structures
+    description: >
+      Structures SIAE conventionnées issues du flux ASP (Agence de Services et de Paiement),
+      organisme qui gère les conventionnements et le financement des structures d'insertion
+      par l'activité économique.
+      Normalement une ligne par structure, identifiée par `structure_id_siae` mais des erreurs côté ASP existent.
+      D'où le distinct servant à retirer des doublons provenant d'une mauvaise gestion côté ASP.
+      Source administrative de référence pour les SIAE conventionnées.
+      Les structures présentes ici et dans `stg_emplois__structures` (jointure sur
+      `structure_id_siae = id_asp`) sont les structures mères.
+    config:
+      tags:
+        - emplois
+    columns:
+      - name: structure_date_creation
+        description: Date de création de la fiche structure dans le système ASP, en texte au format DD/MM/YYYY HH:MM:SS.
+      - name: structure_date_modification
+        description: Date de dernière modification de la fiche structure dans le système ASP, en texte au format DD/MM/YYYY HH:MM:SS.
+      - name: structure_id_siae
+        description: >
+          Identifiant unique de la structure dans le système ASP. Correspond à `id_asp`
+          dans `stg_emplois__structures`.
+        tests:
+          - not_null
+          - unique
+      - name: structure_siret_signature
+        description: Numéro SIRET de la structure au moment de la signature du conventionnement.
+      - name: structure_siret_actualise
+        description: Numéro SIRET actualisé de la structure, mis à jour en cas de changement après le conventionnement.
+        tests:
+          - not_null
+      - name: structure_denomination
+        description: Dénomination officielle de la structure enregistrée à l'ASP.
+      - name: structure_categorie_juridique_id
+        description: Identifiant interne ASP de la catégorie juridique de la structure.
+      - name: structure_categorie_juridique_code
+        description: Catégorie juridique de la structure.e.
+      - name: structure_code_naf
+        description: Code NAF de la structure, décrivant son activité principale.
+      - name: structure_idcc_id
+        description: Identifiant interne ASP de la convention collective applicable à la structure.
+      - name: structure_idcc_code
+        description: Code IDCC de la convention collective applicable à la structure.
+      - name: structure_adresse_admin_numero_apt
+        description: Numéro d'appartement de l'adresse administrative.
+      - name: structure_adresse_admin_entree
+        description: Entrée ou bâtiment de l'adresse administrative.
+      - name: structure_adresse_admin_numero
+        description: Numéro de voie de l'adresse administrative, stocké en nombre décimal.
+      - name: structure_adresse_admin_cplt_num_voie
+        description: Complément du numéro de voie de l'adresse administrative, par exemple bis ou ter.
+      - name: structure_adresse_admin_type_voie
+        description: Type de voie de l'adresse administrative, par exemple RUE ou AVENUE.
+      - name: structure_adresse_admin_nom_voie
+        description: Nom de la voie de l'adresse administrative.
+      - name: structure_adresse_admin_cplt_adresse
+        description: Complément de l'adresse administrative (lieu-dit, zone industrielle...).
+      - name: structure_adresse_admin_cp
+        description: Code postal de l'adresse administrative, stocké en entier.
+      - name: structure_adresse_admin_commune
+        description: Nom de la commune de l'adresse administrative.
+      - name: structure_adresse_admin_code_insee
+        description: >
+          Code INSEE de la commune de l'adresse administrative.
+      - name: structure_adresse_gestion_numero_apt
+        description: >
+          Numéro d'appartement de l'adresse de gestion.
+      - name: structure_adresse_gestion_entree
+        description: Entrée ou bâtiment de l'adresse de gestion.
+      - name: structure_adresse_gestion_numero
+        description: Numéro de voie de l'adresse de gestion, stocké en nombre décimal.
+      - name: structure_adresse_gestion_cplt_num_voie
+        description: Complément du numéro de voie de l'adresse de gestion.
+      - name: structure_adresse_gestion_type_voie
+        description: Type de voie de l'adresse de gestion.
+      - name: structure_adresse_gestion_nom_voie
+        description: Nom de la voie de l'adresse de gestion.
+      - name: structure_adresse_gestion_cplt_adresse
+        description: Complément de l'adresse de gestion.
+      - name: structure_adresse_gestion_cp
+        description: Code postal de l'adresse de gestion, stocké en entier.
+      - name: structure_adresse_gestion_commune
+        description: Nom de la commune de l'adresse de gestion.
+      - name: structure_adresse_gestion_code_insee
+        description: Code INSEE de la commune de l'adresse de gestion.
+      - name: structure_identifiant_corresp_technique
+        description: Identifiant du correspondant technique ASP de la structure.

@@ -1,0 +1,83 @@
+version: 2
+
+models:
+  - name: dim_emplois__etablissements
+    description: >
+      Établissements inscrits sur les Emplois de l'Inclusion : structures employeuses et organisations
+      prescriptrices ou orienteuses. Une ligne par établissement.
+      Pour les structures importées de l'ASP (source Export ASP), le nom, le SIRET, le code NAF et
+      la commune proviennent du flux ASP, sinon des Emplois.
+      Les colonnes propres à un seul type d'établissement sont nulles pour l'autre.
+    config:
+      tags:
+        - emplois
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - type_etablissement
+              - id
+    columns:
+      - name: type_etablissement
+        description: Type d'établissement, structure pour une structure employeuse ou organisation pour une organisation prescriptrice.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - structure
+                  - organisation
+      - name: uid
+        description: Identifiant unique universel (UUID) de l'établissement dans les Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: id
+        description: >
+          Identifiant de l'établissement dans les Emplois. Unique uniquement en combinaison avec
+          `type_etablissement`, une structure et une organisation pouvant avoir le même identifiant.
+        tests:
+          - not_null
+      - name: id_strct_mere
+        description: >
+          Identifiant ASP de la structure mère. Renseigné pour les structures de source Export ASP.
+          Les antennes n'ont pas d'existence juridique, elles sont administrativement portées par leur structure mère.
+          Null pour les organisations et les structures hors IAE
+      - name: nom_emplois
+        description: Nom de l'établissement saisi sur les Emplois.
+      - name: nom_asp
+        description: >
+            Dénomination de la structure à l'ASP. Renseignée uniquement pour les structures de source Export ASP.
+            Le nom de la structure peut différer entre les emplois et l'ASP, les deux sont corrects il est donc nécessaire d'exposer les deux.
+      - name: type
+        description: >
+          Code du type d'établissement. Pour les structures, par exemple ACI, EI, AI, ETTI, EITI, GEIQ, EA
+          ou OPCS. Pour les organisations, par exemple FT, ML, CAP_EMPLOI, DEPT, CCAS ou Autre.
+      - name: type_complet
+        description: Libellé long du type d'organisation. Null pour les structures.
+      - name: habilitee
+        description: >
+          Entier 0/1 indiquant si l'organisation est habilitée à réaliser des diagnostics
+          d'éligibilité IAE. Null pour les structures.
+      - name: siret
+        description: >
+          Numéro SIRET de l'établissement. Pour les structures de source Export ASP, SIRET actualisé
+          issu de l'ASP.
+      - name: code_naf
+        description: >
+          Code NAF de la structure, issu de l'ASP pour les structures de source Export ASP.
+          Null pour les organisations.
+      - name: code_commune
+        description: >
+          Code INSEE de la commune de l'établissement. Pour les structures de source Export ASP,
+          commune de l'adresse administrative ASP, sinon commune de l'adresse C1 des Emplois.
+      - name: code_safir
+        description: Code SAFIR de l'agence France Travail. Renseigné uniquement pour les organisations de type FT.
+      - name: source
+        description: >
+          Origine de la création de la structure. Valeurs possibles : Export ASP, Export GEIQ,
+          Utilisateur (Antenne), Staff Itou. Null pour les organisations.
+      - name: date_inscription_emplois
+        description: Date d'inscription de l'établissement sur les Emplois de l'Inclusion.
+      - name: active
+        description: Entier 0/1 indiquant si l'établissement est actif sur la plateforme.

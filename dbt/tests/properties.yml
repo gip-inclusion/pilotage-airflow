@@ -95,3 +95,6 @@ tests:
   - name: test_rpt_dora__orientations_rowcount_matches_fact
     description: >
       Vérifie que rpt_dora__orientations contient le même nombre de lignes que fct_dora__orientations.
+  - name: test_dim_emplois__etablissements_row_count
+    description: >
+      Permet de vérifier que dim_emplois__etablissements a autant de lignes que stg_emplois__structures et stg_emplois__organisations réunies.
