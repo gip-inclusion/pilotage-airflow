@@ -154,3 +154,90 @@ models:
         description: >
           Nom de l'organisation, à défaut de la structure employeuse, à défaut de l'institution
           de rattachement.
+
+  - name: int_emplois__pass_iae_suspensions
+    description: >
+      Pour chaque PASS IAE qui a au moins une suspension, on résume les principales
+      étapes de ses suspensions sur une seule ligne.
+    columns:
+      - name: id_pass_iae
+        description: Identifiant du PASS IAE ou de l’ancien agrément.
+        data_tests:
+          - not_null
+          - unique
+      - name: nombre_suspensions
+        description: Nombre total de suspensions du titre, terminées ou en cours.
+        data_tests:
+          - not_null
+      - name: date_premiere_suspension
+        description: Première date de début de suspension, sans filtre sur son état.
+      - name: date_derniere_suspension
+        description: Dernière date de début de suspension, sans filtre sur son état.
+      - name: date_de_fin_derniere_suspension
+        description: >
+          Date de fin de la dernière suspension, choisie par date de début puis par identifiant décroissant.
+          Les dates de début NULL passent en dernier. On garde la date de fin de la source,
+          même si la suspension est en cours. Si cette date est NULL, elle reste NULL.
+      - name: is_suspension_en_cours
+        description: >
+          Vaut true si au moins une suspension a en_cours = true dans la source.
+          On ne regarde pas les dates. Si tous les indicateurs sont NULL, le résultat reste NULL.
+        data_type: boolean
+  - name: int_emplois__pass_iae_prolongations
+    description: Une ligne par identifiant de PASS présent dans les prolongations accordées. Une prolongation peut
+      exister sans demande ; elle est toujours comptée.
+    columns:
+      - name: id_pass_iae
+        description: Identifiant du PASS IAE ou de l’ancien agrément.
+        data_tests:
+          - not_null
+          - unique
+      - name: nombre_prolongations
+        description: Nombre de prolongations accordées dans prolongations, avec ou sans demande liée. Les demandes
+          acceptées ne sont pas ajoutées à ce nombre.
+        data_tests:
+          - not_null
+      - name: date_premiere_prolongation
+        description: Première date de création d’une prolongation accordée.
+      - name: date_derniere_prolongation
+        description: Dernière date de création d’une prolongation accordée.
+      - name: date_debut_derniere_prolongation
+        description: Début de la dernière prolongation accordée, choisie par date de création puis par identifiant
+          décroissant. Les dates NULL passent en dernier.
+      - name: date_fin_derniere_prolongation
+        description: Fin de cette même dernière prolongation. La sentinelle 2040-01-01 est conservée.
+  - name: int_emplois__pass_iae_demandes_prolongation
+    description: Une ligne par identifiant de PASS présent dans les demandes. Une demande acceptée reste une demande
+      et n’ajoute rien au nombre de prolongations.
+    columns:
+      - name: id_pass_iae
+        description: Identifiant du PASS IAE ou de l’ancien agrément.
+        data_tests:
+          - not_null
+          - unique
+      - name: nombre_demandes_prolongation
+        description: Nombre total de demandes, indépendamment des prolongations accordées.
+        data_tests:
+          - not_null
+      - name: nombre_demandes_acceptees
+        description: Nombre de demandes dans l’état Acceptée, même sans prolongation associée.
+        data_tests:
+          - not_null
+      - name: nombre_demandes_refusees
+        description: Nombre de demandes dans l’état Refusée.
+        data_tests:
+          - not_null
+      - name: nombre_demandes_en_attente
+        description: Nombre de demandes dans l’état À traiter.
+        data_tests:
+          - not_null
+      - name: date_premiere_demande_prolongation
+        description: Première date de demande de prolongation.
+      - name: date_derniere_demande_prolongation
+        description: Dernière date de demande de prolongation.
+      - name: date_dernier_traitement_demande
+        description: Dernier horodatage de traitement, toutes demandes du titre confondues. Peut concerner une demande
+          plus ancienne.
+      - name: etat_derniere_demande_prolongation
+        description: État de la dernière demande, choisie par date de demande puis par identifiant décroissant. Les
+          dates NULL passent en dernier.

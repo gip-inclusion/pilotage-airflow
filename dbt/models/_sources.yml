@@ -244,6 +244,145 @@ sources:
       - name: organisations_v0
       - name: institutions
       - name: candidats_v0
+        columns:
+          - name: pe_inscrit
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: pe_connect
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: actif
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: diagnostic_valide
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n1_bénéficiaire_du_rsa
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n1_allocataire_ass
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n1_allocataire_aah
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n1_detld_plus_de_24_mois
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_niveau_d_étude_3_cap_bep_ou_infra
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_senior_plus_de_50_ans
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_jeune_moins_de_26_ans
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_sortant_de_l_ase
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_deld_12_à_24_mois
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_travailleur_handicapé
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_parent_isolé
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_personne_sans_hébergement_ou_hébergée_ou_ayant_u
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_réfugié_statutaire_bénéficiaire_d_une_protectio
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_résident_zrr
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_résident_qpv
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_sortant_de_détention_ou_personne_placée_sous_main
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_maîtrise_de_la_langue_française_inférieure_au_ni
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_problème_de_mobilité
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: injection_ai
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
       - name: utilisateurs_v0
       - name: collaborations
         description: >
@@ -374,6 +513,13 @@ sources:
               Mise à jour quotidienne.
       - name: demandes_de_prolongation
       - name: suspensions_v0
+        columns:
+          - name: en_cours
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
       - name: cap_campagnes
       - name: cap_structures
       - name: cap_candidatures
@@ -506,6 +652,11 @@ sources:
               (Associations Intermédiaires).
               (1 = PASS injecté depuis l'historique AI, 0 = PASS natif).
               Filtrer sur `injection_ai = 0` pour les analyses de flux courant.
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
 
           - name: hash_numéro_pass_iae
             description: >
