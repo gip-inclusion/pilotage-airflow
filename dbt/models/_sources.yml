@@ -391,9 +391,19 @@ sources:
           - name: pe_connect
             description: >
               Vrai si le candidat utilise France Travail Connect.
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
           - name: pe_inscrit
             description: >
               Vrai si le candidat a un identifiant France Travail.
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
           - name: last_login
             description: >
               Date de la dernière connexion.
@@ -403,6 +413,11 @@ sources:
           - name: actif
             description: >
               Vrai si la dernière connexion a eu lieu dans les 7 jours.
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
           - name: code_postal
             description: >
               Code postal de la commune du candidat.
@@ -439,6 +454,11 @@ sources:
           - name: diagnostic_valide
             description: >
               Vrai si le diagnostic est en cours de validité au moment de l’import.
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
           - name: id_auteur_diagnostic_prescripteur
             description: >
               Identifiant de l’organisation prescriptrice à l’origine du diagnostic (si diagnostic prescripteur).
@@ -469,10 +489,123 @@ sources:
           - name: injection_ai
             description: >
               Fait partie de l’import massif des PASS IAE (sans diagnostic) réalisé le 30 novembre 2021.
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
           - name: date_mise_à_jour_metabase
             description: >
               Date de la dernière synchronisation de cette ligne dans Metabase.
               Mise à jour quotidienne.
+          - name: critère_n1_bénéficiaire_du_rsa
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n1_allocataire_ass
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n1_allocataire_aah
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n1_detld_plus_de_24_mois
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_niveau_d_étude_3_cap_bep_ou_infra
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_senior_plus_de_50_ans
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_jeune_moins_de_26_ans
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_sortant_de_l_ase
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_deld_12_à_24_mois
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_travailleur_handicapé
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_parent_isolé
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_personne_sans_hébergement_ou_hébergée_ou_ayant_u
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_réfugié_statutaire_bénéficiaire_d_une_protectio
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_résident_zrr
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_résident_qpv
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_sortant_de_détention_ou_personne_placée_sous_main
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_maîtrise_de_la_langue_française_inférieure_au_ni
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+          - name: critère_n2_problème_de_mobilité
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
       - name: utilisateurs_v0
       - name: collaborations
         description: >
@@ -603,6 +736,13 @@ sources:
               Mise à jour quotidienne.
       - name: demandes_de_prolongation
       - name: suspensions_v0
+        columns:
+          - name: en_cours
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
       - name: cap_campagnes
       - name: cap_structures
       - name: cap_candidatures
@@ -680,8 +820,6 @@ sources:
             description: >
               Date de fin de validité du PASS IAE. Calculée à 2 ans après
               `date_début`, prolongée si des prolongations ont été accordées.
-              La valeur '2040-01-01' est utilisée comme sentinelle pour les PASS
-              sans date de fin définie.
 
           - name: durée
             description: >
@@ -735,6 +873,11 @@ sources:
               (Associations Intermédiaires).
               (1 = PASS injecté depuis l'historique AI, 0 = PASS natif).
               Filtrer sur `injection_ai = 0` pour les analyses de flux courant.
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
 
           - name: hash_numéro_pass_iae
             description: >
