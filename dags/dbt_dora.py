@@ -11,7 +11,7 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with DAG(
     dag_id=DAG_ID,
-    schedule="0 5 * * *",
+    schedule="20 5 * * *",
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()
