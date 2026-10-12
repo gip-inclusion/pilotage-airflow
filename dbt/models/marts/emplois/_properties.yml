@@ -1,0 +1,107 @@
+version: 2
+
+models:
+  - name: dim_emplois__etablissements
+    description: >
+      Établissements inscrits sur les Emplois de l'Inclusion : structures employeuses et organisations
+      prescriptrices ou orienteuses. Une ligne par établissement.
+      Une structure et une organisation partageant le même SIRET sont rapprochées sur une seule ligne
+      lorsque la correspondance est 1:1 : la structure est seule sur son SIRET et l'organisation est
+      seule sur son SIRET, ou est l'unique organisation de type Autre parmi celles partageant ce SIRET.
+      Les autres structures et organisations ont chacune leur propre ligne.
+      Pour les structures importées de l'ASP (source Export ASP), le nom, le SIRET, le code NAF et
+      la commune proviennent du flux ASP, sinon des Emplois.
+      Les colonnes propres à un seul type d'établissement sont nulles pour l'autre.
+    config:
+      tags:
+        - emplois
+    tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: uid_structure is not null or uid_organisation is not null
+    columns:
+      - name: id
+        description: >
+          Identifiant de l'établissement, hash des UUID de la structure et de l'organisation.
+          Stable d'une exécution à l'autre tant que le rapprochement ne change pas.
+        tests:
+          - not_null
+          - unique
+      - name: type_etablissement
+        description: >
+          Type d'établissement, structure pour une structure employeuse, organisation pour une organisation
+          prescriptrice, structure_organisation pour une structure et une organisation rapprochées par SIRET.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - structure
+                  - organisation
+                  - structure_organisation
+      - name: uid_structure
+        description: Identifiant unique universel (UUID) de la structure dans les Emplois. Null pour les organisations non rapprochées.
+        tests:
+          - unique
+      - name: id_structure
+        description: Identifiant de la structure dans les Emplois. Null pour les organisations non rapprochées.
+        tests:
+          - unique
+      - name: uid_organisation
+        description: Identifiant unique universel (UUID) de l'organisation dans les Emplois. Null pour les structures non rapprochées.
+        tests:
+          - unique
+      - name: id_organisation
+        description: Identifiant de l'organisation dans les Emplois. Null pour les structures non rapprochées.
+        tests:
+          - unique
+      - name: id_strct_mere
+        description: >
+          Identifiant ASP de la structure mère. Renseigné pour les structures de source Export ASP.
+          Les antennes n'ont pas d'existence juridique, elles sont administrativement portées par leur structure mère.
+          Null pour les organisations et les structures hors IAE
+      - name: nom_structure
+        description: Nom de la structure saisi sur les Emplois. Null pour les organisations non rapprochées.
+      - name: nom_organisation
+        description: Nom de l'organisation saisi sur les Emplois. Null pour les structures non rapprochées.
+      - name: nom_structure_asp
+        description: >
+            Dénomination de la structure à l'ASP. Renseignée uniquement pour les structures de source Export ASP.
+            Le nom de la structure peut différer entre les emplois et l'ASP, les deux sont corrects il est donc nécessaire d'exposer les deux.
+      - name: type_structure
+        description: Code du type de structure, par exemple ACI, EI, AI, ETTI, EITI, GEIQ, EA ou OPCS.
+      - name: type_organisation
+        description: Code du type d'organisation, par exemple FT, ML, CAP_EMPLOI, DEPT, CCAS ou Autre.
+      - name: type_complet
+        description: Libellé long du type d'organisation. Null pour les structures non rapprochées.
+      - name: habilitee
+        description: >
+          Entier 0/1 indiquant si l'organisation est habilitée à réaliser des diagnostics
+          d'éligibilité IAE. Null pour les structures non rapprochées.
+      - name: siret
+        description: >
+          Numéro SIRET de l'établissement. Pour les structures de source Export ASP, SIRET actualisé
+          issu de l'ASP.
+      - name: code_naf
+        description: >
+          Code NAF de la structure, issu de l'ASP pour les structures de source Export ASP.
+          Null pour les organisations non rapprochées.
+      - name: code_commune
+        description: >
+          Code INSEE de la commune de l'établissement. Pour les structures de source Export ASP,
+          commune de l'adresse administrative ASP, sinon commune de l'adresse C1 des Emplois.
+          Pour un établissement rapproché, commune de la structure.
+      - name: code_safir
+        description: Code SAFIR de l'agence France Travail. Renseigné uniquement pour les organisations de type FT.
+      - name: source
+        description: >
+          Origine de la création de la structure. Valeurs possibles : Export ASP, Export GEIQ,
+          Utilisateur (Antenne), Staff Itou. Null pour les organisations non rapprochées.
+      - name: date_inscription_emplois
+        description: >
+          Date d'inscription de l'établissement sur les Emplois de l'Inclusion. Pour un établissement
+          rapproché, date la plus ancienne entre la structure et l'organisation.
+      - name: active
+        description: >
+          Entier 0/1 indiquant si l'établissement est actif sur la plateforme. Pour un établissement
+          rapproché, actif si la structure ou l'organisation l'est.

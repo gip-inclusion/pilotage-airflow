@@ -214,3 +214,57 @@ models:
           Reste NULL si la correspondance manque.
       - name: oriented_service_code_commune_insee
         description: Code commune ajouté depuis stg_emplois__services.code_insee, via service_uid = uid.
+
+  - name: int_emplois__structures
+    description: >
+      Structures inscrites sur les Emplois de l'Inclusion complétées avec les données de l'ASP.
+      Pour les structures de source Export ASP (=structures mères), le nom ASP,
+      le SIRET, le code NAF et la commune proviennent du flux ASP (jointure sur
+      `id_strct_mere = structure_id_siae`), sinon des Emplois. Si la valeur ASP est nulle
+      (structure absente du flux ASP ou champ non renseigné), on reprend celle des Emplois.
+    config:
+      tags:
+        - emplois
+    columns:
+      - name: uid
+        description: Identifiant unique universel (UUID) de la structure dans les Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: id
+        description: Identifiant de la structure dans les Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: id_strct_mere
+        description: >
+          Identifiant ASP de la structure mère, issu de `id_asp` dans `stg_emplois__structures`.
+          Renseigné pour les structures de source Export ASP, qui sont elles-mêmes des structures
+          mères, et pour la plupart des antennes, qui portent l'identifiant de leur structure mère.
+      - name: nom_emplois
+        description: Nom de la structure saisi sur les Emplois.
+      - name: type
+        description: Type de structure employeuse, par exemple ACI, EI, AI, ETTI, EITI, GEIQ, EA ou OPCS.
+      - name: date_inscription_emplois
+        description: Date d'inscription de la structure sur les Emplois de l'Inclusion.
+      - name: active
+        description: Entier 0/1 indiquant si la structure est active sur la plateforme.
+      - name: source
+        description: >
+          Origine de la création de la structure. Valeurs possibles : Export ASP, Export GEIQ,
+          Utilisateur (Antenne), Staff Itou.
+      - name: nom_asp
+        description: Dénomination de la structure à l'ASP. Renseignée uniquement pour les structures de source Export ASP.
+      - name: siret
+        description: >
+          Numéro SIRET de la structure : SIRET actualisé de l'ASP pour les structures de source
+          Export ASP, SIRET des Emplois sinon ou si le SIRET ASP est nul.
+      - name: code_naf
+        description: >
+          Code NAF de la structure : code NAF de l'ASP pour les structures de source Export ASP,
+          code NAF des Emplois sinon ou si le code NAF ASP est nul.
+      - name: code_commune
+        description: >
+          Code INSEE de la commune de la structure : commune de l'adresse administrative ASP pour
+          les structures de source Export ASP, commune de l'adresse C1 des Emplois sinon ou si
+          la commune ASP est nulle.
