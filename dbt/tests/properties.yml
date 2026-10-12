@@ -101,3 +101,6 @@ tests:
       doublons ou perdre des orientations. Donc, pour chaque source, on vérifie que chaque orientation
       apparaît autant de fois dans le fact que dans le staging. Côté DORA, on ne prend que les orientations
       avec un prescripteur ; côté Emplois, on les prend toutes.
+  - name: test_dim_emplois__etablissements_row_count
+    description: >
+      Vérifie que chaque structure de stg_emplois__structures et chaque organisation de stg_emplois__organisations apparaît exactement une fois dans dim_emplois__etablissements.

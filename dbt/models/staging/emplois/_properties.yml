@@ -315,3 +315,221 @@ models:
           Certains services sont désactivés temporairement, le temps d'un weekend par exemple.
       - name: date_mise_a_jour_metabase
         description: Date de dernière synchronisation dans Metabase.
+
+  - name: stg_emplois__structures
+    description: >
+      Structures employeuses inscrites sur les Emplois de l'Inclusion (SIAE, GEIQ, EA, EATT, OPCS).
+      Une ligne par structure, avec ses informations administratives, ses deux adresses
+      (principale et de correspondance C1=adresse entrée dans les Emplois), ses agrégats d'activité (candidatures, embauches, fiches de poste)
+      et ses métadonnées de suivi. Une structure est considérée comme mère si elle provient de l'export ASP
+    config:
+      tags:
+        - emplois
+    columns:
+      - name: id
+        description: Identifiant unique de la structure.
+        tests:
+          - not_null
+          - unique
+      - name: uid
+        description: Identifiant unique universel (UUID) de la structure.
+        tests:
+          - not_null
+          - unique
+      - name: id_asp
+        description: >
+          Identifiant de la structure dans le système de l'ASP, qui gère les conventionnements
+          et le financement des SIAE. Les structures mères et antenne ont le même id_asp.
+          Il faut que source = Export ASP pour que l'on identifie la structure mère (ou qu'elle soit présente dans stg_asp__structures)
+          Null pour les structures non conventionnées via l'ASP
+          (GEIQ, EA, OPCS).
+      - name: nom
+        description: Nom de la structure tel que saisi lors de l'inscription.
+      - name: nom_complet
+        description: Nom complet de la structure, au format Type de structure - ID structure - Nom de la structure.
+      - name: description
+        description: Description libre de la structure et de ses activités, saisie par l'employeur.
+      - name: type
+        description: >
+          Type de structure employeuse. Valeurs possibles : ACI (Atelier et Chantier d'Insertion),
+          EI (Entreprise d'Insertion), AI (Association Intermédiaire), ETTI (Entreprise de Travail
+          Temporaire d'Insertion), EITI (Entreprise d'Insertion par le Travail Indépendant),
+          EA (Entreprise Adaptée), EATT (Entreprise Adaptée de Travail Temporaire),
+          GEIQ (Groupement d'Employeurs pour l'Insertion et la Qualification),
+          OPCS (Organisme concourant à l'insertion des personnes placées sous main de justice).
+      - name: siret
+        description: Numéro SIRET de la structure (14 chiffres). Le structures mères et antennes peuvent avoir le même SIRET.
+      - name: source
+        description: >
+          Origine de la création de la structure. Valeurs possibles : Export ASP, Export GEIQ,
+          Utilisateur (Antenne), Staff Itou.
+      - name: code_naf
+        description: Code NAF de la structure, décrivant son activité principale.
+      - name: email_public
+        description: Adresse e-mail publique de la structure, visible des candidats.
+      - name: email_authentification
+        description: Adresse e-mail utilisée pour l'authentification sur la plateforme. Donnée non publique.
+      - name: convergence_france
+        description: >
+          Entier 0/1 indiquant si la structure participe au programme Convergence France,
+          dispositif d'accompagnement renforcé vers l'emploi durable.
+      - name: adresse_ligne_1
+        description: Première ligne de l'adresse principale, équivalente à celle de la structure mère.
+      - name: adresse_ligne_2
+        description: Complément de l'adresse principale, équivalent à celui de la structure mère.
+      - name: code_postal
+        description: Code postal de l'adresse principale, équivalent à celui de la structure mère.
+      - name: code_commune
+        description: Code INSEE de la commune de l'adresse principale, équivalent à celui de la structure mère.
+      - name: ville
+        description: Nom de la ville de l'adresse principale, équivalent à celui de la structure mère.
+      - name: longitude
+        description: Longitude de l'adresse principale (WGS84), équivalente à celle de la structure mère.
+      - name: latitude
+        description: Latitude de l'adresse principale (WGS84), équivalente à celle de la structure mère.
+      - name: departement
+        description: Code du département de l'adresse principale, par exemple 59, 75 ou 974.
+      - name: nom_departement
+        description: Code et nom du département de l'adresse principale, par exemple 93 - Seine-Saint-Denis.
+      - name: region
+        description: Nom de la région de l'adresse principale.
+      - name: adresse_ligne_1_c1
+        description: >
+          Première ligne de l'adresse de correspondance (C1=telle que déclarée dans les emplois), distincte de l'adresse principale
+          pour les structures ayant deux établissements.
+      - name: adresse_ligne_2_c1
+        description: Complément de l'adresse C1=telle que déclarée dans les emplois.
+      - name: code_postal_c1
+        description: Code postal de l'adresse C1=telle que déclarée dans les emplois.
+      - name: code_commune_c1
+        description: Code INSEE de la commune de l'adresse C1=telle que déclarée dans les emplois.
+      - name: ville_c1
+        description: Nom de la ville de l'adresse C1=telle que déclarée dans les emplois.
+      - name: longitude_c1
+        description: Longitude de l'adresse C1=telle que déclarée dans les emplois (WGS84).
+      - name: latitude_c1
+        description: Latitude de l'adresse C1=telle que déclarée dans les emplois (WGS84).
+      - name: departement_c1
+        description: Code du département de l'adresse C1=telle que déclarée dans les emplois.
+      - name: nom_departement_c1
+        description: Code et nom du département de l'adresse C1=telle que déclarée dans les emplois.
+      - name: region_c1
+        description: Nom de la région de l'adresse C1=telle que déclarée dans les emplois.
+      - name: date_inscription
+        description: Date d'inscription de la structure sur les Emplois de l'Inclusion.
+      - name: total_membres
+        description: Nombre d'utilisateurs rattachés à la structure.
+      - name: total_candidatures
+        description: Nombre total de candidatures reçues par la structure, tous états confondus.
+      - name: total_candidatures_30j
+        description: Nombre de candidatures reçues au cours des 30 derniers jours.
+      - name: total_embauches
+        description: Nombre total de candidatures acceptées par la structure.
+      - name: total_embauches_30j
+        description: Nombre de candidatures acceptées au cours des 30 derniers jours.
+      - name: taux_conversion_30j
+        description: Taux de conversion des candidatures en embauches sur les 30 derniers jours, entre 0 et 1.
+      - name: total_auto_prescriptions
+        description: >
+          Nombre de candidatures en auto prescription.
+      - name: total_candidatures_autonomes
+        description: Nombre de candidatures déposées de manière autonome par des candidats.
+      - name: total_candidatures_via_prescripteur
+        description: Nombre de candidatures reçues via un prescripteur ou un orienteur.
+      - name: total_candidatures_non_traitees
+        description: Nombre de candidatures en attente de traitement (nouvelles ou en attente).
+      - name: total_candidatures_en_etude
+        description: Nombre de candidatures actuellement à l'étude.
+      - name: date_derniere_connexion
+        description: Date de la dernière connexion d'un membre de la structure à la plateforme.
+      - name: active
+        description: Entier 0/1 indiquant si la structure est active sur la plateforme.
+      - name: date_derniere_evolution_candidature
+        description: Date du dernier changement d'état d'une candidature reçue par la structure.
+      - name: total_fiches_de_poste_actives
+        description: Nombre de fiches de poste ouvertes au recrutement.
+      - name: total_fiches_de_poste_inactives
+        description: Nombre de fiches de poste fermées.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière synchronisation de la ligne dans Metabase.
+
+  - name: stg_emplois__organisations
+    description: >
+      Organisations prescriptrices et orienteuses inscrites sur les Emplois de l'Inclusion
+      (France Travail, Mission locale, CCAS, CHRS, conseil départemental...). Une ligne par
+      organisation. Les organisations habilitées peuvent réaliser des diagnostics d'éligibilité IAE
+      et délivrer un PASS IAE, les orienteurs peuvent uniquement orienter des candidats vers des SIAE.
+    config:
+      tags:
+        - emplois
+    columns:
+      - name: id
+        description: Identifiant unique de l'organisation.
+        tests:
+          - not_null
+          - unique
+      - name: uid
+        description: Identifiant unique universel (UUID) de l'organisation.
+        tests:
+          - not_null
+          - unique
+      - name: siret
+        description: Numéro SIRET de l'organisation. Peut être null et n'est pas unique dans la table.
+      - name: nom
+        description: Nom de l'organisation tel que saisi lors de l'inscription.
+      - name: type
+        description: >
+          Code du type d'organisation, par exemple FT (France Travail), ML (Mission locale),
+          CAP_EMPLOI (Cap emploi), DEPT (Service social du conseil départemental), ODC
+          (Organisation délégataire d'un Conseil Départemental), CCAS, CHRS, PLIE, SPIP, Orienteur
+          ou Autre. Voir `type_complet` pour les libellés longs.
+      - name: type_complet
+        description: Libellé long du type d'organisation, par exemple Mission locale ou France Travail.
+      - name: habilitee
+        description: >
+          Entier 0/1 indiquant si l'organisation est habilitée à réaliser des diagnostics
+          d'éligibilité IAE (0 pour les orienteurs).
+      - name: adresse_ligne_1
+        description: Première ligne de l'adresse de l'organisation.
+      - name: adresse_ligne_2
+        description: Complément de l'adresse de l'organisation.
+      - name: code_postal
+        description: Code postal de l'organisation.
+      - name: code_commune
+        description: Code INSEE de la commune de l'organisation.
+      - name: ville
+        description: Nom de la ville de l'organisation.
+      - name: longitude
+        description: Longitude de l'organisation (WGS84).
+      - name: latitude
+        description: Latitude de l'organisation (WGS84).
+      - name: departement
+        description: Code du département de l'organisation, par exemple 59, 75 ou 974.
+      - name: nom_departement
+        description: Code et nom du département de l'organisation, par exemple 62 - Pas-de-Calais.
+      - name: region
+        description: Nom de la région de l'organisation.
+      - name: date_inscription
+        description: Date d'inscription de l'organisation sur les Emplois de l'Inclusion.
+      - name: code_safir
+        description: >
+          Code SAFIR de l'agence France Travail. Renseigné uniquement pour les organisations
+          de type FT.
+      - name: total_membres
+        description: Nombre d'utilisateurs rattachés à l'organisation.
+      - name: total_candidatures
+        description: Nombre total de candidatures émises par l'organisation.
+      - name: total_embauches
+        description: Nombre de candidatures émises par l'organisation ayant abouti à une embauche.
+      - name: date_derniere_candidature
+        description: Date de la dernière candidature émise par l'organisation.
+      - name: date_derniere_connexion
+        description: Date de la dernière connexion d'un membre de l'organisation à la plateforme.
+      - name: active
+        description: Entier 0/1 indiquant si l'organisation est active sur la plateforme.
+      - name: brsa
+        description: >
+          Entier 0/1 indiquant si l'organisation est conventionnée pour l'accompagnement
+          des bénéficiaires du RSA.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière synchronisation de la ligne dans Metabase.
