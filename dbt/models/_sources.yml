@@ -157,6 +157,45 @@ sources:
           - name: date_mise_à_jour_metabase
             description: >
               Date de la dernière synchronisation de cette ligne dans Metabase.
+      - name: services_v0
+        description: >
+          Liste des services d’insertion référencés sur la plateforme (les Emplois).
+          Il peut y avoir quelques différences par rapport à ce que renvoie l’API data·inclusion : l’API renvoie une photographie des services actuels (un service supprimé chez un fournisseur de données disparaît des résultats).
+          Sur la plateforme, un service supprimé est simplement désactivé (`is_active=False`). Cela permet de préserver les relations avec les iMERs ou les orientations par exemple.
+        columns:
+          - name: id
+            description: >
+              Identifiant unique du service. Clé primaire de la table.
+          - name: uid
+            description: >
+              Identifiant public (data·inclusion) du service.
+          - name: structure_uid
+            description: >
+              Identifiant public (data·inclusion) de la structure qui offre le service.
+          - name: source
+            description: >
+              Source de la donnée.
+          - name: source_link
+            description: >
+              Lien de la source (peut être vide).
+          - name: name
+            description: >
+                Nom du service.
+          - name: description
+            description: >
+                Description du service.
+          - name: duration_weekly_hours
+            description: >
+                Volume horaire hebdomadaire.
+          - name: duration_weeks
+            description: >
+                Nombre de semaines.
+          - name: code_insee
+            description: >
+                Code INSEE de la commune où est situé le service.
+          - name: is_active
+            description: >
+                Booléen représentant l’état du service. Si `False`, alors le service n’apparaissait plus dans les résultats de l’API data·inclusion. Note : certains services sont désactivés temporairement (le temps d’un weekend par exemple).
       - name: geiq_assessments
         description: >
           Bilans d'exécution des GEIQ. Une ligne par bilan, à l'échelle du GEIQ et pour une
