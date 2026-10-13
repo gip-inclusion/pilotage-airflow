@@ -69,13 +69,13 @@ sources:
               Clé étrangère vers `les_emplois.structures_v0.id`.
           - name: structure_id
             description: >
-              Identifiant Data·Inclusion de la structure ciblée par l'intention de mise en relation.
+              Identifiant data·inclusion de la structure ciblée par l'intention de mise en relation.
           - name: kind
             description: >
               Type de l'intention de mise en relation.
           - name: service_id
             description: >
-              Identifiant Data·Inclusion du service concerné par l'intention.
+              Identifiant data·inclusion du service concerné par l'intention.
           - name: source
             description: >
               Source de la structure de l'intention de mise en relation.
@@ -85,6 +85,75 @@ sources:
           - name: orientation_id
             description: >
               Identifiant de l'orientation. Renseigné uniquement lorsqu'une orientation a eu lieu.
+          - name: date_mise_à_jour_metabase
+            description: >
+              Date de la dernière synchronisation de cette ligne dans Metabase.
+      - name: orientations_v0
+        description: >
+          Liste des orientations émises par la plateforme (les Emplois).
+          Une orientation (id) correspond à l'envoi d'un formulaire de la part d'un precripteur (sender_id).
+          Un formulaire étant la recommandation d'un service (service_uid) à un tiers (beneficiary).
+        columns:
+          - name: id
+            description: >
+              Identifiant unique (UUID) de l'orientation. Clé primaire de la table.
+          - name: creation_date
+            description: >
+              Date d'envoi de l'orientation.
+          - name: processing_date
+            description: >
+              Date de traitement en compte de l'orientation (acceptée ou déclinée).
+              Vide lorsque l'orientation est encore ouverte.
+          - name: status
+            description: >
+              État de l'orientation (OUVERTE, VALIDÉE, REFUSÉE, EXPIRÉE).
+          - name: service_uid
+            description: >
+              Identifiant data·inclusion du service vers lequel le bénéficiaire est orienté, correspondant à `les_emplois.services_v0.uid`.
+          - name: structure_uid
+            description: >
+              Identifiant data·inclusion de la structure porteuse du service vers lequel le bénéficiaire est orienté.
+          - name: beneficiary_id
+            description: >
+              Identifiant unique du bénéficiaire orienté vers le service.
+              Correspond à la clé primaire `les_emplois.candidats_v0.id`.
+          - name: beneficiary_public_id
+            description: >
+              Identifiant public du bénéficiaire orienté vers le service.
+              Correspond à `les_emplois.candidats_v0.public_id`.
+          - name: sender_id
+            description: >
+              Identifiant unique du professionnel (employeur ou prescripteur) qui a envoyé l’orientation.
+              Correspond à la clé primaire `les_emplois.utilisateurs_v0.id`.
+          - name: sender_public_id
+            description: >
+              Identifiant public du professionnel (employeur ou prescripteur) qui a envoyé l’orientation.
+              Correspond à `les_emplois.utilisateurs_v0.public_id`.
+          - name: sender_kind
+            description: >
+              Type d'utilisateur à l'origine de l'orientation (employeur ou prescripteur).
+          - name: sender_prescriber_organization_id
+            description: >
+              Identifiant de l'organisation prescriptrice de l'utilisateur.
+              Clé étrangère vers `les_emplois.organisations_v0.id` (clé primaire).
+          - name: sender_prescriber_organization_uid
+            description: >
+              Identifiant public de l'organisation prescriptrice de l'utilisateur.
+              Correspond à `les_emplois.organisations_v0.uid`.
+          - name: sender_company_id
+            description: >
+              Identifiant de l’entreprise de l'utilisateur.
+              Clé étrangère vers `les_emplois.structures_v0.id` (clé primaire).
+          - name: sender_company_id
+            description: >
+              Identifiant public de l’entreprise de l'utilisateur.
+              Correspond à `les_emplois.structures_v0.uid`.
+          - name: data_protection_commitment
+            description: >
+                Booléen représentant l’engagement RGPD de l’utilisateur ayant émis l’orientation.
+          - name: last_reminder_sent_at
+            description: >
+                Date de l’envoi du dernier rappel. Tant qu’une orientation est à l’état OUVERTE, des rappels par email sont envoyés à l’offreur de service qui doit traiter l’orientation, à J+10 et J+20 à partir de la date de création.
           - name: date_mise_à_jour_metabase
             description: >
               Date de la dernière synchronisation de cette ligne dans Metabase.
