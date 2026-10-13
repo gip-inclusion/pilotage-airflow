@@ -62,17 +62,20 @@ sources:
           - name: user_prescriber_organization_id
             description: >
               Identifiant de l'organisation prescriptrice de l'utilisateur.
+              Clé étrangère vers `les_emplois.organisations_v0.id`
           - name: user_company_id
+            description: >
+              Identifiant de l’entreprise de l'utilisateur.
+              Clé étrangère vers `les_emplois.structures_v0.id`.
           - name: structure_id
             description: >
-              Identifiant de la structure ciblée par l'intention de mise en relation.
-              Clé étrangère vers `les_emplois.structures_v0.id`.
+              Identifiant Data·Inclusion de la structure ciblée par l'intention de mise en relation.
           - name: kind
             description: >
               Type de l'intention de mise en relation.
           - name: service_id
             description: >
-              Identifiant du service concerné par l'intention.
+              Identifiant Data·Inclusion du service concerné par l'intention.
           - name: source
             description: >
               Source de la structure de l'intention de mise en relation.
