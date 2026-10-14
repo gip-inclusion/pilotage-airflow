@@ -7,6 +7,10 @@ select
     ctr.contrat_date_embauche,
     ctr.contrat_date_fin_contrat,
     ctr.contrat_date_sortie_definitive,
+    ctr.categorie_sortie,
+    ctr.rcs_code,
+    ctr.motif_sortie,
+    ctr.rms_code,
     case
         when ctr.num_reconduction = 0 then 'initial'
         when ctr.num_reconduction > 0 then 'renouvellement'
