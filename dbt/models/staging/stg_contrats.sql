@@ -12,6 +12,8 @@ select
     rfc.rfc_lib_forme_contrat                                 as type_contrat,
     motif_sortie.rms_libelle                                  as motif_sortie,
     categorie_sortie.rcs_libelle                              as categorie_sortie,
+    categorie_sortie.rcs_code,
+    motif_sortie.rms_code,
     emi.emi_nb_heures_travail                                 as contrat_nb_heures,
     structs.nom_region_structure,
     structs.nom_departement_structure,

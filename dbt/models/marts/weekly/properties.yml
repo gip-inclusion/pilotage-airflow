@@ -175,6 +175,18 @@ models:
       - name: contrat_date_embauche
         tests:
           - not_null
+      - name: categorie_sortie
+        description: >
+          Catégorie à laquelle appartient le motif de sortie (fluxIAE_RefCategorieSort_v2). Il y a 5 grandes catégories.
+      - name: rcs_code
+        description: >
+          Code associé à la catégorie de sortie, un code par catégorie.
+      - name: motif_sortie
+        description: >
+          Libellé du motif de sortie du salarié déclaré dans l'extranet ASP (fluxIAE_RefMotifSort_v2).
+      - name: rms_code
+        description: >
+          Code associé au motif de sortie, un code par motif.
       - name: type_contrat
         tests:
           - not_null
