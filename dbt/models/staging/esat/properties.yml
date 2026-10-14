@@ -508,6 +508,7 @@ models:
         - name: year_foresight_in_place
           description: >
             Année de mise en œuvre du régime de prévoyance dans l’ESAT.
+            Les caractères autres que les chiffres sont supprimés et la valeur est convertie en nombre ; une valeur sans chiffre devient `null`.
 
         # Mobility program
         - name: annual_transport_budget

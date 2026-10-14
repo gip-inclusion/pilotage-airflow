@@ -41,8 +41,9 @@ models:
     description: >
       Modèle intermédiaire qui applique les neutralisations de cellules déclarées dans `seed_esat__answer_field_exclusions` aux réponses du questionnaire ESAT.
 
-      Il conserve une ligne par réponse et remplace uniquement les valeurs explicitement exclues par `null`, sans modifier la table brute ni le modèle de staging
-      principal.
+      Il conserve une ligne par réponse et remplace les valeurs explicitement exclues par `null`, sans modifier la table brute.
+      L'année de prévoyance, nettoyée et convertie en nombre dans le staging, est également neutralisée si le régime n'est pas en place (`true`)
+      ou si la valeur n'est pas comprise entre 1 et 2025 (regle donnée par Alice).
 
     columns:
       - name: answer_id
