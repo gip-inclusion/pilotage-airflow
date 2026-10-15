@@ -1,0 +1,20 @@
+select
+    id,
+    creation_date,
+    processing_date,
+    status,
+    service_uid,
+    structure_uid,
+    beneficiary_id,
+    beneficiary_public_id,
+    sender_id,
+    sender_public_id,
+    sender_prescriber_organization_id,
+    sender_prescriber_organization_uid,
+    sender_company_id,
+    sender_company_uid,
+    data_protection_commitment::boolean as data_protection_commitment,
+    last_reminder_email_sent_at,
+    "date_mise_à_jour_metabase"         as date_mise_a_jour_metabase,
+    sender_kind
+from {{ source('raw_emplois', 'orientations_v0') }}
