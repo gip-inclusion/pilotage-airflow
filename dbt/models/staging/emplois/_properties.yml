@@ -184,3 +184,134 @@ models:
         description: Nom de la région de l'institution.
       - name: date_mise_a_jour_metabase
         description: Date de la dernière synchronisation de la ligne dans Metabase.
+
+  - name: stg_emplois__orientations
+    description: >-
+      Liste des orientations émises par la plateforme (les Emplois).
+      Une orientation (id) correspond à l'envoi d'un formulaire de la part d'un prescripteur (sender_id).
+      Un formulaire étant la recommandation d'un service (service_uid) à un tiers (beneficiary).
+    config:
+      tags:
+        - dora
+    columns:
+      - name: id
+        description: >
+          Identifiant unique de l'orientation.
+          Correspond à raw_emplois.imer_v0.orientation_id.
+        tests:
+          - unique
+          - not_null
+      - name: creation_date
+        description: Date d'envoi de l'orientation.
+        tests:
+          - not_null
+      - name: processing_date
+        description: >
+          Date de traitement de l'orientation (acceptée ou déclinée).
+          Vide lorsque l'orientation est encore ouverte.
+      - name: status
+        description: État de l'orientation.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - OUVERTE
+                  - VALIDÉE
+                  - REFUSÉE
+                  - EXPIRÉE
+      - name: service_uid
+        description: >
+          Identifiant Data Inclusion du service vers lequel le bénéficiaire est orienté.
+          Correspond à raw_emplois.services_v0.uid.
+      - name: structure_uid
+        description: >
+          Identifiant Data Inclusion de la structure porteuse du service.
+          Correspond à int_di__structure_source_mapping.source_structure_id.
+      - name: beneficiary_id
+        description: Identifiant du bénéficiaire, correspondant à raw_emplois.candidats_v0.id.
+      - name: beneficiary_public_id
+        description: Identifiant public du bénéficiaire, correspondant à raw_emplois.candidats_v0.uid.
+      - name: sender_id
+        description: >
+          Identifiant du professionnel (employeur ou prescripteur) qui a envoyé l'orientation.
+          Correspond à raw_emplois.utilisateurs_v0.id.
+      - name: sender_public_id
+        description: >
+          Identifiant public du professionnel (employeur ou prescripteur) qui a envoyé l'orientation.
+          Correspond à raw_emplois.utilisateurs_v0.uid.
+      - name: sender_kind
+        description: Type d'utilisateur à l'origine de l'orientation (employeur ou prescripteur).
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - emplois_employer
+                  - emplois_prescriber
+      - name: sender_prescriber_organization_id
+        description: >
+          Identifiant de l'organisation prescriptrice de l'utilisateur.
+          Correspond à raw_emplois.organisations_v0.id.
+      - name: sender_prescriber_organization_uid
+        description: >
+          Identifiant public de l'organisation prescriptrice de l'utilisateur.
+          Correspond à raw_emplois.organisations_v0.uid.
+      - name: sender_company_id
+        description: Identifiant de l'entreprise de l'utilisateur, correspondant à raw_emplois.structures_v0.id.
+      - name: sender_company_uid
+        description: Identifiant public de l'entreprise de l'utilisateur, correspondant à raw_emplois.structures_v0.uid.
+      - name: data_protection_commitment
+        description: Engagement RGPD de l'utilisateur ayant émis l'orientation.
+      - name: last_reminder_email_sent_at
+        description: >
+          Date du dernier rappel envoyé à l'offreur de service. Les relances ont lieu à J+10 et J+20
+          après l'envoi, tant que l'orientation reste ouverte.
+      - name: date_mise_a_jour_metabase
+        description: Date de dernière synchronisation dans Metabase.
+  - name: stg_emplois__services
+    description: >-
+      Liste des services d'insertion référencés sur la plateforme (les Emplois).
+      L'API data·inclusion renvoie une photographie des services actuels ; un service supprimé chez
+      un fournisseur disparaît des résultats. Sur la plateforme, il est simplement désactivé
+      (is_active=False), ce qui préserve les relations avec les IMER et les orientations.
+    config:
+      tags:
+        - dora
+    columns:
+      - name: id
+        description: Identifiant interne du service.
+        tests:
+          - unique
+          - not_null
+      - name: uid
+        description: >
+          Identifiant public (Data Inclusion) du service. Correspond à raw_emplois.orientations_v0.service_uid
+          et à dim_data_inclusion__services.service_id.
+        tests:
+          - unique
+          - not_null
+      - name: structure_uid
+        description: >
+          Identifiant public (Data Inclusion) de la structure qui offre le service.
+          Correspond à int_di__structure_source_mapping.source_structure_id.
+      - name: source
+        description: Source de la donnée.
+      - name: source_link
+        description: Lien de la source (peut être vide).
+      - name: name
+        description: Nom du service.
+      - name: description
+        description: Description du service.
+      - name: duration_weekly_hours
+        description: Volume horaire hebdomadaire.
+      - name: duration_weeks
+        description: Nombre de semaines.
+      - name: code_insee
+        description: Code INSEE de la commune du service, correspondant à dim_commune.code_commune_insee.
+      - name: is_active
+        description: >
+          État du service. Si False, le service n'apparaissait plus dans les résultats de l'API data·inclusion.
+          Certains services sont désactivés temporairement, le temps d'un weekend par exemple.
+      - name: date_mise_a_jour_metabase
+        description: Date de dernière synchronisation dans Metabase.

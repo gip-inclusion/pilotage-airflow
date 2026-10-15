@@ -460,7 +460,7 @@ models:
       tags:
         - dora
     description: >
-      Table de faits des orientations DORA. Une ligne correspond à une orientation.
+      Table de faits des orientations DORA et Emplois. Une ligne correspond à une orientation.
       Certaines orientations sont créées directement dans DORA, d'autres viennent des Emplois.
 
       Pour les services, on reçoit parfois un identifiant DORA, parfois un identifiant Data Inclusion.
@@ -472,18 +472,14 @@ models:
       Les orientations restent ainsi lisibles même quand une jointure ne retrouve plus la ligne attendue.
     columns:
       - name: id
-        description: Identifiant canonique de l'orientation DORA.
+        description: 'Identifiant canonique en texte : ID DORA pour l''origine dora, UUID Emplois pour l''origine
+          emplois.'
         tests:
           - unique
           - not_null
       - name: origin_source
-        description: |
-          Origine qu'on retient pour lire l'orientation :
-          - Orientation purement DORA : `prescriber_id_dora` IS NOT NULL.
-          - Orientation DORA venant des Emplois par flux JWT : `prescriber_id_dora` IS NOT NULL et une
-            ligne dans `orientations_emploisorientationdata` correspond à l'orientation.
-          - Orientation venant directement des Emplois via l'API : `prescriber_id_dora` IS NULL et une
-            ligne dans `orientations_emploisorientationdata` correspond à l'orientation.
+        description: dora pour les orientations avec prescripteur DORA, y compris les JWT historiques ; emplois pour
+          celles de la Plateforme (Emplois).
         tests:
           - not_null
           - accepted_values:
@@ -491,10 +487,6 @@ models:
                 values:
                   - emplois
                   - dora
-      - name: emplois_sync_uid
-        description: >
-          UID de synchronisation avec Les Emplois, quand l'orientation a une ligne dans les données
-          Emplois. Il sert à retrouver l'`orientation_id` de DORA.
       - name: creation_date
         description: Date de création de l'orientation.
         tests:
@@ -504,53 +496,35 @@ models:
       - name: status
         description: Statut de traitement de l'orientation dans DORA.
       - name: requirements
-        description: >
-          Prérequis ou conditions indiqués dans DORA pour l'orientation. Pas de détail DORA plus précis
-          dans dbt.
+        description: Prérequis du formulaire DORA ; NULL typé pour Emplois car absent de l'export.
       - name: situation
-        description: >
-          Situations ou publics indiqués dans DORA pour l'orientation. Pas de détail DORA plus précis
-          dans dbt.
+        description: Situation du bénéficiaire dans DORA ; NULL typé pour Emplois car absent de l'export.
       - name: beneficiary_contact_preferences
-        description: >
-          Préférences de contact indiquées dans DORA pour l'orientation. Liste avec des valeurs comme
-          `TELEPHONE`, `EMAIL`, `REFERENT` ou `AUTRE`. Pas de détail DORA plus précis dans dbt.
+        description: Préférences de contact DORA ; NULL typé pour Emplois car absent de l'export.
       - name: beneficiary_availability
-        description: >
-          Date reprise telle quelle depuis le staging.
+        description: Disponibilité du bénéficiaire DORA ; NULL typé pour Emplois car absent de l'export.
       - name: duration_weekly_hours
-        description: >
-          Durée hebdomadaire en heures reprise depuis le staging.
+        description: 'Volume horaire hebdomadaire : formulaire DORA ou catalogue Emplois, sans arrondi ; type numeric dans le mart.'
       - name: duration_weeks
-        description: >
-          Durée en semaines reprise depuis le staging.
+        description: 'Durée en semaines : formulaire DORA ou catalogue Emplois.'
       - name: query_expires_at
-        description: >
-          Date d'expiration de la demande d'orientation, reprise depuis le staging. Pas de détail DORA plus
-          précis dans dbt.
+        description: Expiration de la demande DORA ; NULL typé pour Emplois car absent de l'export.
       - name: last_reminder_email_sent
         description: >
           Date du dernier email de relance envoyé pour cette orientation.
       - name: data_protection_commitment
         description: >
-          Booléen repris depuis le staging. Pas de détail DORA plus précis dans dbt.
+          Booléen représentant l’engagement RGPD de l’utilisateur ayant émis l’orientation.
       - name: is_anonymized
-        description: >
-          Booléen repris depuis le staging. Pas de détail DORA plus précis dans dbt.
+        description: Indicateur DORA ; NULL typé pour Emplois car absent de l'export.
       - name: prescriber_id_dora
-        description: >
-          Identifiant du prescripteur côté DORA. Il est rempli pour les orientations DORA, y compris celles
-          créées depuis Les Emplois via le flux JWT. On peut le joindre à `dim_dora__users.id`.
+        description: Identifiant du professionnel DORA, y compris pour le flux JWT historique ; NULL pour Emplois.
       - name: user_kind
-        description: >
-          Type actuel du professionnel qui réalise la demande, repris du fact : `main_activity`
-          DORA pour les orientations `dora`, y compris le flux JWT, et `type` Emplois pour les
-          orientations `emplois`.
-          Elle décrit le profil actuel,pas celui enregistré au moment de la demande.
+        description: main_activity du profil DORA actuel, y compris pour les JWT ; sender_kind enregistré sur l'orientation
+          Emplois (emplois_employer ou emplois_prescriber), sans harmonisation.
       - name: prescriber_id_emplois
-        description: >
-          UID du professionnel, prescripteur ou employeur, transmis par Les Emplois. Il correspond à
-          `pilotage.candidats_v0.uid`. Il peut être vide pour les orientations réalisées par JWT.
+        description: 'UUID public du professionnel : sender_public_id pour Emplois, donnée historique transmise à
+          DORA pour les JWT quand elle existe.'
       - name: prescriber_structure_id_di
         description: >
           Identifiant Data Inclusion de la structure prescriptrice. C'est la colonne à utiliser si on veut
@@ -564,54 +538,37 @@ models:
           Identifiant de la structure prescriptrice côté DORA. Il est rempli pour les orientations classées
           en `dora`.
       - name: prescriber_structure_id_emplois
-        description: >
-          UID de la structure côté Les Emplois. Peut désigner une organisation prescriptrice, auquel cas il
-          correspond à `pilotage.organisations_v0.uid`, ou une entreprise, auquel cas il correspond à
-          `pilotage.structures_v0.uid`. Il est rempli pour les orientations classées en `emplois`.
-      - name: prescriber_structure_name
+        description: UID de l'entreprise Emplois, repris de sender_company_uid sans condition sur sender_kind ; NULL pour DORA.
+      - name: prescriber_organization_id_emplois
+        description: UID de l'organisation prescriptrice Emplois, repris de sender_prescriber_organization_uid sans condition sur sender_kind ; NULL pour DORA.
+      - name: prescriber_nom_etablissement
         description: >
           Nom de la structure prescriptrice. On l'ajoute directement dans le mart parce que les dimensions
           Data Inclusion ne sont pas historisées et que les jointures ne sont pas toujours stables dans le
-          temps. Côté API Les Emplois, le nom vient de
-          `stg_dora__emplois_orientation_data.structure_name`. Côté DORA, y compris pour le flux JWT
+          temps. Côté Les Emplois, le nom vient de `stg_organisations.nom` pour les prescripteurs ou de
+          `stg_structures.nom` pour les employeurs. Côté DORA, y compris pour le flux JWT
           Emplois, il vient de l'état courant de `stg_dora__structure.name`. La colonne peut rester vide,
           par exemple si une orientation DORA n'a pas de structure prescriptrice renseignée.
       - name: prescriber_structure_siret
-        description: >
-          SIRET de la structure prescriptrice. Même logique que pour le nom : on le garde ici pour faciliter
-          la lecture et éviter de dépendre uniquement de jointures Data Inclusion non historisées. Côté API
-          Les Emplois, il vient de `stg_dora__emplois_orientation_data.structure_siret`. Côté DORA, y
-          compris pour le flux JWT Emplois, il vient de l'état courant de `stg_dora__structure.siret`.
-          La colonne peut rester vide, par exemple si une orientation DORA n'a pas de structure
-          prescriptrice, ou si la structure DORA existe sans SIRET.
+        description: SIRET actuel de la structure DORA ou de l'organisation/entreprise Emplois référencée par l'orientation
+          ; NULL si absent.
       - name: oriented_service_id_di
-        description: >
-          Identifiant Data Inclusion du service vers lequel la personne est orientée. C'est la colonne à
-          utiliser pour analyser les orientations par service Data Inclusion. Pour les services DORA, elle
-          est remplie seulement si on retrouve le service dans `dim_data_inclusion__services`. Si
-          l'orientation porte déjà un identifiant Data Inclusion, on garde l'identifiant reçu dans DORA.
-          Comme la dimension Data Inclusion n'est pas historisée, on ne met pas de test de relation strict.
+        description: 'Emplois : service_uid conservé même si le catalogue DI ne contient plus le service. DORA : identifiant
+          DI reçu directement, ou correspondance du service DORA dans la dimension DI.'
       - name: oriented_service_id_dora
-        description: >
-          Identifiant du service orienté côté DORA. Il est rempli quand l'orientation pointe vers un service
-          DORA.
+        description: Identifiant du service DORA reçu dans l'orientation DORA ; NULL pour Emplois.
       - name: oriented_service_name
-        description: >
-          Nom du service orienté, prêt à lire dans le mart. On prend d'abord le nom Data Inclusion reçu dans
-          l'orientation, puis le nom DORA dans `dim_dora__services`, puis le nom source historisé dans
-          l'orientation si besoin. On garde ce libellé dans le fact parce que les dimensions de services ne
-          sont pas assez stables pour tout récupérer après coup.
+        description: 'DORA : nom DI reçu, puis nom du service DORA, puis nom historisé. Emplois : nom dans stg_emplois__services,
+          y compris pour les services inactifs.'
       - name: oriented_service_structure_name
-        description: >
-          Nom de la structure qui porte le service orienté. On prend d'abord le nom Data Inclusion reçu dans
-          l'orientation, puis le nom DORA disponible dans `dim_dora__services`. La colonne peut rester vide,
-          par exemple si le service Data Inclusion n'est plus dans la version disponible de la dimension.
+        description: 'DORA : nom DI reçu puis nom de structure du service DORA. Emplois : nom de la structure DI canonique
+          retrouvée depuis structure_uid.'
       - name: oriented_service_code_commune_insee
-        description: >
-          Code commune INSEE du service orienté. On l'utilise pour joindre une dimension commune et analyser
-          la géographie. On prend d'abord le code commune dans `dim_data_inclusion__services`, puis le
-          `city_code` du service DORA dans `dim_dora__services`. La colonne peut rester vide si on ne
-          retrouve pas le service dans les dimensions disponibles.
+        description: 'DORA : commune du service DI puis commune du service DORA. Emplois : code_insee du catalogue
+          Emplois, y compris pour les services inactifs.'
       - name: emplois_beneficiary_id
-        description: >
-          UID du bénéficiaire transmis par Les Emplois. Il correspond à `pilotage.candidats_v0.uid`.
+        description: >-
+          UUID public du bénéficiaire côté Emplois. Il concerne uniquement les orientations réalisées dans
+          les Emplois et les orientations DORA issues du flux JWT Emplois historique ; il reste NULL pour
+          les autres orientations DORA. Il vient de beneficiary_public_id pour le flux Emplois et de
+          stg_dora__emplois_orientation_data.beneficiary_id pour les JWT.
