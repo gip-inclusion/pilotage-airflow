@@ -36,7 +36,7 @@ select
 
     -- géographie structure depuis stg_structures, donc depuis dim_commune
     struct."département"                                   as "département_structure",
-    struct."nom_département"                               as "nom_département_structure",
+    struct.nom_departement_complet                         as "nom_département_structure",
     struct."région"                                        as "région_structure",
     struct.nom_epci_structure,
     struct.bassin_d_emploi                                 as bassin_emploi_structure,
