@@ -38,6 +38,8 @@ sources:
       Tables générées chaque nuit par les Emplois de l'Inclusion à partir de leur base de données.
       A partir de juillet 2026 nous mettons les nouvelles tables dans le schéma raw_emplois, plutôt que public.
     tables:
+      - name: orientations_v0
+      - name: services_v0
       - name: imer_v0
         description: >
           Table récupérant les intentions de mise en relation (IMER)effectuées sur les Emplois de l'Inclusion.

@@ -95,3 +95,9 @@ tests:
   - name: test_rpt_dora__orientations_rowcount_matches_fact
     description: >
       Vérifie que rpt_dora__orientations contient le même nombre de lignes que fct_dora__orientations.
+  - name: test_fct_dora__orientations_matches_sources
+    description: >
+      Quand on ajoute ou modifie des jointures pour enrichir le fact, j'ai peur de créer des
+      doublons ou perdre des orientations. Donc, pour chaque source, on vérifie que chaque orientation
+      apparaît autant de fois dans le fact que dans le staging. Côté DORA, on ne prend que les orientations
+      avec un prescripteur ; côté Emplois, on les prend toutes.
