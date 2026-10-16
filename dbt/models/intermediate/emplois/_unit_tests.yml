@@ -1,0 +1,60 @@
+version: 2
+
+unit_tests:
+  - name: candidats_geographie_priorite_commune_et_repli_source
+    description: >-
+      Le département de la commune fait référence, y compris en cas de désaccord avec la source.
+      On garde celui de la source si le département de la commune n'est pas disponible.
+    model: int_emplois__candidats_geographie
+    given:
+      - input: ref('stg_emplois__candidats')
+        rows:
+          - {id: 1, code_commune_insee: '44109', departement: '75'}
+          - {id: 2, code_commune_insee: '75056', departement: null}
+          - {id: 3, code_commune_insee: null, departement: '2A'}
+          - {id: 4, code_commune_insee: '99999', departement: '976'}
+          - {id: 5, code_commune_insee: null, departement: null}
+          - {id: 6, code_commune_insee: '01001', departement: ' '}
+          - {id: 7, code_commune_insee: '02001', departement: ' 02 '}
+          - {id: 8, code_commune_insee: '03001', departement: ''}
+      - input: ref('dim_commune')
+        rows:
+          - {code_commune_insee: '44109', code_departement_insee: '44'}
+          - {code_commune_insee: '75056', code_departement_insee: '75'}
+          - {code_commune_insee: '01001', code_departement_insee: '01'}
+          - {code_commune_insee: '02001', code_departement_insee: null}
+          - {code_commune_insee: '03001', code_departement_insee: ' '}
+    expect:
+      rows:
+        - id_candidat: 1
+          code_commune_insee: '44109'
+          departement: '44'
+          origine_departement: dim_commune
+        - id_candidat: 2
+          code_commune_insee: '75056'
+          departement: '75'
+          origine_departement: dim_commune
+        - id_candidat: 3
+          code_commune_insee: null
+          departement: '2A'
+          origine_departement: staging
+        - id_candidat: 4
+          code_commune_insee: '99999'
+          departement: '976'
+          origine_departement: staging
+        - id_candidat: 5
+          code_commune_insee: null
+          departement: null
+          origine_departement: non_renseigne
+        - id_candidat: 6
+          code_commune_insee: '01001'
+          departement: '01'
+          origine_departement: dim_commune
+        - id_candidat: 7
+          code_commune_insee: '02001'
+          departement: '02'
+          origine_departement: staging
+        - id_candidat: 8
+          code_commune_insee: '03001'
+          departement: null
+          origine_departement: non_renseigne

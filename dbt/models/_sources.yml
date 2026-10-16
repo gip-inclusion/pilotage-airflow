@@ -597,8 +597,6 @@ sources:
             description: >
               Date de fin de validité du PASS IAE. Calculée à 2 ans après
               `date_début`, prolongée si des prolongations ont été accordées.
-              La valeur '2040-01-01' est utilisée comme sentinelle pour les PASS
-              sans date de fin définie.
 
           - name: durée
             description: >

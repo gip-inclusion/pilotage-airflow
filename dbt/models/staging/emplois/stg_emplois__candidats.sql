@@ -10,6 +10,7 @@ select
     type_inscription,
     "date_dernière_connexion"                                          as date_derniere_connexion,
     date_premiere_connexion,
+    code_insee                                                         as code_commune_insee,
     code_postal,
     "département"                                                      as departement,
     "nom_département"                                                  as nom_departement,

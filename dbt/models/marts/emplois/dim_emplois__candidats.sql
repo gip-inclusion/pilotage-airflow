@@ -3,6 +3,13 @@ with source as (
     from {{ ref('stg_emplois__candidats') }}
 ),
 
+geographie as (
+    select
+        id_candidat,
+        departement
+    from {{ ref('int_emplois__candidats_geographie') }}
+),
+
 candidats_avec_criteres as (
     select
         *,
@@ -56,6 +63,8 @@ final as (
         hash_nir,
         sexe_selon_nir,
         age,
+        candidats.code_commune_insee,
+        geographie.departement,
         date_inscription,
         type_inscription,
         date_premiere_connexion,
@@ -108,6 +117,8 @@ final as (
         end                                    as statut_dernier_pass_iae,
         coalesce(pass_iae.nombre_pass_iae, 0)  as nombre_pass_iae
     from candidats_avec_criteres as candidats
+    left join geographie
+        on candidats.id = geographie.id_candidat
     left join dernier_pass_iae as pass_iae
         on candidats.id = pass_iae.id_candidat
 )

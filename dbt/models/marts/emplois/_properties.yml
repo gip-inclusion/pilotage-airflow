@@ -2,17 +2,22 @@ version: 2
 models:
   - name: dim_emplois__candidats
     description: >-
-      Table de dimension contenant toutes les informations relatives aux utilisateurs non professionnels inscrits sur Les Emplois,
-      principalement pour travailler dans une SIAE, mais qui peuvent également postuler dans des structures en dehors du parcours
-      IAE. Une ligne = un utilisateur.
-      Ça inclut les personnes qui se sont inscrites elles-mêmes ou qui ont été inscrites par des pros. Un candidat peut être dans cette table sans avoir encore fait de candidature.
-      Référence métier critères elegibilité IAE : https://aide.emplois.inclusion.beta.gouv.fr/hc/fr/articles/14733921254161--Les-crit%C3%A8res-d-%C3%A9ligibilit%C3%A9-IAE
+      Candidats inscrits sur La Plateforme de l'inclusion, aussi appelés usagers ou bénéficiaires selon le contexte.
+      Une ligne correspond à un compte candidat, y compris s'il a été créé par un professionnel ou un
+      administrateur et si la personne n'a encore déposé aucune candidature. Les candidats peuvent postuler dans
+      des SIAE ou dans des structures hors parcours IAE. La table décrit le profil, la commune de résidence,
+      l'utilisation de la plateforme, le dernier diagnostic d'éligibilité et les critères administratifs associés.
+      Elle indique aussi le respect des seuils de critères pour l'éligibilité IAE et résume les PASS IAEA du candidat.
+      Référence métier des critères d'éligibilité IAE :
+      https://aide.emplois.inclusion.beta.gouv.fr/hc/fr/articles/14733921254161--Les-crit%C3%A8res-d-%C3%A9ligibilit%C3%A9-IAE
     data_tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: ref('stg_emplois__candidats')
     columns:
       - name: id_candidat
+        description: >-
+          Identifiant unique du candidat sur Les Emplois de l'inclusion.
         data_tests:
           - not_null
           - unique
@@ -22,118 +27,241 @@ models:
                 field: id
       - name: uid
         description: >-
-          Identifiant public du compte du candidat sur Les Emplois, au format UUID.
-          Il correspond à users_user.public_id dans Les Emplois.
-          Il permet de retrouver ce compte dans d'autres services, par exemple via
-          beneficiary_id dans les orientations DORA.
+          Identifiant public du candidat, au format UUID. Il permet de retrouver son compte dans d'autres
+          services, notamment via beneficiary_id dans les orientations DORA.
       - name: hash_nir
+        description: >-
+          Empreinte du NIR du candidat (numéro de Sécurité sociale), permettant de le représenter sans afficher le
+          numéro.
       - name: sexe_selon_nir
+        description: >-
+          Sexe du candidat déduit du premier chiffre de son NIR (numéro de Sécurité sociale).
       - name: age
+        description: >-
+          Âge du candidat calculé à partir de la date de naissance renseignée sur Les Emplois.
+      - name: code_commune_insee
+        description: >-
+          Code INSEE de la commune du candidat. Il permet de retrouver sa commune et ses rattachements
+          territoriaux dans dim_commune. Peut être absent si la commune n'est pas renseignée.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_commune')
+                field: code_commune_insee
+              config:
+                severity: warn
+      - name: departement
+        description: >-
+          Code du département du candidat, par exemple 44, 976 ou 2A.
+          Normalement, on n'ajouterait pas cette colonne au mart, le code commune suffit pour retrouver
+          le département dans dim_commune. Mais certains candidats n'ont pas de code commune, ou ont
+          un code qu'on ne retrouve pas dans dim_commune, alors que leur département est bien renseigné
+          dans le staging. Si on gardait seulement le code commune, on perdrait cette information.
+          C'est pour ça qu'on garde aussi le département ici.
+          Pour éviter les désaccords entre les deux tables, l'intermédiaire int_emplois__candidats_geographie
+          choisit le département de dim_commune quand il est disponible, et celui du staging sinon.
+          Le mart reprend ce choix. Si aucun département n'est disponible, la colonne reste vide.
       - name: tranche_age
+        description: >-
+          Tranche d'âge du candidat : « Moins de 26 ans », « 26–54 ans » ou « 55 ans et plus ». « Non renseigné »
+          lorsque l'âge manque ou est négatif.
         data_tests:
           - accepted_values:
               arguments:
                 values: ['Non renseigné', 'Moins de 26 ans', '26–54 ans', '55 ans et plus']
       - name: date_inscription
+        description: >-
+          Date de création du compte du candidat sur Les Emplois.
       - name: type_inscription
+        description: >-
+          Mode de création du compte : « autonome » si le candidat s'est inscrit lui-même, « par professionnel »
+          ou « par administrateur » si le compte a été créé pour lui.
       - name: pe_inscrit
+        description: >-
+          Indique si le candidat dispose d'un identifiant France Travail.
       - name: pe_connect
+        description: >-
+          Indique si le candidat utilise France Travail Connect pour se connecter à la plateforme.
       - name: actif
+        description: >-
+          Indique si le candidat s'est connecté à la plateforme au cours des 7 derniers jours, au moment de
+          l'import.
       - name: date_premiere_connexion
+        description: >-
+          Date de la première connexion du candidat à la plateforme.
       - name: date_derniere_connexion
+        description: >-
+          Date de la dernière connexion du candidat à la plateforme.
       - name: date_diagnostic
+        description: >-
+          Date du dernier diagnostic d'éligibilité du candidat.
       - name: date_expiration_diagnostic
+        description: >-
+          Date à laquelle le dernier diagnostic d'éligibilité du candidat expire.
       - name: diagnostic_valide
+        description: >-
+          Indique si le dernier diagnostic d'éligibilité du candidat est encore en cours de validité au moment de
+          l'import.
       - name: type_auteur_diagnostic
+        description: >-
+          Type de l'auteur du dernier diagnostic d'éligibilité : « Prescripteur » ou « Employeur ».
       - name: sous_type_auteur_diagnostic
+        description: >-
+          Type de l'organisation prescriptrice ou de l'entreprise à l'origine du dernier diagnostic d'éligibilité,
+          par exemple « Prescripteur FT » ou « Employeur ACI ».
       - name: id_auteur_diagnostic_prescripteur
+        description: >-
+          Identifiant de l'organisation prescriptrice à l'origine du dernier diagnostic d'éligibilité, lorsqu'il a
+          été établi par un prescripteur. Correspond à organisations_v0.id.
       - name: id_auteur_diagnostic_employeur
+        description: >-
+          Identifiant de l'entreprise à l'origine du dernier diagnostic d'éligibilité, lorsqu'il a été établi par
+          un employeur. Correspond à structures_v0.id.
       - name: critere_n1_beneficiaire_du_rsa
+        description: >-
+          Indique si le critère administratif de niveau 1 « bénéficiaire du revenu de solidarité active (RSA) »
+          est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n1_allocataire_ass
+        description: >-
+          Indique si le critère administratif de niveau 1 « allocataire de l'allocation de solidarité spécifique
+          (ASS) » est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n1_allocataire_aah
+        description: >-
+          Indique si le critère administratif de niveau 1 « allocataire de l'allocation aux adultes handicapés
+          (AAH) » est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n1_detld_plus_de_24_mois
+        description: >-
+          Indique si le critère administratif de niveau 1 « demandeur d'emploi de très longue durée, depuis plus
+          de 24 mois » est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_niveau_d_etude_3_cap_bep_ou_infra
+        description: >-
+          Indique si le critère administratif de niveau 2 « niveau d'études 3 (CAP, BEP) ou inférieur » est
+          associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_senior_plus_de_50_ans
+        description: >-
+          Indique si le critère administratif de niveau 2 « senior de plus de 50 ans » est associé au diagnostic
+          d'éligibilité du candidat.
       - name: critere_n2_jeune_moins_de_26_ans
+        description: >-
+          Indique si le critère administratif de niveau 2 « jeune de moins de 26 ans » est associé au diagnostic
+          d'éligibilité du candidat.
       - name: critere_n2_sortant_de_l_ase
+        description: >-
+          Indique si le critère administratif de niveau 2 « sortant de l'aide sociale à l'enfance (ASE) » est
+          associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_deld_12_a_24_mois
+        description: >-
+          Indique si le critère administratif de niveau 2 « demandeur d'emploi de longue durée, depuis 12 à 24
+          mois » est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_travailleur_handicape
+        description: >-
+          Indique si le critère administratif de niveau 2 « travailleur handicapé » est associé au diagnostic
+          d'éligibilité du candidat.
       - name: critere_n2_parent_isole
+        description: >-
+          Indique si le critère administratif de niveau 2 « parent isolé » est associé au diagnostic d'éligibilité
+          du candidat.
       - name: critere_n2_personne_sans_hebergement_ou_hebergee_ou_ayant_u
+        description: >-
+          Indique si le critère administratif de niveau 2 « situation de précarité de l'hébergement » est associé
+          au diagnostic d'éligibilité du candidat.
       - name: critere_n2_refugie_statutaire_beneficiaire_d_une_protectio
+        description: >-
+          Indique si le critère administratif de niveau 2 « réfugié statutaire ou bénéficiaire d'une protection »
+          est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_resident_zrr
+        description: >-
+          Indique si le critère administratif de niveau 2 « résident en zone de revitalisation rurale (ZRR) » est
+          associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_resident_qpv
+        description: >-
+          Indique si le critère administratif de niveau 2 « résident d'un quartier prioritaire de la politique de
+          la ville (QPV) » est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_sortant_de_detention_ou_personne_placee_sous_main
+        description: >-
+          Indique si le critère administratif de niveau 2 « sortant de détention ou personne placée sous main de
+          justice » est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_maitrise_de_la_langue_francaise_inferieure_au_ni
+        description: >-
+          Indique si le critère administratif de niveau 2 « maîtrise insuffisante de la langue française » est
+          associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_probleme_de_mobilite
+        description: >-
+          Indique si le critère administratif de niveau 2 « problème de mobilité » est associé au diagnostic
+          d'éligibilité du candidat.
       - name: total_criteres_niveau_1
+        description: >-
+          Nombre de critères administratifs de niveau 1 associés au diagnostic d'éligibilité du candidat.
       - name: total_criteres_niveau_2
+        description: >-
+          Nombre de critères administratifs de niveau 2 associés au diagnostic d'éligibilité du candidat.
       - name: has_crit_nv_1
         description: >-
-          Booléen valant true si total_criteres_niveau_1 >= 1 : le candidat possède au moins
-          un critère de niveau 1. Vaut false si le total est inférieur à 1 ou NULL.
-          Calculé à partir du total fourni par le staging, sans recompter les critères individuels.
+          Indique si le candidat possède au moins un critère administratif de niveau 1 pour l'éligibilité IAE.
+          Vaut false si le total de critères de niveau 1 est absent.
         data_type: boolean
       - name: has_crit_nv_2
         description: >-
-          Booléen valant true si total_criteres_niveau_2 >= 3 : le candidat possède au moins
-          trois critères de niveau 2. Vaut false si le total est inférieur à 3 ou NULL.
-          Ce seuil est indépendant de la présence de critères de niveau 1.
+          Indique si le candidat possède au moins trois critères administratifs de niveau 2, seuil applicable aux
+          SIAE hors entreprises de travail temporaire d'insertion (ETTI) et associations intermédiaires (AI). Ce
+          seuil peut être atteint même sans critère de niveau 1. Vaut false si le total de niveau 2 est absent.
         data_type: boolean
       - name: has_crit_nv_2_etti_ai
         description: >-
-          Booléen valant true si total_criteres_niveau_2 >= 2 : le candidat possède au moins
-          deux critères de niveau 2 (seuil ETTI/AI). Vaut false si le total est inférieur à 2
-          ou NULL. Ce seuil est indépendant de la présence de critères de niveau 1.
-
+          Indique si le candidat possède au moins deux critères administratifs de niveau 2, seuil applicable aux
+          entreprises de travail temporaire d'insertion (ETTI) et associations intermédiaires (AI). Ce seuil peut
+          être atteint même sans critère de niveau 1. Vaut false si le total de niveau 2 est absent.
         data_type: boolean
       - name: injection_ai
+        description: >-
+          Indique si le candidat fait partie de l'import massif des PASS IAE réalisé le 30 novembre 2021, sans
+          diagnostic d'éligibilité, pour les associations intermédiaires (AI).
       - name: date_mise_a_jour_metabase
+        description: >-
+          Date de la dernière synchronisation des données du candidat dans Metabase. La source est mise à jour
+          quotidiennement.
       - name: is_eligible_pass_iae
         description: >-
-          Booléen calculé par has_crit_nv_1 OR has_crit_nv_2. Vaut true si le candidat
-          possède au moins un critère de niveau 1 ou au moins trois critères de niveau 2,
-          sinon false. Représente uniquement le respect des seuils administratifs pour
-          les SIAE hors ETTI/AI, selon la référence métier du modèle.
-          Un seuil satisfait suffit même si l'autre total est NULL.
+          Indique si le candidat satisfait les seuils de critères administratifs pour les SIAE hors ETTI et AI :
+          au moins un critère de niveau 1 ou au moins trois critères de niveau 2. Cet indicateur ne prouve ni la
+          validité d'un diagnostic ni la détention d'un PASS IAE. Un seuil satisfait suffit ; si aucun seuil n'est
+          satisfait, y compris faute de total renseigné, vaut false.
         data_type: boolean
       - name: is_eligible_pass_iae_etti_ai
         description: >-
-          Booléen calculé par has_crit_nv_1 OR has_crit_nv_2_etti_ai. Vaut true si le candidat
-          possède au moins un critère de niveau 1 ou au moins deux critères de niveau 2,
-          sinon false. Représente uniquement le respect des seuils administratifs pour
-          les ETTI/AI, selon la référence métier du modèle.
-          Un seuil satisfait suffit même si l'autre total est NULL.
+          Indique si le candidat satisfait les seuils de critères administratifs pour les entreprises de travail
+          temporaire d'insertion (ETTI) et les associations intermédiaires (AI) : au moins un critère de niveau 1
+          ou au moins deux critères de niveau 2. Cet indicateur ne prouve ni la validité d'un diagnostic ni la
+          détention d'un PASS IAE. Un seuil satisfait suffit ; si aucun seuil n'est satisfait, y compris faute de
+          total renseigné, vaut false.
         data_type: boolean
 
       - name: nombre_pass_iae
         description: >-
-          Nombre de titres du candidat dans fct_emplois__pass_iae.
-          On compte les PASS IAE et les anciens agréments Pôle emploi, quel que soit leur état,
-          même ceux qui n'ont pas encore commencé. Vaut 0 si le candidat n'a aucun titre.
+          Nombre de titres du candidat, en incluant les PASS IAE et les anciens agréments Pôle emploi. Tous les
+          états sont comptés, y compris les titres à venir. Vaut 0 si le candidat n'a aucun titre.
         data_type: bigint
       - name: date_debut_premier_pass_iae
         description: >-
-          Date à laquelle le premier PASS du candidat a commencé. On prend la date de début
-          la plus ancienne, en comptant aussi les anciens agréments Pôle emploi.
-          Vaut NULL si le candidat n'a aucun titre ou si aucune date de début n'est connue.
+          Date de début la plus ancienne parmi les titres du candidat, PASS IAE et anciens agréments Pôle emploi
+          inclus. Vaut NULL si le candidat n'a aucun titre ou si aucune date de début n'est connue.
       - name: date_debut_dernier_pass_iae
         description: >-
-          Date à laquelle le dernier PASS du candidat commence. On compte aussi les anciens
-          agréments Pôle emploi et on prend le titre qui commence le plus récemment,
-          même s'il n'a pas encore commencé. Les dates de début manquantes passent après les dates connues.
-          Vaut NULL si le candidat n'a aucun titre ou si le début du dernier titre n'est pas connu.
+          Date de début du titre le plus récent du candidat, PASS IAE ou ancien agrément Pôle emploi, même s'il
+          n'a pas encore commencé. Le titre le plus récent est celui dont la date de début est la plus récente ;
+          les dates inconnues passent après les dates connues. Vaut NULL si le candidat n'a aucun titre ou si la
+          date de début du titre retenu est inconnue.
       - name: date_fin_dernier_pass_iae
         description: >-
-          Dernier jour de validité du même titre que date_debut_dernier_pass_iae.
-          Vaut NULL si le candidat n'a aucun titre, si ce titre a une durée indéterminée
-          ou si sa date de fin manque.
+          Dernier jour de validité, inclus, du titre décrit par date_debut_dernier_pass_iae. Vaut NULL si le
+          candidat n'a aucun titre, si ce titre est à durée indéterminée ou si sa date de fin est inconnue.
       - name: statut_dernier_pass_iae
         description: >-
-          État du dernier Pass IAE, repris à la dernière mise à jour de fct_emplois__pass_iae : Actif, Suspendu,
-          Expiré ou À venir.
-          Sans PASS IAE veut dire que le candidat n'a aucun titre, ni PASS IAE ni ancien agrément Pôle emploi.
-          Vaut NULL si le candidat a un titre mais que son état n'est pas connu.
+          État du titre le plus récent du candidat à la dernière mise à jour des données :
+          « Actif », « Suspendu », « Expiré » ou « À venir ».
+          Il s'agit du même titre que date_debut_dernier_pass_iae, PASS IAE ou
+          ancien agrément Pôle emploi. « Sans PASS IAE » signifie que le candidat n'a aucun titre. Vaut NULL si le
+          candidat a un titre dont l'état n'est pas connu.
         data_tests:
           - accepted_values:
               arguments:

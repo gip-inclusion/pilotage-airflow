@@ -1,6 +1,50 @@
 version: 2
 
 models:
+  - name: int_emplois__candidats_geographie
+    description: >-
+      Une ligne par candidat, avec son code commune et le département retenu pour les analyses.
+      Ce modèle existe parce que le département qui arrive du staging n'est pas toujours le même que celui
+      qu'on retrouve avec le code commune dans dim_commune. Sans règle commune, on pourrait donc classer
+      un même candidat dans deux départements différents selon la table utilisée.
+      On décide ici, une seule fois, quel département garder : celui de dim_commune en priorité.
+      Si on ne peut pas le retrouver, on garde celui du staging pour ne pas perdre l'information.
+      Le mart reprend ensuite ce département déjà choisi, sans refaire le choix de son côté.
+      On garde aussi les deux valeurs d'origine et on indique laquelle a été retenue pour comprendre
+      les écarts. Ces informations de suivi restent dans l'intermédiaire.
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_emplois__candidats')
+    columns:
+      - name: id_candidat
+        description: Identifiant du candidat sur Les Emplois de l'inclusion.
+        data_tests:
+          - not_null
+          - unique
+      - name: code_commune_insee
+        description: Code INSEE de la commune du candidat, conservé tel qu'il arrive du staging.
+      - name: departement_source
+        description: Code du département renseigné dans la source, conservé tel quel pour comprendre les écarts.
+      - name: departement_commune
+        description: >-
+          Code du département trouvé dans dim_commune à partir du code commune du candidat.
+          Peut être absent si la commune n'est pas renseignée, n'est pas reconnue ou n'a pas de département.
+      - name: departement
+        description: >-
+          Code du département retenu : celui de dim_commune en priorité, sinon celui de la source.
+          On enlève les espaces en début et en fin de valeur ; les textes vides sont considérés comme absents.
+          Vaut NULL si aucun département n'est disponible. Les zéros initiaux et les lettres sont conservés.
+      - name: origine_departement
+        description: >-
+          Indique d'où vient le département retenu : dim_commune quand le référentiel fournit le département,
+          staging quand on utilise celui de la source, non_renseigne si aucun département n'est disponible.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['dim_commune', 'staging', 'non_renseigne']
+
   - name: int_emplois__actes_metier
     description: >
       Compte les actes métier Emplois par mois : candidatures, créations et mises à jour d'offres d'emploi,
