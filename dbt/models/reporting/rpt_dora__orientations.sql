@@ -17,7 +17,6 @@ communes as (
 select
     orientations.id,
     orientations.origin_source,
-    orientations.emplois_sync_uid,
     orientations.creation_date,
     orientations.processing_date,
     orientations.status,
@@ -37,7 +36,8 @@ select
     orientations.prescriber_structure_id_di,
     orientations.prescriber_structure_id_dora,
     orientations.prescriber_structure_id_emplois,
-    orientations.prescriber_structure_name,
+    orientations.prescriber_organization_id_emplois,
+    orientations.prescriber_nom_etablissement,
     orientations.prescriber_structure_siret,
     orientations.oriented_service_id_di,
     orientations.oriented_service_id_dora,

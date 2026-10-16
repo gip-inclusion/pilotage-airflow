@@ -44,7 +44,9 @@ emplois as (
     left join structure_source_mapping
         on cast(emplois_imer.structure_id as text) = structure_source_mapping.source_structure_id
     left join dora_orientations
-        on cast(emplois_imer.orientation_id as text) = cast(dora_orientations.emplois_sync_uid as text)
+        on
+            dora_orientations.origin_source = 'emplois'
+            and cast(emplois_imer.orientation_id as text) = cast(dora_orientations.id as text)
 ),
 
 dora_imer_with_orientation as materialized (
