@@ -355,6 +355,124 @@ sources:
       - name: organisations_v0
       - name: institutions
       - name: candidats_v0
+        description: >
+         Table des candidats (aussi appelés usagers ou bénéficiaires en fonction du contexte).
+         Cette table contient également les diagnostics d’éligibilité et les critères administratifs associés.
+         Une colonne par critère, au format `critère_n1_*` et `critère_n2_*`, non documenté exhaustivement.
+         Pour les critères certifiables, il y a trois colonnes ; les deux colonnes supplémentaires indiquent la date de certication du critère et la période de validité.
+        columns:
+          - name: id
+            description: >
+              Identifiant unique du candidat. Clé primaire de la table.
+          - name: public_id
+            description: >
+              Identifiant public (UUID) du candidat.
+          - name: hash_nir
+            description: >
+              Valeur hashée du NIR (numéro de Sécurité sociale).
+          - name: sexe_selon_nir
+            description: >
+              Sexe déduit à partir du premier chiffre du NIR.
+          - name: annee_naissance_selon_nir
+            description: >
+              Année de naissance déduite à partir du NIR.
+          - name: mois_naissance_selon_nir
+            description: >
+              Mois de naissance déduit à partir du NIR.
+          - name: age
+            description: >
+              Âge calculé à partir de la date de naissance renseignée.
+          - name: date_inscription
+            description: >
+              Date de création du compte sur la plateforme.
+          - name: type_inscription
+            description: >
+              Type de l’inscription : `autonome`, `par professionnel` ou `par administrateur`.
+          - name: pe_connect
+            description: >
+              Vrai si le candidat utilise France Travail Connect.
+          - name: pe_inscrit
+            description: >
+              Vrai si le candidat a un identifiant France Travail.
+          - name: last_login
+            description: >
+              Date de la dernière connexion.
+          - name: first_login
+            description: >
+              Date de la première connexion.
+          - name: actif
+            description: >
+              Vrai si la dernière connexion a eu lieu dans les 7 jours.
+          - name: code_postal
+            description: >
+              Code postal de la commune du candidat.
+          - name: département
+            description: >
+              Numéro du département du candidat.
+          - name: nom_département
+            description: >
+              Nom du département du candidat (format : "29 - Finistère")
+          - name: région
+            description: >
+              Nom de la région (format : "Bretagne")
+          - name: code_insee
+            description: >
+              Code INSEE de la commune du candidat.
+          - name: adresse_en_qpv
+            description: >
+              Vrai si l’adresse renseignée se trouve dans une zone QPV (quartiers prioritaires de la politique de la ville).
+          - name: total_candidatures
+            description: >
+              Nombre de candidatures réalisées par ou pour le candidat.
+          - name: total_embauches
+            description: >
+              Nombre d’embauches (= candidatures acceptées).
+          - name: total_diagnostics
+            description: >
+              Nombre de diagnostics d’éligibilité.
+          - name: date_diagnostic
+            description: >
+              Date du dernier diagnostic d’éligibilité.
+          - name: date_expiration_diagnostic
+            description: >
+              Date d’expiration du dernier diagnostic d’éligibilité.
+          - name: diagnostic_valide
+            description: >
+              Vrai si le diagnostic est en cours de validité au moment de l’import.
+          - name: id_auteur_diagnostic_prescripteur
+            description: >
+              Identifiant de l’organisation prescriptrice à l’origine du diagnostic (si diagnostic prescripteur).
+              Clé étrangère vers `les_emplois.organisations_v0.id`.
+          - name: id_auteur_diagnostic_employeur
+            description: >
+              Identifiant de l’entreprise à l’origine du diagnostic (si diagnostic employeur).
+              Clé étrangère vers `les_emplois.structures_v0.id`.
+          - name: type_auteur_diagnostic
+            description: >
+              Type de l’auteur du diagnostic : `Prescripteur` ou `Employeur`.
+          - name: sous_type_auteur_diagnostic
+            description: >
+              Sous-type de l’auteur du diagnostic, c’est-à-dire type de l’organisation ou de l’entreprise.
+              Par exemple : `Employeur ACI` ou `Prescripteur FT`.
+          - name: nom_auteur_diagnostic
+            description: >
+              Nom de l’organisation prescriptrice ou de l’entreprise à l’origine du diagnostic.
+          - name: type_structure_dernière_embauche
+            description: >
+              Type de la structure de la dernière embauche, c’est-à-dire ayant accepté une candidature.
+          - name: total_critères_niveau_1
+            description: >
+              Nombre de critères de niveau 1.
+          - name: total_critères_niveau_2
+            description: >
+              Nombre de critères de niveau 2.
+          - name: injection_ai
+            description: >
+              Fait partie de l’import massif des PASS IAE (sans diagnostic) réalisé le 30 novembre 2021.
+          - name: date_mise_à_jour_metabase
+            description: >
+              Date de la dernière synchronisation de cette ligne dans Metabase.
+              Mise à jour quotidienne.
       - name: utilisateurs_v0
       - name: collaborations
         description: >
