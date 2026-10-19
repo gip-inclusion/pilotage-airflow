@@ -64,6 +64,8 @@ select
     dora_structures.name                      as prescriber_structure_name,
     dora_structures.siret                     as prescriber_structure_siret,
     orientations.service_id                   as oriented_service_id_dora,
+    -- UUID public reçu via le JWT : la jointure candidat se fait sur candidats_v0.uid, pas sur son id.
+    -- TODO : passer à l'id du candidat via dim_emplois__candidats quand la dimension sera disponible
     emplois_orientation_data.beneficiary_id   as emplois_beneficiary_id,
     nullif(dora_users.main_activity, '')      as user_kind,
     case
