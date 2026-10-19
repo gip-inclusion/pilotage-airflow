@@ -330,6 +330,8 @@ models:
           UUID public du bénéficiaire côté Emplois, repris du fact. Concerne uniquement les orientations
           réalisées dans les Emplois et les orientations DORA issues du flux JWT Emplois historique ;
           reste NULL pour les autres orientations DORA.
+          Pour joindre un candidat, utiliser `candidats_v0.uid`, pas `candidats_v0.id`.
+          TODO : passer à l'id du candidat via `dim_emplois__candidats` quand la dimension sera disponible.
       - name: oriented_service_nom_commune
         description: Nom de la commune du service de destination, issu de `dim_commune.nom_commune`.
         tests:

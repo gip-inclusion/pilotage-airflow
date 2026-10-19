@@ -51,6 +51,8 @@ select
     services.name                              as oriented_service_name,
     data_inclusion_structures.nom              as oriented_service_structure_name,
     services.code_insee                        as oriented_service_code_commune_insee,
+    -- UUID public : la jointure candidat se fait sur candidats_v0.uid, pas sur candidats_v0.id.
+    -- TODO : passer à l'id du candidat via dim_emplois__candidats quand la dimension sera disponible
     senders.beneficiary_public_id              as emplois_beneficiary_id,
     case
         when senders.sender_kind = 'emplois_prescriber' then organisations.nom

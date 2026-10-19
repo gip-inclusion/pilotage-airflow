@@ -154,3 +154,63 @@ models:
         description: >
           Nom de l'organisation, à défaut de la structure employeuse, à défaut de l'institution
           de rattachement.
+
+  - name: int_emplois__orientations_enriched
+    description: >-
+      On part des orientations enregistrées dans les Emplois pour les enrichir avec les informations
+      utiles à leur analyse. Les identifiants de l'entreprise et de l'organisation prescriptrice restent
+      séparés pour savoir à quel type d'établissement on se réfère.
+
+      Pour décrire le service, on utilise le catalogue Emplois car il garde aussi les services devenus
+      inactifs, dont on a toujours besoin pour comprendre les orientations passées. Si une référence
+      manque, on conserve quand même l'orientation pour ne pas la perdre dans les comptages.
+      Les correspondances Data Inclusion permettent de retrouver les structures dans le référentiel
+      commun aux différentes sources.
+
+      Ce modèle enrichit uniquement le flux Emplois. C'est le mart qui le réunit avec les orientations
+      DORA et qui ajoute les colonnes absentes de chaque flux pour les présenter dans une même table.
+      Le bénéficiaire est identifié par son UUID public Emplois, également disponible pour les anciennes
+      orientations DORA réalisées via le JWT Emplois.
+    config:
+      tags:
+        - dora
+    columns:
+      - name: id
+        description: UUID du staging converti en texte pour partager une même colonne d'identifiant avec DORA dans le mart.
+        tests:
+          - unique
+          - not_null
+      - name: origin_source
+        description: Colonne ajoutée avec la valeur emplois pour distinguer ce flux de DORA dans le mart.
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - emplois
+      - name: duration_weekly_hours
+        description: Volume horaire hebdomadaire ajouté depuis stg_emplois__services, via service_uid = uid.
+      - name: duration_weeks
+        description: Nombre de semaines ajouté depuis stg_emplois__services, via service_uid = uid.
+      - name: prescriber_structure_id_di
+        description: >-
+          Identifiant canonique DI ajouté via int_di__structure_source_mapping.source_structure_id.
+          La clé cherchée est emplois-de-linclusion-- suivi de sender_prescriber_organization_uid pour
+          un emplois_prescriber, ou de sender_company_uid pour un emplois_employer.
+      - name: prescriber_nom_etablissement
+        description: >-
+          Nom ajouté depuis stg_organisations.nom pour un emplois_prescriber
+          (sender_prescriber_organization_id = id), ou stg_structures.nom pour un emplois_employer
+          (sender_company_id = id).
+      - name: prescriber_structure_siret
+        description: >-
+          SIRET ajouté par les mêmes jointures que le nom : stg_organisations.siret_org_prescripteur
+          pour un emplois_prescriber, stg_structures.siret pour un emplois_employer.
+      - name: oriented_service_name
+        description: Nom ajouté depuis stg_emplois__services.name, via service_uid = uid, y compris pour un service inactif.
+      - name: oriented_service_structure_name
+        description: >-
+          Nom ajouté depuis dim_data_inclusion__structures.nom. On relie structure_uid à
+          int_di__structure_source_mapping.source_structure_id, puis son structure_id à celui de la dimension.
+          Reste NULL si la correspondance manque.
+      - name: oriented_service_code_commune_insee
+        description: Code commune ajouté depuis stg_emplois__services.code_insee, via service_uid = uid.
