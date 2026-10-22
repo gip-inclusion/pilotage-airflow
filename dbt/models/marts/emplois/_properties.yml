@@ -13,7 +13,7 @@ models:
       Elle indique aussi le respect des seuils de critères pour l'éligibilité IAE et résume les PASS IAEA du candidat.
       Référence métier des critères d'éligibilité IAE :
       https://aide.emplois.inclusion.beta.gouv.fr/hc/fr/articles/14733921254161--Les-crit%C3%A8res-d-%C3%A9ligibilit%C3%A9-IAE
-    data_tests:
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: ref('stg_emplois__candidats')
@@ -21,7 +21,7 @@ models:
       - name: id_candidat
         description: >-
           Identifiant unique du candidat sur Les Emplois de l'inclusion.
-        data_tests:
+        tests:
           - not_null
           - unique
           - relationships:
@@ -46,7 +46,7 @@ models:
         description: >-
           Code INSEE de la commune du candidat. Il permet de retrouver sa commune et ses rattachements
           territoriaux dans dim_commune. Peut être absent si la commune n'est pas renseignée.
-        data_tests:
+        tests:
           - relationships:
               arguments:
                 to: ref('dim_commune')
@@ -68,7 +68,7 @@ models:
         description: >-
           Tranche d'âge du candidat : « Moins de 26 ans », « 26–54 ans » ou « 55 ans et plus ». « Non renseigné »
           lorsque l'âge manque ou est négatif.
-        data_tests:
+        tests:
           - accepted_values:
               arguments:
                 values: ['Non renseigné', 'Moins de 26 ans', '26–54 ans', '55 ans et plus']
@@ -266,7 +266,7 @@ models:
           Il s'agit du même titre que date_debut_dernier_pass_iae, PASS IAE ou
           ancien agrément Pôle emploi. « Sans PASS IAE » signifie que le candidat n'a aucun titre. Vaut NULL si le
           candidat a un titre dont l'état n'est pas connu.
-        data_tests:
+        tests:
           - accepted_values:
               arguments:
                 values: ['Sans PASS IAE', 'Actif', 'Suspendu', 'Expiré', 'À venir']
@@ -285,12 +285,12 @@ models:
     columns:
       - name: id_pass_iae
         description: Identifiant du PASS IAE ou de l’ancien agrément.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: id_candidat
         description: Identifiant du candidat titulaire. S'il manque, on garde la ligne et le test not_null échoue.
-        data_tests:
+        tests:
           - not_null
           - relationships:
               arguments:
@@ -300,7 +300,7 @@ models:
                 severity: warn
       - name: type_pass
         description: PASS IAE ou Agrément PE, déjà normalisé dans le staging.
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
@@ -320,18 +320,18 @@ models:
         description: Identifiant de la structure disponible dans la source. Aucun filtre sur son type.
       - name: date_debut
         description: Premier jour de validité du titre.
-        data_tests:
+        tests:
           - not_null
       - name: date_fin
         description: >-
           Dernier jour de validité, inclus.
-        data_tests:
+        tests:
           - not_null
       - name: duree
         description: Durée fournie par la source.
       - name: nombre_suspensions
         description: Nombre total de suspensions du titre, terminées ou en cours. Vaut zéro en l’absence d’événement.
-        data_tests:
+        tests:
           - not_null
       - name: date_premiere_suspension
         description: Première date de début de suspension, sans filtre sur son état. Vaut NULL si aucun jalon n’existe.
@@ -351,7 +351,7 @@ models:
       - name: nombre_prolongations
         description: Nombre de prolongations accordées dans prolongations, avec ou sans demande liée. Les demandes
           acceptées ne sont pas ajoutées à ce nombre. Vaut zéro en l’absence d’événement.
-        data_tests:
+        tests:
           - not_null
       - name: date_premiere_prolongation
         description: Première date de création d’une prolongation accordée. Vaut NULL si aucun jalon n’existe.
@@ -366,20 +366,20 @@ models:
       - name: nombre_demandes_prolongation
         description: Nombre total de demandes, indépendamment des prolongations accordées. Vaut zéro en l’absence
           d’événement.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_acceptees
         description: Nombre de demandes dans l’état Acceptée, même sans prolongation associée. Vaut zéro en l’absence
           d’événement.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_refusees
         description: Nombre de demandes dans l’état Refusée. Vaut zéro en l’absence d’événement.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_en_attente
         description: Nombre de demandes dans l’état À traiter. Vaut zéro en l’absence d’événement.
-        data_tests:
+        tests:
           - not_null
       - name: date_premiere_demande_prolongation
         description: Première date de demande de prolongation. Vaut NULL si aucun jalon n’existe.
@@ -395,7 +395,7 @@ models:
         description: 'État à la date d’exécution du modèle, dans cet ordre de priorité : Expiré, À venir, Suspendu, Actif.
           Le dernier jour de validité est inclus.
           Si la validité est inconnue, ou si le PASS est valide et les indicateurs de suspension sont tous NULL, le statut reste NULL.'
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
@@ -410,14 +410,14 @@ models:
           et si sa date de fin n’est pas dépassée. Les bornes sont incluses. Une date de fin manquante
           dans la source ne rend pas le titre valide. Une suspension ne change pas la validité du titre.
         data_type: boolean
-        data_tests:
+        tests:
           - not_null
       - name: is_pass_actif
         description: >-
           Indique si le titre est encore valide et n’a pas de suspension en cours
           au moment de la mise à jour de la table.
         data_type: boolean
-        data_tests:
+        tests:
           - not_null
 
   - name: dim_emplois__etablissements

@@ -194,7 +194,7 @@ models:
       Cette table contient également les diagnostics d’éligibilité et les critères administratifs associés.
       Une colonne par critère, au format `critere_n1_*` et `critere_n2_*`, non documenté exhaustivement.
       Pour les critères certifiables, il y a trois colonnes ; les deux colonnes supplémentaires indiquent la date de certication du critère et la période de validité.
-    data_tests:
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('raw_emplois', 'candidats_v0')
@@ -202,7 +202,7 @@ models:
       - name: id
         description: >
           Identifiant unique du candidat. Clé primaire de la table.
-        data_tests:
+        tests:
           - not_null
           - unique
           - relationships:
@@ -352,14 +352,14 @@ models:
     description: >
       On garde tous les titres de emplois.pass_agréments. Ici, on nettoie les textes et on simplifie les noms.
       On ramène les types à PASS IAE ou Agrément PE.
-    data_tests:
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('emplois', 'pass_agréments')
     columns:
       - name: id_pass_iae
         description: Identifiant unique du PASS IAE ou de l'agrément.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: type_pass
@@ -367,7 +367,7 @@ models:
           On nettoie les espaces, puis PASS IAE (99999) devient PASS IAE
           et Agrément PE via ITOU (non 99999) devient Agrément PE.
           Un type vide ou inconnu donne NULL ; les tests le signalent.
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
@@ -376,20 +376,20 @@ models:
                   - Agrément PE
       - name: date_debut
         description: Début de validité du PASS IAE. C'est en général la date d'embauche du candidat.
-        data_tests:
+        tests:
           - not_null
       - name: date_fin
         description: >
           Dernier jour de validité, inclus, conservé tel quel depuis la source.
           Si la fin manque dans la source, le test échoue.
-        data_tests:
+        tests:
           - not_null
       - name: duree
         description: >
           On garde la durée fournie par la source, sans la recalculer.
       - name: id_candidat
         description: Identifiant du candidat qui a le PASS IAE.
-        data_tests:
+        tests:
           - not_null
           - relationships:
               arguments:
@@ -428,7 +428,7 @@ models:
         description: Numéro du PASS IAE anonymisé par hachage. Il permet de retrouver le PASS sans afficher son vrai numéro.
       - name: date_mise_a_jour_metabase
         description: Date de la dernière mise à jour de cette ligne dans Metabase. La source est mise à jour chaque jour.
-        data_tests:
+        tests:
           - not_null
   - name: stg_emplois__suspensions
     config:
@@ -439,17 +439,17 @@ models:
       On garde toutes les colonnes et toutes les lignes de raw_emplois.suspensions_v0,
       sans jointure, regroupement ni filtre métier. On simplifie les noms de colonnes
       et on nettoie les textes. Pour en_cours, 1 devient true, 0 devient false et NULL reste NULL.
-    data_tests:
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('raw_emplois', 'suspensions_v0')
     columns:
       - name: id_suspension
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: id_pass_iae
-        data_tests:
+        tests:
           - not_null
           - relationships:
               arguments:
@@ -470,19 +470,19 @@ models:
         - emplois
     description: Une ligne par prolongation accordée. On garde toutes les colonnes et toutes les lignes de la source.
       On simplifie les noms de colonnes et on nettoie les textes, sans jointure, regroupement ni filtre métier.
-    data_tests:
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('raw_emplois', 'prolongations')
     columns:
       - name: id_prolongation
         description: Identifiant unique de la prolongation.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: id_pass_iae
         description: Identifiant du PASS IAE prolongé. Un même PASS peut avoir plusieurs prolongations.
-        data_tests:
+        tests:
           - not_null
           - relationships:
               arguments:
@@ -512,7 +512,7 @@ models:
         description: Date de création de la prolongation dans le système. On garde le type de la source.
       - name: id_demande_de_prolongation
         description: Identifiant de la demande de prolongation liée. Il est NULL pour les prolongations d'avant juillet 2023.
-        data_tests:
+        tests:
           - relationships:
               arguments:
                 to: ref('stg_emplois__demandes_prolongation')
@@ -527,19 +527,19 @@ models:
         - emplois
     description: Une ligne par demande de prolongation de PASS IAE. On garde toutes les colonnes et toutes les lignes de raw_emplois.demandes_de_prolongation.
       On simplifie les noms de colonnes et on nettoie les textes, sans jointure, regroupement ni filtre métier.
-    data_tests:
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('raw_emplois', 'demandes_de_prolongation')
     columns:
       - name: id_demande_prolongation
         description: Colonne id de la source, renommée id_demande_prolongation.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: id_pass_iae
         description: Colonne id_pass_agrément de la source, renommée id_pass_iae.
-        data_tests:
+        tests:
           - not_null
           - relationships:
               arguments:
@@ -556,7 +556,7 @@ models:
       - name: id_organisation_prescripteur
       - name: id_utilisateur_prescripteur
       - name: id_prolongation
-        data_tests:
+        tests:
           - relationships:
               arguments:
                 to: ref('stg_emplois__prolongations')
@@ -565,7 +565,7 @@ models:
                 severity: warn
       - name: etat
         description: On enlève les espaces au début et à la fin du texte et on remplace les textes vides par NULL.
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:

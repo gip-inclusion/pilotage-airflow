@@ -15,14 +15,14 @@ models:
       Le mart reprend ensuite ce département déjà choisi, sans refaire le choix de son côté.
       On garde aussi les deux valeurs d'origine et on indique laquelle a été retenue pour comprendre
       les écarts. Ces informations de suivi restent dans l'intermédiaire.
-    data_tests:
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: ref('stg_emplois__candidats')
     columns:
       - name: id_candidat
         description: Identifiant du candidat sur Les Emplois de l'inclusion.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: code_commune_insee
@@ -42,7 +42,7 @@ models:
         description: >-
           Indique d'où vient le département retenu : dim_commune quand le référentiel fournit le département,
           staging quand on utilise celui de la source, non_renseigne si aucun département n'est disponible.
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
@@ -212,12 +212,12 @@ models:
     columns:
       - name: id_pass_iae
         description: Identifiant du PASS IAE ou de l’ancien agrément.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: nombre_suspensions
         description: Nombre total de suspensions du titre, terminées ou en cours.
-        data_tests:
+        tests:
           - not_null
       - name: date_premiere_suspension
         description: Première date de début de suspension, sans filtre sur son état.
@@ -242,13 +242,13 @@ models:
     columns:
       - name: id_pass_iae
         description: Identifiant du PASS IAE ou de l’ancien agrément.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: nombre_prolongations
         description: Nombre de prolongations accordées dans prolongations, avec ou sans demande liée. Les demandes
           acceptées ne sont pas ajoutées à ce nombre.
-        data_tests:
+        tests:
           - not_null
       - name: date_premiere_prolongation
         description: Première date de création d’une prolongation accordée.
@@ -268,24 +268,24 @@ models:
     columns:
       - name: id_pass_iae
         description: Identifiant du PASS IAE ou de l’ancien agrément.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: nombre_demandes_prolongation
         description: Nombre total de demandes, indépendamment des prolongations accordées.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_acceptees
         description: Nombre de demandes dans l’état Acceptée, même sans prolongation associée.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_refusees
         description: Nombre de demandes dans l’état Refusée.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_en_attente
         description: Nombre de demandes dans l’état À traiter.
-        data_tests:
+        tests:
           - not_null
       - name: date_premiere_demande_prolongation
         description: Première date de demande de prolongation.
