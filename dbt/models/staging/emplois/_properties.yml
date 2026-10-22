@@ -350,7 +350,7 @@ models:
       tags:
         - emplois
     description: >
-      On garde tous les titres de emplois.pass_agréments. Ici, on nettoie les textes et on simplifie les noms.
+      On garde tous les titres de emplois.pass_agréments. Ici, on simplifie les noms.
       On ramène les types à PASS IAE ou Agrément PE.
     tests:
       - dbt_utils.equal_rowcount:
@@ -362,6 +362,8 @@ models:
         tests:
           - not_null
           - unique
+      - name: type
+        description: On conserve le type brut au cas où on a besoin pour faire des jointures.
       - name: type_pass
         description: >
           On nettoie les espaces, puis PASS IAE (99999) devient PASS IAE
@@ -437,8 +439,8 @@ models:
     description: >
       Une ligne par suspension de PASS IAE ou d'ancien agrément.
       On garde toutes les colonnes et toutes les lignes de raw_emplois.suspensions_v0,
-      sans jointure, regroupement ni filtre métier. On simplifie les noms de colonnes
-      et on nettoie les textes. Pour en_cours, 1 devient true, 0 devient false et NULL reste NULL.
+      sans jointure, regroupement ni filtre métier. On simplifie les noms de colonnes.
+      Pour en_cours, 1 devient true, 0 devient false et NULL reste NULL.
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -469,7 +471,7 @@ models:
       tags:
         - emplois
     description: Une ligne par prolongation accordée. On garde toutes les colonnes et toutes les lignes de la source.
-      On simplifie les noms de colonnes et on nettoie les textes, sans jointure, regroupement ni filtre métier.
+      On simplifie les noms de colonnes, sans jointure, regroupement ni filtre métier.
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -526,7 +528,7 @@ models:
       tags:
         - emplois
     description: Une ligne par demande de prolongation de PASS IAE. On garde toutes les colonnes et toutes les lignes de raw_emplois.demandes_de_prolongation.
-      On simplifie les noms de colonnes et on nettoie les textes, sans jointure, regroupement ni filtre métier.
+      On simplifie les noms de colonnes, sans jointure, regroupement ni filtre métier.
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -550,7 +552,6 @@ models:
       - name: date_debut
       - name: date_fin
       - name: motif
-        description: On enlève les espaces au début et à la fin du texte et on remplace les textes vides par NULL.
       - name: id_utilisateur_declarant
       - name: id_structure_declarante
       - name: id_organisation_prescripteur
@@ -564,7 +565,6 @@ models:
               config:
                 severity: warn
       - name: etat
-        description: On enlève les espaces au début et à la fin du texte et on remplace les textes vides par NULL.
         tests:
           - not_null
           - accepted_values:
@@ -574,7 +574,6 @@ models:
                   - Refusée
                   - À traiter
       - name: motif_de_refus
-        description: On enlève les espaces au début et à la fin du texte et on remplace les textes vides par NULL.
       - name: date_de_demande
       - name: date_traitement
       - name: id_utilisateur_traitant
