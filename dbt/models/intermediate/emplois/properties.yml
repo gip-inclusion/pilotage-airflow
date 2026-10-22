@@ -15,14 +15,14 @@ models:
       Le mart reprend ensuite ce département déjà choisi, sans refaire le choix de son côté.
       On garde aussi les deux valeurs d'origine et on indique laquelle a été retenue pour comprendre
       les écarts. Ces informations de suivi restent dans l'intermédiaire.
-    data_tests:
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: ref('stg_emplois__candidats')
     columns:
       - name: id_candidat
         description: Identifiant du candidat sur Les Emplois de l'inclusion.
-        data_tests:
+        tests:
           - not_null
           - unique
       - name: code_commune_insee
@@ -42,7 +42,7 @@ models:
         description: >-
           Indique d'où vient le département retenu : dim_commune quand le référentiel fournit le département,
           staging quand on utilise celui de la source, non_renseigne si aucun département n'est disponible.
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
@@ -202,22 +202,22 @@ models:
           Nom de l'organisation, à défaut de la structure employeuse, à défaut de l'institution
           de rattachement.
 
-  - name: int_emplois__pass_iae_suspensions
+  - name: int_emplois__pass_suspensions
     config:
       tags:
         - emplois
     description: >
-      Pour chaque PASS IAE qui a au moins une suspension, on résume les principales
-      étapes de ses suspensions sur une seule ligne.
+      Pour chaque PASS qui a au moins une suspension, on résume les principales étapes de ses suspensions
+      sur une seule ligne. Un PASS désigne ici un PASS IAE ou un ancien agrément Pôle emploi.
     columns:
-      - name: id_pass_iae
-        description: Identifiant du PASS IAE ou de l’ancien agrément.
-        data_tests:
+      - name: id_pass
+        description: Identifiant du PASS.
+        tests:
           - not_null
           - unique
       - name: nombre_suspensions
-        description: Nombre total de suspensions du titre, terminées ou en cours.
-        data_tests:
+        description: Nombre total de suspensions du PASS, terminées ou en cours.
+        tests:
           - not_null
       - name: date_premiere_suspension
         description: Première date de début de suspension, sans filtre sur son état.
@@ -233,22 +233,24 @@ models:
           Vaut true si au moins une suspension a en_cours = true dans la source.
           On ne regarde pas les dates. Si tous les indicateurs sont NULL, le résultat reste NULL.
         data_type: boolean
-  - name: int_emplois__pass_iae_prolongations
+  - name: int_emplois__pass_prolongations
     config:
       tags:
         - emplois
-    description: Une ligne par identifiant de PASS présent dans les prolongations accordées. Une prolongation peut
-      exister sans demande ; elle est toujours comptée.
+    description: >
+      Une ligne par identifiant de PASS présent dans les prolongations accordées.
+      Un PASS désigne ici un PASS IAE ou un ancien agrément Pôle emploi.
+      Une prolongation peut exister sans demande ; elle est toujours comptée.
     columns:
-      - name: id_pass_iae
-        description: Identifiant du PASS IAE ou de l’ancien agrément.
-        data_tests:
+      - name: id_pass
+        description: Identifiant du PASS.
+        tests:
           - not_null
           - unique
       - name: nombre_prolongations
         description: Nombre de prolongations accordées dans prolongations, avec ou sans demande liée. Les demandes
           acceptées ne sont pas ajoutées à ce nombre.
-        data_tests:
+        tests:
           - not_null
       - name: date_premiere_prolongation
         description: Première date de création d’une prolongation accordée.
@@ -259,40 +261,42 @@ models:
           décroissant. Les dates NULL passent en dernier.
       - name: date_fin_derniere_prolongation
         description: Fin de cette même dernière prolongation, conservée telle quelle depuis la source.
-  - name: int_emplois__pass_iae_demandes_prolongation
+  - name: int_emplois__pass_demandes_prolongation
     config:
       tags:
         - emplois
-    description: Une ligne par identifiant de PASS présent dans les demandes. Une demande acceptée reste une demande
-      et n’ajoute rien au nombre de prolongations.
+    description: >
+      Une ligne par identifiant de PASS présent dans les demandes.
+      Un PASS désigne ici un PASS IAE ou un ancien agrément Pôle emploi.
+      Une demande acceptée reste une demande et n’ajoute rien au nombre de prolongations.
     columns:
-      - name: id_pass_iae
-        description: Identifiant du PASS IAE ou de l’ancien agrément.
-        data_tests:
+      - name: id_pass
+        description: Identifiant du PASS.
+        tests:
           - not_null
           - unique
       - name: nombre_demandes_prolongation
         description: Nombre total de demandes, indépendamment des prolongations accordées.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_acceptees
         description: Nombre de demandes dans l’état Acceptée, même sans prolongation associée.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_refusees
         description: Nombre de demandes dans l’état Refusée.
-        data_tests:
+        tests:
           - not_null
       - name: nombre_demandes_en_attente
         description: Nombre de demandes dans l’état À traiter.
-        data_tests:
+        tests:
           - not_null
       - name: date_premiere_demande_prolongation
         description: Première date de demande de prolongation.
       - name: date_derniere_demande_prolongation
         description: Dernière date de demande de prolongation.
       - name: date_dernier_traitement_demande
-        description: Dernier horodatage de traitement, toutes demandes du titre confondues. Peut concerner une demande
+        description: Dernier horodatage de traitement, toutes demandes du PASS confondues. Peut concerner une demande
           plus ancienne.
       - name: etat_derniere_demande_prolongation
         description: État de la dernière demande, choisie par date de demande puis par identifiant décroissant. Les

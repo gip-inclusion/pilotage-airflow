@@ -192,9 +192,12 @@ models:
     description: >
       Table des candidats (aussi appelés usagers ou bénéficiaires en fonction du contexte).
       Cette table contient également les diagnostics d’éligibilité et les critères administratifs associés.
-      Une colonne par critère, au format `critere_n1_*` et `critere_n2_*`, non documenté exhaustivement.
-      Pour les critères certifiables, il y a trois colonnes ; les deux colonnes supplémentaires indiquent la date de certication du critère et la période de validité.
-    data_tests:
+      Dans cette documentation, un PASS désigne un PASS IAE ou un ancien agrément Pôle emploi.
+      Les colonnes critere_n1_* et critere_n2_* reprennent ce qui est coché dans le diagnostic :
+      true = critère retenu, false = non retenu, NULL = pas renseigné. On ne recalcule pas les critères.
+      Règles métier :
+      https://aide.emplois.inclusion.beta.gouv.fr/hc/fr/articles/14733921254161--Les-crit%C3%A8res-d-%C3%A9ligibilit%C3%A9-IAE
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('raw_emplois', 'candidats_v0')
@@ -202,7 +205,7 @@ models:
       - name: id
         description: >
           Identifiant unique du candidat. Clé primaire de la table.
-        data_tests:
+        tests:
           - not_null
           - unique
           - relationships:
@@ -232,7 +235,13 @@ models:
           Date de création du compte sur la plateforme.
       - name: type_inscription
         description: >
-          Type de l’inscription : `autonome`, `par professionnel` ou `par administrateur`.
+          Type de l’inscription.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['autonome', 'par professionnel', 'par administrateur']
+              config:
+                severity: warn
       - name: pe_connect
         description: >
           Vrai si le candidat utilise France Travail Connect.
@@ -306,68 +315,123 @@ models:
         description: >
           Type de la structure de la dernière embauche, c’est-à-dire ayant accepté une candidature.
       - name: total_criteres_niveau_1
-        description: >
-          Nombre de critères de niveau 1.
+        description: >-
+          Nombre de critères de niveau 1 retenus dans le diagnostic.
       - name: total_criteres_niveau_2
-        description: >
-          Nombre de critères de niveau 2.
+        description: >-
+          Nombre de critères de niveau 2 retenus dans le diagnostic.
       - name: critere_n1_beneficiaire_du_rsa
+        description: >-
+          Niveau 1. Le candidat touche le RSA (revenu de solidarité active).
       - name: critere_n1_beneficiaire_du_rsa_date_certification
+        description: >-
+          Date de vérification automatique du critère RSA, fournie par la source.
       - name: critere_n1_beneficiaire_du_rsa_periode_certification
+        description: >-
+          Période de certification du critère RSA, reprise telle quelle de la source.
       - name: critere_n1_allocataire_ass
+        description: >-
+          Niveau 1. Le candidat touche l'ASS (allocation de solidarité spécifique).
       - name: critere_n1_allocataire_aah
+        description: >-
+          Niveau 1. Le candidat touche l'AAH (allocation aux adultes handicapés).
       - name: critere_n1_allocataire_aah_date_certification
+        description: >-
+          Date de vérification automatique du critère AAH, fournie par la source.
       - name: critere_n1_allocataire_aah_periode_certification
+        description: >-
+          Période de certification du critère AAH, reprise telle quelle de la source.
       - name: critere_n1_detld_plus_de_24_mois
+        description: >-
+          Niveau 1. Au moins 24 mois d'inscription à France Travail sur les 27 derniers mois.
       - name: critere_n2_niveau_d_etude_3_cap_bep_ou_infra
+        description: >-
+          Niveau 2. CAP, BEP ou niveau d'études inférieur.
       - name: critere_n2_senior_plus_de_50_ans
+        description: >-
+          Niveau 2. Le candidat a plus de 50 ans.
       - name: critere_n2_jeune_moins_de_26_ans
+        description: >-
+          Niveau 2. Le candidat a moins de 26 ans.
       - name: critere_n2_sortant_de_l_ase
+        description: >-
+          Niveau 2. Le candidat sort de l'aide sociale à l'enfance (ASE).
       - name: critere_n2_deld_12_a_24_mois
+        description: >-
+          Niveau 2. Au moins 12 mois d'inscription à France Travail sur les 15 derniers mois.
       - name: critere_n2_travailleur_handicape
+        description: >-
+          Niveau 2. Le candidat est reconnu travailleur handicapé.
       - name: critere_n2_travailleur_handicape_date_certification
+        description: >-
+          Date de vérification automatique du critère handicap, fournie par la source.
       - name: critere_n2_travailleur_handicape_periode_certification
+        description: >-
+          Période de certification du critère handicap, reprise telle quelle de la source.
       - name: critere_n2_parent_isole
+        description: >-
+          Niveau 2. Le candidat élève seul son ou ses enfants.
       - name: critere_n2_parent_isole_date_certification
+        description: >-
+          Date de vérification automatique du critère parent isolé, fournie par la source.
       - name: critere_n2_parent_isole_periode_certification
+        description: >-
+          Période de certification du critère parent isolé, reprise telle quelle de la source.
       - name: critere_n2_personne_sans_hebergement_ou_hebergee_ou_ayant_u
+        description: >-
+          Niveau 2. Le candidat est sans hébergement, est hébergé ou a connu la rue.
       - name: critere_n2_refugie_statutaire_beneficiaire_d_une_protectio
+        description: >-
+          Niveau 2. Le candidat est réfugié, sous protection temporaire ou subsidiaire, ou demandeur d'asile.
       - name: critere_n2_resident_zrr
+        description: >-
+          Niveau 2. Le candidat habite une zone de revitalisation rurale (ZRR).
       - name: critere_n2_resident_qpv
+        description: >-
+          Niveau 2. Le candidat habite un quartier prioritaire de la politique de la ville (QPV).
       - name: critere_n2_sortant_de_detention_ou_personne_placee_sous_main
+        description: >-
+          Niveau 2. Le candidat sort de prison ou est placé sous main de justice.
       - name: critere_n2_maitrise_de_la_langue_francaise_inferieure_au_ni
+        description: >-
+          Niveau 2. Son niveau de français est inférieur à A1.
       - name: critere_n2_probleme_de_mobilite
+        description: >-
+          Niveau 2. Un prescripteur habilité a repéré des difficultés de déplacement.
       - name: injection_ai
         description: >
-          Fait partie de l’import massif des PASS IAE (sans diagnostic) réalisé le 30 novembre 2021.
+          Fait partie de l’import massif des PASS (sans diagnostic) réalisé le 30 novembre 2021.
       - name: date_mise_a_jour_metabase
         description: >
           Date de la dernière synchronisation de cette ligne dans Metabase.
           Mise à jour quotidienne.
 
-  - name: stg_emplois__pass_iae
+  - name: stg_emplois__pass
     config:
       tags:
         - emplois
     description: >
-      On garde tous les titres de emplois.pass_agréments. Ici, on nettoie les textes et on simplifie les noms.
-      On ramène les types à PASS IAE ou Agrément PE.
-    data_tests:
+      On garde tous les PASS de emplois.pass_agréments. Un PASS désigne ici un PASS IAE
+      ou un ancien agrément Pôle emploi. On simplifie les noms et on normalise type_pass
+      avec les valeurs PASS IAE ou Agrément PE.
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('emplois', 'pass_agréments')
     columns:
-      - name: id_pass_iae
-        description: Identifiant unique du PASS IAE ou de l'agrément.
-        data_tests:
+      - name: id_pass
+        description: Identifiant unique du PASS.
+        tests:
           - not_null
           - unique
+      - name: type
+        description: On conserve le type brut au cas où on a besoin pour faire des jointures.
       - name: type_pass
         description: >
           On nettoie les espaces, puis PASS IAE (99999) devient PASS IAE
           et Agrément PE via ITOU (non 99999) devient Agrément PE.
           Un type vide ou inconnu donne NULL ; les tests le signalent.
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
@@ -375,21 +439,21 @@ models:
                   - PASS IAE
                   - Agrément PE
       - name: date_debut
-        description: Début de validité du PASS IAE. C'est en général la date d'embauche du candidat.
-        data_tests:
+        description: Début de validité du PASS. C'est en général la date d'embauche du candidat.
+        tests:
           - not_null
       - name: date_fin
         description: >
           Dernier jour de validité, inclus, conservé tel quel depuis la source.
           Si la fin manque dans la source, le test échoue.
-        data_tests:
+        tests:
           - not_null
       - name: duree
         description: >
           On garde la durée fournie par la source, sans la recalculer.
       - name: id_candidat
-        description: Identifiant du candidat qui a le PASS IAE.
-        data_tests:
+        description: Identifiant du candidat titulaire du PASS.
+        tests:
           - not_null
           - relationships:
               arguments:
@@ -398,13 +462,13 @@ models:
               config:
                 severity: warn
       - name: id_structure
-        description: Identifiant de la structure employeuse qui a déclenché le PASS IAE.
+        description: Identifiant de la structure employeuse qui a déclenché le PASS.
       - name: type_structure
-        description: Type de la structure employeuse liée au PASS IAE.
+        description: Type de la structure employeuse liée au PASS.
       - name: siret_structure
-        description: SIRET de la structure employeuse au moment où le PASS IAE a été délivré.
+        description: SIRET de la structure employeuse au moment où le PASS a été délivré.
       - name: nom_structure
-        description: Nom de la structure employeuse au moment où le PASS IAE a été délivré.
+        description: Nom de la structure employeuse au moment où le PASS a été délivré.
       - name: departement_structure_ou_org_pe
         description: >
           Code INSEE du département de la structure employeuse.
@@ -425,36 +489,36 @@ models:
           soit false ici.
         data_type: boolean
       - name: hash_numero_pass_iae
-        description: Numéro du PASS IAE anonymisé par hachage. Il permet de retrouver le PASS sans afficher son vrai numéro.
+        description: Numéro du PASS anonymisé par hachage. Il permet de retrouver le PASS sans afficher son vrai numéro.
       - name: date_mise_a_jour_metabase
         description: Date de la dernière mise à jour de cette ligne dans Metabase. La source est mise à jour chaque jour.
-        data_tests:
+        tests:
           - not_null
   - name: stg_emplois__suspensions
     config:
       tags:
         - emplois
     description: >
-      Une ligne par suspension de PASS IAE ou d'ancien agrément.
+      Une ligne par suspension de PASS (PASS IAE ou ancien agrément Pôle emploi).
       On garde toutes les colonnes et toutes les lignes de raw_emplois.suspensions_v0,
-      sans jointure, regroupement ni filtre métier. On simplifie les noms de colonnes
-      et on nettoie les textes. Pour en_cours, 1 devient true, 0 devient false et NULL reste NULL.
-    data_tests:
+      sans jointure, regroupement ni filtre métier. On simplifie les noms de colonnes.
+      Pour en_cours, 1 devient true, 0 devient false et NULL reste NULL.
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('raw_emplois', 'suspensions_v0')
     columns:
       - name: id_suspension
-        data_tests:
+        tests:
           - not_null
           - unique
-      - name: id_pass_iae
-        data_tests:
+      - name: id_pass
+        tests:
           - not_null
           - relationships:
               arguments:
-                to: ref('stg_emplois__pass_iae')
-                field: id_pass_iae
+                to: ref('stg_emplois__pass')
+                field: id_pass
               config:
                 severity: warn
       - name: date_debut
@@ -468,26 +532,27 @@ models:
     config:
       tags:
         - emplois
-    description: Une ligne par prolongation accordée. On garde toutes les colonnes et toutes les lignes de la source.
-      On simplifie les noms de colonnes et on nettoie les textes, sans jointure, regroupement ni filtre métier.
-    data_tests:
+    description: Une ligne par prolongation accordée de PASS (PASS IAE ou ancien agrément Pôle emploi).
+      On garde toutes les colonnes et toutes les lignes de la source.
+      On simplifie les noms de colonnes, sans jointure, regroupement ni filtre métier.
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('raw_emplois', 'prolongations')
     columns:
       - name: id_prolongation
         description: Identifiant unique de la prolongation.
-        data_tests:
+        tests:
           - not_null
           - unique
-      - name: id_pass_iae
-        description: Identifiant du PASS IAE prolongé. Un même PASS peut avoir plusieurs prolongations.
-        data_tests:
+      - name: id_pass
+        description: Identifiant du PASS prolongé. Un même PASS peut avoir plusieurs prolongations.
+        tests:
           - not_null
           - relationships:
               arguments:
-                to: ref('stg_emplois__pass_iae')
-                field: id_pass_iae
+                to: ref('stg_emplois__pass')
+                field: id_pass
               config:
                 severity: warn
       - name: date_debut
@@ -497,7 +562,22 @@ models:
       - name: date_fin
         description: Fin de la prolongation, conservée telle quelle depuis la source.
       - name: motif
-        description: Raison pour laquelle le PASS IAE est prolongé.
+        description: Raison pour laquelle le PASS est prolongé.
+        tests:
+          - accepted_values:
+              arguments:
+                # Les apostrophes sont doublées pour les littéraux SQL générés par dbt.
+                values:
+                  - 50 ans et plus
+                  - >-
+                    Difficultés particulièrement importantes dont l''absence de prise en charge
+                    ferait obstacle à son insertion professionnelle
+                  - Fin d''une formation
+                  - Contexte sanitaire
+                  - RQTH - Reconnaissance de la qualité de travailleur handicapé
+                  - CDI conclu avec une personne de plus de 57 ans
+              config:
+                severity: warn
       - name: id_utilisateur_declarant
         description: Identifiant de l'utilisateur de la structure qui a déclaré la prolongation.
       - name: id_structure_declarante
@@ -512,7 +592,7 @@ models:
         description: Date de création de la prolongation dans le système. On garde le type de la source.
       - name: id_demande_de_prolongation
         description: Identifiant de la demande de prolongation liée. Il est NULL pour les prolongations d'avant juillet 2023.
-        data_tests:
+        tests:
           - relationships:
               arguments:
                 to: ref('stg_emplois__demandes_prolongation')
@@ -525,38 +605,38 @@ models:
     config:
       tags:
         - emplois
-    description: Une ligne par demande de prolongation de PASS IAE. On garde toutes les colonnes et toutes les lignes de raw_emplois.demandes_de_prolongation.
-      On simplifie les noms de colonnes et on nettoie les textes, sans jointure, regroupement ni filtre métier.
-    data_tests:
+    description: Une ligne par demande de prolongation de PASS (PASS IAE ou ancien agrément Pôle emploi).
+      On garde toutes les colonnes et toutes les lignes de raw_emplois.demandes_de_prolongation.
+      On simplifie les noms de colonnes, sans jointure, regroupement ni filtre métier.
+    tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('raw_emplois', 'demandes_de_prolongation')
     columns:
       - name: id_demande_prolongation
         description: Colonne id de la source, renommée id_demande_prolongation.
-        data_tests:
+        tests:
           - not_null
           - unique
-      - name: id_pass_iae
-        description: Colonne id_pass_agrément de la source, renommée id_pass_iae.
-        data_tests:
+      - name: id_pass
+        description: Colonne id_pass_agrément de la source, renommée id_pass.
+        tests:
           - not_null
           - relationships:
               arguments:
-                to: ref('stg_emplois__pass_iae')
-                field: id_pass_iae
+                to: ref('stg_emplois__pass')
+                field: id_pass
               config:
                 severity: warn
       - name: date_debut
       - name: date_fin
       - name: motif
-        description: On enlève les espaces au début et à la fin du texte et on remplace les textes vides par NULL.
       - name: id_utilisateur_declarant
       - name: id_structure_declarante
       - name: id_organisation_prescripteur
       - name: id_utilisateur_prescripteur
       - name: id_prolongation
-        data_tests:
+        tests:
           - relationships:
               arguments:
                 to: ref('stg_emplois__prolongations')
@@ -564,8 +644,7 @@ models:
               config:
                 severity: warn
       - name: etat
-        description: On enlève les espaces au début et à la fin du texte et on remplace les textes vides par NULL.
-        data_tests:
+        tests:
           - not_null
           - accepted_values:
               arguments:
@@ -574,7 +653,6 @@ models:
                   - Refusée
                   - À traiter
       - name: motif_de_refus
-        description: On enlève les espaces au début et à la fin du texte et on remplace les textes vides par NULL.
       - name: date_de_demande
       - name: date_traitement
       - name: id_utilisateur_traitant

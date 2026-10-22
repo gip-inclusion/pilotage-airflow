@@ -104,3 +104,12 @@ tests:
   - name: test_dim_emplois__etablissements_row_count
     description: >
       Vérifie que chaque structure de stg_emplois__structures et chaque organisation de stg_emplois__organisations apparaît exactement une fois dans dim_emplois__etablissements.
+
+data_tests:
+  - name: test_fct_emplois__evenements_pass_candidat
+    description: >-
+      On vérifie que chaque prolongation, demande de prolongation et suspension porte le même
+      id_candidat que son PASS dans fct_emplois__pass. Par exemple, si le PASS appartient au candidat
+      123 mais que la prolongation indique 456, le test échoue. Il échoue aussi si l'identifiant manque
+      d'un seul côté. Si les deux valeurs sont NULL, le test passe.
+      Les tests relationships vérifient de leur côté que le PASS existe bien.

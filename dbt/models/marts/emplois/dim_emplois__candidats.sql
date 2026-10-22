@@ -31,22 +31,22 @@ pass_iae_classes as (
         date_debut,
         date_fin,
         statut_pass,
-        count(*) over (partition by id_candidat)        as nombre_pass_iae,
+        count(*) over (partition by id_candidat)        as nombre_pass,
         min(date_debut) over (partition by id_candidat) as date_debut_premier_pass_iae,
         row_number() over (
             partition by id_candidat
             order by
                 date_debut desc nulls last,
                 date_fin desc nulls last,
-                id_pass_iae desc
+                id_pass desc
         )                                               as rang
-    from {{ ref('fct_emplois__pass_iae') }}
+    from {{ ref('fct_emplois__pass') }}
 ),
 
 dernier_pass_iae as (
     select
         id_candidat,
-        nombre_pass_iae,
+        nombre_pass,
         date_debut_premier_pass_iae,
         date_debut as date_debut_dernier_pass_iae,
         date_fin   as date_fin_dernier_pass_iae,
@@ -57,7 +57,7 @@ dernier_pass_iae as (
 
 final as (
     select
-        candidats.id                                               as id_candidat,
+        candidats.id                                                     as id_candidat,
         candidats.uid,
         candidats.hash_nir,
         candidats.sexe_selon_nir,
@@ -82,8 +82,12 @@ final as (
         candidats.actif,
         candidats.diagnostic_valide,
         candidats.critere_n1_beneficiaire_du_rsa,
+        candidats.critere_n1_beneficiaire_du_rsa_date_certification      as date_certification_rsa,
+        candidats.critere_n1_beneficiaire_du_rsa_periode_certification   as periode_certification_rsa,
         candidats.critere_n1_allocataire_ass,
         candidats.critere_n1_allocataire_aah,
+        candidats.critere_n1_allocataire_aah_date_certification          as date_certification_aah,
+        candidats.critere_n1_allocataire_aah_periode_certification       as periode_certification_aah,
         candidats.critere_n1_detld_plus_de_24_mois,
         candidats.critere_n2_niveau_d_etude_3_cap_bep_ou_infra,
         candidats.critere_n2_senior_plus_de_50_ans,
@@ -91,7 +95,11 @@ final as (
         candidats.critere_n2_sortant_de_l_ase,
         candidats.critere_n2_deld_12_a_24_mois,
         candidats.critere_n2_travailleur_handicape,
+        candidats.critere_n2_travailleur_handicape_date_certification    as date_certification_travailleur_handicape,
+        candidats.critere_n2_travailleur_handicape_periode_certification as periode_certification_travailleur_handicape,
         candidats.critere_n2_parent_isole,
+        candidats.critere_n2_parent_isole_date_certification             as date_certification_parent_isole,
+        candidats.critere_n2_parent_isole_periode_certification          as periode_certification_parent_isole,
         candidats.critere_n2_personne_sans_hebergement_ou_hebergee_ou_ayant_u,
         candidats.critere_n2_refugie_statutaire_beneficiaire_d_une_protectio,
         candidats.critere_n2_resident_zrr,
@@ -108,13 +116,13 @@ final as (
         pass_iae.date_debut_premier_pass_iae,
         pass_iae.date_debut_dernier_pass_iae,
         pass_iae.date_fin_dernier_pass_iae,
-        candidats.has_crit_nv_1 or candidats.has_crit_nv_2         as is_eligible_pass_iae,
-        candidats.has_crit_nv_1 or candidats.has_crit_nv_2_etti_ai as is_eligible_pass_iae_etti_ai,
+        candidats.has_crit_nv_1 or candidats.has_crit_nv_2               as is_eligible_pass_iae,
+        candidats.has_crit_nv_1 or candidats.has_crit_nv_2_etti_ai       as is_eligible_pass_iae_etti_ai,
         case
             when pass_iae.id_candidat is null then 'Sans PASS IAE'
             else pass_iae.statut_pass
-        end                                                        as statut_dernier_pass_iae,
-        coalesce(pass_iae.nombre_pass_iae, 0)                      as nombre_pass_iae
+        end                                                              as statut_dernier_pass_iae,
+        coalesce(pass_iae.nombre_pass, 0)                                as nombre_pass
     from candidats_avec_criteres as candidats
     left join geographie
         on candidats.id = geographie.id_candidat
