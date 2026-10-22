@@ -10,6 +10,7 @@ select
     c."département_structure",
     c."nom_département_structure",
     c."région_structure",
+    c.id_org_prescripteur,
     c.nom_org_prescripteur,
     count(c."état")                                                                   as nombre_de_candidatures,
     count(case when type_de_candidature = 'Autoprescription' then id_candidature end) as nombre_autoprescription
@@ -31,4 +32,5 @@ group by
     c."département_structure",
     c."nom_département_structure",
     c."région_structure",
-    c.nom_org_prescripteur
+    c.nom_org_prescripteur,
+    c.id_org_prescripteur
