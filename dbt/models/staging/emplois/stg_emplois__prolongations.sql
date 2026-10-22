@@ -1,9 +1,9 @@
 select
     id                          as id_prolongation,
-    "id_pass_agrément"          as id_pass_iae,
+    "id_pass_agrément"          as id_pass,
     "date_début"                as date_debut,
     date_fin,
-    {{ clean_text('motif') }} as motif,
+    motif,
     "id_utilisateur_déclarant"  as id_utilisateur_declarant,
     "id_structure_déclarante"   as id_structure_declarante,
     id_organisation_prescripteur,

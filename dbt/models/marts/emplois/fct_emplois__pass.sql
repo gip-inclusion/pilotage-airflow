@@ -1,26 +1,26 @@
 with pass_iae as (
     select *
-    from {{ ref('stg_emplois__pass_iae') }}
+    from {{ ref('stg_emplois__pass') }}
 ),
 
 suspensions as (
     select *
-    from {{ ref('int_emplois__pass_iae_suspensions') }}
+    from {{ ref('int_emplois__pass_suspensions') }}
 ),
 
 prolongations as (
     select *
-    from {{ ref('int_emplois__pass_iae_prolongations') }}
+    from {{ ref('int_emplois__pass_prolongations') }}
 ),
 
 demandes_prolongation as (
     select *
-    from {{ ref('int_emplois__pass_iae_demandes_prolongation') }}
+    from {{ ref('int_emplois__pass_demandes_prolongation') }}
 ),
 
 parcours as (
     select
-        pass.id_pass_iae,
+        pass.id_pass,
         pass.id_candidat,
         pass.hash_numero_pass_iae,
         pass.injection_ai,
@@ -43,7 +43,7 @@ parcours as (
         cast({{ dbt.current_timestamp() }} at time zone 'Europe/Paris' as date) as date_execution,
         coalesce(suspensions.nombre_suspensions, 0)                             as nombre_suspensions,
         case
-            when suspensions.id_pass_iae is null then false
+            when suspensions.id_pass is null then false
             else suspensions.is_suspension_en_cours
         end                                                                     as is_suspension_en_cours,
         coalesce(prolongations.nombre_prolongations, 0)                         as nombre_prolongations,
@@ -53,11 +53,11 @@ parcours as (
         coalesce(demandes.nombre_demandes_en_attente, 0)                        as nombre_demandes_en_attente
     from pass_iae as pass
     left join suspensions
-        on pass.id_pass_iae = suspensions.id_pass_iae
+        on pass.id_pass = suspensions.id_pass
     left join prolongations
-        on pass.id_pass_iae = prolongations.id_pass_iae
+        on pass.id_pass = prolongations.id_pass
     left join demandes_prolongation as demandes
-        on pass.id_pass_iae = demandes.id_pass_iae
+        on pass.id_pass = demandes.id_pass
 ),
 
 validite as (
@@ -70,7 +70,7 @@ validite as (
 
 final as (
     select
-        id_pass_iae,
+        id_pass,
         id_candidat,
         type_pass,
         hash_numero_pass_iae,

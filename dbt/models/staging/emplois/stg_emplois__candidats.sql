@@ -12,7 +12,6 @@ select
     date_premiere_connexion,
     code_insee                                                              as code_commune_insee,
     code_postal,
-    "département"                                                           as departement,
     "nom_département"                                                       as nom_departement,
     "région"                                                                as region,
     adresse_en_qpv,
@@ -60,5 +59,6 @@ select
     "critère_n2_sortant_de_détention_ou_personne_placée_sous_main"::boolean as critere_n2_sortant_de_detention_ou_personne_placee_sous_main,
     "critère_n2_maîtrise_de_la_langue_française_inférieure_au_ni"::boolean  as critere_n2_maitrise_de_la_langue_francaise_inferieure_au_ni,
     "critère_n2_problème_de_mobilité"::boolean                              as critere_n2_probleme_de_mobilite,
-    injection_ai::boolean                                                   as injection_ai
+    injection_ai::boolean                                                   as injection_ai,
+    nullif(trim("département"), '')                                         as departement
 from {{ source('raw_emplois', 'candidats_v0') }}

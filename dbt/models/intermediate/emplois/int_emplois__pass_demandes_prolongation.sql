@@ -2,14 +2,14 @@ with demandes as (
     select
         *,
         row_number() over (
-            partition by id_pass_iae
+            partition by id_pass
             order by date_de_demande desc nulls last, id_demande_prolongation desc
         ) as rang
     from {{ ref('stg_emplois__demandes_prolongation') }}
 )
 
 select
-    id_pass_iae,
+    id_pass,
     count(*)                                   as nombre_demandes_prolongation,
     count(*) filter (where etat = 'Acceptée')  as nombre_demandes_acceptees,
     count(*) filter (where etat = 'Refusée')   as nombre_demandes_refusees,
@@ -19,4 +19,4 @@ select
     max(date_traitement)                       as date_dernier_traitement_demande,
     max(etat) filter (where rang = 1)          as etat_derniere_demande_prolongation
 from demandes
-group by id_pass_iae
+group by id_pass
