@@ -21,6 +21,7 @@ select
     cd.injection_ai,
     cd."état",
     cd.id_structure,
+    cd.id_org_prescripteur,
     cd.origine,
     cd."origine_détaillée",
     cd.type_structure,

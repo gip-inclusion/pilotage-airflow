@@ -16,6 +16,7 @@ select
     c."département_structure",
     c."nom_département_structure",
     c."région_structure",
+    c.id_org_prescripteur,
     c.nom_org_prescripteur,
     c.id_structure,
     c.injection_ai,
