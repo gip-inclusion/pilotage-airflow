@@ -185,6 +185,480 @@ models:
       - name: date_mise_a_jour_metabase
         description: Date de la dernière synchronisation de la ligne dans Metabase.
 
+  - name: stg_emplois__candidats
+    config:
+      tags:
+        - emplois
+    description: >
+      Table des candidats (aussi appelés usagers ou bénéficiaires en fonction du contexte).
+      Cette table contient également les diagnostics d’éligibilité et les critères administratifs associés.
+      Dans cette documentation, un PASS désigne un PASS IAE ou un ancien agrément Pôle emploi.
+      Les colonnes critere_n1_* et critere_n2_* reprennent ce qui est coché dans le diagnostic :
+      true = critère retenu, false = non retenu, NULL = pas renseigné. On ne recalcule pas les critères.
+      Règles métier :
+      https://aide.emplois.inclusion.beta.gouv.fr/hc/fr/articles/14733921254161--Les-crit%C3%A8res-d-%C3%A9ligibilit%C3%A9-IAE
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('raw_emplois', 'candidats_v0')
+    columns:
+      - name: id
+        description: >
+          Identifiant unique du candidat. Clé primaire de la table.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: source('raw_emplois', 'candidats_v0')
+                field: id
+      - name: uid
+        description: >
+          Identifiant public (UUID) du candidat.
+      - name: hash_nir
+        description: >
+          Valeur hashée du NIR (numéro de Sécurité sociale).
+      - name: sexe_selon_nir
+        description: >
+          Sexe déduit à partir du premier chiffre du NIR.
+      - name: annee_naissance_selon_nir
+        description: >
+          Année de naissance déduite à partir du NIR.
+      - name: mois_naissance_selon_nir
+        description: >
+          Mois de naissance déduit à partir du NIR.
+      - name: age
+        description: >
+          Âge calculé à partir de la date de naissance renseignée.
+      - name: date_inscription
+        description: >
+          Date de création du compte sur la plateforme.
+      - name: type_inscription
+        description: >
+          Type de l’inscription : `autonome`, `par professionnel` ou `par administrateur`.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['autonome', 'par professionnel', 'par administrateur']
+              config:
+                severity: warn
+      - name: pe_connect
+        description: >
+          Vrai si le candidat utilise France Travail Connect.
+      - name: pe_inscrit
+        description: >
+          Vrai si le candidat a un identifiant France Travail.
+      - name: date_derniere_connexion
+        description: >
+          Date de la dernière connexion.
+      - name: date_premiere_connexion
+        description: >
+          Date de la première connexion.
+      - name: actif
+        description: >
+          Vrai si la dernière connexion a eu lieu dans les 7 jours.
+      - name: code_commune_insee
+        description: >
+          Code INSEE de la commune du candidat.
+      - name: code_postal
+        description: >
+          Code postal de la commune du candidat.
+      - name: departement
+        description: >
+          Numéro du département du candidat.
+      - name: nom_departement
+        description: >
+          Nom du département du candidat (format : "29 - Finistère")
+      - name: region
+        description: >
+          Nom de la région (format : "Bretagne")
+      - name: adresse_en_qpv
+        description: >
+          Vrai si l’adresse renseignée se trouve dans une zone QPV (quartiers prioritaires de la politique de la ville).
+      - name: total_candidatures
+        description: >
+          Nombre de candidatures réalisées par ou pour le candidat.
+      - name: total_embauches
+        description: >
+          Nombre d’embauches (= candidatures acceptées).
+      - name: total_diagnostics
+        description: >
+          Nombre de diagnostics d’éligibilité.
+      - name: date_diagnostic
+        description: >
+          Date du dernier diagnostic d’éligibilité.
+      - name: date_expiration_diagnostic
+        description: >
+          Date d’expiration du dernier diagnostic d’éligibilité.
+      - name: diagnostic_valide
+        description: >
+          Vrai si le diagnostic est en cours de validité au moment de l’import.
+      - name: id_auteur_diagnostic_prescripteur
+        description: >
+          Identifiant de l’organisation prescriptrice à l’origine du diagnostic (si diagnostic prescripteur).
+          Clé étrangère vers `les_emplois.organisations_v0.id`.
+      - name: id_auteur_diagnostic_employeur
+        description: >
+          Identifiant de l’entreprise à l’origine du diagnostic (si diagnostic employeur).
+          Clé étrangère vers `les_emplois.structures_v0.id`.
+      - name: type_auteur_diagnostic
+        description: >
+          Type de l’auteur du diagnostic : `Prescripteur` ou `Employeur`.
+      - name: sous_type_auteur_diagnostic
+        description: >
+          Sous-type de l’auteur du diagnostic, c’est-à-dire type de l’organisation ou de l’entreprise.
+          Par exemple : `Employeur ACI` ou `Prescripteur FT`.
+      - name: nom_auteur_diagnostic
+        description: >
+          Nom de l’organisation prescriptrice ou de l’entreprise à l’origine du diagnostic.
+      - name: type_structure_derniere_embauche
+        description: >
+          Type de la structure de la dernière embauche, c’est-à-dire ayant accepté une candidature.
+      - name: total_criteres_niveau_1
+        description: >-
+          Nombre de critères de niveau 1 retenus dans le diagnostic.
+      - name: total_criteres_niveau_2
+        description: >-
+          Nombre de critères de niveau 2 retenus dans le diagnostic.
+      - name: critere_n1_beneficiaire_du_rsa
+        description: >-
+          Niveau 1. Le candidat touche le RSA (revenu de solidarité active).
+      - name: critere_n1_beneficiaire_du_rsa_date_certification
+        description: >-
+          Date de vérification automatique du critère RSA, fournie par la source.
+      - name: critere_n1_beneficiaire_du_rsa_periode_certification
+        description: >-
+          Période de certification du critère RSA, reprise telle quelle de la source.
+      - name: critere_n1_allocataire_ass
+        description: >-
+          Niveau 1. Le candidat touche l'ASS (allocation de solidarité spécifique).
+      - name: critere_n1_allocataire_aah
+        description: >-
+          Niveau 1. Le candidat touche l'AAH (allocation aux adultes handicapés).
+      - name: critere_n1_allocataire_aah_date_certification
+        description: >-
+          Date de vérification automatique du critère AAH, fournie par la source.
+      - name: critere_n1_allocataire_aah_periode_certification
+        description: >-
+          Période de certification du critère AAH, reprise telle quelle de la source.
+      - name: critere_n1_detld_plus_de_24_mois
+        description: >-
+          Niveau 1. Au moins 24 mois d'inscription à France Travail sur les 27 derniers mois.
+      - name: critere_n2_niveau_d_etude_3_cap_bep_ou_infra
+        description: >-
+          Niveau 2. CAP, BEP ou niveau d'études inférieur.
+      - name: critere_n2_senior_plus_de_50_ans
+        description: >-
+          Niveau 2. Le candidat a plus de 50 ans.
+      - name: critere_n2_jeune_moins_de_26_ans
+        description: >-
+          Niveau 2. Le candidat a moins de 26 ans.
+      - name: critere_n2_sortant_de_l_ase
+        description: >-
+          Niveau 2. Le candidat sort de l'aide sociale à l'enfance (ASE).
+      - name: critere_n2_deld_12_a_24_mois
+        description: >-
+          Niveau 2. Au moins 12 mois d'inscription à France Travail sur les 15 derniers mois.
+      - name: critere_n2_travailleur_handicape
+        description: >-
+          Niveau 2. Le candidat est reconnu travailleur handicapé.
+      - name: critere_n2_travailleur_handicape_date_certification
+        description: >-
+          Date de vérification automatique du critère handicap, fournie par la source.
+      - name: critere_n2_travailleur_handicape_periode_certification
+        description: >-
+          Période de certification du critère handicap, reprise telle quelle de la source.
+      - name: critere_n2_parent_isole
+        description: >-
+          Niveau 2. Le candidat élève seul son ou ses enfants.
+      - name: critere_n2_parent_isole_date_certification
+        description: >-
+          Date de vérification automatique du critère parent isolé, fournie par la source.
+      - name: critere_n2_parent_isole_periode_certification
+        description: >-
+          Période de certification du critère parent isolé, reprise telle quelle de la source.
+      - name: critere_n2_personne_sans_hebergement_ou_hebergee_ou_ayant_u
+        description: >-
+          Niveau 2. Le candidat est sans hébergement, est hébergé ou a connu la rue.
+      - name: critere_n2_refugie_statutaire_beneficiaire_d_une_protectio
+        description: >-
+          Niveau 2. Le candidat est réfugié, sous protection temporaire ou subsidiaire, ou demandeur d'asile.
+      - name: critere_n2_resident_zrr
+        description: >-
+          Niveau 2. Le candidat habite une zone de revitalisation rurale (ZRR).
+      - name: critere_n2_resident_qpv
+        description: >-
+          Niveau 2. Le candidat habite un quartier prioritaire de la politique de la ville (QPV).
+      - name: critere_n2_sortant_de_detention_ou_personne_placee_sous_main
+        description: >-
+          Niveau 2. Le candidat sort de prison ou est placé sous main de justice.
+      - name: critere_n2_maitrise_de_la_langue_francaise_inferieure_au_ni
+        description: >-
+          Niveau 2. Son niveau de français est inférieur à A1.
+      - name: critere_n2_probleme_de_mobilite
+        description: >-
+          Niveau 2. Un prescripteur habilité a repéré des difficultés de déplacement.
+      - name: injection_ai
+        description: >
+          Fait partie de l’import massif des PASS (sans diagnostic) réalisé le 30 novembre 2021.
+      - name: date_mise_a_jour_metabase
+        description: >
+          Date de la dernière synchronisation de cette ligne dans Metabase.
+          Mise à jour quotidienne.
+
+  - name: stg_emplois__pass
+    config:
+      tags:
+        - emplois
+    description: >
+      On garde tous les PASS de emplois.pass_agréments. Un PASS désigne ici un PASS IAE
+      ou un ancien agrément Pôle emploi. On simplifie les noms et on normalise type_pass
+      avec les valeurs PASS IAE ou Agrément PE.
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('emplois', 'pass_agréments')
+    columns:
+      - name: id_pass
+        description: Identifiant unique du PASS.
+        tests:
+          - not_null
+          - unique
+      - name: type
+        description: On conserve le type brut au cas où on a besoin pour faire des jointures.
+      - name: type_pass
+        description: >
+          On nettoie les espaces, puis PASS IAE (99999) devient PASS IAE
+          et Agrément PE via ITOU (non 99999) devient Agrément PE.
+          Un type vide ou inconnu donne NULL ; les tests le signalent.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - PASS IAE
+                  - Agrément PE
+      - name: date_debut
+        description: Début de validité du PASS. C'est en général la date d'embauche du candidat.
+        tests:
+          - not_null
+      - name: date_fin
+        description: >
+          Dernier jour de validité, inclus, conservé tel quel depuis la source.
+          Si la fin manque dans la source, le test échoue.
+        tests:
+          - not_null
+      - name: duree
+        description: >
+          On garde la durée fournie par la source, sans la recalculer.
+      - name: id_candidat
+        description: Identifiant du candidat titulaire du PASS.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: source('raw_emplois', 'candidats_v0')
+                field: id
+              config:
+                severity: warn
+      - name: id_structure
+        description: Identifiant de la structure employeuse qui a déclenché le PASS.
+      - name: type_structure
+        description: Type de la structure employeuse liée au PASS.
+      - name: siret_structure
+        description: SIRET de la structure employeuse au moment où le PASS a été délivré.
+      - name: nom_structure
+        description: Nom de la structure employeuse au moment où le PASS a été délivré.
+      - name: departement_structure_ou_org_pe
+        description: >
+          Code INSEE du département de la structure employeuse.
+          Pour les anciens agréments, c'est celui de l'organisation Pôle emploi.
+      - name: nom_departement_structure_ou_org_pe
+        description: >
+          Nom du département de la structure employeuse.
+          Pour les anciens agréments, c'est celui de l'organisation Pôle emploi.
+      - name: region_structure_ou_org_pe
+        description: >
+          Nom de la région de la structure employeuse.
+          Pour les anciens agréments, c'est celle de l'organisation Pôle emploi.
+      - name: injection_ai
+        description: >
+          Indique si le PASS vient de la reprise de l'historique des AI (Associations Intermédiaires).
+          1 devient true, 0 devient false et NULL reste NULL.
+          Pour analyser les flux courants, la source recommande de garder les PASS avec injection_ai = 0,
+          soit false ici.
+        data_type: boolean
+      - name: hash_numero_pass_iae
+        description: Numéro du PASS anonymisé par hachage. Il permet de retrouver le PASS sans afficher son vrai numéro.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière mise à jour de cette ligne dans Metabase. La source est mise à jour chaque jour.
+        tests:
+          - not_null
+  - name: stg_emplois__suspensions
+    config:
+      tags:
+        - emplois
+    description: >
+      Une ligne par suspension de PASS (PASS IAE ou ancien agrément Pôle emploi).
+      On garde toutes les colonnes et toutes les lignes de raw_emplois.suspensions_v0,
+      sans jointure, regroupement ni filtre métier. On simplifie les noms de colonnes.
+      Pour en_cours, 1 devient true, 0 devient false et NULL reste NULL.
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('raw_emplois', 'suspensions_v0')
+    columns:
+      - name: id_suspension
+        tests:
+          - not_null
+          - unique
+      - name: id_pass
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_emplois__pass')
+                field: id_pass
+              config:
+                severity: warn
+      - name: date_debut
+      - name: date_fin
+      - name: motif
+      - name: en_cours
+        data_type: boolean
+      - name: date_creation
+      - name: date_mise_a_jour_metabase
+  - name: stg_emplois__prolongations
+    config:
+      tags:
+        - emplois
+    description: Une ligne par prolongation accordée de PASS (PASS IAE ou ancien agrément Pôle emploi).
+      On garde toutes les colonnes et toutes les lignes de la source.
+      On simplifie les noms de colonnes, sans jointure, regroupement ni filtre métier.
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('raw_emplois', 'prolongations')
+    columns:
+      - name: id_prolongation
+        description: Identifiant unique de la prolongation.
+        tests:
+          - not_null
+          - unique
+      - name: id_pass
+        description: Identifiant du PASS prolongé. Un même PASS peut avoir plusieurs prolongations.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_emplois__pass')
+                field: id_pass
+              config:
+                severity: warn
+      - name: date_debut
+        description: >
+          Début de la prolongation. C'est en général la date de fin du PASS initial
+          ou de la prolongation précédente.
+      - name: date_fin
+        description: Fin de la prolongation, conservée telle quelle depuis la source.
+      - name: motif
+        description: Raison pour laquelle le PASS est prolongé.
+        tests:
+          - accepted_values:
+              arguments:
+                # Les apostrophes sont doublées pour les littéraux SQL générés par dbt.
+                values:
+                  - 50 ans et plus
+                  - >-
+                    Difficultés particulièrement importantes dont l''absence de prise en charge
+                    ferait obstacle à son insertion professionnelle
+                  - Fin d''une formation
+                  - Contexte sanitaire
+                  - RQTH - Reconnaissance de la qualité de travailleur handicapé
+                  - CDI conclu avec une personne de plus de 57 ans
+              config:
+                severity: warn
+      - name: id_utilisateur_declarant
+        description: Identifiant de l'utilisateur de la structure qui a déclaré la prolongation.
+      - name: id_structure_declarante
+        description: Identifiant de la structure employeuse qui a déclaré la prolongation.
+      - name: id_organisation_prescripteur
+        description: >
+          Identifiant de l'organisation prescriptrice qui a validé la demande de prolongation.
+          Il est NULL quand la SIAE valide directement, ou pour les prolongations d'avant juillet 2023.
+      - name: id_utilisateur_prescripteur
+        description: Identifiant de l'utilisateur prescripteur qui a traité la demande. NULL si aucun prescripteur n'intervient.
+      - name: date_creation
+        description: Date de création de la prolongation dans le système. On garde le type de la source.
+      - name: id_demande_de_prolongation
+        description: Identifiant de la demande de prolongation liée. Il est NULL pour les prolongations d'avant juillet 2023.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_emplois__demandes_prolongation')
+                field: id_demande_prolongation
+              config:
+                severity: warn
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière mise à jour de cette ligne dans Metabase. La source est mise à jour chaque jour.
+  - name: stg_emplois__demandes_prolongation
+    config:
+      tags:
+        - emplois
+    description: Une ligne par demande de prolongation de PASS (PASS IAE ou ancien agrément Pôle emploi).
+      On garde toutes les colonnes et toutes les lignes de raw_emplois.demandes_de_prolongation.
+      On simplifie les noms de colonnes, sans jointure, regroupement ni filtre métier.
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: source('raw_emplois', 'demandes_de_prolongation')
+    columns:
+      - name: id_demande_prolongation
+        description: Colonne id de la source, renommée id_demande_prolongation.
+        tests:
+          - not_null
+          - unique
+      - name: id_pass
+        description: Colonne id_pass_agrément de la source, renommée id_pass.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_emplois__pass')
+                field: id_pass
+              config:
+                severity: warn
+      - name: date_debut
+      - name: date_fin
+      - name: motif
+      - name: id_utilisateur_declarant
+      - name: id_structure_declarante
+      - name: id_organisation_prescripteur
+      - name: id_utilisateur_prescripteur
+      - name: id_prolongation
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_emplois__prolongations')
+                field: id_prolongation
+              config:
+                severity: warn
+      - name: etat
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Acceptée
+                  - Refusée
+                  - À traiter
+      - name: motif_de_refus
+      - name: date_de_demande
+      - name: date_traitement
+      - name: id_utilisateur_traitant
+      - name: date_envoi_rappel
+      - name: date_mise_a_jour_metabase
+
   - name: stg_emplois__orientations
     description: >-
       Liste des orientations émises par la plateforme (les Emplois).
@@ -315,7 +789,6 @@ models:
           Certains services sont désactivés temporairement, le temps d'un weekend par exemple.
       - name: date_mise_a_jour_metabase
         description: Date de dernière synchronisation dans Metabase.
-
   - name: stg_emplois__structures
     description: >
       Structures employeuses inscrites sur les Emplois de l'Inclusion (SIAE, GEIQ, EA, EATT, OPCS).
@@ -452,7 +925,6 @@ models:
         description: Nombre de fiches de poste fermées.
       - name: date_mise_a_jour_metabase
         description: Date de la dernière synchronisation de la ligne dans Metabase.
-
   - name: stg_emplois__organisations
     description: >
       Organisations prescriptrices et orienteuses inscrites sur les Emplois de l'Inclusion
