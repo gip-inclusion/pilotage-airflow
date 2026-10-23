@@ -192,6 +192,7 @@ models:
     description: >
       Table des candidats (aussi appelés usagers ou bénéficiaires en fonction du contexte).
       Cette table contient également les diagnostics d’éligibilité et les critères administratifs associés.
+      Dans cette documentation, un PASS désigne un PASS IAE ou un ancien agrément Pôle emploi.
       Une colonne par critère, au format `critere_n1_*` et `critere_n2_*`, non documenté exhaustivement.
       Pour les critères certifiables, il y a trois colonnes ; les deux colonnes supplémentaires indiquent la date de certication du critère et la période de validité.
     tests:
@@ -339,26 +340,27 @@ models:
       - name: critere_n2_probleme_de_mobilite
       - name: injection_ai
         description: >
-          Fait partie de l’import massif des PASS IAE (sans diagnostic) réalisé le 30 novembre 2021.
+          Fait partie de l’import massif des PASS (sans diagnostic) réalisé le 30 novembre 2021.
       - name: date_mise_a_jour_metabase
         description: >
           Date de la dernière synchronisation de cette ligne dans Metabase.
           Mise à jour quotidienne.
 
-  - name: stg_emplois__pass_iae
+  - name: stg_emplois__pass
     config:
       tags:
         - emplois
     description: >
-      On garde tous les titres de emplois.pass_agréments. Ici, on simplifie les noms.
-      On ramène les types à PASS IAE ou Agrément PE.
+      On garde tous les PASS de emplois.pass_agréments. Un PASS désigne ici un PASS IAE
+      ou un ancien agrément Pôle emploi. On simplifie les noms et on normalise type_pass
+      avec les valeurs PASS IAE ou Agrément PE.
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: source('emplois', 'pass_agréments')
     columns:
-      - name: id_pass_iae
-        description: Identifiant unique du PASS IAE ou de l'agrément.
+      - name: id_pass
+        description: Identifiant unique du PASS.
         tests:
           - not_null
           - unique
@@ -377,7 +379,7 @@ models:
                   - PASS IAE
                   - Agrément PE
       - name: date_debut
-        description: Début de validité du PASS IAE. C'est en général la date d'embauche du candidat.
+        description: Début de validité du PASS. C'est en général la date d'embauche du candidat.
         tests:
           - not_null
       - name: date_fin
@@ -390,7 +392,7 @@ models:
         description: >
           On garde la durée fournie par la source, sans la recalculer.
       - name: id_candidat
-        description: Identifiant du candidat qui a le PASS IAE.
+        description: Identifiant du candidat titulaire du PASS.
         tests:
           - not_null
           - relationships:
@@ -400,13 +402,13 @@ models:
               config:
                 severity: warn
       - name: id_structure
-        description: Identifiant de la structure employeuse qui a déclenché le PASS IAE.
+        description: Identifiant de la structure employeuse qui a déclenché le PASS.
       - name: type_structure
-        description: Type de la structure employeuse liée au PASS IAE.
+        description: Type de la structure employeuse liée au PASS.
       - name: siret_structure
-        description: SIRET de la structure employeuse au moment où le PASS IAE a été délivré.
+        description: SIRET de la structure employeuse au moment où le PASS a été délivré.
       - name: nom_structure
-        description: Nom de la structure employeuse au moment où le PASS IAE a été délivré.
+        description: Nom de la structure employeuse au moment où le PASS a été délivré.
       - name: departement_structure_ou_org_pe
         description: >
           Code INSEE du département de la structure employeuse.
@@ -427,7 +429,7 @@ models:
           soit false ici.
         data_type: boolean
       - name: hash_numero_pass_iae
-        description: Numéro du PASS IAE anonymisé par hachage. Il permet de retrouver le PASS sans afficher son vrai numéro.
+        description: Numéro du PASS anonymisé par hachage. Il permet de retrouver le PASS sans afficher son vrai numéro.
       - name: date_mise_a_jour_metabase
         description: Date de la dernière mise à jour de cette ligne dans Metabase. La source est mise à jour chaque jour.
         tests:
@@ -437,7 +439,7 @@ models:
       tags:
         - emplois
     description: >
-      Une ligne par suspension de PASS IAE ou d'ancien agrément.
+      Une ligne par suspension de PASS (PASS IAE ou ancien agrément Pôle emploi).
       On garde toutes les colonnes et toutes les lignes de raw_emplois.suspensions_v0,
       sans jointure, regroupement ni filtre métier. On simplifie les noms de colonnes.
       Pour en_cours, 1 devient true, 0 devient false et NULL reste NULL.
@@ -450,13 +452,13 @@ models:
         tests:
           - not_null
           - unique
-      - name: id_pass_iae
+      - name: id_pass
         tests:
           - not_null
           - relationships:
               arguments:
-                to: ref('stg_emplois__pass_iae')
-                field: id_pass_iae
+                to: ref('stg_emplois__pass')
+                field: id_pass
               config:
                 severity: warn
       - name: date_debut
@@ -470,7 +472,8 @@ models:
     config:
       tags:
         - emplois
-    description: Une ligne par prolongation accordée. On garde toutes les colonnes et toutes les lignes de la source.
+    description: Une ligne par prolongation accordée de PASS (PASS IAE ou ancien agrément Pôle emploi).
+      On garde toutes les colonnes et toutes les lignes de la source.
       On simplifie les noms de colonnes, sans jointure, regroupement ni filtre métier.
     tests:
       - dbt_utils.equal_rowcount:
@@ -482,14 +485,14 @@ models:
         tests:
           - not_null
           - unique
-      - name: id_pass_iae
-        description: Identifiant du PASS IAE prolongé. Un même PASS peut avoir plusieurs prolongations.
+      - name: id_pass
+        description: Identifiant du PASS prolongé. Un même PASS peut avoir plusieurs prolongations.
         tests:
           - not_null
           - relationships:
               arguments:
-                to: ref('stg_emplois__pass_iae')
-                field: id_pass_iae
+                to: ref('stg_emplois__pass')
+                field: id_pass
               config:
                 severity: warn
       - name: date_debut
@@ -499,7 +502,7 @@ models:
       - name: date_fin
         description: Fin de la prolongation, conservée telle quelle depuis la source.
       - name: motif
-        description: Raison pour laquelle le PASS IAE est prolongé.
+        description: Raison pour laquelle le PASS est prolongé.
       - name: id_utilisateur_declarant
         description: Identifiant de l'utilisateur de la structure qui a déclaré la prolongation.
       - name: id_structure_declarante
@@ -527,7 +530,8 @@ models:
     config:
       tags:
         - emplois
-    description: Une ligne par demande de prolongation de PASS IAE. On garde toutes les colonnes et toutes les lignes de raw_emplois.demandes_de_prolongation.
+    description: Une ligne par demande de prolongation de PASS (PASS IAE ou ancien agrément Pôle emploi).
+      On garde toutes les colonnes et toutes les lignes de raw_emplois.demandes_de_prolongation.
       On simplifie les noms de colonnes, sans jointure, regroupement ni filtre métier.
     tests:
       - dbt_utils.equal_rowcount:
@@ -539,14 +543,14 @@ models:
         tests:
           - not_null
           - unique
-      - name: id_pass_iae
-        description: Colonne id_pass_agrément de la source, renommée id_pass_iae.
+      - name: id_pass
+        description: Colonne id_pass_agrément de la source, renommée id_pass.
         tests:
           - not_null
           - relationships:
               arguments:
-                to: ref('stg_emplois__pass_iae')
-                field: id_pass_iae
+                to: ref('stg_emplois__pass')
+                field: id_pass
               config:
                 severity: warn
       - name: date_debut

@@ -10,7 +10,8 @@ models:
       administrateur et si la personne n'a encore déposé aucune candidature. Les candidats peuvent postuler dans
       des SIAE ou dans des structures hors parcours IAE. La table décrit le profil, la commune de résidence,
       l'utilisation de la plateforme, le dernier diagnostic d'éligibilité et les critères administratifs associés.
-      Elle indique aussi le respect des seuils de critères pour l'éligibilité IAE et résume les PASS IAEA du candidat.
+      Elle indique aussi le respect des seuils de critères pour l'éligibilité IAE et résume les PASS du candidat.
+      Un PASS désigne ici un PASS IAE ou un ancien agrément Pôle emploi.
       Référence métier des critères d'éligibilité IAE :
       https://aide.emplois.inclusion.beta.gouv.fr/hc/fr/articles/14733921254161--Les-crit%C3%A8res-d-%C3%A9ligibilit%C3%A9-IAE
     tests:
@@ -217,7 +218,7 @@ models:
         data_type: boolean
       - name: injection_ai
         description: >-
-          Indique si le candidat fait partie de l'import massif des PASS IAE réalisé le 30 novembre 2021, sans
+          Indique si le candidat fait partie de l'import massif des PASS réalisé le 30 novembre 2021, sans
           diagnostic d'éligibilité, pour les associations intermédiaires (AI).
       - name: date_mise_a_jour_metabase
         description: >-
@@ -227,7 +228,7 @@ models:
         description: >-
           Indique si le candidat satisfait les seuils de critères administratifs pour les SIAE hors ETTI et AI :
           au moins un critère de niveau 1 ou au moins trois critères de niveau 2. Cet indicateur ne prouve ni la
-          validité d'un diagnostic ni la détention d'un PASS IAE. Un seuil satisfait suffit ; si aucun seuil n'est
+          validité d'un diagnostic ni la détention d'un PASS. Un seuil satisfait suffit ; si aucun seuil n'est
           satisfait, y compris faute de total renseigné, vaut false.
         data_type: boolean
       - name: is_eligible_pass_iae_etti_ai
@@ -235,56 +236,56 @@ models:
           Indique si le candidat satisfait les seuils de critères administratifs pour les entreprises de travail
           temporaire d'insertion (ETTI) et les associations intermédiaires (AI) : au moins un critère de niveau 1
           ou au moins deux critères de niveau 2. Cet indicateur ne prouve ni la validité d'un diagnostic ni la
-          détention d'un PASS IAE. Un seuil satisfait suffit ; si aucun seuil n'est satisfait, y compris faute de
+          détention d'un PASS. Un seuil satisfait suffit ; si aucun seuil n'est satisfait, y compris faute de
           total renseigné, vaut false.
         data_type: boolean
 
-      - name: nombre_pass_iae
+      - name: nombre_pass
         description: >-
-          Nombre de titres du candidat, en incluant les PASS IAE et les anciens agréments Pôle emploi. Tous les
-          états sont comptés, y compris les titres à venir. Vaut 0 si le candidat n'a aucun titre.
+          Nombre de PASS du candidat. Tous les états sont comptés, y compris les PASS à venir.
+          Vaut 0 si le candidat n'a aucun PASS.
         data_type: bigint
       - name: date_debut_premier_pass_iae
         description: >-
-          Date de début la plus ancienne parmi les titres du candidat, PASS IAE et anciens agréments Pôle emploi
-          inclus. Vaut NULL si le candidat n'a aucun titre ou si aucune date de début n'est connue.
+          Date de début la plus ancienne parmi les PASS du candidat.
+          Vaut NULL si le candidat n'a aucun PASS ou si aucune date de début n'est connue.
       - name: date_debut_dernier_pass_iae
         description: >-
-          Date de début du titre le plus récent du candidat, PASS IAE ou ancien agrément Pôle emploi, même s'il
-          n'a pas encore commencé. Le titre le plus récent est celui dont la date de début est la plus récente ;
+          Date de début du PASS le plus récent du candidat, même s'il n'a pas encore commencé.
+          Le PASS le plus récent est celui dont la date de début est la plus récente ;
           à égalité, on retient la date de fin la plus récente, puis l'identifiant le plus élevé.
-          Les dates inconnues passent après les dates connues. Vaut NULL si le candidat n'a aucun titre ou si la
-          date de début du titre retenu est inconnue.
+          Les dates inconnues passent après les dates connues. Vaut NULL si le candidat n'a aucun PASS ou si la
+          date de début du PASS retenu est inconnue.
       - name: date_fin_dernier_pass_iae
         description: >-
-          Dernier jour de validité, inclus, du titre décrit par date_debut_dernier_pass_iae. Vaut NULL si le
-          candidat n'a aucun titre ou si la date de fin de ce titre est inconnue.
+          Dernier jour de validité, inclus, du PASS décrit par date_debut_dernier_pass_iae. Vaut NULL si le
+          candidat n'a aucun PASS ou si la date de fin de ce PASS est inconnue.
       - name: statut_dernier_pass_iae
         description: >-
-          État du titre le plus récent du candidat à la dernière mise à jour des données :
+          État du PASS le plus récent du candidat à la dernière mise à jour des données :
           « Actif », « Suspendu », « Expiré » ou « À venir ».
-          Il s'agit du même titre que date_debut_dernier_pass_iae, PASS IAE ou
-          ancien agrément Pôle emploi. « Sans PASS IAE » signifie que le candidat n'a aucun titre. Vaut NULL si le
-          candidat a un titre dont l'état n'est pas connu.
+          Il s'agit du même PASS que date_debut_dernier_pass_iae.
+          La valeur technique « Sans PASS IAE » signifie que le candidat n'a aucun PASS, quel que soit son type.
+          Vaut NULL si le candidat a un PASS dont l'état n'est pas connu.
         tests:
           - accepted_values:
               arguments:
                 values: ['Sans PASS IAE', 'Actif', 'Suspendu', 'Expiré', 'À venir']
 
-  - name: fct_emplois__pass_iae
+  - name: fct_emplois__pass
     config:
       tags:
         - emplois
     description: >-
-      Cette table rassemble les PASS IAE et les anciens agréments Pôle emploi,
-      y compris ceux repris de l’historique des AI. Chaque ligne correspond à un titre,
+      Cette table rassemble les PASS. Un PASS désigne ici un PASS IAE ou un ancien agrément Pôle emploi,
+      y compris ceux repris de l’historique des AI. Chaque ligne correspond à un PASS,
       avec son candidat, sa structure, ses dates de validité et sa durée.
       On y retrouve son état à la dernière mise à jour : actif, suspendu, expiré ou à venir.
       Elle résume aussi ses suspensions, ses prolongations accordées et ses demandes de prolongation,
-      avec leur nombre et leurs principales dates. Un candidat peut avoir plusieurs titres, donc plusieurs lignes.
+      avec leur nombre et leurs principales dates. Un candidat peut avoir plusieurs PASS, donc plusieurs lignes.
     columns:
-      - name: id_pass_iae
-        description: Identifiant du PASS IAE ou de l’ancien agrément.
+      - name: id_pass
+        description: Identifiant du PASS.
         tests:
           - not_null
           - unique
@@ -299,7 +300,7 @@ models:
               config:
                 severity: warn
       - name: type_pass
-        description: PASS IAE ou Agrément PE, déjà normalisé dans le staging.
+        description: Type du PASS, avec les valeurs PASS IAE ou Agrément PE, déjà normalisé dans le staging.
         tests:
           - not_null
           - accepted_values:
@@ -308,18 +309,18 @@ models:
                   - PASS IAE
                   - Agrément PE
       - name: hash_numero_pass_iae
-        description: Empreinte du numéro du titre, sans exposer le numéro.
+        description: Empreinte du numéro du PASS, sans exposer le numéro.
       - name: injection_ai
         description: >-
           true pour un PASS issu de l’import des données ASP de salariés déjà en poste
           dans une association intermédiaire (AI). C’est ce qu’on appelle la reprise de stock AI.
           Ces personnes étaient déjà dans le parcours : leur import ne correspond pas à une nouvelle entrée.
-          false pour un titre qui ne vient pas de cette reprise ; NULL si l’information manque.
+          false pour un PASS qui ne vient pas de cette reprise ; NULL si l’information manque.
         data_type: boolean
       - name: id_structure
         description: Identifiant de la structure disponible dans la source. Aucun filtre sur son type.
       - name: date_debut
-        description: Premier jour de validité du titre.
+        description: Premier jour de validité du PASS.
         tests:
           - not_null
       - name: date_fin
@@ -330,7 +331,7 @@ models:
       - name: duree
         description: Durée fournie par la source.
       - name: nombre_suspensions
-        description: Nombre total de suspensions du titre, terminées ou en cours. Vaut zéro en l’absence d’événement.
+        description: Nombre total de suspensions du PASS, terminées ou en cours. Vaut zéro en l’absence d’événement.
         tests:
           - not_null
       - name: date_premiere_suspension
@@ -386,7 +387,7 @@ models:
       - name: date_derniere_demande_prolongation
         description: Dernière date de demande de prolongation. Vaut NULL si aucun jalon n’existe.
       - name: date_dernier_traitement_demande
-        description: Dernier horodatage de traitement, toutes demandes du titre confondues. Peut concerner une demande
+        description: Dernier horodatage de traitement, toutes demandes du PASS confondues. Peut concerner une demande
           plus ancienne. Vaut NULL si aucun jalon n’existe.
       - name: etat_derniere_demande_prolongation
         description: État de la dernière demande, choisie par date de demande puis par identifiant décroissant. Les
@@ -406,15 +407,15 @@ models:
                   - Actif
       - name: is_pass_valide
         description: >-
-          Vaut true si le titre a commencé à la date d’exécution du modèle
+          Vaut true si le PASS a commencé à la date d’exécution du modèle
           et si sa date de fin n’est pas dépassée. Les bornes sont incluses. Une date de fin manquante
-          dans la source ne rend pas le titre valide. Une suspension ne change pas la validité du titre.
+          dans la source ne rend pas le PASS valide. Une suspension ne change pas la validité du PASS.
         data_type: boolean
         tests:
           - not_null
       - name: is_pass_actif
         description: >-
-          Indique si le titre est encore valide et n’a pas de suspension en cours
+          Indique si le PASS est encore valide et n’a pas de suspension en cours
           au moment de la mise à jour de la table.
         data_type: boolean
         tests:

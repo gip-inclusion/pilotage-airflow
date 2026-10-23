@@ -31,22 +31,22 @@ pass_iae_classes as (
         date_debut,
         date_fin,
         statut_pass,
-        count(*) over (partition by id_candidat)        as nombre_pass_iae,
+        count(*) over (partition by id_candidat)        as nombre_pass,
         min(date_debut) over (partition by id_candidat) as date_debut_premier_pass_iae,
         row_number() over (
             partition by id_candidat
             order by
                 date_debut desc nulls last,
                 date_fin desc nulls last,
-                id_pass_iae desc
+                id_pass desc
         )                                               as rang
-    from {{ ref('fct_emplois__pass_iae') }}
+    from {{ ref('fct_emplois__pass') }}
 ),
 
 dernier_pass_iae as (
     select
         id_candidat,
-        nombre_pass_iae,
+        nombre_pass,
         date_debut_premier_pass_iae,
         date_debut as date_debut_dernier_pass_iae,
         date_fin   as date_fin_dernier_pass_iae,
@@ -114,7 +114,7 @@ final as (
             when pass_iae.id_candidat is null then 'Sans PASS IAE'
             else pass_iae.statut_pass
         end                                                        as statut_dernier_pass_iae,
-        coalesce(pass_iae.nombre_pass_iae, 0)                      as nombre_pass_iae
+        coalesce(pass_iae.nombre_pass, 0)                          as nombre_pass
     from candidats_avec_criteres as candidats
     left join geographie
         on candidats.id = geographie.id_candidat

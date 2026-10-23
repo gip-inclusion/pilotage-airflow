@@ -1,6 +1,6 @@
 select
     id                          as id_suspension,
-    "id_pass_agrément"          as id_pass_iae,
+    "id_pass_agrément"          as id_pass,
     "date_début"                as date_debut,
     date_fin,
     motif,
