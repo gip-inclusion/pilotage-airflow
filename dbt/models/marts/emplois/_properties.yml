@@ -125,6 +125,12 @@ models:
         description: >-
           Indique si le critère administratif de niveau 1 « bénéficiaire du revenu de solidarité active (RSA) »
           est associé au diagnostic d'éligibilité du candidat.
+      - name: date_certification_rsa
+        description: >-
+          Date de vérification automatique du critère RSA.
+      - name: periode_certification_rsa
+        description: >-
+          Période de certification du critère RSA.
       - name: critere_n1_allocataire_ass
         description: >-
           Indique si le critère administratif de niveau 1 « allocataire de l'allocation de solidarité spécifique
@@ -133,10 +139,17 @@ models:
         description: >-
           Indique si le critère administratif de niveau 1 « allocataire de l'allocation aux adultes handicapés
           (AAH) » est associé au diagnostic d'éligibilité du candidat.
+      - name: date_certification_aah
+        description: >-
+          Date de vérification automatique du critère AAH.
+      - name: periode_certification_aah
+        description: >-
+          Période de certification du critère AAH, reprise du staging.
       - name: critere_n1_detld_plus_de_24_mois
         description: >-
-          Indique si le critère administratif de niveau 1 « demandeur d'emploi de très longue durée, depuis plus
-          de 24 mois » est associé au diagnostic d'éligibilité du candidat.
+          Indique si le critère administratif de niveau 1 « demandeur d'emploi de très longue durée, avec au moins
+          24 mois d'inscription à France Travail sur les 27 derniers mois » est associé au diagnostic d'éligibilité
+          du candidat.
       - name: critere_n2_niveau_d_etude_3_cap_bep_ou_infra
         description: >-
           Indique si le critère administratif de niveau 2 « niveau d'études 3 (CAP, BEP) ou inférieur » est
@@ -155,24 +168,37 @@ models:
           associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_deld_12_a_24_mois
         description: >-
-          Indique si le critère administratif de niveau 2 « demandeur d'emploi de longue durée, depuis 12 à 24
-          mois » est associé au diagnostic d'éligibilité du candidat.
+          Indique si le critère administratif de niveau 2 « demandeur d'emploi de longue durée, avec au moins
+          12 mois d'inscription à France Travail sur les 15 derniers mois » est associé au diagnostic d'éligibilité
+          du candidat.
       - name: critere_n2_travailleur_handicape
         description: >-
           Indique si le critère administratif de niveau 2 « travailleur handicapé » est associé au diagnostic
           d'éligibilité du candidat.
+      - name: date_certification_travailleur_handicape
+        description: >-
+          Date de vérification automatique du critère handicap.
+      - name: periode_certification_travailleur_handicape
+        description: >-
+          Période de certification du critère handicap.
       - name: critere_n2_parent_isole
         description: >-
           Indique si le critère administratif de niveau 2 « parent isolé » est associé au diagnostic d'éligibilité
           du candidat.
+      - name: date_certification_parent_isole
+        description: >-
+          Date de vérification automatique du critère parent isolé.
+      - name: periode_certification_parent_isole
+        description: >-
+          Période de certification du critère parent isolé, reprise du staging.
       - name: critere_n2_personne_sans_hebergement_ou_hebergee_ou_ayant_u
         description: >-
           Indique si le critère administratif de niveau 2 « situation de précarité de l'hébergement » est associé
           au diagnostic d'éligibilité du candidat.
       - name: critere_n2_refugie_statutaire_beneficiaire_d_une_protectio
         description: >-
-          Indique si le critère administratif de niveau 2 « réfugié statutaire ou bénéficiaire d'une protection »
-          est associé au diagnostic d'éligibilité du candidat.
+          Indique si le critère administratif de niveau 2 « réfugié statutaire, bénéficiaire d'une protection
+          temporaire ou subsidiaire, ou demandeur d'asile » est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_resident_zrr
         description: >-
           Indique si le critère administratif de niveau 2 « résident en zone de revitalisation rurale (ZRR) » est
@@ -187,7 +213,7 @@ models:
           justice » est associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_maitrise_de_la_langue_francaise_inferieure_au_ni
         description: >-
-          Indique si le critère administratif de niveau 2 « maîtrise insuffisante de la langue française » est
+          Indique si le critère administratif de niveau 2 « niveau de français inférieur à A1 » est
           associé au diagnostic d'éligibilité du candidat.
       - name: critere_n2_probleme_de_mobilite
         description: >-

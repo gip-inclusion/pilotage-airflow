@@ -193,8 +193,10 @@ models:
       Table des candidats (aussi appelés usagers ou bénéficiaires en fonction du contexte).
       Cette table contient également les diagnostics d’éligibilité et les critères administratifs associés.
       Dans cette documentation, un PASS désigne un PASS IAE ou un ancien agrément Pôle emploi.
-      Une colonne par critère, au format `critere_n1_*` et `critere_n2_*`, non documenté exhaustivement.
-      Pour les critères certifiables, il y a trois colonnes ; les deux colonnes supplémentaires indiquent la date de certication du critère et la période de validité.
+      Les colonnes critere_n1_* et critere_n2_* reprennent ce qui est coché dans le diagnostic :
+      true = critère retenu, false = non retenu, NULL = pas renseigné. On ne recalcule pas les critères.
+      Règles métier :
+      https://aide.emplois.inclusion.beta.gouv.fr/hc/fr/articles/14733921254161--Les-crit%C3%A8res-d-%C3%A9ligibilit%C3%A9-IAE
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -313,37 +315,89 @@ models:
         description: >
           Type de la structure de la dernière embauche, c’est-à-dire ayant accepté une candidature.
       - name: total_criteres_niveau_1
-        description: >
-          Nombre de critères de niveau 1.
+        description: >-
+          Nombre de critères de niveau 1 retenus dans le diagnostic.
       - name: total_criteres_niveau_2
-        description: >
-          Nombre de critères de niveau 2.
+        description: >-
+          Nombre de critères de niveau 2 retenus dans le diagnostic.
       - name: critere_n1_beneficiaire_du_rsa
+        description: >-
+          Niveau 1. Le candidat touche le RSA (revenu de solidarité active).
       - name: critere_n1_beneficiaire_du_rsa_date_certification
+        description: >-
+          Date de vérification automatique du critère RSA, fournie par la source.
       - name: critere_n1_beneficiaire_du_rsa_periode_certification
+        description: >-
+          Période de certification du critère RSA, reprise telle quelle de la source.
       - name: critere_n1_allocataire_ass
+        description: >-
+          Niveau 1. Le candidat touche l'ASS (allocation de solidarité spécifique).
       - name: critere_n1_allocataire_aah
+        description: >-
+          Niveau 1. Le candidat touche l'AAH (allocation aux adultes handicapés).
       - name: critere_n1_allocataire_aah_date_certification
+        description: >-
+          Date de vérification automatique du critère AAH, fournie par la source.
       - name: critere_n1_allocataire_aah_periode_certification
+        description: >-
+          Période de certification du critère AAH, reprise telle quelle de la source.
       - name: critere_n1_detld_plus_de_24_mois
+        description: >-
+          Niveau 1. Au moins 24 mois d'inscription à France Travail sur les 27 derniers mois.
       - name: critere_n2_niveau_d_etude_3_cap_bep_ou_infra
+        description: >-
+          Niveau 2. CAP, BEP ou niveau d'études inférieur.
       - name: critere_n2_senior_plus_de_50_ans
+        description: >-
+          Niveau 2. Le candidat a plus de 50 ans.
       - name: critere_n2_jeune_moins_de_26_ans
+        description: >-
+          Niveau 2. Le candidat a moins de 26 ans.
       - name: critere_n2_sortant_de_l_ase
+        description: >-
+          Niveau 2. Le candidat sort de l'aide sociale à l'enfance (ASE).
       - name: critere_n2_deld_12_a_24_mois
+        description: >-
+          Niveau 2. Au moins 12 mois d'inscription à France Travail sur les 15 derniers mois.
       - name: critere_n2_travailleur_handicape
+        description: >-
+          Niveau 2. Le candidat est reconnu travailleur handicapé.
       - name: critere_n2_travailleur_handicape_date_certification
+        description: >-
+          Date de vérification automatique du critère handicap, fournie par la source.
       - name: critere_n2_travailleur_handicape_periode_certification
+        description: >-
+          Période de certification du critère handicap, reprise telle quelle de la source.
       - name: critere_n2_parent_isole
+        description: >-
+          Niveau 2. Le candidat élève seul son ou ses enfants.
       - name: critere_n2_parent_isole_date_certification
+        description: >-
+          Date de vérification automatique du critère parent isolé, fournie par la source.
       - name: critere_n2_parent_isole_periode_certification
+        description: >-
+          Période de certification du critère parent isolé, reprise telle quelle de la source.
       - name: critere_n2_personne_sans_hebergement_ou_hebergee_ou_ayant_u
+        description: >-
+          Niveau 2. Le candidat est sans hébergement, est hébergé ou a connu la rue.
       - name: critere_n2_refugie_statutaire_beneficiaire_d_une_protectio
+        description: >-
+          Niveau 2. Le candidat est réfugié, sous protection temporaire ou subsidiaire, ou demandeur d'asile.
       - name: critere_n2_resident_zrr
+        description: >-
+          Niveau 2. Le candidat habite une zone de revitalisation rurale (ZRR).
       - name: critere_n2_resident_qpv
+        description: >-
+          Niveau 2. Le candidat habite un quartier prioritaire de la politique de la ville (QPV).
       - name: critere_n2_sortant_de_detention_ou_personne_placee_sous_main
+        description: >-
+          Niveau 2. Le candidat sort de prison ou est placé sous main de justice.
       - name: critere_n2_maitrise_de_la_langue_francaise_inferieure_au_ni
+        description: >-
+          Niveau 2. Son niveau de français est inférieur à A1.
       - name: critere_n2_probleme_de_mobilite
+        description: >-
+          Niveau 2. Un prescripteur habilité a repéré des difficultés de déplacement.
       - name: injection_ai
         description: >
           Fait partie de l’import massif des PASS (sans diagnostic) réalisé le 30 novembre 2021.

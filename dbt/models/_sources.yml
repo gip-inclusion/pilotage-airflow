@@ -358,8 +358,10 @@ sources:
         description: >
          Table des candidats (aussi appelés usagers ou bénéficiaires en fonction du contexte).
          Cette table contient également les diagnostics d’éligibilité et les critères administratifs associés.
-         Une colonne par critère, au format `critère_n1_*` et `critère_n2_*`, non documenté exhaustivement.
-         Pour les critères certifiables, il y a trois colonnes ; les deux colonnes supplémentaires indiquent la date de certication du critère et la période de validité.
+         Une colonne par critère, au format `critère_n1_*` et `critère_n2_*` : 1 = critère retenu dans le diagnostic,
+         0 = non retenu, NULL = pas renseigné.
+         Référence métier :
+         https://aide.emplois.inclusion.beta.gouv.fr/hc/fr/articles/14733921254161--Les-crit%C3%A8res-d-%C3%A9ligibilit%C3%A9-IAE
         columns:
           - name: id
             description: >
@@ -499,113 +501,173 @@ sources:
               Date de la dernière synchronisation de cette ligne dans Metabase.
               Mise à jour quotidienne.
           - name: critère_n1_bénéficiaire_du_rsa
+            description: >-
+              Niveau 1. Le candidat touche le RSA (revenu de solidarité active).
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n1_allocataire_ass
+            description: >-
+              Niveau 1. Le candidat touche l'ASS (allocation de solidarité spécifique).
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n1_allocataire_aah
+            description: >-
+              Niveau 1. Le candidat touche l'AAH (allocation aux adultes handicapés).
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n1_detld_plus_de_24_mois
+            description: >-
+              Niveau 1. Au moins 24 mois d'inscription à France Travail sur les 27 derniers mois.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_niveau_d_étude_3_cap_bep_ou_infra
+            description: >-
+              Niveau 2. CAP, BEP ou niveau d'études inférieur.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_senior_plus_de_50_ans
+            description: >-
+              Niveau 2. Le candidat a plus de 50 ans.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_jeune_moins_de_26_ans
+            description: >-
+              Niveau 2. Le candidat a moins de 26 ans.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_sortant_de_l_ase
+            description: >-
+              Niveau 2. Le candidat sort de l'aide sociale à l'enfance (ASE).
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_deld_12_à_24_mois
+            description: >-
+              Niveau 2. Au moins 12 mois d'inscription à France Travail sur les 15 derniers mois.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_travailleur_handicapé
+            description: >-
+              Niveau 2. Le candidat est reconnu travailleur handicapé.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_parent_isolé
+            description: >-
+              Niveau 2. Le candidat élève seul son ou ses enfants.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_personne_sans_hébergement_ou_hébergée_ou_ayant_u
+            description: >-
+              Niveau 2. Le candidat est sans hébergement, est hébergé ou a connu la rue.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_réfugié_statutaire_bénéficiaire_d_une_protectio
+            description: >-
+              Niveau 2. Le candidat est réfugié, sous protection temporaire ou subsidiaire, ou demandeur d'asile.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_résident_zrr
+            description: >-
+              Niveau 2. Le candidat habite une zone de revitalisation rurale (ZRR).
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_résident_qpv
+            description: >-
+              Niveau 2. Le candidat habite un quartier prioritaire de la politique de la ville (QPV).
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_sortant_de_détention_ou_personne_placée_sous_main
+            description: >-
+              Niveau 2. Le candidat sort de prison ou est placé sous main de justice.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_maîtrise_de_la_langue_française_inférieure_au_ni
+            description: >-
+              Niveau 2. Son niveau de français est inférieur à A1.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
           - name: critère_n2_problème_de_mobilité
+            description: >-
+              Niveau 2. Un prescripteur habilité a repéré des difficultés de déplacement.
             tests:
               - accepted_values:
                   arguments:
                     values: [0, 1]
                     quote: false
+          - name: critère_n1_bénéficiaire_du_rsa_date_certification
+            description: >-
+              Date de vérification automatique du critère RSA.
+          - name: critère_n1_bénéficiaire_du_rsa_période_certification
+            description: >-
+              Période de certification du critère RSA.
+          - name: critère_n1_allocataire_aah_date_certification
+            description: >-
+              Date de vérification automatique du critère AAH.
+          - name: critère_n1_allocataire_aah_période_certification
+            description: >-
+              Période de certification du critère AAH.
+          - name: critère_n2_travailleur_handicapé_date_certification
+            description: >-
+              Date de vérification automatique du critère handicap.
+          - name: critère_n2_travailleur_handicapé_période_certification
+            description: >-
+              Période de certification du critère handicap.
+          - name: critère_n2_parent_isolé_date_certification
+            description: >-
+              Date de vérification automatique du critère parent isolé.
+          - name: critère_n2_parent_isolé_période_certification
+            description: >-
+              Période de certification du critère parent isolé.
       - name: utilisateurs_v0
       - name: collaborations
         description: >
