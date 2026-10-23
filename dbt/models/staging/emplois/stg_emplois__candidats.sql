@@ -12,7 +12,7 @@ select
     date_premiere_connexion,
     code_insee                                                              as code_commune_insee,
     code_postal,
-    "département"                                                           as departement,
+    nullif(trim("département"), '')                                         as departement,
     "nom_département"                                                       as nom_departement,
     "région"                                                                as region,
     adresse_en_qpv,
