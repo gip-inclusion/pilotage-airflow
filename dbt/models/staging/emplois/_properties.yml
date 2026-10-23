@@ -234,6 +234,12 @@ models:
       - name: type_inscription
         description: >
           Type de l’inscription : `autonome`, `par professionnel` ou `par administrateur`.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['autonome', 'par professionnel', 'par administrateur']
+              config:
+                severity: warn
       - name: pe_connect
         description: >
           Vrai si le candidat utilise France Travail Connect.
@@ -503,6 +509,21 @@ models:
         description: Fin de la prolongation, conservée telle quelle depuis la source.
       - name: motif
         description: Raison pour laquelle le PASS est prolongé.
+        tests:
+          - accepted_values:
+              arguments:
+                # Les apostrophes sont doublées pour les littéraux SQL générés par dbt.
+                values:
+                  - 50 ans et plus
+                  - >-
+                    Difficultés particulièrement importantes dont l''absence de prise en charge
+                    ferait obstacle à son insertion professionnelle
+                  - Fin d''une formation
+                  - Contexte sanitaire
+                  - RQTH - Reconnaissance de la qualité de travailleur handicapé
+                  - CDI conclu avec une personne de plus de 57 ans
+              config:
+                severity: warn
       - name: id_utilisateur_declarant
         description: Identifiant de l'utilisateur de la structure qui a déclaré la prolongation.
       - name: id_structure_declarante
