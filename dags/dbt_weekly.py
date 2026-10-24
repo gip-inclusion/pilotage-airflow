@@ -2,6 +2,7 @@ from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG, Param, task
 
 from dags.common import db, dbt, default_dag_args, slack
+from dags.common.anonymize_sensitive_columns import WEEKLY_TABLES_TO_ANONYMIZE, anonymize_nir
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -9,7 +10,9 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 with DAG(
     dag_id="dbt_weekly",
     schedule=None,
-    params={"full_refresh": Param(False, type="boolean")},
+    params={
+        "full_refresh": Param(False, type="boolean"),
+    },
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()
@@ -59,4 +62,13 @@ with DAG(
         append_env=True,
     )
 
-    (params_check() >> dbt_debug >> dbt_deps >> dbt_seed >> dbt_run >> dbt_test >> slack.success_notifying_task())
+    (
+        params_check()
+        >> anonymize_nir(WEEKLY_TABLES_TO_ANONYMIZE)
+        >> dbt_debug
+        >> dbt_deps
+        >> dbt_seed
+        >> dbt_run
+        >> dbt_test
+        >> slack.success_notifying_task()
+    )
