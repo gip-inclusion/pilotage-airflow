@@ -1,5 +1,5 @@
 select
-    {{ pilo_star(source('raw_emplois','structures_v0'), except=['source', 'ville'], relation_alias='struct') }},
+    {{ pilo_star(source('raw_emplois','structures_v0'), except=['source', 'ville', 'convention_asp_active'], relation_alias='struct') }},
     dim_commune.nom_commune     as ville,
     dim_commune.nom_zone_emploi as bassin_d_emploi,
     grp_strct.groupe            as categorie_structure,
@@ -11,7 +11,11 @@ select
         when struct.type = 'OPCS' and struct.source = 'Utilisateur (Antenne)' then 'Utilisateur (OPCS)'
         when struct.type = 'OPCS' and struct.source = 'Staff Itou' then 'Staff Itou (OPCS)'
         else struct.source
-    end                         as source
+    end                         as source,
+    case
+        when struct.convention_asp_active then 'Oui'
+        else 'Sans convention'
+    end                         as structure_conventionnee
 from
     {{ source('raw_emplois','structures_v0') }} as struct
 left join
@@ -23,3 +27,4 @@ left join
 left join
     {{ ref('fluxIAE_Structure_v2') }} as strct_asp
     on struct.id_asp = strct_asp.structure_id_siae
+where struct.convention_asp_active is not false

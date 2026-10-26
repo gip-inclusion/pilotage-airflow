@@ -903,6 +903,8 @@ models:
         description: Code NAF de la structure qui reçoit la candidature, issu de l'ASP pour les structures de source Export ASP.
       - name: destinataire_active
         description: Entier 0/1 indiquant si l'établissement qui reçoit la candidature est actif sur la plateforme.
+      - name: destinataire_conventionnee
+        description: Statut de la convention ASP de l'établissement qui reçoit la candidature (Oui, Non ou Sans convention). Null pour les organisations.
       - name: destinataire_code_commune
         description: >
           Code INSEE de la commune de l'établissement qui reçoit la candidature. Pour les structures de source
@@ -949,6 +951,8 @@ models:
         description: SIRET de l'établissement à l'origine de la candidature.
       - name: origine_active
         description: Entier 0/1 indiquant si l'établissement à l'origine de la candidature est actif sur la plateforme.
+      - name: origine_conventionnee
+        description: Statut de la convention ASP de l'établissement à l'origine de la candidature (Oui, Non ou Sans convention). Null pour les organisations.
       - name: origine_code_commune
         description: Code INSEE de la commune de l'établissement à l'origine de la candidature.
       - name: origine_code_departement_insee
@@ -1023,6 +1027,8 @@ models:
         description: Date d'inscription de la structure sur les Emplois de l'Inclusion.
       - name: active
         description: Entier 0/1 indiquant si la structure est active sur la plateforme.
+      - name: structure_conventionnee
+        description: Statut de la convention ASP de la structure (Oui, Non ou Sans convention).
       - name: code_commune
         description: >
           Code INSEE de la commune de la structure. Pour les structures de source Export ASP,
