@@ -50,7 +50,7 @@ select
     coalesce(contracts.short_derogated_contract_nb, 0)                                       as short_derogated_contract_nb,
     coalesce(contracts.requested_allowance_amount, 0)                                        as requested_allowance_amount,
     coalesce(contracts.granted_allowance_amount, 0)                                          as granted_allowance_amount,
-    coalesce(contracts.granted_allowance_amount, 0) - assessments.convention_amount
+    coalesce(assessments.convention_amount, 0) - contracts.granted_allowance_amount
         as convention_vs_granted_allowance_gap,
     coalesce(assessments.granted_amount, 0) - assessments.convention_amount
         as convention_vs_granted_amount_gap,
