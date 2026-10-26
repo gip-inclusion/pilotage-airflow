@@ -2,6 +2,7 @@ select
     id,
     uid,
     id_asp,
+    convention_asp_active::boolean,
     nom,
     nom_complet,
     description,

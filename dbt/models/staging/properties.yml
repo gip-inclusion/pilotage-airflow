@@ -17,6 +17,7 @@ models:
   - name: stg_structures
     description: >
       Ce modèle permet de selectionner certaines informations (id, active, siret, ville, bassin_d_emploi, et nom complet de la structure) de la table structures et de lever des ambiguités dans les noms de colonne, en particulier avec les départements.
+      Les structures qui ne sont plus conventionnées (convention_asp_active à false) ne sont pas considérées.
     config:
       tags:
         - pro_pdi

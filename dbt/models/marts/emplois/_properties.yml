@@ -1038,6 +1038,8 @@ models:
         description: Nom de la structure saisi sur les Emplois. Null pour les organisations non rapprochées.
       - name: nom_organisation
         description: Nom de l'organisation saisi sur les Emplois. Null pour les structures non rapprochées.
+      - name: structure_conventionnee
+        description: Statut de la convention ASP de la structure, Oui (convention active), Non (convention inactive) ou Sans convention (GEIQ, OPCS, etc.). Null pour les organisations non rapprochées.
       - name: nom_structure_asp
         description: >
             Dénomination de la structure à l'ASP. Renseignée uniquement pour les structures de source Export ASP.

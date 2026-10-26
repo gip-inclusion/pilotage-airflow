@@ -35,6 +35,7 @@ final as (
         o.id                                                       as id_organisation,
         s.nom_emplois                                              as nom_structure,
         o.nom                                                      as nom_organisation,
+        s.conventionnee                                            as structure_conventionnee,
         s.id_strct_mere,
         s.nom_asp                                                  as nom_structure_asp,
         s.type                                                     as type_structure,

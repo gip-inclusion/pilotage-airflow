@@ -18,6 +18,11 @@ final as (
         emp.active,
         emp.source,
         case
+            when emp.convention_asp_active then 'Oui'
+            when not emp.convention_asp_active then 'Non'
+            else 'Sans convention'
+        end                  as conventionnee,
+        case
             when emp.source = 'Export ASP' then asp.structure_denomination
         end                  as nom_asp,
         case

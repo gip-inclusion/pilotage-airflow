@@ -19,6 +19,7 @@ select
     siae.source,
     siae.date_inscription_emplois,
     siae.active,
+    siae.structure_conventionnee,
     siae.code_commune,
     communes.nom_commune,
     communes.code_departement_insee,
