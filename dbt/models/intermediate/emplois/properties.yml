@@ -249,6 +249,8 @@ models:
         description: Date d'inscription de la structure sur les Emplois de l'Inclusion.
       - name: active
         description: Entier 0/1 indiquant si la structure est active sur la plateforme.
+      - name: conventionnee
+        description: Convention ASP active (vide si la structure n'a pas de convention), issue de `convention_asp_active`.
       - name: source
         description: >
           Origine de la création de la structure. Valeurs possibles : Export ASP, Export GEIQ,

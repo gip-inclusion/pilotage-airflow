@@ -343,6 +343,8 @@ models:
           Il faut que source = Export ASP pour que l'on identifie la structure mère (ou qu'elle soit présente dans stg_asp__structures)
           Null pour les structures non conventionnées via l'ASP
           (GEIQ, EA, OPCS).
+      - name: convention_asp_active
+        description: Convention ASP active (vide si la structure n'a pas de convention).
       - name: nom
         description: Nom de la structure tel que saisi lors de l'inscription.
       - name: nom_complet
