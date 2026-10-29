@@ -125,6 +125,13 @@ tests:
       est `emplois_prescriber` ou `emplois_employer`, comme indiqué dans la documentation de `mer_mail_v0`.
       Le test échoue si une iMER liée a un autre type d'utilisateur ou un type NULL.
 
+  - name: test_stg_emplois__candidatures_origine_exclusive
+    config:
+      severity: warn
+    description: >-
+      Dans les données regardées jusqu'ici, aucune candidature n'a à la fois
+      une structure d'origine et une organisation prescriptrice. Si ça arrive un jour,
+      ce test permet de le repérer et de déclencher un avertissement.
   - name: test_fct_emplois__evenements_pass_candidat
     description: >-
       On vérifie que chaque prolongation, demande de prolongation et suspension porte le même
