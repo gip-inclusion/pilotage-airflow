@@ -106,6 +106,13 @@ tests:
       Vérifie que chaque structure de stg_emplois__structures et chaque organisation de stg_emplois__organisations apparaît exactement une fois dans dim_emplois__etablissements.
 
 data_tests:
+  - name: test_stg_emplois__candidatures_origine_exclusive
+    config:
+      severity: warn
+    description: >-
+      Dans les données regardées jusqu'ici, aucune candidature n'a à la fois
+      une structure d'origine et une organisation prescriptrice. Si ça arrive un jour,
+      ce test permet de le repérer et de déclencher un avertissement.
   - name: test_fct_emplois__evenements_pass_candidat
     description: >-
       On vérifie que chaque prolongation, demande de prolongation et suspension porte le même
