@@ -1,6 +1,19 @@
 version: 2
 
 models:
+  - name: stg_emplois__motifs_refus
+    description: >-
+      Correspondance entre les codes des motifs de refus des candidatures et les libellés
+      affichés sur la Plateforme.
+    columns:
+      - name: code
+        description: Code du motif de refus, renseigné dans le champ motif_de_refus des candidatures.
+        tests:
+          - not_null
+          - unique
+      - name: label
+        description: Libellé du motif de refus affiché sur les Emplois.
+
   - name: stg_emplois__candidatures
     description: >-
       Les candidatures de La Plateforme de l'inclusion (et historiquement, des Emplois).

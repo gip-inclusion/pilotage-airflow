@@ -1,5 +1,108 @@
 version: 2
 models:
+  - name: fct_emplois__candidatures
+    config:
+      tags:
+        - emplois
+    description: >-
+      Les candidatures sur la Plateforme de l'inclusion.
+      Une ligne par candidature, avec le candidat, les établissements concernés, l'origine,
+      l'état, les dates, le motif de refus et le nombre de fiches de poste associées.
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_emplois__candidatures')
+    columns:
+      - name: id_candidature
+        description: Identifiant unique de la candidature dans les Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: id_candidat
+        description: Identifiant du candidat, à joindre à dim_emplois__candidats.id_candidat.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__candidats')
+                field: id_candidat
+              config:
+                severity: warn
+      - name: id_structure_destinataire
+        description: >-
+          Clé de l'établissement qui reçoit la candidature, à joindre à dim_emplois__etablissements.id.
+          Reste NULL si la structure n'est pas retrouvée dans la dimension.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
+              config:
+                severity: warn
+      - name: id_organisation_prescriptrice
+        description: >-
+          Clé de l'organisation à l'origine de la candidature, à joindre à dim_emplois__etablissements.id.
+          Reste NULL si l'organisation n'est pas renseignée ou n'est pas retrouvée dans la dimension.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
+              config:
+                severity: warn
+      - name: id_structure_origine
+        description: >-
+          Clé de la structure à l'origine de la candidature, à joindre à dim_emplois__etablissements.id.
+          Reste NULL si la structure n'est pas renseignée ou n'est pas retrouvée dans la dimension.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
+              config:
+                severity: warn
+      - name: id_utilisateur_origine_candidature
+        description: Identifiant de l'utilisateur à l'origine de la candidature.
+      - name: origine_candidature
+        description: Type d'acteur à l'origine de la candidature, tel qu'indiqué dans la source.
+      - name: origine_detaillee
+        description: Précision sur l'origine de la candidature, reprise de la source.
+      - name: statut_candidature
+        description: État actuel de la candidature, sans changement de libellé.
+      - name: parcours_de_creation
+        description: Parcours technique de création de la candidature, repris de la source.
+      - name: date_candidature
+        description: Date de dépôt de la candidature.
+      - name: date_traitement
+        description: Date de traitement renseignée dans la source.
+      - name: date_debut_contrat
+        description: Date de début du contrat renseignée dans la source.
+      - name: date_embauche
+        description: Date d'embauche renseignée dans la source.
+      - name: candidature_archivee
+        description: Indique si la candidature est archivée.
+        data_type: boolean
+      - name: candidature_refusee_automatiquement
+        description: Indique si le refus de la candidature est automatique.
+        data_type: boolean
+      - name: injection_ai
+        description: Indique si la candidature vient de la reprise de stock AI.
+        data_type: boolean
+      - name: motif_refus
+        description: >-
+          Motif du refus, quand il est renseigné. Le libellé « Autre » devient
+          « Autre (la SIAE a saisi le motif "autre") », comme dans le modèle existant
+          stg_candidatures, pour garder la même présentation. Si le code ne figure pas
+          dans la liste des motifs, la valeur reste NULL, comme dans ce modèle.
+      - name: mode_attribution_pass_iae
+        description: Mode d'attribution du PASS indiqué par la source, automatique ou manuel. Peut être absent.
+      - name: nombre_fiches_de_poste
+        description: Nombre de fiches de poste distinctes liées à la candidature. Vaut 0 en l'absence de lien.
+        tests:
+          - not_null
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière mise à jour de la candidature dans Metabase.
+
   - name: dim_emplois__candidats
     config:
       tags:
