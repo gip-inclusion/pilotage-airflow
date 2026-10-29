@@ -1,6 +1,177 @@
 version: 2
 
 models:
+  - name: stg_emplois__candidatures
+    description: >-
+      Les candidatures de La Plateforme de l'inclusion (et historiquement, des Emplois).
+      Une ligne par candidature, avec son candidat, ses acteurs, son origine, son état et ses dates.
+      Tous les champs de la source sont conservés, sauf le nom et le prénom du conseiller.
+
+    columns:
+      - name: id_candidature
+        description: Identifiant unique de la candidature dans les Emplois (UUID).
+        tests:
+          - not_null
+          - unique
+      - name: id_candidat
+        description: Identifiant de la personne candidate.
+        tests:
+          - not_null
+      - name: id_structure_destinataire
+        description: Identifiant de la structure qui reçoit la candidature.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id_structure
+              config:
+                severity: warn
+      - name: id_organisation_prescriptrice
+        description: Identifiant de l'organisation à l'origine de la candidature, quand elle est renseignée.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id_organisation
+              config:
+                severity: warn
+      - name: id_structure_origine
+        description: Identifiant de la structure à l'origine de la candidature, quand elle est renseignée.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id_structure
+              config:
+                severity: warn
+      - name: id_utilisateur_origine_candidature
+        description: Identifiant de l'utilisateur à l'origine de la candidature.
+      - name: origine_candidature
+        description: Type d'acteur à l'origine de la candidature, tel qu'indiqué dans la source.
+      - name: origine_detaillee
+        description: Précision sur l'origine de la candidature, reprise de la source.
+      - name: statut_candidature
+        description: État actuel de la candidature, sans changement de libellé.
+      - name: parcours_de_creation
+        description: Parcours technique de création de la candidature, repris de la source.
+      - name: date_candidature
+        description: Date de dépôt de la candidature.
+      - name: date_traitement
+        description: Date de traitement renseignée dans la source.
+      - name: date_debut_contrat
+        description: Date de début du contrat renseignée dans la source.
+      - name: date_embauche
+        description: >-
+          Date d'embauche déclarée sur les Emplois.
+          Une déclaration d'embauche ne garantit pas l'existence d'un contrat.
+      - name: candidature_archivee
+        description: Indique si la candidature est archivée.
+        data_type: boolean
+      - name: candidature_refusee_automatiquement
+        description: Indique si le refus de la candidature est automatique.
+        data_type: boolean
+      - name: injection_ai
+        description: Indique si la candidature provient de la reprise de stock des associations intermédiaires (AI).
+        data_type: boolean
+      - name: type_contrat
+        description: >-
+          Code du type de contrat dans la source. Les chaînes vides sont converties en NULL.
+      - name: motif_refus
+        description: Code du motif de refus dans la source.
+      - name: mode_attribution_pass_iae
+        description: >-
+          Mode d'attribution du PASS indiqué par la source, automatique ou manuel. Peut être absent.
+          Les chaînes vides sont converties en NULL.
+        tests:
+          - accepted_values:
+              values:
+                - Automatique
+                - Manuel
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière mise à jour de la ligne dans Metabase.
+      - name: delai_prise_en_compte
+        description: Délai entre le dépôt de la candidature et sa première prise en compte par l'employeur.
+        data_type: interval
+      - name: delai_de_reponse
+        description: >-
+          Délai entre le dépôt de la candidature et la réponse finale : acceptation, refus ou archivage.
+        data_type: interval
+      - name: delai_candidature_a_l_etude
+        description: Délai associé au statut « Candidature à l'étude ».
+        data_type: interval
+      - name: delai_candidature_en_attente
+        description: Délai associé au statut « Candidature en attente ».
+        data_type: interval
+      - name: delai_action_prealable_a_l_embauche
+        description: Délai associé au statut « Action préalable à l'embauche ».
+        data_type: interval
+      - name: delai_candidature_acceptee
+        description: Délai associé au statut « Candidature acceptée ».
+        data_type: interval
+      - name: delai_candidature_declinee
+        description: Délai associé au statut « Candidature déclinée ».
+        data_type: interval
+      - name: delai_embauche_annulee
+        description: Délai associé au statut « Embauche annulée ».
+        data_type: interval
+      - name: delai_embauche_ailleurs
+        description: Délai associé au statut « Embauché ailleurs ».
+        data_type: interval
+      - name: delai_vivier_de_candidatures
+        description: Délai associé au statut « Vivier de candidatures ».
+        data_type: interval
+      - name: type_structure
+        description: Type de la structure destinataire, tel qu'indiqué dans la source.
+      - name: nom_structure
+        description: Nom de la structure destinataire, tel qu'indiqué dans la source.
+      - name: nom_complet_structure
+        description: Nom complet de la structure destinataire, tel qu'indiqué dans la source.
+      - name: departement_structure
+        description: Code du département de la structure destinataire, repris de la source.
+      - name: nom_departement_structure
+        description: Nom du département de la structure destinataire, repris de la source.
+      - name: region_structure
+        description: Région de la structure destinataire, reprise de la source.
+      - name: nom_org_prescripteur
+        description: Nom de l'organisation prescriptrice, tel qu'indiqué dans la source.
+      - name: safir_org_prescripteur
+        description: Code SAFIR de l'organisation prescriptrice, repris de la source.
+      - name: presence_de_cv
+        description: Indique si un CV est joint à la candidature.
+        data_type: boolean
+      - name: nombre_caracteres_message_candidature
+        description: Nombre de caractères du message de candidature, sans le contenu du message.
+        data_type: integer
+
+  - name: stg_emplois__fiche_de_poste_par_candidature
+    description: >-
+      Les liens entre les candidatures et les fiches de poste.
+      Une ligne associe une candidature à une fiche ; une candidature peut en avoir plusieurs.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - id_candidature
+              - id_fiche_de_poste
+    columns:
+      - name: id_candidature
+        description: Identifiant de la candidature associée à la fiche de poste.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_emplois__candidatures')
+                field: id_candidature
+              config:
+                severity: warn
+      - name: id_fiche_de_poste
+        description: Identifiant de la fiche de poste associée à la candidature.
+        tests:
+          - not_null
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière mise à jour du lien dans Metabase.
+
   - name: stg_emplois__fiches_de_poste
     description: >
       Fiches de poste publiées sur les Emplois de l'Inclusion.
