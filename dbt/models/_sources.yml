@@ -355,6 +355,11 @@ sources:
       - name: organisations_v0
       - name: institutions
       - name: candidats_v0
+        config:
+          loaded_at_field: '"date_mise_à_jour_metabase"::timestamp'
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 2, period: day}
         description: >
          Table des candidats (aussi appelés usagers ou bénéficiaires en fonction du contexte).
          Cette table contient également les diagnostics d’éligibilité et les critères administratifs associés.
@@ -1403,6 +1408,11 @@ sources:
           Événements de visualisation d'une page structure.
 
       - name: structures_structure
+        config:
+          loaded_at_field: synced_at
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 2, period: day}
         description: >
           Liste des structures.
         columns:
@@ -2573,6 +2583,11 @@ sources:
           Cette table est calculée tous les soirs.
 
       - name: category_configuration_creneau_availabilities
+        config:
+          loaded_at_field: '"updated_at"::timestamp'
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 2, period: day}
         description: >
           Suivi historisé du nombre de créneaux disponibles pour une configuration.
 
