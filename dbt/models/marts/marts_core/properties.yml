@@ -365,14 +365,34 @@ models:
           cette colonne seule : il faut choisir la table utilisateur selon `origin_source`. Pour les
           lignes DORA, les structures de rattachement de l'utilisateur se retrouvent via
           `int_dora__structure_members`, mais cette relation peut être 1:N et multiplier les lignes.
-      - name: user_prescriber_organization_id
+      - name: user_prescriber_etablissement
         description: >
-          Identifiant de l'organisation prescriptrice côté Emplois. Il est rempli uniquement pour
-          les lignes Emplois et reste vide pour les lignes DORA.
-      - name: user_company_id
+          Identifiant de l'établissement de l'utilisateur pour les IMER Emplois. Il permet de
+          retrouver l'établissement dans `dim_emplois__etablissements.id`.
+          Dans l'export des Emplois, on reçoit soit une organisation prescriptrice
+          (`user_prescriber_organization_id`), soit une structure employeuse (`user_company_id`).
+          Si les deux sont remplis, on garde l'organisation et un test nous prévient.
+          Cette colonne reste vide pour DORA. Elle reste aussi vide si on n'a reçu aucun des deux
+          identifiants ou si on ne retrouve pas l'établissement.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
+      - name: user_prescriber_etablissement_type
         description: >
-          Identifiant de la structure employeuse côté Emplois. Il est rempli uniquement pour les
-          lignes Emplois et reste vide pour les lignes DORA.
+          Dit si l'utilisateur dépend d'une `organisation` ou d'une `structure` dans cette IMER Emplois.
+          On regarde quel identifiant est rempli dans l'export, pas le type actuel de l'établissement.
+          On garde donc cette distinction même si l'organisation et la structure ont été réunies
+          dans la même ligne de `dim_emplois__etablissements`.
+          Le type reste rempli même si on ne retrouve pas l'établissement. Il reste vide pour DORA
+          ou si aucun des deux identifiants n'est rempli dans l'export.
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - organisation
+                  - structure
       - name: target_structure_source_id
         description: >
           Identifiant de la structure ciblée avec son espace de noms. Pour DORA, il vaut `dora--<id>`;
