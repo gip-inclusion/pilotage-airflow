@@ -118,7 +118,7 @@ sources:
               Clé étrangère vers `les_emplois.structures_v0.id`.
           - name: imer_id
             description: >
-              Identifiant de le l’intention de mise en relation associée (iMER de type `service_contact `).
+              Identifiant de l’intention de mise en relation associée (iMER de type `service_contact`).
           - name: service_id
             description: >
               Identifiant data·inclusion du service concerné par la mise en relation par mail.
