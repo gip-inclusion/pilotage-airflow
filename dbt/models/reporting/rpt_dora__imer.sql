@@ -8,8 +8,8 @@ with imer as (
         user_kind,
         is_logged_imer,
         user_id,
-        user_prescriber_organization_id,
-        user_company_id,
+        user_prescriber_etablissement,
+        user_prescriber_etablissement_type,
         target_structure_source_id,
         target_di_structure_id,
         kind,
@@ -70,6 +70,14 @@ services as (
     left join communes on di.code_commune_insee = communes.code_commune_insee
 ),
 
+emplois_etablissements as (
+    select
+        id,
+        id_organisation,
+        id_structure
+    from {{ ref('dim_emplois__etablissements') }}
+),
+
 organization as (
     select
         id                       as organization_id,
@@ -103,8 +111,8 @@ imer_enriched as (
         imer.user_kind,
         imer.is_logged_imer,
         imer.user_id,
-        imer.user_prescriber_organization_id,
-        imer.user_company_id,
+        imer.user_prescriber_etablissement,
+        imer.user_prescriber_etablissement_type,
         imer.target_structure_source_id,
         imer.target_di_structure_id,
         imer.kind,
@@ -165,8 +173,16 @@ imer_enriched as (
         on services.di_services_structure_id = service_di_structures.di_structure_id
     left join dora_structures
         on imer.target_structure_source_id = dora_structures.dora_structure_id_jointure_di
-    left join organization on imer.user_prescriber_organization_id = organization.organization_id
-    left join company on imer.user_company_id = company.company_id
+    left join emplois_etablissements
+        on imer.user_prescriber_etablissement = emplois_etablissements.id
+    left join organization
+        on
+            imer.user_prescriber_etablissement_type = 'organisation'
+            and emplois_etablissements.id_organisation = organization.organization_id
+    left join company
+        on
+            imer.user_prescriber_etablissement_type = 'structure'
+            and emplois_etablissements.id_structure = company.company_id
 )
 
 select
@@ -178,8 +194,8 @@ select
     user_kind,
     is_logged_imer,
     user_id,
-    user_prescriber_organization_id,
-    user_company_id,
+    user_prescriber_etablissement,
+    user_prescriber_etablissement_type,
     target_structure_source_id,
     target_di_structure_id,
     kind,

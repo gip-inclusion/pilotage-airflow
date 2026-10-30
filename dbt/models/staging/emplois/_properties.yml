@@ -1,6 +1,52 @@
 version: 2
 
 models:
+  - name: stg_emplois__mer_mail
+    description: >
+      Courriels envoyés depuis les Emplois pour contacter un offreur de service.
+      Une ligne correspond à un courriel envoyé. On garde tous les envois, avec ou sans réponse.
+
+      C'est une compréhension provisoire qui pourrait évoluer légèrement une fois que la doc de la
+      table source sera en place.
+
+    config:
+      tags:
+        - dora
+
+    columns:
+      - name: id
+        description: Identifiant du courriel envoyé dans l'export des Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: sent_at
+        description: Date et heure d'envoi, avec fuseau horaire.
+        tests:
+          - not_null
+      - name: answered_at
+        description: >
+          Date et heure de réception de la première réponse, avec fuseau horaire. Vide tant qu'aucune
+          réponse n'est enregistrée.
+      - name: user_kind
+        description: Type de l'expéditeur reçu dans l'export des courriels.
+      - name: user_id
+        description: Identifiant de l'expéditeur dans les Emplois.
+      - name: user_prescriber_organization_id
+        description: Identifiant de l'organisation prescriptrice de l'expéditeur, quand il y en a une.
+      - name: user_company_id
+        description: Identifiant de l'entreprise de l'expéditeur, quand il y en a une.
+      - name: imer_id
+        description: >
+          Identifiant source de l'iMER enregistrée au clic sur « Voir les coordonnées ».
+          On le passe en texte pour le comparer à `fct_dora__imer.source_imer_id`.
+          Correspond à `stg_emplois__imer.id`, pas à la clé calculée de `fct_dora__imer`.
+      - name: service_id
+        description: >
+          UID data·inclusion du service contacté. Correspond à `stg_emplois__services.uid`,
+          et non à son identifiant interne `id`.
+      - name: date_mise_a_jour_metabase
+        description: Date de dernière mise à jour de l'export.
+
   - name: stg_emplois__fiches_de_poste
     description: >
       Fiches de poste publiées sur les Emplois de l'Inclusion.

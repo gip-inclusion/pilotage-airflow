@@ -37,11 +37,11 @@ imer as (
         case
             when
                 imer.origin_source = 'emplois'
-                and imer.user_prescriber_organization_id is not null
+                and imer.user_prescriber_etablissement_type = 'organisation'
                 then 'emplois_organisation'
             when
                 imer.origin_source = 'emplois'
-                and imer.user_company_id is not null
+                and imer.user_prescriber_etablissement_type = 'structure'
                 then 'emplois_structure'
             when imer.origin_source in ('dora', 'dora-data-inclusion') then user_struct.typology
         end as raw_type_structure,

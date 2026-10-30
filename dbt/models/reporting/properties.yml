@@ -355,6 +355,151 @@ models:
         description: >
           Code et nom du département du service de destination, issus de `dim_commune.nom_departement_complet`.
 
+  - name: rpt_emplois__inbound_parsing_mer_email
+    description: >
+      Les mails envoyés depuis les Emplois, avec le type d'utilisateur qui les envoie et les infos du service contacté.
+      On ajoute le nom de la structure depuis data·inclusion et la commune, le département et la région
+      du service depuis `dim_commune`.
+      Il y a une ligne par mail, avec ou sans réponse. On garde tous les mails depuis le début du suivi.
+      Cette table permet de voir combien de mails ont été envoyés, combien ont reçu une réponse
+      et combien de temps on attend en moyenne avant la première réponse.
+    config:
+      tags:
+        - dora
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('fct_emplois__inbound_parsing_mer_email')
+    columns:
+      - name: id
+        description: >
+          Identifiant du mail envoyé. Pour compter les envois, on utilise `count(*)`
+          après avoir choisi les filtres qui nous intéressent.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('fct_emplois__inbound_parsing_mer_email')
+                field: id
+      - name: imer_id
+        description: Identifiant de l'iMER liée au mail dans `fct_dora__imer`. On le reprend du fact des mails.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_dora__imer')
+                field: id
+      - name: service_uid_di
+        description: >
+          Identifiant data·inclusion du service contacté. Il permet de retrouver le service dans
+          `dim_emplois__services.service_uid_di`. Si on ne le retrouve pas, on garde le mail,
+          mais les infos du service restent vides.
+      - name: sent_at
+        description: Date et heure d'envoi, avec le fuseau horaire. On les reprend du fact des mails.
+        tests:
+          - not_null
+      - name: sent_date
+        description: >
+          Le jour d'envoi du mail, sans l'heure. On le calcule à partir de `sent_at` pour suivre les envois par jour.
+        tests:
+          - not_null
+      - name: answered_at
+        description: >
+          Date et heure de la première réponse. Cette colonne reste vide tant qu'on n'a pas de réponse.
+          Pour calculer le taux de réponse, on utilise `count(answered_at)::numeric / nullif(count(*), 0)`.
+      - name: is_answered
+        description: >
+          Dit si le mail a reçu une réponse : `true` quand `answered_at` est renseigné, `false` sinon.
+          On reprend cette valeur du fact. Elle permet de choisir les mails avec ou sans réponse.
+        data_type: boolean
+        tests:
+          - not_null
+      - name: response_time_days
+        description: >
+          Combien de jours on a attendu entre l'envoi et la première réponse, sans arrondir.
+          Par exemple, 36 heures donnent 1,5 jour. On reprend la valeur du fact ; elle reste vide sans réponse.
+          Pour le délai moyen, on utilise `avg(response_time_days)`. Les mails sans réponse ne comptent pas
+          dans la moyenne. Si aucun mail n'a reçu de réponse, la moyenne reste vide.
+          Pour un total ou une autre période, on refait le calcul à partir des mails concernés.
+          On ne fait pas la moyenne de taux ou de délais moyens déjà calculés.
+      - name: date_mise_a_jour_metabase
+        description: Dernière date de mise à jour du mail dans l'export pour Metabase.
+      - name: source_imer_id
+        description: Identifiant de l'iMER dans l'export des Emplois. On le reprend de `fct_dora__imer`, sous forme de texte.
+      - name: user_kind
+        description: >
+          Type d'utilisateur qui a envoyé le mail, par exemple `emplois_prescriber`.
+          On reprend `fct_dora__imer.user_kind` : c'est le type reçu au moment de l'iMER,
+          pas celui qu'on trouverait aujourd'hui dans le profil de l'utilisateur.
+      - name: user_id
+        description: Identifiant de l'utilisateur qui a envoyé le mail, tel qu'on le reçoit dans l'iMER Emplois.
+      - name: user_prescriber_etablissement
+        description: >
+          Identifiant de l'organisation ou de la structure de l'utilisateur qui a envoyé le mail.
+          On reprend `fct_dora__imer.user_prescriber_etablissement`. Il permet de retrouver l'établissement
+          dans `dim_emplois__etablissements.id`. Si on ne retrouve pas l'établissement, cette colonne reste vide.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
+      - name: user_prescriber_etablissement_type
+        description: >
+          Dit si l'utilisateur dépend d'une `organisation` ou d'une `structure` dans l'iMER liée au mail.
+          On reprend la valeur de `fct_dora__imer`. Elle reste vide si on n'a reçu aucun des deux identifiants.
+      - name: service_id
+        description: Identifiant du service propre aux Emplois. `service_uid_di` est son identifiant côté data·inclusion.
+      - name: service_structure_uid_di
+        description: >
+          Identifiant data·inclusion de la structure qui propose le service, tel qu'il est reçu des Emplois.
+          On le relie à `int_di__structure_source_mapping.source_structure_id` pour retrouver la structure dédupliquée.
+      - name: service_structure_name
+        description: >
+          Nom actuel de la structure qui propose le service, issu de `dim_data_inclusion__structures.nom`.
+          On le retrouve via `int_di__structure_source_mapping`, y compris quand l'identifiant reçu des Emplois
+          correspond à un doublon. Si la structure n'est plus dans data·inclusion, le nom reste vide et on garde le mail.
+      - name: service_source
+        description: >
+          D'où vient le service, par exemple `dora` ou `soliguide`, d'après le dernier export des Emplois.
+          On garde la source telle qu'on la reçoit, sans regrouper les valeurs en DORA ou data·inclusion.
+          On cherche les services dans les données des Emplois pour retrouver aussi ceux qui sont désactivés,
+          même s'ils ne sont plus dans le catalogue de data·inclusion.
+      - name: service_source_link
+        description: Lien vers la fiche du service sur son site d'origine, quand on l'a.
+      - name: service_name
+        description: Nom du service dans le dernier export des Emplois.
+      - name: service_description
+        description: Texte qui présente le service dans le dernier export des Emplois.
+      - name: service_duration_weekly_hours
+        description: Nombre d'heures par semaine prévu pour le service, quand on a cette info.
+      - name: service_duration_weeks
+        description: Durée du service en semaines, quand on a cette info.
+      - name: service_code_insee
+        description: >
+          Code INSEE de la commune du service, repris du dernier export des Emplois.
+          Il sert de clé de jointure avec `dim_commune` pour les colonnes géographiques.
+          Si la commune n'est pas retrouvée, ces colonnes restent vides et on garde le mail.
+      - name: service_nom_commune
+        description: Nom de la commune du service, issu de `dim_commune.nom_commune`.
+      - name: service_code_region_insee
+        description: Code INSEE de la région du service, issu de `dim_commune.code_region_insee`.
+      - name: service_nom_region
+        description: Nom de la région du service, issu de `dim_commune.nom_region`.
+      - name: service_code_departement_insee
+        description: Code INSEE du département du service, issu de `dim_commune.code_departement_insee`.
+      - name: service_nom_departement
+        description: Nom du département du service, issu de `dim_commune.nom_departement`.
+      - name: service_nom_departement_complet
+        description: Code et nom du département du service, issus de `dim_commune.nom_departement_complet`.
+      - name: service_is_active
+        description: >
+          Dit si le service est actif dans le dernier export des Emplois. On garde les mails envoyés
+          vers des services désactivés. Les infos du service sont celles du dernier export :
+          elles peuvent donc avoir changé depuis l'envoi du mail.
+      - name: service_date_mise_a_jour_metabase
+        description: Dernière date de mise à jour du service dans l'export pour Metabase.
+
   - name: rpt_dora__imer
     config:
       tags:
@@ -422,13 +567,17 @@ models:
           cette colonne seule : il faut choisir la table utilisateur selon `origin_source`. Pour les
           lignes DORA, les structures de rattachement de l'utilisateur se retrouvent via
           `int_dora__structure_members`, mais cette relation peut être 1:N et multiplier les lignes.
-      - name: user_prescriber_organization_id
+      - name: user_prescriber_etablissement
         description: >
-          Identifiant de l'organisation prescriptrice côté Emplois. Il reste vide pour les lignes
-          DORA.
-      - name: user_company_id
+          Identifiant de l'établissement de l'utilisateur, repris de `fct_dora__imer`.
+          On peut l'utiliser pour retrouver l'établissement dans `dim_emplois__etablissements.id`.
+          Il reste vide pour les IMER DORA.
+      - name: user_prescriber_etablissement_type
         description: >
-          Identifiant de la structure employeuse côté Emplois. Il reste vide pour les lignes DORA.
+          Dit si l'utilisateur dépend d'une `organisation` ou d'une `structure` dans cette IMER Emplois.
+          On reprend la valeur de `fct_dora__imer`. Elle nous sert à choisir les infos à afficher :
+          celles de l'organisation ou celles de la structure, même si elles partagent le même établissement.
+          Cette colonne reste vide pour les IMER DORA.
       - name: target_structure_source_id
         description: >
           Identifiant de la structure ciblée avec son espace de noms. Pour DORA, il vaut `dora--<id>`;

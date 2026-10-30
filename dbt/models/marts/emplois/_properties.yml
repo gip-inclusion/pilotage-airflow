@@ -1,5 +1,124 @@
 version: 2
 models:
+  - name: dim_emplois__services
+    description: >
+      Les services présents sur les Emplois, avec leur nom, leur source et leurs principales infos.
+      Il y a une ligne par service, actif ou désactivé.
+
+      On utilise cette table pour retrouver les services contactés par le passé. Les Emplois gardent les
+      services désactivés, même quand ils ont disparu de data·inclusion. C'est la différence avec
+      `dim_data_inclusion__services`, qui contient le catalogue actuel de data·inclusion.
+    config:
+      tags:
+        - dora  # car c'est necessaire pour l'inbound parsing lié aux imers
+        - emplois
+    columns:
+      - name: id
+        description: Identifiant du service propre aux Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: service_uid_di
+        description: >
+          Identifiant data·inclusion du service.
+        tests:
+          - not_null
+          - unique
+      - name: structure_uid_di
+        description: Identifiant data·inclusion de la structure qui propose le service.
+      - name: source
+        description: >
+          D'où vient le service, par exemple `dora` ou `soliguide`, d'après le dernier export des Emplois.
+      - name: source_link
+        description: Lien vers la fiche du service sur son site d'origine, quand on l'a.
+      - name: name
+        description: Nom du service dans le dernier export des Emplois.
+      - name: description
+        description: Texte qui présente le service dans le dernier export des Emplois.
+      - name: duration_weekly_hours
+        description: Nombre d'heures prévues par semaine, quand on a cette info.
+      - name: duration_weeks
+        description: Durée du service en semaines, quand on a cette info.
+      - name: code_insee
+        description: Code INSEE de la commune du service.
+      - name: is_active
+        description: >
+          Dit si le service est actif dans le dernier export des Emplois. On garde aussi ceux qui sont
+          désactivés. Les infos sont celles du dernier export disponible.
+      - name: date_mise_a_jour_metabase
+        description: Dernière date de mise à jour du service dans l'export pour Metabase.
+
+  - name: fct_emplois__inbound_parsing_mer_email
+    description: >
+      Les mails envoyés depuis les Emplois pour contacter un offreur de service.
+      Il y a une ligne par mail, avec sa date d'envoi, la date de première réponse et le temps d'attente.
+      On garde aussi les mails restés sans réponse.
+    config:
+      tags:
+        - dora
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_emplois__mer_mail')
+    columns:
+      - name: id
+        description: Identifiant du mail envoyé, tel qu'on le reçoit dans l'export des Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: imer_id
+        description: >
+          Identifiant de l'iMER liée au mail dans `fct_dora__imer.id`. Pour le retrouver, on cherche
+          l'iMER avec `origin_source = 'emplois'` et `source_imer_id` égal à l'identifiant reçu dans
+          l'export des mails. On garde donc ici l'identifiant du mart, qui est différent de celui de l'export.
+          Chaque mail doit avoir une iMER : si on ne la retrouve pas, on garde le mail et le test échoue.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_dora__imer')
+                field: id
+      - name: service_uid_di
+        description: >
+          Identifiant data·inclusion du service contacté. Il permet de retrouver le service dans
+          `dim_emplois__services.service_uid_di`.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__services')
+                field: service_uid_di
+              config:
+                severity: error
+      - name: sent_at
+        description: Date et heure d'envoi, avec le fuseau horaire. On utilise cette date pour suivre les envois.
+        tests:
+          - not_null
+      - name: sent_date
+        description: >
+          Date extraite du timestamp `sent_at`, utilisée pour les regroupements par date.
+        data_type: date
+        tests:
+          - not_null
+      - name: answered_at
+        description: >
+          Date et heure de la première réponse, avec le fuseau horaire, telles qu'on les reçoit dans l'export.
+          Reste vide tant qu'on n'a pas de réponse. On garde les réponses présentes dans l'export,
+          y compris les réponses automatiques s'il y en a.
+      - name: is_answered
+        description: >
+          Dit si le mail a reçu une réponse : `true` quand `answered_at` est renseigné, `false` sinon.
+        data_type: boolean
+        tests:
+          - not_null
+      - name: response_time_days
+        description: >
+          Temps d'attente entre l'envoi et la première réponse, en jours. Par exemple, 36 heures donnent 1,5 jour.
+          Reste vide si on n'a pas de réponse. Si le délai est négatif, on le garde
+          et le test échoue. Pour la moyenne, utiliser `avg(response_time_days)` : les mails sans
+          réponse ne sont pas comptés.
+      - name: date_mise_a_jour_metabase
+        description: Dernière date de mise à jour du mail dans l'export pour Metabase.
+
   - name: dim_emplois__candidats
     config:
       tags:

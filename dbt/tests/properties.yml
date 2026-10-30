@@ -70,6 +70,11 @@ tests:
     description: >
       Vérifie que les IMER Emplois anonymes sont marquées non connectées, et que
       les autres IMER Emplois sont marquées connectées.
+  - name: test_stg_emplois__imer_user_establishment_ids_mutually_exclusive
+    description: >
+      On s'attend à recevoir soit une organisation, soit une structure pour une IMER Emplois.
+      Ce test nous prévient si les deux identifiants sont remplis dans `stg_emplois__imer`.
+      Si les deux sont vides, c'est accepté.
   - name: test_fct_dora__imer_dora_is_logged_imer_matches_int_dora_imer
     description: >
       Vérifie que les volumes DORA de fct_dora__imer par statut de connexion
@@ -105,7 +110,10 @@ tests:
     description: >
       Vérifie que chaque structure de stg_emplois__structures et chaque organisation de stg_emplois__organisations apparaît exactement une fois dans dim_emplois__etablissements.
 
-data_tests:
+  - name: test_fct_emplois__inbound_parsing_mer_email_non_negative_response_time
+    description: >
+      Vérifie qu'on n'a pas de réponse datée avant l'envoi du mail dans `fct_emplois__inbound_parsing_mer_email`.
+
   - name: test_fct_emplois__evenements_pass_candidat
     description: >-
       On vérifie que chaque prolongation, demande de prolongation et suspension porte le même
