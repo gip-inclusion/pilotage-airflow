@@ -40,7 +40,7 @@ sources:
     tables:
       - name: imer_v0
         description: >
-          Table récupérant les intentions de mise en relation (IMER)effectuées sur les Emplois de l'Inclusion.
+          Table récupérant les intentions de mise en relation (IMER) effectuées sur les Emplois de l'Inclusion.
           Chaque ligne représente une intention de mise
           en relation initiée par un utilisateur (candidat, prescripteur ou employeur).
         columns:
@@ -52,7 +52,7 @@ sources:
               Date à laquelle l'intention de mise en relation a été enregistrée.
           - name: user_session
             description: >
-              Identifiant de la session de l'utilisateur à l'origine de l'intention.
+              Identifiant hashé de la session de l'utilisateur à l'origine de l'intention.
           - name: user_kind
             description: >
               Type d'utilisateur à l'origine de l'intention.
