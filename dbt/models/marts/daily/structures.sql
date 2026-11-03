@@ -23,3 +23,4 @@ left join
 left join
     {{ ref('fluxIAE_Structure_v2') }} as strct_asp
     on struct.id_asp = strct_asp.structure_id_siae
+where convention_asp_active is not false

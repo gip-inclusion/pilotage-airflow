@@ -1626,6 +1626,7 @@ models:
       ses métadonnées de suivi.
       Une structure sera considérée comme mère si elle est présente dans asp.fluxIAE_Structures_v2 et dans cette table,
       la correspondance se fait sur fluxIAE_Structures_v2.id et structures.id_asp
+      Les structures qui ne sont plus conventionnées (convention_asp_active à false) sont exclues.
     columns:
       - name: id
         description: >
@@ -1640,6 +1641,11 @@ models:
           Permet d'identifier les structures mères.
           Une structure sera considérée comme mère si elle est présente dans asp.fluxIAE_Structures_v2 et dans cette table,
           la correspondance se fait sur fluxIAE_Structures_v2.id et structures.id_asp
+
+      - name: convention_asp_active
+        description: >
+          Convention ASP active (vide si la structure n'a pas de convention).
+          Les structures qui ne sont plus conventionnées (valeur false) sont exclues de la table.
 
       - name: nom
         description: >
