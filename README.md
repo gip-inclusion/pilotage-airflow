@@ -61,6 +61,8 @@ La base de données (PostgreSQL), le serveur S3 (MinIO) et Airflow peuvent tous 
 
     docker compose up --build
 
+Les packages dbt sont installés au démarrage du conteneur qui exécute les tâches Airflow, en local comme en production.
+
 ## DBT et base de données Pilotage
 
 Pour récupérer les tables sources non générables pas un DAG, il vous faut configurer la connexion au DB du prod
@@ -115,6 +117,19 @@ Démarrer Airflow avec Docker
 Vous pouvez ensuite accéder à l'interface Web sur http://127.0.0.1:8080 et lancer les DAGs.
 
 L'utilisateur local de base a pour credentials "admin" / "password".
+
+### Préparation nocturne de dbt
+
+Chaque soir à 22 h 30 (heure de Paris), `dbt_prepare` lance `dbt debug`, puis `dbt seed`.
+Les tâches `dbt build` utilisent les seeds déjà chargés en base. Si un déploiement ajoute un seed,
+attendez la prochaine exécution de `dbt_prepare` ou lancez ce DAG avec `seed_name` avant d'exécuter
+les modèles qui en dépendent.
+
+Pour reconstruire un seul seed depuis Airflow, lancez `dbt_prepare` avec le nom du seed dans `seed_name`
+et cochez `full_refresh`. Faites-le quand aucun autre traitement dbt ne tourne.
+
+**Attention** — `dbt seed --full-refresh` supprime les vues qui dépendent du seed.
+Si vous en avez besoin, recréez-les avant de les utiliser.
 
 ## Linter & en forme de vos scripts
 

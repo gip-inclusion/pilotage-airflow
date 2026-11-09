@@ -1,4 +1,4 @@
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
 from dags.common import db, default_dag_args, slack
 
@@ -13,7 +13,7 @@ CREATE TABLE {table_name}(
 
 with DAG(
     "reseau_iae_adherents",
-    schedule="@monthly",
+    schedule=CronTriggerTimetable("20 2 1 * *", timezone="Europe/Paris"),
     **default_dag_args(),
 ) as dag:
 

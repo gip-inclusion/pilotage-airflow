@@ -50,25 +50,11 @@ with DAG("populate_esat_database", schedule=None, **dag_args) as dag:
                 )
                 first_write = False
 
-    dbt_debug = bash.BashOperator(
-        task_id="dbt_debug",
-        bash_command="dbt debug",
-        env=env_vars,
-        append_env=True,
-    )
-
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command="dbt build --select +tag:esat",
+        bash_command="dbt build --select +tag:esat --exclude-resource-type seed",
         env=env_vars,
         append_env=True,
     )
 
-    export_esat_table() >> dbt_debug >> dbt_deps >> dbt_build >> slack.success_notifying_task()
+    export_esat_table() >> dbt_build >> slack.success_notifying_task()

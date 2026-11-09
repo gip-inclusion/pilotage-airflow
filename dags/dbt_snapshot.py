@@ -1,5 +1,5 @@
 from airflow.providers.standard.operators import bash
-from airflow.sdk import DAG, Param
+from airflow.sdk import DAG, CronTriggerTimetable, Param
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -8,27 +8,13 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with DAG(
     dag_id="dbt_snapshot",
-    schedule="@weekly",
+    schedule=CronTriggerTimetable("45 15 * * 0", timezone="Europe/Paris"),
     params={
         "full_refresh": Param(False, type="boolean"),
     },
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()
-
-    dbt_debug = bash.BashOperator(
-        task_id="dbt_debug",
-        bash_command="dbt debug",
-        env=env_vars,
-        append_env=True,
-    )
-
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        env=env_vars,
-        append_env=True,
-    )
 
     dbt_snapshot = bash.BashOperator(
         task_id="dbt_snapshot",
@@ -37,4 +23,4 @@ with DAG(
         append_env=True,
     )
 
-    dbt_debug >> dbt_deps >> dbt_snapshot >> slack.success_notifying_task()
+    dbt_snapshot >> slack.success_notifying_task()

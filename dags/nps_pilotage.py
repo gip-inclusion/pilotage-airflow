@@ -1,11 +1,11 @@
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
 from dags.common import db, default_dag_args, slack
 
 
 with DAG(
     "nps_pilotage",
-    schedule="@weekly",
+    schedule=CronTriggerTimetable("0 21 * * 6", timezone="Europe/Paris"),
     **default_dag_args(),
 ) as dag:
 

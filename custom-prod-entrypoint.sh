@@ -12,6 +12,8 @@ export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="${POSTGRESQL_ADDON_URI//\"/}"
 export AIRFLOW__API_AUTH__JWT_SECRET="${AIRFLOW__API_AUTH__JWT_SECRET//\"/}"
 
 
+dbt deps --project-dir /opt/airflow
+
 airflow db migrate
 airflow fab-db migrate
 

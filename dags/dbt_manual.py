@@ -20,7 +20,7 @@ with DAG(
 
     dbt_run = bash.BashOperator(
         task_id="dbt_run",
-        bash_command="dbt deps && dbt run {{ params.dbt_run_args }}",  # dbt deps is needed
+        bash_command="dbt run {{ params.dbt_run_args }}",
         env=env_vars,
         append_env=True,
     )

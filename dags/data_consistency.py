@@ -14,13 +14,6 @@ with DAG(
 ) as dag:
     env_vars = db.connection_envvars()
 
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        env=env_vars,
-        append_env=True,
-    )
-
     @task
     def params_check(params=None, **kwargs):
         is_all_tests = params.get("all_tests")
@@ -36,4 +29,4 @@ with DAG(
         append_env=True,
     )
 
-    params_check() >> dbt_deps >> dbt_test
+    params_check() >> dbt_test

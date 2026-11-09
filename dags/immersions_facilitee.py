@@ -1,6 +1,6 @@
 import logging
 
-from airflow.sdk import DAG, task
+from airflow.sdk import DAG, CronTriggerTimetable, task
 
 from dags.common import dbt, default_dag_args
 from dags.common.immersion_facilitee.helpers import get_all_items, get_dataframe_from_response, insert_data_to_db
@@ -13,7 +13,11 @@ logger = logging.getLogger(__name__)
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
-with DAG("immersion_facilitee", schedule="@weekly", **dag_args) as dag:
+with DAG(
+    "immersion_facilitee",
+    schedule=CronTriggerTimetable("45 17 * * 0", timezone="Europe/Paris"),
+    **dag_args,
+) as dag:
 
     @task
     def import_conventions(**kwargs):

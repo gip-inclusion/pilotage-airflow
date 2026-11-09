@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 
 import pandas as pd
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 from pyairtable import Table
 from sqlalchemy import text
 from sqlalchemy.orm import declarative_base
@@ -20,7 +20,7 @@ Base = declarative_base()
 
 with DAG(
     "mon_recap_mailing_autres_pro_aap",
-    schedule="@daily",
+    schedule=CronTriggerTimetable("40 0 * * *", timezone="Europe/Paris"),
     **dag_args,
 ) as dag:
     variables = gsheet.get_variables(
