@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import sqlalchemy.types as types
 from airflow.providers.standard.operators import bash
-from airflow.sdk import DAG, Param, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Param, Variable, task
 from airflow.task.trigger_rule import TriggerRule
 from sqlalchemy import text
 from sqlalchemy.orm import declarative_base
@@ -24,7 +24,7 @@ MonrecapBase = declarative_base()
 
 with DAG(
     "mon_recap",
-    schedule="@daily",
+    schedule=CronTriggerTimetable("0 0 * * *", timezone="Europe/Paris"),
     params={
         "drop_baro": Param(
             title="drop table raw_barometre",
@@ -125,24 +125,10 @@ with DAG(
                 db_table_name, con=con, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype_mapping
             )
 
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        trigger_rule=TriggerRule.ALL_DONE,
-        env=env_vars,
-        append_env=True,
-    )
-
-    dbt_seed = bash.BashOperator(
-        task_id="dbt_seed",
-        bash_command="dbt seed",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_monrecap = bash.BashOperator(
         task_id="dbt_monrecap",
         bash_command="dbt run --select staging.monrecap marts.monrecap",
+        trigger_rule=TriggerRule.ALL_DONE,
         env=env_vars,
         append_env=True,
     )
@@ -151,8 +137,6 @@ with DAG(
         drop_barometre_table()
         >> create_models(MonrecapBase)
         >> [monrecap_airtable(), import_barometre(barometre_model, variables)]
-        >> dbt_deps
-        >> dbt_seed
         >> dbt_monrecap
         >> slack.success_notifying_task()
     )

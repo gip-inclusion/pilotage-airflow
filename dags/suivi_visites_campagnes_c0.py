@@ -1,4 +1,4 @@
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 from sqlalchemy.types import DateTime, Integer
 
 from dags.common import db, default_dag_args, matomo, slack
@@ -6,7 +6,7 @@ from dags.common import db, default_dag_args, matomo, slack
 
 with DAG(
     "suivi_visites_campagnes_c0",
-    schedule="@monthly",
+    schedule=CronTriggerTimetable("15 12 1 * *", timezone="Europe/Paris"),
     **default_dag_args(),
 ) as dag:
 

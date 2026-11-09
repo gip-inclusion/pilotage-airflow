@@ -1,7 +1,7 @@
 import logging
 
 from airflow.providers.ssh.hooks import ssh
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -11,7 +11,11 @@ logger = logging.getLogger(__name__)
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 
-with DAG("emplois_users_to_dora", schedule="@weekly", **dag_args) as dag:
+with DAG(
+    "emplois_users_to_dora",
+    schedule=CronTriggerTimetable("0 20 * * 0", timezone="Europe/Paris"),
+    **dag_args,
+) as dag:
 
     @task
     def export_users(**kwargs):

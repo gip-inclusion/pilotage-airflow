@@ -113,6 +113,15 @@ services:
   airflow-scheduler:
     <<: *airflow-common
     container_name: pilotage_airflow_scheduler
+    entrypoint:
+      - /usr/bin/dumb-init
+      - --
+      - /bin/bash
+      - -ec
+      - |
+        dbt deps --project-dir /opt/airflow
+        exec /entrypoint "$$@"
+      - --
     command: scheduler
     healthcheck:
       test: airflow jobs check --job-type SchedulerJob --local

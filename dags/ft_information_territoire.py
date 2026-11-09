@@ -1,6 +1,6 @@
 import logging
 
-from airflow.sdk import DAG, task
+from airflow.sdk import DAG, CronTriggerTimetable, task
 
 from dags.common import default_dag_args, slack
 from dags.common.france_travail import api as ft_api_helpers
@@ -13,7 +13,11 @@ logger = logging.getLogger(__name__)
 
 # NOTE: We recuperate the stats on a quarterly basis. Since we don't know when the stats will be updated API-side
 # we cannot reliably schedule this DAG, so we run it regularly.
-with DAG(**default_dag_args(), dag_id="ft_information_territoire", schedule="@weekly") as dag:
+with DAG(
+    dag_id="ft_information_territoire",
+    schedule=CronTriggerTimetable("0 14 * * 0", timezone="Europe/Paris"),
+    **default_dag_args(),
+) as dag:
 
     @task
     def registered_jobseeker_stats_by_territory(**kwargs):

@@ -15,17 +15,12 @@ def get_default_args():
 
 
 def tag_build_dag(dag_id, schedule, tag, build_args="", **dag_kwargs):
-    """DAG standard : dbt debug > dbt deps > dbt build --select "+tag:<tag>" > notification Slack."""
+    """Construit les modèles du tag à partir des dépendances préparées par dbt_prepare."""
     dag_args = default_dag_args() | {"default_args": get_default_args()} | dag_kwargs
 
     with DAG(dag_id=dag_id, schedule=schedule, **dag_args) as dag:
         task = functools.partial(bash.BashOperator, env=db.connection_envvars(), append_env=True)
         build_command = " ".join(filter(None, [f'dbt build --select "+tag:{tag}"', build_args]))
-        (
-            task(task_id="dbt_debug", bash_command="dbt debug")
-            >> task(task_id="dbt_deps", bash_command="dbt deps")
-            >> task(task_id="dbt_build", bash_command=build_command)
-            >> slack.success_notifying_task()
-        )
+        task(task_id="dbt_build", bash_command=build_command) >> slack.success_notifying_task()
 
     return dag

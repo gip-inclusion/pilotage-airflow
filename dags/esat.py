@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 from sqlalchemy.orm import declarative_base
 
 from dags.common import dbt, default_dag_args, gsheet
@@ -16,7 +16,7 @@ variables_files = Path(__file__).parent / "common" / "esat" / "ESAT_variables_qu
 EsatBase = declarative_base()
 
 
-with DAG("esat", schedule="@daily", **dag_args) as dag:
+with DAG("esat", schedule=CronTriggerTimetable("20 0 * * *", timezone="Europe/Paris"), **dag_args) as dag:
     variables = gsheet.get_variables(variables_files, delimiter_type=";")
     esat_model = gsheet.build_data_model(  # Needs to be build before `create_models(EsatBase)`
         variables,

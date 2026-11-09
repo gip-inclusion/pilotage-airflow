@@ -3,7 +3,7 @@ import hmac
 import json
 import logging
 
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
 from dags.common import db, dbt, default_dag_args, slack
 
@@ -89,7 +89,11 @@ def sync_tables(table_names, src_schema, dest_schema, from_db=None):
                 del chunk
 
 
-with DAG("populate_matometa_db", schedule="@daily", **dag_args) as dag:
+with DAG(
+    "populate_matometa_db",
+    schedule=CronTriggerTimetable("20 1 * * *", timezone="Europe/Paris"),
+    **dag_args,
+) as dag:
 
     @task
     def export_emplois_tables():

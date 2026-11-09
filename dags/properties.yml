@@ -11,12 +11,14 @@ models:
       Ainsi, il est possible de suivre l'évolution hebdomadaire du NPS de tous les TBs, les TBs FT, SIAE et DDETS.
   - name: suivi_visites_campagnes_c0
     description: >
-      Ce DAG permet de récupérer (de manière hebdomadaire) pour chaque campagne matomo du c0 et chaque produit du gip les visiteurs et leurs actions.
+      Le premier jour de chaque mois à 12 h 15 (heure de Paris), ce DAG récupère les visiteurs et leurs actions
+      pour chaque campagne Matomo du c0 et chaque produit du GIP.
       Mise à disposition de cette table sur metabase pour les statistiques internes du c0.
   - name: actes_metier
     description: >
-      Ce DAG recupere depuis Matomo les visites mensuelles des pages de recherche Emplois necessaires aux actes metier,
-      sur les 14 derniers mois fermes. Il lance ensuite, chaque premier jour du mois a 08:00, les modèles dbt tagués actes-metier.
+      Le premier jour de chaque mois à 10 h 30 (heure de Paris), ce DAG récupère depuis Matomo les visites
+      des pages de recherche Emplois nécessaires aux actes métier sur les 14 derniers mois clos.
+      Il lance ensuite les modèles dbt tagués actes-metier.
   - name: dora
     description: >
       Ce DAG lance les modèles dbt tagués dora à partir des données déjà déposées dans le schéma raw_dora.

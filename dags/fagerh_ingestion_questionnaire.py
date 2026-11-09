@@ -54,27 +54,13 @@ with DAG(
         print(f"{inserted_rows=}")
         print("status=loaded")
 
-    dbt_debug = bash.BashOperator(
-        task_id="dbt_debug",
-        bash_command="dbt debug",
-        env=env_vars,
-        append_env=True,
-    )
-
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command='dbt build --select "+tag:fagerh"',
+        bash_command='dbt build --select "+tag:fagerh" --exclude-resource-type seed',
         env=env_vars,
         append_env=True,
     )
 
     loaded = load_raw_csv_to_db()
 
-    loaded >> dbt_debug >> dbt_deps >> dbt_build
+    loaded >> dbt_build

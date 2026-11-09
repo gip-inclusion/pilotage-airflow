@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 from airflow.providers.standard.operators import bash
-from airflow.sdk import DAG, task
+from airflow.sdk import DAG, CronTriggerTimetable, task
 
 from dags.common import db, dbt, default_dag_args
 
@@ -93,7 +93,7 @@ ALTER SCHEMA "{TEMP_SCHEMA}" RENAME TO "{TARGET_SCHEMA}";
 
 with DAG(
     dag_id=DAG_ID,
-    schedule="0 5 * * *",
+    schedule=CronTriggerTimetable("30 6 * * *", timezone="Europe/Paris"),
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()
@@ -158,25 +158,11 @@ with DAG(
             shutil.rmtree(base_tmp, ignore_errors=True)
             print("END cleanup_tmp_files")
 
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        env=env_vars,
-        append_env=True,
-    )
-
-    dbt_seed = bash.BashOperator(
-        task_id="dbt_seed",
-        bash_command="dbt seed",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command='dbt build --select "+tag:marche"',
+        bash_command='dbt build --select "+tag:marche" --exclude-resource-type seed',
         env=env_vars,
         append_env=True,
     )
 
-    refresh_raw_schema() >> dbt_deps >> dbt_seed >> dbt_build
+    refresh_raw_schema() >> dbt_build

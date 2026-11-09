@@ -1,7 +1,7 @@
 import pendulum
 import sqlalchemy
 from airflow.providers.standard.operators import bash
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
 from dags.common import db, dbt, default_dag_args, matomo, slack
 
@@ -144,7 +144,7 @@ def fetch_actes_metier_matomo_data_for_site(
 
 with DAG(
     "actes_metier",
-    schedule="0 8 1 * *",
+    schedule=CronTriggerTimetable("30 10 1 * *", timezone="Europe/Paris"),
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()
@@ -172,27 +172,13 @@ with DAG(
             if department_visits:
                 conn.execute(sqlalchemy.text(UPSERT_DEPARTMENT_VISITS_SQL), department_visits)
 
-    dbt_debug = bash.BashOperator(
-        task_id="dbt_debug",
-        bash_command="dbt debug",
-        env=env_vars,
-        append_env=True,
-    )
-
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command='dbt build --select "tag:actes-metier"',
+        bash_command='dbt build --select "tag:actes-metier" --exclude-resource-type seed',
         env=env_vars,
         append_env=True,
     )
 
     fetched = fetch_actes_metier_matomo_data()
 
-    fetched >> dbt_debug >> dbt_deps >> dbt_build >> slack.success_notifying_task()
+    fetched >> dbt_build >> slack.success_notifying_task()

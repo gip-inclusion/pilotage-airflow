@@ -117,23 +117,9 @@ with DAG("data_inclusion", schedule="0 23 * * *", **dag_args) as dag:
         )
         logger.info("%r rows created", len(services.index))
 
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        env=env_vars,
-        append_env=True,
-    )
-
-    dbt_seed = bash.BashOperator(
-        task_id="dbt_seed",
-        bash_command="dbt seed",
-        env=env_vars,
-        append_env=True,
-    )
-
     dbt_build = bash.BashOperator(
         task_id="dbt_build",
-        bash_command='dbt build --select "+tag:data-inclusion"',
+        bash_command='dbt build --select "+tag:data-inclusion" --exclude-resource-type seed',
         env=env_vars,
         append_env=True,
     )
@@ -142,8 +128,6 @@ with DAG("data_inclusion", schedule="0 23 * * *", **dag_args) as dag:
         create_schema(DB_SCHEMA).as_setup()
         >> drop_tables()
         >> [import_structures(), import_structures_deduplicated(), import_services()]
-        >> dbt_deps
-        >> dbt_seed
         >> dbt_build
         >> slack.success_notifying_task()
     )

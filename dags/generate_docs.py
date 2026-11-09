@@ -6,7 +6,7 @@ import pathlib
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
 from airflow.providers.standard.operators import bash
-from airflow.sdk import DAG, Variable, task
+from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
 from dags.common import db, dbt, default_dag_args
 
@@ -17,17 +17,10 @@ dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
 
 with DAG(
     dag_id="generate_docs",
-    schedule="@daily",
+    schedule=CronTriggerTimetable("0 1 * * *", timezone="Europe/Paris"),
     **dag_args,
 ) as dag:
     env_vars = db.connection_envvars()
-
-    dbt_deps = bash.BashOperator(
-        task_id="dbt_deps",
-        bash_command="dbt deps",
-        env=env_vars,
-        append_env=True,
-    )
 
     dbt_generate_docs = bash.BashOperator(
         task_id="dbt_generate_docs",
@@ -57,4 +50,4 @@ with DAG(
             acl_policy="public-read",
         )
 
-    ([dbt_deps.as_setup(), create_bucket.as_setup()] >> dbt_generate_docs >> copy_file())
+    create_bucket.as_setup() >> dbt_generate_docs >> copy_file()
