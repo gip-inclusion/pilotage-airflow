@@ -3,7 +3,7 @@ version: 2
 models:
   - name: stg_di__services
     description: >
-      Modèle de staging contenant la liste des services récupérés via l'API data inclusion. Ici la source soliguide est incluse.
+      Modèle de staging contenant la liste des services data inclusion récupérés depuis l'export S3, sans filtrage. Ici la source soliguide est incluse.
 
     config:
         tags:
@@ -89,10 +89,20 @@ models:
         description: Indique si l'adresse a été certifiée.
       - name: score_qualite
         description: Score de qualité de la fiche service.
+      - name: _has_pii
+        description: Indique si le service contient des données personnelles.
+      - name: _in_opendata
+        description: Indique si le service est diffusé en open data.
+      - name: _is_valid
+        description: Indique si le service respecte le schéma data inclusion.
+      - name: _was_renamed
+        description: Indique si le service a été renommé par data inclusion.
+      - name: _is_contact_public
+        description: Indique si les informations de contact du service sont publiques.
 
   - name: stg_di__structures
     description: >
-      Modèle de staging contenant la liste des structures récupérées via l'API data inclusion. Ici la source soliguide est incluse.
+      Modèle de staging contenant la liste des structures data inclusion récupérées depuis l'export S3, sans dédoublonnage ni filtrage. Ici la source soliguide est incluse.
 
     config:
         tags:
@@ -115,7 +125,7 @@ models:
       - name: nom
         description: Nom de la structure (3 à 150 caractères).
       - name: date_maj
-        description: Date de dernière modification de la structure chez le producteur (format ISO 8601).
+        description: Date de dernière modification de la structure chez le producteur.
       - name: description
         description: Présentation générale de la structure.
       - name: lien_source
@@ -148,77 +158,18 @@ models:
         description: Lien vers la page Accesslibre décrivant l'accessibilité du lieu.
       - name: reseaux_porteurs
         description: Réseaux porteurs auxquels appartient la structure (référentiel reseaux_porteurs).
+      - name: _cluster_id
+        description: Identifiant du groupe de doublons auquel appartient la structure, nul si elle n'a pas de doublon.
       - name: adresse_certifiee
-        description: Indique si l'adresse a été certifiée.
-      - name: score_qualite
-        description: Score de qualité de la fiche structure.
-      - name: doublons
-        description: Liste des doublons identifiés pour cette structure.
-
-  - name: stg_di__structures_deduplicated
-    description: >
-      Modèle de staging contenant la liste des structures récupérées via l'API data inclusion, sans les doublons. Ici la source soliguide est incluse.
-
-    config:
-        tags:
-            - data-inclusion
-
-    tests:
-      - dbt_utils.equal_rowcount:
-          arguments:
-            compare_model: source('data_inclusion', 'raw_di_structures_deduplicated')
-    columns:
-      - name: source
-        description: Identifiant du producteur original de la donnée.
-        tests:
-          - not_null
-      - name: id
-        description: Identifiant unique de la structure, combinant l'identifiant du producteur et celui de la structure.
-        tests:
-          - not_null
-          - unique
-      - name: nom
-        description: Nom de la structure (3 à 150 caractères).
-      - name: date_maj
-        description: Date de dernière modification de la structure chez le producteur (format ISO 8601).
-      - name: description
-        description: Présentation générale de la structure.
-      - name: lien_source
-        description: Lien vers la structure sur le site du producteur.
-      - name: siret
-        description: Numéro SIRET associé à la structure (14 chiffres).
-      - name: commune
-        description: Nom de la commune où se situe la structure.
-      - name: code_postal
-        description: Code postal de la structure (5 chiffres).
-      - name: code_insee
-        description: Code INSEE de la commune de la structure (5 caractères alphanumériques).
-      - name: adresse
-        description: Adresse de la structure.
-      - name: complement_adresse
-        description: Complément d'adresse.
-      - name: longitude
-        description: Longitude géographique.
-      - name: latitude
-        description: Latitude géographique.
-      - name: telephone
-        description: Numéro de téléphone pour obtenir des informations sur la structure, format E.164 privilégié.
-      - name: courriel
-        description: Adresse email de contact (RFC 5322).
-      - name: site_web
-        description: URL du site web de la structure.
-      - name: horaires_accueil
-        description: Horaires d'accueil du public par la structure (format OpenStreetMap Opening Hours).
-      - name: accessibilite_lieu
-        description: Lien vers la page Accesslibre décrivant l'accessibilité du lieu.
-      - name: reseaux_porteurs
-        description: Réseaux porteurs auxquels appartient la structure (référentiel reseaux_porteurs).
-      - name: adresse_certifiee
-        description: Indique si l'adresse a été certifiée.
-      - name: score_qualite
-        description: Score de qualité de la fiche structure.
-      - name: doublons
-        description: Liste des doublons identifiés pour cette structure.
+        description: Indique si l'adresse a été certifiée (_has_valid_address dans la source).
+      - name: _has_pii
+        description: Indique si la structure contient des données personnelles.
+      - name: _in_opendata
+        description: Indique si la structure est diffusée en open data.
+      - name: _is_valid
+        description: Indique si la structure respecte le schéma data inclusion.
+      - name: _is_closed
+        description: Indique si la structure est fermée.
 
   - name: stg_actes_metier__data_inclusion
     description: >

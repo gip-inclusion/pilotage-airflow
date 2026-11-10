@@ -1,5 +1,5 @@
 with structures as (
-    select * from {{ ref('stg_di__structures') }}
+    select * from {{ ref('int_di__structures') }}
 ),
 
 structure_source_mapping as (

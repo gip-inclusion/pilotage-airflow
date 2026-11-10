@@ -1197,11 +1197,14 @@ sources:
   - name: data_inclusion
     schema: raw_data_inclusion
     description: >
-      Données de data inclusion récupérées via leur API. Toutes les données correspondent à la v1, la v0 étant decomissionnée depuis mai 2026.
+      Données de data inclusion récupérées depuis leur export S3 par le DAG data_inclusion. Toutes les données correspondent à la v1, la v0 étant decomissionnée depuis mai 2026.
     tables:
       - name: raw_di_services
-      - name: raw_di_structures_deduplicated
+        description: >
+          Services data inclusion importés depuis l'export S3 par le DAG data_inclusion.
       - name: raw_di_structures
+        description: >
+          Structures data inclusion (non dédupliquées) importées depuis l'export S3 par le DAG data_inclusion.
   - name: gps
     schema: public
     description: >

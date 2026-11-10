@@ -19,7 +19,10 @@ select
     horaires_accueil,
     accessibilite_lieu,
     reseaux_porteurs,
-    adresse_certifiee,
-    score_qualite,
-    doublons
+    _cluster_id,
+    _has_valid_address as adresse_certifiee,
+    _has_pii,
+    _in_opendata,
+    _is_valid,
+    _is_closed
 from {{ source('data_inclusion', 'raw_di_structures') }}

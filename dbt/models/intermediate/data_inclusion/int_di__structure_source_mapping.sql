@@ -1,66 +1,37 @@
-with deduplicated_structures as (
+with principales as (
 
-    select *
-    from {{ ref('stg_di__structures_deduplicated') }}
+    select
+        source,
+        id,
+        doublons
+    from {{ ref('int_di__structures') }}
+    where est_structure_principale
 
 ),
 
-kept_structures as (
+structure_source_mapping as (
 
     select
         source as deduplicated_source,
         id     as deduplicated_source_structure_id,
         source,
         id     as source_structure_id
-    from deduplicated_structures
-
-),
-
-duplicated_structures as (
-
-    select
-        deduplicated_structures.source    as deduplicated_source,
-        deduplicated_structures.id        as deduplicated_source_structure_id,
-        doublon.value::jsonb ->> 'source' as source,
-        doublon.value::jsonb ->> 'id'     as source_structure_id
-    from deduplicated_structures
-    cross join lateral unnest(deduplicated_structures.doublons) as doublon (value)
-
-),
-
-structure_source_mapping as (
-
-    select *
-    from kept_structures
+    from principales
 
     union all
 
-    select *
-    from duplicated_structures
-
-),
-
-structure_ids as (
-
-    select distinct
-        deduplicated_source,
-        deduplicated_source_structure_id,
-        {{ dbt_utils.generate_surrogate_key([
-            'deduplicated_source',
-            'deduplicated_source_structure_id'
-        ]) }} as structure_id
-    from structure_source_mapping
+    select
+        principales.source                as deduplicated_source,
+        principales.id                    as deduplicated_source_structure_id,
+        doublon.value::jsonb ->> 'source' as source,
+        doublon.value::jsonb ->> 'id'     as source_structure_id
+    from principales
+    cross join lateral unnest(principales.doublons) as doublon (value)
 
 )
 
 select
-    structure_ids.structure_id,
-    structure_source_mapping.source,
-    structure_source_mapping.source_structure_id
+    {{ dbt_utils.generate_surrogate_key(['deduplicated_source', 'deduplicated_source_structure_id']) }} as structure_id,
+    source,
+    source_structure_id
 from structure_source_mapping
-left join structure_ids
-    on
-        structure_source_mapping.deduplicated_source
-        = structure_ids.deduplicated_source
-        and structure_source_mapping.deduplicated_source_structure_id
-        = structure_ids.deduplicated_source_structure_id

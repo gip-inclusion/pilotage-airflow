@@ -32,6 +32,11 @@ select
     volume_horaire_hebdomadaire,
     nombre_semaines,
     horaires_accueil,
-    adresse_certifiee,
-    score_qualite
+    score_qualite,
+    _has_valid_address as adresse_certifiee,
+    _has_pii,
+    _in_opendata,
+    _is_valid,
+    _was_renamed,
+    _is_contact_public
 from {{ source('data_inclusion', 'raw_di_services') }}

@@ -1,7 +1,8 @@
 with structures as (
 
     select *
-    from {{ ref('stg_di__structures_deduplicated') }}
+    from {{ ref('int_di__structures') }}
+    where est_structure_principale
 
 ),
 
