@@ -10,9 +10,9 @@ with thematiques_per_service as (
         max(case when thematique_principale like '%famille%' then 1 else 0 end)                                   as famille_thematique,
         max(case when thematique_principale like '%difficultes_administratives_ou_juridiques%' then 1 else 0 end) as difficultes_administratives_ou_juridiques_thematique,
         max(case when thematique_principale like '%difficultes_financieres%' then 1 else 0 end)                   as difficultes_financieres_thematique
-    from {{ ref('stg_di__services') }} as services
-    inner join {{ ref('stg_di__structures_deduplicated') }} as structure
-        on services.structure_id = structure.id,
+    from {{ ref('int_di__services') }} as services
+    inner join {{ ref('int_di__structures') }} as structure
+        on services.structure_id = structure.id and structure.est_structure_principale,
         unnest(services.thematiques) as thematique_principale
     where services.thematiques is not null
     group by

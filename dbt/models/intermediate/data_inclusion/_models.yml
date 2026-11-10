@@ -7,6 +7,8 @@ models:
 
         Il contient une ligne par structure présente dans une source.
 
+        Il est construit à partir de int_di__structures, en ne gardant que les structures exposées par l'API.
+
         Il permet de savoir quelles structures d'origine correspondent à une même structure Data Inclusion
         dédupliquée.
 
@@ -45,6 +47,174 @@ models:
           combination_of_columns:
             - source
             - source_structure_id
+
+  - name: int_di__services
+    description: >
+      Services data inclusion de l'export S3 exposés par l'API data·inclusion. Reproduit le filtrage fait par l'API
+      au chargement des données (fonction prepare_load de api/src/data_inclusion/api/inclusion_data/commands.py
+      dans le dépôt gip-inclusion/data-inclusion) :
+
+      - le service est valide (_is_valid) ;
+
+      - il est rattaché à une structure exposée par l'API (présente dans int_di__structures) ;
+
+      - il a un code commune, sauf s'il n'est pas proposé en présentiel (ex. service uniquement à distance) :
+      un service en présentiel sans code commune ne peut pas être localisé et est écarté. Un service sans
+      modes_accueil est considéré comme non présentiel.
+
+
+    config:
+        tags:
+            - data-inclusion
+
+    columns:
+      - name: source
+        description: Identifiant du producteur original de la donnée.
+      - name: structure_id
+        description: Identifiant de la structure porteuse du service.
+        tests:
+          - not_null
+      - name: id
+        description: Identifiant unique du service, combinant l'identifiant du producteur et celui du service.
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        description: Nom du service (3 à 150 caractères).
+      - name: description
+        description: Présentation générale du service (idéalement 200 à 2000 caractères).
+      - name: lien_source
+        description: Lien permettant d'accéder au service sur le site du producteur.
+      - name: date_maj
+        description: Date de dernière modification de la donnée chez le producteur (format ISO 8601).
+      - name: type
+        description: Catégorie du service (référentiel types).
+      - name: thematiques
+        description: Thématiques couvertes par le service (référentiel thematiques).
+      - name: frais
+        description: Statut de facturation du service (référentiel frais, ex. gratuit, payant).
+      - name: frais_precisions
+        description: Précisions sur les frais applicables.
+      - name: publics
+        description: Publics cibles du service — tous-publics ne peut pas être combiné avec d'autres valeurs (référentiel publics).
+      - name: publics_precisions
+        description: Précisions sur les publics cibles.
+      - name: conditions_acces
+        description: Prérequis ou documents nécessaires pour accéder au service.
+      - name: commune
+        description: Nom de la commune où le service est disponible.
+      - name: code_postal
+        description: Code postal du lieu du service (5 chiffres).
+      - name: code_insee
+        description: Code INSEE de la commune du service (5 caractères alphanumériques).
+      - name: adresse
+        description: Adresse du service.
+      - name: complement_adresse
+        description: Complément d'adresse.
+      - name: longitude
+        description: Longitude géographique.
+      - name: latitude
+        description: Latitude géographique.
+      - name: telephone
+        description: Numéro de téléphone de contact, format E.164 privilégié.
+      - name: courriel
+        description: Adresse email de contact (RFC 5322).
+      - name: modes_accueil
+        description: Modalités d'accueil disponibles (référentiel modes_accueil).
+      - name: zone_eligibilite
+        description: Zones géographiques éligibles au service, via codes COG (communes, départements, EPCI, pays).
+      - name: contact_nom_prenom
+        description: Nom et prénom du contact du service.
+      - name: lien_mobilisation
+        description: Lien permettant d'accéder au service ou de le mobiliser.
+      - name: modes_mobilisation
+        description: Modalités de mobilisation du service (référentiel modes_mobilisation).
+      - name: mobilisable_par
+        description: Profils autorisés à mobiliser le service (référentiel personnes_mobilisatrices).
+      - name: mobilisation_precisions
+        description: Précisions sur le processus de mobilisation.
+      - name: volume_horaire_hebdomadaire
+        description: Volume horaire hebdomadaire du service, en heures. Utilisé pour le suivi des activités BRSA (15 à 20h).
+      - name: nombre_semaines
+        description: Durée du service en semaines (minimum 1). Utilisé pour les calculs BRSA.
+      - name: horaires_accueil
+        description: Horaires d'accueil du public (format OpenStreetMap Opening Hours).
+      - name: adresse_certifiee
+        description: Indique si l'adresse a été certifiée.
+      - name: score_qualite
+        description: Score de qualité de la fiche service.
+
+  - name: int_di__structures
+    description: >
+      Structures data inclusion exposées par l'API data·inclusion, reconstruites à partir de l'export S3. Le modèle
+      a les mêmes colonnes que l'API (endpoint /api/v1/structures), plus est_structure_principale.
+
+      Il reproduit le code de l'API (dépôt gip-inclusion/data-inclusion, dossier api/src/data_inclusion/api/inclusion_data) :
+      les structures fermées ou invalides sont exclues, puis une structure est gardée par groupe de doublons
+      (`_cluster_id`, ou `id` si `_cluster_id` est nul) en prenant le meilleur score qualité, puis la date de mise à jour
+      la plus récente, puis le plus petit identifiant. Filtrer sur est_structure_principale équivaut à appeler l'API
+      avec exclure_doublons=true.
+
+    config:
+        tags:
+            - data-inclusion
+
+    columns:
+      - name: source
+        description: Identifiant du producteur original de la donnée.
+      - name: id
+        description: Identifiant unique de la structure, combinant l'identifiant du producteur et celui de la structure.
+        tests:
+          - not_null
+          - unique
+      - name: nom
+        description: Nom de la structure (3 à 150 caractères).
+      - name: date_maj
+        description: Date de dernière modification de la structure chez le producteur.
+      - name: description
+        description: Présentation générale de la structure.
+      - name: lien_source
+        description: Lien vers la structure sur le site du producteur.
+      - name: siret
+        description: Numéro SIRET associé à la structure (14 chiffres).
+      - name: commune
+        description: Nom de la commune où se situe la structure.
+      - name: code_postal
+        description: Code postal de la structure (5 chiffres).
+      - name: code_insee
+        description: Code INSEE de la commune de la structure (5 caractères alphanumériques).
+      - name: adresse
+        description: Adresse de la structure.
+      - name: complement_adresse
+        description: Complément d'adresse.
+      - name: longitude
+        description: Longitude géographique.
+      - name: latitude
+        description: Latitude géographique.
+      - name: telephone
+        description: Numéro de téléphone pour obtenir des informations sur la structure, format E.164 privilégié.
+      - name: courriel
+        description: Adresse email de contact (RFC 5322).
+      - name: site_web
+        description: URL du site web de la structure.
+      - name: horaires_accueil
+        description: Horaires d'accueil du public par la structure (format OpenStreetMap Opening Hours).
+      - name: accessibilite_lieu
+        description: Lien vers la page Accesslibre décrivant l'accessibilité du lieu.
+      - name: reseaux_porteurs
+        description: Réseaux porteurs auxquels appartient la structure (référentiel reseaux_porteurs).
+      - name: adresse_certifiee
+        description: Indique si l'adresse a été certifiée.
+      - name: score_qualite
+        description: Moyenne arrondie à deux décimales des scores qualité des services de la structure exposés par l'API (mêmes filtres que int_di__services), 0 sans service.
+      - name: doublons
+        description: Liste des autres structures du même groupe de doublons, au format JSON avec leur source et leur identifiant.
+        tests:
+          - not_null
+      - name: est_structure_principale
+        description: Vrai si la structure est celle gardée par l'API pour son groupe de doublons, ou si elle n'a pas de doublon.
+        tests:
+          - not_null
 
   - name: int_data_inclusion__actes_metier
     description: >

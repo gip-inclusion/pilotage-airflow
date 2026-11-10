@@ -8,7 +8,7 @@ with mapping as (
 structures as (
 
     select count(distinct id) as structure_id_count
-    from {{ ref('stg_di__structures') }}
+    from {{ ref('int_di__structures') }}
 
 )
 

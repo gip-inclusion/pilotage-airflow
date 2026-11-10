@@ -1,7 +1,7 @@
 with services as (
 
     select *
-    from {{ ref('stg_di__services') }}
+    from {{ ref('int_di__services') }}
 
 ),
 
