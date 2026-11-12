@@ -6,7 +6,8 @@
     {#- `this` is a dbt built-in: the model being built -#}
     {%- for col in adapter.get_columns_in_relation(this) -%}
       {%- set n = col.name | lower -%}
-      {%- if 'id' in n.split('_') or n in extra %}
+      {#- arrays are never join keys and can exceed the btree row size limit -#}
+      {%- if ('id' in n.split('_') or n in extra) and col.dtype != 'ARRAY' %}
         {#- 63 = psql's identifier-length limit -#}
         {%- set idx = (this.identifier ~ '_' ~ n ~ '_idx') | truncate(63, true, '') %}
         create index if not exists "{{ idx }}" on {{ this }} ("{{ col.name }}");
