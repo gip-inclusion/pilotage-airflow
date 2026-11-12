@@ -37,12 +37,19 @@ models:
     legacy:
       +materialized: table
       +post-hook: ["{{ index_join_keys() }}"]
+      daily:
+        +tags: ["daily"]
     marts:
       +schema: public
       +materialized: table
       +post-hook: ["{{ index_join_keys() }}"]
       monrecap:
         +schema: monrecap
+      daily:
+        +tags: ["daily"]
+      marts_core:
+        daily:
+          +tags: ["daily"]
     data_inclusion:
       +schema: data_inclusion
     reporting:

@@ -48,7 +48,7 @@ def rename_table_atomically(from_table_name, to_table_name):
     to_table_name to z_old_<to_table_name>.
     This allows us to take our time filling the new table without locking the current one.
     Note that when the old table z_old_<to_table_name> is deleted, all its obsolete airflow staging views
-    are deleted as well, they will be rebuilt by the next run of the airflow DAG `dbt_daily`.
+    are deleted as well, they will be rebuilt by the airflow DAG `dbt_weekly`, triggered right after.
     """
 
     with MetabaseDatabaseCursor3() as (cur, conn):
