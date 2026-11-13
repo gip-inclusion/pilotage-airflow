@@ -28,6 +28,9 @@ with DAG("copy_metabase_docs_to_pilotage", schedule="0 4 * * *", **dag_args) as 
             from metabase_field as mb_field
             left join metabase_table as mb_table on mb_field.table_id = mb_table.id
             where mb_table.db_id = 2
+                -- Metabase keeps tables and columns that vanished from the database, flagged inactive
+                and mb_table.active
+                and mb_field.active
                 and (
                         mb_table.description is not null
                         or mb_field.description is not null
