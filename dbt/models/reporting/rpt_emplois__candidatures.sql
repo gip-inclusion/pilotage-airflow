@@ -3,19 +3,24 @@ with candidatures as (
     from {{ ref('fct_emplois__candidatures') }}
 ),
 
+communes as (
+    select *
+    from {{ ref('dim_commune') }}
+),
+
 etablissements as (
     select
         etab.*,
-        commune.nom_commune,
-        commune.code_departement_insee,
-        commune.nom_departement,
-        commune.code_region_insee,
-        commune.nom_region,
-        commune.code_ft_clpe,
-        commune.nom_clpe
+        communes.nom_commune,
+        communes.code_departement_insee,
+        communes.nom_departement,
+        communes.code_region_insee,
+        communes.nom_region,
+        communes.code_ft_clpe,
+        communes.nom_clpe
     from {{ ref('dim_emplois__etablissements') }} as etab
-    left join {{ ref('dim_commune') }} as commune
-        on etab.code_commune = commune.code_commune_insee
+    left join communes
+        on etab.code_commune = communes.code_commune_insee
 )
 
 select
