@@ -835,3 +835,198 @@ models:
         description: >
           liste dédupliquée des départements dans lesquels le geiq a une antenne ayant porté au moins un
           contrat sur l'année de campagne du contrat.
+
+  - name: rpt_emplois__candidatures
+    description: >
+      Candidatures des Emplois de l'Inclusion sur l'ensemble du territoire national, enrichies des informations
+      de l'établissement d'origine et de l'établissement destinataire. Une ligne par candidature.
+      Les colonnes destinataire_ et origine_ viennent de dim_emplois__etablissements, la géographie
+      (dont la région et la CLPE France Travail) vient de dim_commune.
+    config:
+      tags:
+        - emplois
+    columns:
+      - name: id_candidature
+        description: Identifiant unique de la candidature dans les Emplois.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('fct_emplois__candidatures')
+                field: id_candidature
+      - name: id_candidat
+        description: Identifiant du candidat, à joindre à dim_emplois__candidats.id_candidat.
+      - name: origine_candidature
+        description: Type d'acteur à l'origine de la candidature, tel qu'indiqué dans la source.
+      - name: origine_detaillee
+        description: Précision sur l'origine de la candidature, reprise de la source.
+      - name: statut_candidature
+        description: État actuel de la candidature, sans changement de libellé.
+      - name: parcours_de_creation
+        description: Parcours technique de création de la candidature, repris de la source.
+      - name: date_candidature
+        description: Date de dépôt de la candidature.
+      - name: date_traitement
+        description: Date de traitement renseignée dans la source.
+      - name: date_debut_contrat
+        description: Date de début du contrat renseignée dans la source.
+      - name: date_embauche
+        description: Date d'embauche renseignée dans la source.
+      - name: candidature_archivee
+        description: Indique si la candidature est archivée.
+      - name: candidature_refusee_automatiquement
+        description: Indique si le refus de la candidature est automatique.
+      - name: injection_ai
+        description: Indique si la candidature vient de la reprise de stock AI.
+      - name: mode_attribution_pass_iae
+        description: Mode d'attribution du PASS indiqué par la source, automatique ou manuel. Peut être absent.
+      - name: motif_refus
+        description: Motif du refus, quand il est renseigné.
+      - name: nombre_fiches_de_poste
+        description: Nombre de fiches de poste distinctes liées à la candidature. Vaut 0 en l'absence de lien.
+      - name: destinataire_type_etablissement
+        description: >
+          Type de l'établissement qui reçoit la candidature, structure, organisation ou structure_organisation.
+          Null si l'établissement n'est pas retrouvé dans dim_emplois__etablissements.
+      - name: destinataire_id_structure
+        description: Identifiant dans les Emplois de la structure qui reçoit la candidature.
+      - name: destinataire_nom_structure
+        description: Nom saisi sur les Emplois de la structure qui reçoit la candidature.
+      - name: destinataire_type_structure
+        description: Code du type de la structure qui reçoit la candidature, par exemple ACI, EI, AI, ETTI, EITI ou GEIQ.
+      - name: destinataire_siret
+        description: >
+          SIRET de l'établissement qui reçoit la candidature. Pour les structures de source Export ASP,
+          SIRET actualisé issu de l'ASP.
+      - name: destinataire_code_naf
+        description: Code NAF de la structure qui reçoit la candidature, issu de l'ASP pour les structures de source Export ASP.
+      - name: destinataire_active
+        description: Entier 0/1 indiquant si l'établissement qui reçoit la candidature est actif sur la plateforme.
+      - name: destinataire_code_commune
+        description: >
+          Code INSEE de la commune de l'établissement qui reçoit la candidature. Pour les structures de source
+          Export ASP, commune de l'adresse administrative ASP, sinon commune de l'adresse saisie sur les Emplois.
+      - name: destinataire_nom_departement
+        description: Nom du département de l'établissement qui reçoit la candidature.
+      - name: destinataire_code_clpe
+        description: Code de la CLPE France Travail de la commune de l'établissement qui reçoit la candidature.
+      - name: destinataire_nom_clpe
+        description: Nom de la CLPE France Travail de la commune de l'établissement qui reçoit la candidature.
+      - name: destinataire_nom_region
+        description: Nom de la région de l'établissement qui reçoit la candidature.
+      - name: origine_type_etablissement
+        description: >
+          Type de l'établissement à l'origine de la candidature, structure, organisation ou structure_organisation.
+          Null si aucun établissement d'origine n'est renseigné ou retrouvé.
+      - name: origine_id_structure
+        description: Identifiant dans les Emplois de la structure à l'origine de la candidature.
+      - name: origine_id_organisation
+        description: Identifiant dans les Emplois de l'organisation prescriptrice à l'origine de la candidature.
+      - name: origine_nom_structure
+        description: Nom saisi sur les Emplois de la structure à l'origine de la candidature.
+      - name: origine_nom_organisation
+        description: Nom saisi sur les Emplois de l'organisation à l'origine de la candidature.
+      - name: origine_type_structure
+        description: Code du type de la structure à l'origine de la candidature.
+      - name: origine_type_organisation
+        description: Code du type de l'organisation à l'origine de la candidature, par exemple FT, ML, CAP_EMPLOI, DEPT, CCAS ou Autre.
+      - name: origine_type_complet
+        description: Libellé long du type de l'organisation à l'origine de la candidature.
+      - name: origine_habilitee
+        description: >
+          Entier 0/1 indiquant si l'organisation à l'origine de la candidature est habilitée à réaliser
+          des diagnostics d'éligibilité IAE.
+      - name: origine_code_safir
+        description: Code SAFIR de l'agence France Travail à l'origine de la candidature. Renseigné uniquement pour les organisations de type FT.
+      - name: origine_siret
+        description: SIRET de l'établissement à l'origine de la candidature.
+      - name: origine_active
+        description: Entier 0/1 indiquant si l'établissement à l'origine de la candidature est actif sur la plateforme.
+      - name: origine_code_commune
+        description: Code INSEE de la commune de l'établissement à l'origine de la candidature.
+      - name: origine_nom_departement
+        description: Nom du département de l'établissement à l'origine de la candidature.
+      - name: origine_code_clpe
+        description: Code de la CLPE France Travail de la commune de l'établissement d'origine.
+      - name: origine_nom_clpe
+        description: Nom de la CLPE France Travail de la commune de l'établissement d'origine.
+      - name: origine_nom_region
+        description: Nom de la région de l'établissement à l'origine de la candidature.
+      - name: date_mise_a_jour_metabase
+        description: Date de la dernière mise à jour de la candidature dans Metabase.
+
+  - name: rpt_emplois__structures
+    description: >
+      SIAE (ACI, AI, EI, EITI, ETTI) de dim_emplois__etablissements sur l'ensemble du territoire national,
+      actives ou non. Une ligne par SIAE.
+      La localisation repose sur le code commune de l'établissement : adresse administrative ASP pour les
+      structures de source Export ASP, sinon adresse saisie sur les Emplois. Le découpage territorial
+      (région, département, EPCI, zone d'emploi, CLPE) vient de dim_commune.
+    config:
+      tags:
+        - emplois
+    columns:
+      - name: id
+        description: Identifiant de l'établissement, à joindre à dim_emplois__etablissements.id.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
+      - name: id_structure
+        description: Identifiant de la structure dans les Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: nom_structure
+        description: Nom de la structure saisi sur les Emplois.
+      - name: type_structure
+        description: Type de SIAE.
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - ACI
+                  - AI
+                  - EI
+                  - EITI
+                  - ETTI
+      - name: siret
+        description: SIRET de la structure. Pour les structures de source Export ASP, SIRET actualisé issu de l'ASP.
+      - name: code_naf
+        description: Code NAF de la structure, issu de l'ASP pour les structures de source Export ASP.
+      - name: source
+        description: >
+          Origine de la création de la structure. Valeurs possibles : Export ASP, Export GEIQ,
+          Utilisateur (Antenne), Staff Itou.
+      - name: date_inscription_emplois
+        description: Date d'inscription de la structure sur les Emplois de l'Inclusion.
+      - name: active
+        description: Entier 0/1 indiquant si la structure est active sur la plateforme.
+      - name: code_commune
+        description: >
+          Code INSEE de la commune de la structure. Pour les structures de source Export ASP,
+          commune de l'adresse administrative ASP, sinon commune de l'adresse saisie sur les Emplois.
+      - name: nom_commune
+        description: Nom de la commune de la structure.
+      - name: code_departement_insee
+        description: Code INSEE du département de la structure.
+      - name: nom_departement
+        description: Nom du département de la structure.
+      - name: nom_departement_complet
+        description: Code et nom du département concaténés.
+      - name: nom_region
+        description: Nom de la région de la structure.
+      - name: nom_arrondissement
+        description: Nom de l'arrondissement de la structure.
+      - name: nom_epci
+        description: Nom de l'EPCI de la structure.
+      - name: nom_zone_emploi
+        description: Nom de la zone d'emploi de la structure.
+      - name: code_ft_clpe
+        description: Code de la CLPE France Travail de la commune de la structure.
+      - name: nom_clpe
+        description: Nom de la CLPE France Travail de la commune de la structure.
