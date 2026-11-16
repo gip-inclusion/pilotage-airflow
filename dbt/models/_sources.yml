@@ -1796,10 +1796,22 @@ sources:
         description: >
           Table centrale du métier.
 
-          Représente le suivi d'un usager pour une catégorie de motif donnée.
+          Regroupe les invitations et les RDV d'un usager pour une catégorie de motif donnée.
+          Un usager a au plus un suivi par catégorie.
 
           Rôle : suit l'état d'avancement d'un usager dans son parcours, par exemple orientation ou
           accompagnement.
+
+          Dans l'application, chaque suivi est un bloc de l'onglet Rendez-vous de la fiche usager.
+          L'usager figure dans la liste des usagers d'une catégorie tant que son suivi n'est pas clôturé.
+
+          Création :
+          - Manuellement, par l'agent depuis l'onglet Rendez-vous.
+          - À l'import, lorsqu'une catégorie est choisie, pour chaque usager enregistré.
+            Un suivi clôturé est alors rouvert.
+          - À l'invitation, depuis l'application ou l'API, si le suivi n'existe pas encore.
+          - À la prise de RDV dans RDV-Solidarités sur un motif de la catégorie, si l'organisation
+            a configuré cette catégorie.
 
           Relations :
           - Appartient à un user.
@@ -1815,8 +1827,19 @@ sources:
               Catégorie de motif du suivi, par exemple orientation RSA ou accompagnement RSA.
           - name: status
             description: >
-              Statut du suivi. Valeurs possibles : not_invited, invitation_pending, rdv_pending,
-              rdv_needs_status_update, rdv_noshow, rdv_revoked, rdv_excused, rdv_seen, closed.
+              Statut déduit des invitations et des participations du suivi.
+              Valeurs possibles : not_invited (ni invitation ni RDV), invitation_pending
+              (invitation envoyée, sans RDV pris), invitation_expired (toutes les invitations ont
+              expiré sans prise de RDV), rdv_pending (RDV à venir), rdv_needs_status_update
+              (RDV passé dont le statut reste à préciser), rdv_seen (RDV honoré), rdv_excused
+              (RDV annulé par l'usager, excusé), rdv_revoked (RDV annulé par le service),
+              rdv_noshow (absence non excusée), closed (suivi clôturé par un agent, Dossier traité).
+
+              Le statut reflète l'événement le plus récent : une invitation envoyée après un RDV
+              repasse le suivi en invitation_pending.
+
+              Les statuts invitation_expired, rdv_needs_status_update, rdv_excused, rdv_revoked et
+              rdv_noshow demandent une action de l'agent et alimentent le filtre Intervention nécessaire.
           - name: closed_at
             description: >
               Date de clôture du suivi.
@@ -1859,17 +1882,37 @@ sources:
               Indique si l'usager a cliqué sur le lien.
           - name: origin
             description: >
-              Origine de l'invitation. Valeurs possibles : legacy_triggered_by_agent,
-              legacy_triggered_by_periodic_job, reminder, user_list_upload.
+              Endroit d'où l'invitation a été envoyée.
+              Envois initiés par un agent : users_index_page (liste des usagers d'une catégorie),
+              user_follow_ups_page (onglet Rendez-vous de la fiche usager), user_list_upload
+              (étape d'invitation d'un import de fichier ou bouton Inviter les non-invités), api (API).
+
+              Envoi automatique : reminder, relance envoyée 3 jours après une invitation d'agent
+              si l'usager n'a toujours pas pris RDV.
+
+              Valeurs historiques, plus attribuées : legacy_triggered_by_periodic_job (ancien CRON
+              d'invitations périodiques, supprimé) et legacy_triggered_by_agent (envoi par un agent
+              avant l'enregistrement de l'endroit de l'envoi).
           - name: delivery_status
             description: >
-              Statut de livraison de l'invitation.
+              Statut de délivrance renvoyé par Brevo.
+              Vide : statut pas encore reçu ou non récupérable (courrier, SMS envoyé par Primotexto).
+              delivered : message reçu par le serveur mail du destinataire ou par son téléphone.
+              soft_bounce : échec temporaire, par exemple boîte mail pleine.
+              hard_bounce : échec définitif, par exemple adresse ou numéro inexistant.
+              blocked : envoi bloqué par Brevo, par exemple destinataire sur liste de blocage
+              (email uniquement). invalid_email : adresse email invalide (email uniquement).
+              error : erreur de Brevo pendant l'envoi (email uniquement).
+
+              Les statuts renseignés autres que delivered sont des échecs. L'agent voit
+              Non délivrée et peut renvoyer une invitation le jour même.
           - name: sms_provider
             description: >
               Fournisseur SMS utilisé pour les invitations SMS.
           - name: last_brevo_webhook_received_at
             description: >
-              Date du dernier webhook Brevo reçu.
+              Date du dernier webhook Brevo reçu. Pour une invitation délivrée, correspond à la
+              date de délivrance.
           - name: rdv_with_referents
             description: >
               Indique si l'invitation concerne un RDV avec référent.
@@ -1879,6 +1922,9 @@ sources:
           - name: help_phone_number
             description: >
               Numéro d'aide affiché à l'usager.
+          - name: created_by_agent_id
+            description: >
+              Agent ayant initié l'envoi de l'invitation.
 
       - name: rdvs
         description: >
@@ -1914,7 +1960,10 @@ sources:
               Lieu du RDV. Peut être vide si le RDV est à distance.
           - name: status
             description: >
-              Statut du RDV.
+              Statut du RDV, avec les mêmes valeurs que participations.status.
+              unknown : statut pas encore renseigné, RDV à venir ou passé à préciser par l'agent.
+              seen : RDV honoré. excused : RDV annulé par l'usager, qui a prévenu (excusé).
+              revoked : RDV annulé par le service. noshow : absence non excusée.
           - name: cancelled_at
             description: >
               Date d'annulation du RDV.
@@ -1966,7 +2015,13 @@ sources:
               Suivi associé à la participation.
           - name: status
             description: >
-              Statut de la participation. Valeurs possibles : unknown, excused, seen, noshow, revoked.
+              Statut de l'usager pour ce RDV, avec les mêmes valeurs que rdvs.status.
+              unknown : statut pas encore renseigné, RDV à venir ou passé à préciser par l'agent.
+              seen : RDV honoré. excused : RDV annulé par l'usager, qui a prévenu (excusé).
+              revoked : RDV annulé par le service. noshow : absence non excusée.
+
+              Dans un RDV collectif, chaque participant a son propre statut.
+              C'est le statut de la participation qui fait évoluer le suivi.
           - name: rdv_solidarites_participation_id
             description: >
               ID de la participation dans RDV-Solidarités.
@@ -2143,10 +2198,18 @@ sources:
           - name: email_to_notify_rdv_changes
             description: >
               Email de notification des changements de RDV.
-          - name: template_overrides
+          - name: template_rdv_purpose_override
             description: >
-              Surcharges des templates de messages. Dans l'application, plusieurs champs peuvent suivre
-              un pattern de type template_*_override.
+              Surcharge de l'objet du RDV dans le template de messages.
+          - name: template_rdv_title_by_phone_override
+            description: >
+              Surcharge du titre du RDV téléphonique dans le template de messages.
+          - name: template_rdv_title_override
+            description: >
+              Surcharge du titre du RDV dans le template de messages.
+          - name: template_user_designation_override
+            description: >
+              Surcharge de la désignation de l'usager dans le template de messages.
 
       - name: lieux
         description: >
@@ -2276,10 +2339,18 @@ sources:
               ID du RDV dans RDV-Solidarités.
           - name: delivery_status
             description: >
-              Statut de livraison de la notification.
+              Statut de délivrance renvoyé par Brevo, avec les mêmes valeurs que
+              invitations.delivery_status : delivered (message reçu), soft_bounce (échec temporaire),
+              hard_bounce (échec définitif), blocked (envoi bloqué, email uniquement), invalid_email
+              (adresse invalide, email uniquement), error (erreur Brevo, email uniquement).
+              Un statut vide n'est pas encore reçu ou n'est pas récupérable, notamment pour un
+              courrier ou un SMS envoyé par Primotexto.
           - name: sms_provider
             description: >
               Fournisseur SMS utilisé pour les notifications SMS.
+          - name: last_brevo_webhook_received_at
+            description: >
+              Date du dernier webhook Brevo reçu.
 
       - name: user_list_uploads
         description: >
@@ -2299,6 +2370,11 @@ sources:
           - name: category_configuration_id
             description: >
               Configuration utilisée si l'import est réalisé avec invitation.
+          - name: origin
+            description: >
+              Origine du traitement. file_upload : import d'un fichier, avec enregistrement des
+              usagers puis invitation. invite_all_uninvited_button : bouton Inviter les non-invités
+              de la liste des usagers, avec invitation seule.
           - name: file_name
             description: >
               Nom du fichier importé.
@@ -2388,6 +2464,35 @@ sources:
           - name: number_of_creneaux_available
             description: >
               Nombre de créneaux disponibles au moment de l'import.
+
+      - name: creneau_opening_requests
+        description: >
+          Demande envoyée par email à un agent depuis un import, pour qu'il ouvre des créneaux
+          dans RDV-Solidarités lorsque les créneaux disponibles sont insuffisants pour les usagers
+          à inviter. Une seule demande est possible par agent destinataire et par import.
+        columns:
+          - name: user_list_upload_id
+            description: >
+              Import à l'origine de la demande. L'agent de l'import est l'expéditeur.
+          - name: recipient_agent_id
+            description: >
+              Agent destinataire de la demande.
+          - name: users_to_invite_count
+            description: >
+              Nombre d'usagers à inviter.
+          - name: available_creneaux_count
+            description: >
+              Nombre de créneaux disponibles au moment de la demande.
+          - name: link
+            description: >
+              Lien vers les plages d'ouverture de l'organisation dans RDV-Solidarités,
+              ou vers l'accueil pour un import départemental.
+          - name: email_sent_at
+            description: >
+              Date d'envoi de l'email.
+          - name: clicked_at
+            description: >
+              Date du clic de l'agent destinataire sur le lien.
 
       - name: file_configurations
         description: >
@@ -2488,6 +2593,21 @@ sources:
           - name: agent_full_name
             description: >
               Nom complet de l'agent ayant accepté le DPA.
+
+      - name: rdv_solidarites_oauth_tokens
+        description: >
+          Jetons OAuth d'un agent, utilisés pour appeler l'API de RDV-Solidarités en son nom.
+          Un seul jeton par agent.
+        columns:
+          - name: agent_id
+            description: >
+              Agent propriétaire du jeton.
+          - name: api_token
+            description: >
+              Jeton d'accès chiffré.
+          - name: refresh_token
+            description: >
+              Jeton de rafraîchissement chiffré, renouvelé à chaque rafraîchissement.
 
       - name: api_calls
         description: >

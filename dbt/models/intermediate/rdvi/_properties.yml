@@ -1,6 +1,125 @@
 version: 2
 
 models:
+  - name: int_rdvi__invitations
+    description: |
+      Une ligne par usager, suivi et jour de création, tous canaux et réenvois confondus.
+      Le jour est `created_at::date`. Les reminders sont exclus avant les calculs ; les autres
+      origines, y compris absentes, sont conservées.
+      Les invitations restent présentes même si tous leurs envois ont échoué.
+
+      Seul delivered confirme une délivrance. Les échecs connus sont soft_bounce, hard_bounce,
+      blocked, invalid_email et error. Tout autre statut, vide ou absent, est inconnu.
+      Un succès prévaut sur les échecs et les inconnus. Sans succès, une invitation n'est en
+      échec que si tous ses envois ont un échec connu. Les résultats reflètent les statuts
+      disponibles au dernier rafraîchissement, pas un historique de leurs évolutions.
+
+      Les listes sont triées, sans doublon ni valeur nulle, et vides plutôt que nulles.
+      Un canal ou une origine sans succès mais avec un statut inconnu n'entre pas dans les
+      listes d'échecs. Le détail reste accessible dans stg_rdvi__invitations via les IDs source.
+      Le calcul historique des actes métier conserve sa définition distincte, par envoi source.
+    config:
+      tags:
+        - rdv-insertion
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - user_id
+              - follow_up_id
+              - invitation_date
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "cardinality(source_invitation_ids) > 0"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "not (delivered_origins && failed_origins)"
+    columns:
+      - name: invitation_id
+        description: >
+          Clé technique texte déterministe, calculée avec dbt_utils.generate_surrogate_key
+          sur user_id, follow_up_id et invitation_date. Ce n'est pas un ID d'envoi source.
+        data_tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: Identifiant de l'usager invité.
+        data_tests:
+          - not_null
+      - name: follow_up_id
+        description: Identifiant du suivi ; peut être absent dans les données source.
+      - name: invitation_date
+        description: Jour de création selon le timestamp du staging, sans conversion horaire.
+        data_tests:
+          - not_null
+      - name: created_at
+        description: Plus petit created_at des envois non reminder regroupés, sans conversion horaire.
+        data_tests:
+          - not_null
+      - name: source_invitation_ids
+        description: Liste triée des identifiants des envois non reminder regroupés.
+        data_tests:
+          - not_null
+      - name: is_delivered
+        description: >
+          Vrai si au moins un envoi est delivered ; faux si tous ont un échec connu ;
+          nul sinon, lorsqu'aucun succès n'est confirmé et qu'un statut est inconnu.
+      - name: delivery_status_email
+        description: |
+          Statut agrégé des envois email :
+
+          - `not_sent` : aucun envoi sur ce canal.
+          - `delivered` : au moins un envoi est délivré.
+          - `failed` : tous les envois ont un échec connu.
+          - `unknown` : aucun succès et au moins un statut inconnu.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['not_sent', 'delivered', 'failed', 'unknown']
+      - name: delivery_status_sms
+        description: |
+          Statut agrégé des envois SMS :
+
+          - `not_sent` : aucun envoi sur ce canal.
+          - `delivered` : au moins un envoi est délivré.
+          - `failed` : tous les envois ont un échec connu.
+          - `unknown` : aucun succès et au moins un statut inconnu.
+
+          Les SMS Primotexto sans statut sont `unknown`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['not_sent', 'delivered', 'failed', 'unknown']
+      - name: delivery_status_postal
+        description: |
+          Statut agrégé des envois courrier :
+
+          - `not_sent` : aucun envoi sur ce canal.
+          - `delivered` : au moins un envoi est délivré.
+          - `failed` : tous les envois ont un échec connu.
+          - `unknown` : aucun succès et au moins un statut inconnu.
+
+          Un courrier sans statut est `unknown`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['not_sent', 'delivered', 'failed', 'unknown']
+      - name: failed_formats
+        description: Canaux dont tous les envois ont un échec connu, sans succès ni statut inconnu.
+        data_tests:
+          - not_null
+      - name: delivered_origins
+        description: Origines avec au moins un envoi delivered, tous canaux confondus.
+        data_tests:
+          - not_null
+      - name: failed_origins
+        description: Origines dont tous les envois ont un échec connu, sans succès ni statut inconnu.
+        data_tests:
+          - not_null
+
   - name: int_rdvi__tous_les_pros
     description: |
       Tous les agents rdv-insertion, avec leur organisation de rattachement.
@@ -57,3 +176,90 @@ models:
         description: Même valeur que `type_utilisateur`.
       - name: nom_structure
         description: Nom de l'organisation de rattachement.
+
+  - name: int_rdvi__actes_metiers
+    description: >
+      Ce modèle compte, par mois, le nombre d'invitations envoyées depuis rdv-insertion. Les résultats sont détaillés par type d'acte,
+      type de structure, département et statut north star. Il reprend dans dbt le calcul qui était auparavant fait par le fetcher Python
+      `fetch_rdvi`.
+
+      **ATTENTION : ce modèle réplique directement la logique qui existait sur Autometa pour le tableau de bord des actes métier.
+      Il est possible que cette modélisation soit revue. Si tu es en train de t'en servir pour quelque chose, vérifie d'abord
+      avec l'équipe data.
+
+      Attention, on garde ici le calcul historique d'Autometa : chaque envoi compte séparément,
+      y compris les relances et les envois par plusieurs canaux le même jour.
+
+      La définition métier officielle est celle de `fct_rdvi__invitations` : une invitation par
+      usager, par suivi et par jour, tous canaux et réenvois confondus, sans les relances
+      automatiques. Les invitations restent comptées même si tous leurs envois ont échoué.
+      Les volumes de ce modèle ne suivent donc pas la définition officielle.
+
+      À arbitrer avec l'équipe data et le métier : l'alignement du calcul des actes métier
+      sur cette définition officielle, ainsi que l'éventuel recalcul des chiffres historiques.
+      En attendant cette décision, vérifier avec l'équipe data avant de réutiliser ces chiffres.**
+    config:
+      tags:
+        - actes-metier
+    columns:
+      - name: mois
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - rdvi
+      - name: type_acte
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Invitation à un RDV d’orientation
+                  - Invitation à un RDV d’accompagnement
+                  - Invitation à un Entretien SIAE
+                  - Invitation à un Autre RDV
+      - name: categorie_acte
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Accompagnement
+      - name: north_star
+        tests:
+          - not_null
+      - name: north_star_70
+        tests:
+          - not_null
+      - name: traite
+        tests:
+          - not_null
+      - name: type_structure
+        tests:
+          - not_null
+      - name: departement
+        tests:
+          - not_null
+      - name: nombre_actes
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - mois
+              - source
+              - type_acte
+              - north_star
+              - north_star_70
+              - traite
+              - type_structure
+              - departement

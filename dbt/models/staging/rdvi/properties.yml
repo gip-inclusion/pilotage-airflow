@@ -1,6 +1,71 @@
 version: 2
 
 models:
+  - name: stg_rdvi__users
+    description: >
+      Une ligne par compte usager présent dans la source, y compris les comptes supprimés logiquement.
+      Reprend toutes les colonnes de la source.
+    config:
+      tags:
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique du compte usager dans rdv-insertion.
+        data_tests:
+          - not_null
+          - unique
+      - name: created_at
+        description: Date et heure de création du compte.
+      - name: created_through
+        description: Origine de la création du compte.
+      - name: role
+        description: Rôle de l'usager, par exemple demandeur ou conjoint.
+      - name: rights_opening_date
+        description: Date d'ouverture des droits RSA.
+      - name: deleted_at
+        description: Date et heure de suppression logique du compte, si renseignées.
+      - name: affiliation_number
+        description: Numéro d'allocataire de l'usager. Ici, la valeur est anonymisée.
+      - name: first_name
+        description: Prénom de l'usager. Ici, la valeur est anonymisée.
+      - name: last_name
+        description: Nom de l'usager. Ici, la valeur est anonymisée.
+      - name: address
+        description: Adresse de l'usager. Ici, la valeur est anonymisée.
+      - name: phone_number
+        description: Numéro de téléphone de l'usager. Ici, la valeur est anonymisée.
+      - name: email
+        description: Email de l'usager. Ici, la valeur est anonymisée.
+      - name: title
+        description: Civilité de l'usager. Ici, la valeur est anonymisée.
+      - name: birth_name
+        description: Nom de naissance de l'usager. Ici, la valeur est anonymisée.
+      - name: nir
+        description: NIR de l'usager. Ici, la valeur est anonymisée.
+      - name: france_travail_id
+        description: Identifiant France Travail de l'usager. Ici, la valeur est anonymisée.
+
+  - name: stg_rdvi__motifs
+    description: >
+      Une ligne par motif de rendez-vous présent dans la source. Reprend toutes les colonnes de la source.
+    config:
+      tags:
+        - rdv-insertion
+    columns:
+      - name: id
+        description: Identifiant unique du motif dans rdv-insertion.
+        data_tests:
+          - not_null
+          - unique
+      - name: name
+        description: Nom du motif de rendez-vous.
+      - name: motif_category_id
+        description: Identifiant de la catégorie à laquelle le motif est rattaché.
+      - name: collectif
+        description: Indique si le motif correspond à un rendez-vous collectif.
+      - name: instruction_for_rdv
+        description: Consignes pour le rendez-vous. Ici, la valeur est anonymisée.
+
   - name: stg_rdvi__agents
     description: >
       Représente les professionnels utilisant rdv-insertion, comme les travailleurs sociaux ou
@@ -20,9 +85,9 @@ models:
       - name: email
         description: Email de l'agent, unique et utilisé comme identifiant de connexion.
       - name: first_name
-        description: Prénom de l'agent.
+        description: Prénom de l'agent. Ici, la valeur est anonymisée.
       - name: last_name
-        description: Nom de l'agent.
+        description: Nom de l'agent. Ici, la valeur est anonymisée.
       - name: super_admin
         description: Indique si l'agent est super-administrateur.
       - name: last_sign_in_at
@@ -83,22 +148,35 @@ models:
       - name: region
         description: Région administrative du département.
       - name: email
-        description: Email de contact départemental.
+        description: Email de contact départemental. Ici, la valeur est anonymisée.
       - name: phone_number
-        description: Numéro de téléphone de contact départemental.
+        description: Numéro de téléphone de contact départemental. Ici, la valeur est anonymisée.
       - name: parcours_enabled
         description: Indique si le module parcours est activé pour le département.
       - name: disable_ft_webhooks
         description: Indique si les webhooks France Travail sont désactivés pour le département.
 
   - name: stg_rdvi__follow_ups
-    description: >
+    description: |
       Table centrale du métier.
 
-      Représente le suivi d'un usager pour une catégorie de motif donnée.
+      Regroupe les invitations et les RDV d'un usager pour une catégorie de motif donnée.
+      Un usager a au plus un suivi par catégorie.
 
       Rôle : suit l'état d'avancement d'un usager dans son parcours, par exemple orientation ou
       accompagnement.
+
+      Dans l'application, chaque suivi est un bloc de l'onglet Rendez-vous de la fiche usager.
+      L'usager figure dans la liste des usagers d'une catégorie tant que son suivi n'est pas clôturé.
+
+      Création :
+
+      - Manuellement, par l'agent depuis l'onglet Rendez-vous.
+      - À l'import, lorsqu'une catégorie est choisie, pour chaque usager enregistré.
+        Un suivi clôturé est alors rouvert.
+      - À l'invitation, depuis l'application ou l'API, si le suivi n'existe pas encore.
+      - À la prise de RDV dans RDV-Solidarités sur un motif de la catégorie, si l'organisation
+        a configuré cette catégorie.
 
     config:
       tags:
@@ -115,10 +193,26 @@ models:
         description: >
           Catégorie de motif du suivi, par exemple orientation RSA ou accompagnement RSA.
       - name: status
-        description: >
-          Statut du suivi. Valeurs possibles : not_invited, invitation_pending,
-          rdv_pending, rdv_needs_status_update, rdv_noshow, rdv_revoked, rdv_excused,
-          rdv_seen, closed.
+        description: |
+          Statut déduit des invitations et des participations du suivi.
+          Valeurs possibles :
+
+          - not_invited : ni invitation ni RDV.
+          - invitation_pending : invitation envoyée, sans RDV pris.
+          - invitation_expired : toutes les invitations ont expiré sans prise de RDV.
+          - rdv_pending : RDV à venir.
+          - rdv_needs_status_update : RDV passé dont le statut reste à préciser.
+          - rdv_seen : RDV honoré.
+          - rdv_excused : RDV annulé par l'usager, excusé.
+          - rdv_revoked : RDV annulé par le service.
+          - rdv_noshow : absence non excusée.
+          - closed : suivi clôturé par un agent, Dossier traité.
+
+          Le statut reflète l'événement le plus récent : une invitation envoyée après un RDV
+          repasse le suivi en invitation_pending.
+
+          Les statuts invitation_expired, rdv_needs_status_update, rdv_excused, rdv_revoked et
+          rdv_noshow demandent une action de l'agent et alimentent le filtre Intervention nécessaire.
       - name: closed_at
         description: Date de clôture du suivi.
 
@@ -146,9 +240,9 @@ models:
       - name: format
         description: "Format de l'invitation. Valeurs possibles : sms, email, postal."
       - name: link
-        description: URL de prise de RDV sur RDV-Solidarités.
+        description: URL de prise de RDV sur RDV-Solidarités. Ici, la valeur est anonymisée.
       - name: rdv_solidarites_token
-        description: Token d'authentification RDV-Solidarités.
+        description: Token d'authentification RDV-Solidarités. Ici, la valeur est anonymisée.
       - name: uuid
         description: Identifiant court utilisé dans l'URL publique.
       - name: expires_at
@@ -156,25 +250,54 @@ models:
       - name: clicked
         description: Indique si l'usager a cliqué sur le lien.
       - name: delivery_status
-        description: Statut de livraison de l'invitation.
+        description: |
+          Statut de délivrance renvoyé par Brevo.
+
+          - Vide : statut pas encore reçu ou non récupérable (courrier, SMS envoyé par Primotexto).
+          - delivered : message reçu par le serveur mail du destinataire ou par son téléphone.
+          - soft_bounce : échec temporaire, par exemple boîte mail pleine.
+          - hard_bounce : échec définitif, par exemple adresse ou numéro inexistant.
+          - blocked : envoi bloqué par Brevo, par exemple destinataire sur liste de blocage (email uniquement).
+          - invalid_email : adresse email invalide (email uniquement).
+          - error : erreur de Brevo pendant l'envoi (email uniquement).
+
+          Les statuts renseignés autres que delivered sont des échecs. L'agent voit
+          Non délivrée et peut renvoyer une invitation le jour même.
       - name: sms_provider
         description: Fournisseur SMS utilisé pour les invitations SMS.
       - name: last_brevo_webhook_received_at
-        description: Date du dernier webhook Brevo reçu.
+        description: >
+          Date du dernier webhook Brevo reçu. Pour une invitation délivrée, correspond à la
+          date de délivrance.
       - name: rdv_with_referents
         description: Indique si l'invitation concerne un RDV avec référent.
       - name: rdv_solidarites_lieu_id
         description: Lieu pré-sélectionné dans le lien de prise de RDV.
       - name: help_phone_number
-        description: Numéro d'aide affiché à l'usager.
+        description: Numéro d'aide affiché à l'usager. Ici, la valeur est anonymisée.
       - name: created_at
         description: Date de création de l'invitation.
         tests:
           - not_null
       - name: origin
-        description: >
-          Origine de l'invitation. Valeurs possibles : legacy_triggered_by_agent,
-          legacy_triggered_by_periodic_job, reminder, user_list_upload.
+        description: |
+          Endroit d'où l'invitation a été envoyée.
+
+          Envois initiés par un agent :
+
+          - users_index_page : liste des usagers d'une catégorie.
+          - user_follow_ups_page : onglet Rendez-vous de la fiche usager.
+          - user_list_upload : étape d'invitation d'un import de fichier ou bouton Inviter les non-invités.
+          - api : API.
+
+          Envoi automatique :
+
+          - reminder : relance envoyée 3 jours après une invitation d'agent si l'usager n'a toujours pas pris RDV.
+
+          Valeurs historiques, plus attribuées :
+
+          - legacy_triggered_by_periodic_job : ancien CRON d'invitations périodiques, supprimé.
+          - legacy_triggered_by_agent : envoi par un agent avant l'enregistrement de l'endroit de l'envoi.
 
   - name: stg_rdvi__invitations_organisations
     description: >
@@ -246,15 +369,15 @@ models:
           Type de l'organisation. Valeurs possibles : conseil_departemental,
           delegataire_rsa, france_travail, siae, autre.
       - name: email
-        description: Email de contact de l'organisation.
+        description: Email de contact de l'organisation. Ici, la valeur est anonymisée.
       - name: phone_number
-        description: Numéro de téléphone de contact de l'organisation.
+        description: Numéro de téléphone de contact de l'organisation. Ici, la valeur est anonymisée.
       - name: safir_code
-        description: Code SAFIR pour France Travail.
+        description: Code SAFIR pour France Travail. Ici, la valeur est anonymisée.
       - name: slug
         description: Identifiant court utilisé pour repérer l'organisation dans les fichiers d'import.
       - name: website
-        description: Site web de l'organisation.
+        description: Site web de l'organisation. Ici, la valeur est anonymisée.
       - name: archived_at
         description: Date d'archivage de l'organisation si elle est inactive.
       - name: data_retention_duration_in_months
@@ -281,9 +404,17 @@ models:
       - name: follow_up_id
         description: Suivi associé à la participation.
       - name: status
-        description: >
-          Statut de la participation. Valeurs possibles : unknown, excused, seen,
-          noshow, revoked.
+        description: |
+          Statut de l'usager pour ce RDV, avec les mêmes valeurs que rdvs.status.
+
+          - unknown : statut pas encore renseigné, RDV à venir ou passé à préciser par l'agent.
+          - seen : RDV honoré.
+          - excused : RDV annulé par l'usager, qui a prévenu (excusé).
+          - revoked : RDV annulé par le service.
+          - noshow : absence non excusée.
+
+          Dans un RDV collectif, chaque participant a son propre statut.
+          C'est le statut de la participation qui fait évoluer le suivi.
       - name: rdv_solidarites_participation_id
         description: ID de la participation dans RDV-Solidarités.
       - name: convocable
@@ -293,7 +424,7 @@ models:
       - name: created_by_agent_prescripteur
         description: Indique si le RDV a été créé par un agent prescripteur.
       - name: france_travail_id
-        description: ID France Travail de l'usager.
+        description: ID France Travail de l'usager. Ici, la valeur est anonymisée.
 
   - name: stg_rdvi__rdvs
     description: >
@@ -323,17 +454,26 @@ models:
       - name: lieu_id
         description: Lieu du RDV. Peut être vide si le RDV est à distance.
       - name: status
-        description: Statut du RDV.
+        description: |
+          Statut du RDV, avec les mêmes valeurs que participations.status.
+
+          - unknown : statut pas encore renseigné, RDV à venir ou passé à préciser par l'agent.
+          - seen : RDV honoré.
+          - excused : RDV annulé par l'usager, qui a prévenu (excusé).
+          - revoked : RDV annulé par le service.
+          - noshow : absence non excusée.
       - name: cancelled_at
         description: Date d'annulation du RDV.
+      - name: created_at
+        description: Date et heure de création du RDV dans rdv-insertion.
       - name: created_by
         description: Origine de création du RDV, par exemple agent, user ou prescripteur.
       - name: context
-        description: Contexte ou notes du RDV.
+        description: Contexte ou notes du RDV. Ici, la valeur est anonymisée.
       - name: address
-        description: Adresse du RDV.
+        description: Adresse du RDV. Ici, la valeur est anonymisée.
       - name: visio_url
-        description: URL de visioconférence pour les RDV à distance.
+        description: URL de visioconférence pour les RDV à distance. Ici, la valeur est anonymisée.
       - name: uuid
         description: Identifiant utilisé dans les URLs publiques.
       - name: time_zone

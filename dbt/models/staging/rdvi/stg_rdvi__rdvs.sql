@@ -8,6 +8,7 @@ select
     lieu_id,
     status,
     cancelled_at::timestamp         as cancelled_at,
+    created_at::timestamp           as created_at,
     created_by,
     context,
     address,
