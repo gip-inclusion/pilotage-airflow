@@ -1,0 +1,20 @@
+select
+    id,
+    rdv_solidarites_motif_id,
+    name,
+    deleted_at,
+    rdv_solidarites_service_id,
+    collectif,
+    location_type,
+    last_webhook_update_received_at,
+    organisation_id,
+    created_at,
+    updated_at,
+    follow_up,
+    motif_category_id,
+    instruction_for_rdv,
+    default_duration_in_min,
+    bookable_by,
+    min_public_booking_delay,
+    max_public_booking_delay
+from {{ source('rdv_insertion', 'motifs') }}

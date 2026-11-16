@@ -153,3 +153,7 @@ tests:
     description: >
       On vérifie les clés sur des dates connues, le 29 février 2000, les limites de la table,
       les dates absentes ou hors plage et les timestamps proches de minuit en UTC.
+  - name: test_int_rdvi__invitations_source_coverage
+    description: >
+      On vérifie que chaque envoi hors reminder se retrouve une seule fois dans les invitations
+      regroupées.

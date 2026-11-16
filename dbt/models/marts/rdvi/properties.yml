@@ -1,0 +1,248 @@
+version: 2
+
+models:
+  - name: fct_rdvi__rdvs
+    description: >
+      Une ligne par rendez-vous de `stg_rdvi__rdvs`, y compris les rendez-vous sans inscription
+      et ceux fixés directement par un agent.
+    config:
+      tags:
+        - rdv-insertion
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_rdvi__rdvs')
+    columns:
+      - name: rdv_id
+        description: Identifiant unique du rendez-vous dans rdv-insertion.
+        data_tests:
+          - unique
+          - not_null
+      - name: starts_at
+        description: Date et heure de début du rendez-vous, telles que fournies par le staging.
+      - name: time_zone
+        description: Fuseau horaire du rendez-vous.
+      - name: status
+        description: |
+          Statut d'origine du rendez-vous.
+
+          - unknown : statut pas encore renseigné, RDV à venir ou passé à préciser par l'agent.
+          - seen : RDV honoré.
+          - excused : RDV annulé par l'usager, qui a prévenu (excusé).
+          - revoked : RDV annulé par le service.
+          - noshow : absence non excusée.
+
+          Dans un RDV collectif, chaque participation a son propre statut. Pour compter les
+          personnes présentes, utiliser attended_users_count, calculé à partir des participations.
+      - name: cancelled_at
+        description: Date et heure d'annulation du rendez-vous, telles que fournies par le staging.
+      - name: created_at
+        description: Date et heure de création du rendez-vous dans rdv-insertion, sans fuseau horaire.
+      - name: created_date_id
+        description: >
+          Clé du jour de création dans rdv-insertion.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: created_by
+        description: Origine de création du rendez-vous, telle qu'enregistrée dans la source.
+      - name: organisation_id
+        description: Identifiant de l'organisation du rendez-vous, clé vers `dim_rdvi__organisations`.
+      - name: motif_id
+        description: Identifiant du motif du rendez-vous.
+      - name: motif_category_id
+        description: Identifiant de la catégorie renseignée sur le motif.
+      - name: motif_category_name
+        description: Nom de la catégorie du motif du rendez-vous, issu de `stg_rdvi__motif_categories`.
+      - name: is_collective
+        description: >
+          Valeur de `stg_rdvi__motifs.collectif`. Vrai pour un rendez-vous collectif,
+          faux pour un rendez-vous individuel et nul si la donnée est absente.
+      - name: participants_count
+        description: Nombre d'inscriptions au rendez-vous, tous statuts confondus. Vaut zéro sans inscription.
+      - name: attended_users_count
+        description: >
+          Nombre de participations au statut `seen`, correspondant aux personnes enregistrées comme
+          présentes et reçues. Vaut zéro en l'absence de participation à ce statut.
+
+  - name: fct_rdvi__invitations
+    description: |
+      Cette table permet de suivre les invitations envoyées depuis rdv-insertion pour que les
+      usagers prennent rendez-vous : combien on en envoie, pour quelles catégories de rendez-vous
+      et par quels canaux leur délivrance est confirmée.
+
+      On compte une invitation par usager, par suivi et par jour. Par exemple, un SMS et un email
+      envoyés le même jour pour le même suivi comptent comme une seule invitation, même s'il y a
+      plusieurs tentatives. Les relances automatiques ne sont pas comptées.
+
+      On garde aussi les invitations dont tous les envois ont échoué ou dont la délivrance reste
+      inconnue : elles font bien partie des invitations envoyées.
+
+    config:
+      tags:
+        - rdv-insertion
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('int_rdvi__invitations')
+    columns:
+      - name: invitation_id
+        description: >
+          Clé technique texte déterministe, calculée dans `int_rdvi__invitations` avec
+          `dbt_utils.generate_surrogate_key` sur user_id, follow_up_id et invitation_date.
+          Remplace l'ancien identifiant numérique d'envoi source, désormais dans source_invitation_ids.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_rdvi__invitations')
+                field: invitation_id
+      - name: user_id
+        description: Identifiant de l'usager renseigné sur l'invitation, clé vers `dim_rdvi__utilisateurs`.
+      - name: follow_up_id
+        description: >
+          Identifiant du suivi renseigné sur l'invitation. Un suivi regroupe les invitations et les
+          participations d'un usager pour une catégorie de motif ; plusieurs invitations et RDV
+          peuvent donc partager ce même suivi.
+      - name: motif_category_id
+        description: Identifiant de la catégorie de motif renseignée sur le suivi.
+      - name: motif_category_name
+        description: Nom de la catégorie de motif du suivi, issu de `stg_rdvi__motif_categories`.
+      - name: created_at
+        description: Première date et heure de création des envois non reminder du groupe.
+      - name: created_date_id
+        description: >
+          Clé du jour de création, à joindre à `dim_date.date_id` pour retrouver la date.
+          Correspond au jour `invitation_date` utilisé dans `int_rdvi__invitations` pour le regroupement.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: source_invitation_ids
+        description: Liste triée des IDs source regroupés ; permet de retrouver le détail dans le staging.
+      - name: is_delivered
+        description: >
+          Vrai avec au moins un envoi delivered ; faux si tous les envois ont un échec connu ;
+          nul sans succès et avec au moins un statut inconnu. Calculé dans int_rdvi__invitations.
+      - name: delivery_status_email
+        description: |
+          Statut agrégé des envois email :
+
+          - `not_sent` : aucun envoi sur ce canal.
+          - `delivered` : au moins un envoi est délivré.
+          - `failed` : tous les envois ont un échec connu.
+          - `unknown` : aucun succès et au moins un statut inconnu.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['not_sent', 'delivered', 'failed', 'unknown']
+      - name: delivery_status_sms
+        description: |
+          Statut agrégé des envois SMS :
+
+          - `not_sent` : aucun envoi sur ce canal.
+          - `delivered` : au moins un envoi est délivré.
+          - `failed` : tous les envois ont un échec connu.
+          - `unknown` : aucun succès et au moins un statut inconnu.
+
+          Les SMS Primotexto sans statut sont `unknown`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['not_sent', 'delivered', 'failed', 'unknown']
+      - name: delivery_status_postal
+        description: |
+          Statut agrégé des envois courrier :
+
+          - `not_sent` : aucun envoi sur ce canal.
+          - `delivered` : au moins un envoi est délivré.
+          - `failed` : tous les envois ont un échec connu.
+          - `unknown` : aucun succès et au moins un statut inconnu.
+
+          Un courrier sans statut est `unknown`.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['not_sent', 'delivered', 'failed', 'unknown']
+      - name: failed_formats
+        description: Liste triée des canaux dont tous les envois ont un échec connu ; vide si aucun.
+      - name: delivered_origins
+        description: Liste triée des origines avec au moins un envoi delivered ; vide si aucune.
+      - name: failed_origins
+        description: >
+          Liste triée des origines dont tous les envois ont un échec connu ; vide si aucune.
+          Les statuts inconnus empêchent de conclure à un échec global. Une origine ayant
+          au moins un succès figure uniquement dans delivered_origins.
+
+  - name: dim_rdvi__utilisateurs
+    description: >
+      Une ligne par compte usager de `stg_rdvi__users`, y compris les comptes supprimés logiquement
+      encore présents dans la source.
+    config:
+      tags:
+        - rdv-insertion
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_rdvi__users')
+    columns:
+      - name: user_id
+        description: Identifiant unique du compte usager issu de `stg_rdvi__users.id`.
+        data_tests:
+          - unique
+          - not_null
+      - name: created_at
+        description: Date et heure de création du compte, telles que fournies par le staging.
+      - name: created_through
+        description: Origine de la création du compte.
+      - name: role
+        description: Rôle de l'usager, par exemple demandeur ou conjoint.
+      - name: rights_opening_date
+        description: Date d'ouverture des droits RSA.
+      - name: is_deleted
+        description: Vrai si la date de suppression logique `deleted_at` est renseignée, faux sinon.
+      - name: birth_date
+        description: Date de naissance de l'usager.
+      - name: updated_at
+        description: Date et heure de dernière mise à jour du compte.
+      - name: deleted_at
+        description: Date et heure de suppression du compte.
+      - name: has_email
+        description: >
+          Vrai si l'email contient une valeur après suppression des espaces aux extrémités,
+          faux s'il est nul, vide ou composé uniquement d'espaces.
+          Indique la présence d'une valeur, sans valider son format ni sa délivrabilité.
+      - name: has_phone_number
+        description: >
+          Vrai si le numéro de téléphone contient une valeur après suppression des espaces aux extrémités,
+          faux s'il est nul, vide ou composé uniquement d'espaces.
+          Indique la présence d'une valeur, sans valider son format ni sa capacité à recevoir des messages.
+
+  - name: dim_rdvi__organisations
+    description: Une ligne par organisation présente dans `stg_rdvi__organisations`.
+    config:
+      tags:
+        - rdv-insertion
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_rdvi__organisations')
+    columns:
+      - name: organisation_id
+        description: Identifiant unique de l'organisation dans rdv-insertion.
+        data_tests:
+          - unique
+          - not_null
+      - name: organisation_name
+        description: Nom de l'organisation.

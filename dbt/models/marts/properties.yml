@@ -147,9 +147,13 @@ models:
           Dernière activité de l'utilisateur, définie différemment selon la source (connexion,
           dernière visite, dernière commande...). Voir le modèle intermédiaire correspondant.
       - name: prenom
-        description: Prénom, tel que porté par la source.
+        description: >
+          Prénom fourni par la source. Pour `source = 'RDV-i'`, on a une valeur anonymisée,
+          comme `[valeur unique anonymisée 313689]`, à la place du vrai prénom de l'agent.
       - name: nom
-        description: Nom, tel que porté par la source.
+        description: >
+          Nom fourni par la source. Pour `source = 'RDV-i'`, on a une valeur anonymisée,
+          comme `[valeur unique anonymisée 313689]`, à la place du vrai nom de l'agent.
       - name: type_utilisateur
         description: Type de l'utilisateur, brut, tel que porté par la source.
       - name: date_inscription
