@@ -907,12 +907,18 @@ models:
         description: >
           Code INSEE de la commune de l'établissement qui reçoit la candidature. Pour les structures de source
           Export ASP, commune de l'adresse administrative ASP, sinon commune de l'adresse saisie sur les Emplois.
+      - name: destinataire_code_departement_insee
+        description: Code INSEE du département de l'établissement qui reçoit la candidature.
       - name: destinataire_nom_departement
         description: Nom du département de l'établissement qui reçoit la candidature.
+      - name: destinataire_nom_departement_complet
+        description: Code et nom du département de l'établissement qui reçoit la candidature, concaténés.
       - name: destinataire_code_clpe
         description: Code de la CLPE France Travail de la commune de l'établissement qui reçoit la candidature.
       - name: destinataire_nom_clpe
         description: Nom de la CLPE France Travail de la commune de l'établissement qui reçoit la candidature.
+      - name: destinataire_code_region_insee
+        description: Code INSEE de la région de l'établissement qui reçoit la candidature.
       - name: destinataire_nom_region
         description: Nom de la région de l'établissement qui reçoit la candidature.
       - name: origine_type_etablissement
@@ -945,12 +951,18 @@ models:
         description: Entier 0/1 indiquant si l'établissement à l'origine de la candidature est actif sur la plateforme.
       - name: origine_code_commune
         description: Code INSEE de la commune de l'établissement à l'origine de la candidature.
+      - name: origine_code_departement_insee
+        description: Code INSEE du département de l'établissement à l'origine de la candidature.
       - name: origine_nom_departement
         description: Nom du département de l'établissement à l'origine de la candidature.
+      - name: origine_nom_departement_complet
+        description: Code et nom du département de l'établissement à l'origine de la candidature, concaténés.
       - name: origine_code_clpe
         description: Code de la CLPE France Travail de la commune de l'établissement d'origine.
       - name: origine_nom_clpe
         description: Nom de la CLPE France Travail de la commune de l'établissement d'origine.
+      - name: origine_code_region_insee
+        description: Code INSEE de la région de l'établissement à l'origine de la candidature.
       - name: origine_nom_region
         description: Nom de la région de l'établissement à l'origine de la candidature.
       - name: date_mise_a_jour_metabase

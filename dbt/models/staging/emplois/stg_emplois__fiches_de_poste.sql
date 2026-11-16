@@ -12,6 +12,8 @@ select
     "département_employeur"      as departement_employeur,
     "nom_département_employeur"  as nom_departement_employeur,
     "région_employeur"           as region_employeur,
+    code_insee                   as code_insee_poste,
+    code_insee_employeur,
     total_candidatures,
     "date_création"              as date_creation,
     "date_dernière_modification" as date_derniere_modification,

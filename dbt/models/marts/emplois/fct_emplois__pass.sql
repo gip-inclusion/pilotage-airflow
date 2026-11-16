@@ -3,6 +3,13 @@ with pass_iae as (
     from {{ ref('stg_emplois__pass') }}
 ),
 
+etablissements as (
+    select
+        id,
+        id_structure
+    from {{ ref('dim_emplois__etablissements') }}
+),
+
 suspensions as (
     select *
     from {{ ref('int_emplois__pass_suspensions') }}
@@ -24,11 +31,12 @@ parcours as (
         pass.id_candidat,
         pass.hash_numero_pass_iae,
         pass.injection_ai,
-        pass.id_structure,
+        etablissements.id                                                       as id_structure,
         pass.date_debut,
         pass.date_fin,
         pass.type_pass,
         pass.duree,
+        pass.departement_structure_ou_org_pe,
         suspensions.date_premiere_suspension,
         suspensions.date_derniere_suspension,
         suspensions.date_de_fin_derniere_suspension,
@@ -52,6 +60,8 @@ parcours as (
         coalesce(demandes.nombre_demandes_refusees, 0)                          as nombre_demandes_refusees,
         coalesce(demandes.nombre_demandes_en_attente, 0)                        as nombre_demandes_en_attente
     from pass_iae as pass
+    left join etablissements
+        on pass.id_structure = etablissements.id_structure
     left join suspensions
         on pass.id_pass = suspensions.id_pass
     left join prolongations

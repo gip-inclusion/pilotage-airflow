@@ -3,6 +3,14 @@ with candidatures as (
     from {{ ref('stg_emplois__candidatures') }}
 ),
 
+candidats as (
+    select
+        id,
+        type_auteur_diagnostic,
+        id_auteur_diagnostic_employeur
+    from {{ ref('stg_emplois__candidats') }}
+),
+
 etablissements as (
     select *
     from {{ ref('dim_emplois__etablissements') }}
@@ -46,8 +54,17 @@ final as (
                 then 'Autre (la SIAE a saisi le motif "autre")'
             else motif.label
         end                                             as motif_refus,
-        coalesce(fiches.nombre_fiches_de_poste, 0)      as nombre_fiches_de_poste
+        coalesce(fiches.nombre_fiches_de_poste, 0)      as nombre_fiches_de_poste,
+        case
+            when
+                candidat.type_auteur_diagnostic = 'Employeur'
+                and candidat.id_auteur_diagnostic_employeur = candidature.id_structure_destinataire
+                then 'Autoprescription'
+            else 'Parcours classique'
+        end                                             as type_de_candidature
     from candidatures as candidature
+    left join candidats as candidat
+        on candidature.id_candidat = candidat.id
     left join etablissements as structure_destinataire
         on candidature.id_structure_destinataire = structure_destinataire.id_structure
     left join etablissements as organisation

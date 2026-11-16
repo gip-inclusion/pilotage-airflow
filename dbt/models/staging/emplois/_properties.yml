@@ -254,6 +254,12 @@ models:
         description: Type de l'employeur porteur de la fiche de poste.
       - name: departement_employeur
         description: Département de l'employeur porteur de la fiche de poste.
+      - name: code_insee_poste
+        description: Code INSEE de la commune du poste. Nul si la fiche ne précise pas de lieu de travail.
+      - name: code_insee_employeur
+        description: >
+          Code INSEE de la commune de l'adresse de l'employeur. Si la commune n'est pas renseignée,
+          l'export essaie de la retrouver à partir du code postal et du nom de la ville.
 
   - name: stg_emplois__imer
     description: >
