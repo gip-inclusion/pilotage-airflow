@@ -10,6 +10,14 @@ geographie as (
     from {{ ref('int_emplois__candidats_geographie') }}
 ),
 
+etablissements as (
+    select
+        id,
+        id_organisation,
+        id_structure
+    from {{ ref('dim_emplois__etablissements') }}
+),
+
 candidats_avec_criteres as (
     select
         *,
@@ -72,8 +80,6 @@ final as (
         candidats.date_expiration_diagnostic,
         candidats.type_auteur_diagnostic,
         candidats.sous_type_auteur_diagnostic,
-        candidats.id_auteur_diagnostic_prescripteur,
-        candidats.id_auteur_diagnostic_employeur,
         candidats.total_criteres_niveau_1,
         candidats.total_criteres_niveau_2,
         candidats.date_mise_a_jour_metabase,
@@ -112,10 +118,11 @@ final as (
         candidats.has_crit_nv_1,
         candidats.has_crit_nv_2,
         candidats.has_crit_nv_2_etti_ai,
-
         pass_iae.date_debut_premier_pass_iae,
+
         pass_iae.date_debut_dernier_pass_iae,
         pass_iae.date_fin_dernier_pass_iae,
+        coalesce(prescripteur.id, employeur.id)                          as id_etablissement_auteur_diagnostic,
         candidats.has_crit_nv_1 or candidats.has_crit_nv_2               as is_eligible_pass_iae,
         candidats.has_crit_nv_1 or candidats.has_crit_nv_2_etti_ai       as is_eligible_pass_iae_etti_ai,
         case
@@ -126,6 +133,10 @@ final as (
     from candidats_avec_criteres as candidats
     left join geographie
         on candidats.id = geographie.id_candidat
+    left join etablissements as prescripteur
+        on candidats.id_auteur_diagnostic_prescripteur = prescripteur.id_organisation
+    left join etablissements as employeur
+        on candidats.id_auteur_diagnostic_employeur = employeur.id_structure
     left join dernier_pass_iae as pass_iae
         on candidats.id = pass_iae.id_candidat
 )

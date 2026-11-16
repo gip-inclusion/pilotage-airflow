@@ -48,6 +48,52 @@ models:
       - name: date_mise_a_jour_metabase
         description: Dernière date de mise à jour du service dans l'export pour Metabase.
 
+  - name: dim_emplois__fiches_de_poste
+    description: >
+      Catalogue des fiches de poste des Emplois de l'Inclusion. Une ligne par fiche de poste,
+      qu'elle soit ouverte ou fermée au recrutement. Les attributs reflètent le dernier export disponible.
+    config:
+      tags:
+        - emplois
+    columns:
+      - name: id_fiche_de_poste
+        description: Identifiant unique de la fiche de poste dans les Emplois.
+        tests:
+          - not_null
+          - unique
+      - name: code_rome
+        description: Code ROME du métier associé à la fiche de poste.
+      - name: nom_rome
+        description: Libellé ROME du métier associé à la fiche de poste.
+      - name: type_contrat
+        description: Type de contrat indiqué dans la fiche de poste.
+      - name: recrutement_ouvert
+        description: Indique si le recrutement est ouvert sur la fiche dans le dernier export.
+      - name: id_employeur
+        description: >
+          C'est l'identifiant de l'établissement employeur. Pour récupérer les infos de cet
+          établissement, on joint cette colonne à `dim_emplois__etablissements.id`.
+          On retrouve cet identifiant en cherchant l'ID de la structure (`id_employeur` dans
+          le staging) dans la colonne `id_structure` de la dimension. Si on ne trouve pas
+          de correspondance, la colonne reste vide.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
+      - name: code_commune_poste
+        description: >
+          Code INSEE de la commune du poste renseignée dans la fiche (`code_insee_poste`).
+          Si cette valeur est nulle, on utilise le code INSEE de la commune de l'adresse de
+          l'employeur fourni dans le même export (`code_insee_employeur`).
+          Si les deux valeurs sont nulles, le code reste nul.
+      - name: date_creation
+        description: Date de création de la fiche de poste.
+      - name: date_derniere_modification
+        description: Date de dernière modification de la fiche de poste.
+      - name: date_mise_a_jour_metabase
+        description: Date de dernière synchronisation de la fiche dans l'export pour Metabase.
+
   - name: fct_emplois__inbound_parsing_mer_email
     description: >
       Les mises en relation par mail effectuées sur les Emplois de l'Inclusion,
@@ -220,6 +266,21 @@ models:
           - not_null
       - name: date_mise_a_jour_metabase
         description: Date de la dernière mise à jour de la candidature dans Metabase.
+      - name: type_de_candidature
+        description: >-
+          Vaut « Autoprescription » lorsque le dernier diagnostic d'éligibilité disponible du candidat
+          a été réalisé par un employeur dont l'identifiant Emplois correspond à celui de la structure
+          destinataire de la candidature. Vaut « Parcours classique » dans les autres cas, y compris
+          en l'absence de diagnostic.
+
+          Quand une structure inactive disparaît de l'export des structures, son ID d'établissement devient
+          nul dans `dim_emplois__candidats`. C'est pour ça qu'on utilise `stg_emplois__candidats`, qui garde
+          l'ID de structure d'origine tel qu'il figure dans l'export des candidats.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Autoprescription', 'Parcours classique']
 
   - name: dim_emplois__candidats
     config:
@@ -334,14 +395,18 @@ models:
         description: >-
           Type de l'organisation prescriptrice ou de l'entreprise à l'origine du dernier diagnostic d'éligibilité,
           par exemple « Prescripteur FT » ou « Employeur ACI ».
-      - name: id_auteur_diagnostic_prescripteur
+      - name: id_etablissement_auteur_diagnostic
         description: >-
-          Identifiant de l'organisation prescriptrice à l'origine du dernier diagnostic d'éligibilité, lorsqu'il a
-          été établi par un prescripteur. Correspond à organisations_v0.id.
-      - name: id_auteur_diagnostic_employeur
-        description: >-
-          Identifiant de l'entreprise à l'origine du dernier diagnostic d'éligibilité, lorsqu'il a été établi par
-          un employeur. Correspond à structures_v0.id.
+          Identifiant de l'établissement à l'origine du dernier diagnostic d'éligibilité, à joindre à
+          `dim_emplois__etablissements.id`. Les identifiants source sont disponibles dans `stg_emplois__candidats`,
+          dans les colonnes `id_auteur_diagnostic_prescripteur` et `id_auteur_diagnostic_employeur`.
+          La clé est nulle si aucun auteur n'est renseigné. Si elle est nulle alors que `type_auteur_diagnostic`
+          est renseigné, l'établissement référencé est absent de l'export source actuel.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
       - name: critere_n1_beneficiaire_du_rsa
         description: >-
           Indique si le critère administratif de niveau 1 « bénéficiaire du revenu de solidarité active (RSA) »
@@ -524,7 +589,8 @@ models:
     description: >-
       Cette table rassemble les PASS. Un PASS désigne ici un PASS IAE ou un ancien agrément Pôle emploi,
       y compris ceux repris de l’historique des AI. Chaque ligne correspond à un PASS,
-      avec son candidat, sa structure, ses dates de validité et sa durée.
+      avec son candidat, son établissement employeur référencé dans `dim_emplois__etablissements`,
+      ses dates de validité et sa durée.
       On y retrouve son état à la dernière mise à jour : actif, suspendu, expiré ou à venir.
       Elle résume aussi ses suspensions, ses prolongations accordées et ses demandes de prolongation,
       avec leur nombre et leurs principales dates. Un candidat peut avoir plusieurs PASS, donc plusieurs lignes.
@@ -563,7 +629,26 @@ models:
           false pour un PASS qui ne vient pas de cette reprise ; NULL si l’information manque.
         data_type: boolean
       - name: id_structure
-        description: Identifiant de la structure disponible dans la source. Aucun filtre sur son type.
+        description: >-
+          Clé de l’établissement employeur associé au PASS. Pour joindre la dimension, utiliser
+          `fct_emplois__pass.id_structure = dim_emplois__etablissements.id`.
+          Elle vaut `NULL` si l’identifiant de la structure est absent à la source (très rare) ou si la structure
+          est introuvable dans la dimension (plus probable). L’identifiant source est disponible dans
+          `stg_emplois__pass.id_structure`.
+          On conserve le nom `structure_id` pour garder la terminologie la plus utilisée dans l'application.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_emplois__etablissements')
+                field: id
+              config:
+                severity: error
+      - name: departement_structure_ou_org_pe
+        description: >-
+          Idéalement, on partirait du code commune de l’établissement pour retrouver le département et la région,
+          mais ce code manque pour certains établissements. Comme on analyse souvent les PASS IAE par département
+          ou par région, on reprend directement le code département fourni par la source. Pour les anciens
+          agréments, c’est le département de l’organisation Pôle emploi.
       - name: date_debut
         description: Premier jour de validité du PASS.
         tests:
