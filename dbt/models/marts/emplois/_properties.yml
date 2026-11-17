@@ -93,6 +93,11 @@ models:
         description: Date de dernière modification de la fiche de poste.
       - name: date_mise_a_jour_metabase
         description: Date de dernière synchronisation de la fiche dans l'export pour Metabase.
+      - name: employeur_is_siae
+        description: >-
+          Indique si l'établissement employeur est une SIAE, d'après dim_emplois__etablissements.is_siae.
+          Vaut NULL si l'établissement est introuvable ou si le type de sa structure est absent ou vide.
+        data_type: boolean
 
   - name: fct_emplois__inbound_parsing_mer_email
     description: >
@@ -1074,6 +1079,12 @@ models:
         description: >
           Entier 0/1 indiquant si l'établissement est actif sur la plateforme. Pour un établissement
           rapproché, actif si la structure ou l'organisation l'est.
+      - name: is_siae
+        description: >-
+          Vaut true si la structure employeuse est de type ACI, AI, EI, EITI ou ETTI, quel que soit son statut
+          d'activité. Vaut false pour les autres types et pour les organisations sans structure employeuse.
+          Vaut NULL si une structure employeuse existe mais que son type est absent ou vide.
+        data_type: boolean
 
   - name: dim_emplois__utilisateurs_professionnels
     description: >-

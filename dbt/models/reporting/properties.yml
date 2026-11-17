@@ -967,6 +967,11 @@ models:
         description: Nom de la région de l'établissement à l'origine de la candidature.
       - name: date_mise_a_jour_metabase
         description: Date de la dernière mise à jour de la candidature dans Metabase.
+      - name: destinataire_is_siae
+        description: >-
+          Indique si l'établissement destinataire est une SIAE, d'après dim_emplois__etablissements.is_siae.
+          Vaut NULL si l'établissement est introuvable ou si le type de sa structure est absent ou vide.
+        data_type: boolean
 
   - name: rpt_emplois__structures
     description: >

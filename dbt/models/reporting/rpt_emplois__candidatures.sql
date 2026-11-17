@@ -79,7 +79,8 @@ select
     orig.code_region_insee       as origine_code_region_insee,
     orig.nom_region              as origine_nom_region,
 
-    candidatures.date_mise_a_jour_metabase
+    candidatures.date_mise_a_jour_metabase,
+    dest.is_siae                 as destinataire_is_siae
 
 from candidatures
 left join etablissements as dest
