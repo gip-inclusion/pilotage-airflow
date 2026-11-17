@@ -89,6 +89,7 @@ final as (
         date_debut,
         date_fin,
         duree,
+        departement_structure_ou_org_pe,
         nombre_suspensions,
         date_premiere_suspension,
         date_derniere_suspension,

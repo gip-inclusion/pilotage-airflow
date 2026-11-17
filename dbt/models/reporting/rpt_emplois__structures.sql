@@ -1,7 +1,7 @@
 with siae as (
     select *
     from {{ ref('dim_emplois__etablissements') }}
-    where type_structure in ('ACI', 'AI', 'EI', 'EITI', 'ETTI')
+    where is_siae is true
 ),
 
 communes as (

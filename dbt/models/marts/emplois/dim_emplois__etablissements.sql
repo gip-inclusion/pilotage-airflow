@@ -52,7 +52,11 @@ final as (
         coalesce(s.siret, o.siret)                                 as siret,
         coalesce(s.code_commune, o.code_commune)                   as code_commune,
         least(s.date_inscription_emplois, o.date_inscription)      as date_inscription_emplois,
-        greatest(s.active, o.active)                               as active
+        greatest(s.active, o.active)                               as active,
+        case
+            when s.uid is null then false
+            else nullif(s.type, '') in ('ACI', 'AI', 'EI', 'EITI', 'ETTI')
+        end                                                        as is_siae
     from structures as s
     left join correspondances as c on s.uid = c.uid_structure
     full outer join organisations as o on c.uid_organisation = o.uid
