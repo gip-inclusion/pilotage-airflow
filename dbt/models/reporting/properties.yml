@@ -980,7 +980,7 @@ models:
           Vaut NULL si l'établissement est introuvable ou si le type de sa structure est absent ou vide.
         data_type: boolean
 
-  - name: rpt_emplois__structures
+  - name: rpt_emplois__structures_iae
     description: >
       SIAE (ACI, AI, EI, EITI, ETTI) de dim_emplois__etablissements sur l'ensemble du territoire national,
       actives ou non. Une ligne par SIAE.
