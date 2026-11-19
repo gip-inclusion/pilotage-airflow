@@ -861,6 +861,9 @@ models:
         description: Type d'acteur à l'origine de la candidature, tel qu'indiqué dans la source.
       - name: origine_detaillee
         description: Précision sur l'origine de la candidature, reprise de la source.
+      - name: type_de_candidature
+        description: >-
+          Indique si la candidature provient d'une autoprescription ou du parcours classique.
       - name: statut_candidature
         description: État actuel de la candidature, sans changement de libellé.
       - name: parcours_de_creation
@@ -977,7 +980,7 @@ models:
           Vaut NULL si l'établissement est introuvable ou si le type de sa structure est absent ou vide.
         data_type: boolean
 
-  - name: rpt_emplois__structures
+  - name: rpt_emplois__structures_iae
     description: >
       SIAE (ACI, AI, EI, EITI, ETTI) de dim_emplois__etablissements sur l'ensemble du territoire national,
       actives ou non. Une ligne par SIAE.
