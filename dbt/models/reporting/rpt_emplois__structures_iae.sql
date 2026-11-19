@@ -32,5 +32,5 @@ select
     communes.code_ft_clpe,
     communes.nom_clpe
 from siae
-inner join communes
+left join communes
     on siae.code_commune = communes.code_commune_insee
