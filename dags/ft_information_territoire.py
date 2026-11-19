@@ -2,7 +2,7 @@ import logging
 
 from airflow.sdk import DAG, CronTriggerTimetable, task
 
-from dags.common import default_dag_args, slack
+from dags.common import default_dag_args
 from dags.common.france_travail import api as ft_api_helpers
 from dags.common.france_travail.models import FranceTravailBase
 from dags.common.tasks import create_models
@@ -29,8 +29,4 @@ with DAG(
 
         logger.info("Import complete.")
 
-    (
-        create_models(FranceTravailBase).as_setup()
-        >> registered_jobseeker_stats_by_territory()
-        >> slack.success_notifying_task()
-    )
+    (create_models(FranceTravailBase).as_setup() >> registered_jobseeker_stats_by_territory())

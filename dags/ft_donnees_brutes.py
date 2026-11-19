@@ -1,6 +1,6 @@
 from airflow.sdk import DAG, task
 
-from dags.common import db, default_dag_args, ftp, slack
+from dags.common import db, default_dag_args, ftp
 
 
 FT_RAW_DATA = "raw_data_ft.csv"
@@ -43,4 +43,4 @@ with DAG(
 
         ft_data.to_sql("FT_donnees_brutes", con=db.connection_engine(), if_exists="replace", index=False)
 
-    store_ft() >> slack.success_notifying_task()
+    store_ft()

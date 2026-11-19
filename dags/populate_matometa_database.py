@@ -5,7 +5,7 @@ import logging
 
 from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args
 
 
 logger = logging.getLogger(__name__)
@@ -138,5 +138,4 @@ with DAG(
         >> export_di_tables()
         >> export_datalake_tables()
         >> export_dora_tables()
-        >> slack.success_notifying_task()
     )

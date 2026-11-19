@@ -1,6 +1,6 @@
 from airflow.sdk import DAG, Variable, task
 
-from dags.common import db, default_dag_args, s3, slack
+from dags.common import db, default_dag_args, s3
 
 
 with DAG(
@@ -89,6 +89,4 @@ with DAG(
         finally:
             os.unlink(tmp_path)
 
-    file_key = get_latest_file()
-    copy_result = copy_to_postgres(file_key)
-    copy_result >> slack.success_notifying_task()
+    copy_to_postgres(get_latest_file())

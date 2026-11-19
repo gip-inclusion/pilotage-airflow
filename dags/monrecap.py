@@ -9,7 +9,7 @@ from airflow.task.trigger_rule import TriggerRule
 from sqlalchemy import text
 from sqlalchemy.orm import declarative_base
 
-from dags.common import airtable, db, dbt, default_dag_args, departments, gsheet, slack
+from dags.common import airtable, db, dbt, default_dag_args, departments, gsheet
 from dags.common.monrecap.helpers import convert_date_columns
 from dags.common.tasks import create_models
 
@@ -138,5 +138,4 @@ with DAG(
         >> create_models(MonrecapBase)
         >> [monrecap_airtable(), import_barometre(barometre_model, variables)]
         >> dbt_monrecap
-        >> slack.success_notifying_task()
     )

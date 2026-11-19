@@ -1,6 +1,6 @@
 from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
-from dags.common import db, default_dag_args, slack
+from dags.common import db, default_dag_args
 
 
 with DAG(
@@ -37,4 +37,4 @@ with DAG(
         nps_dashboard["Date"] = pd.to_datetime(nps_dashboard["Date"], dayfirst=True)
         nps_dashboard.to_sql("suivi_satisfaction", con=db.connection_engine(), if_exists="replace", index=False)
 
-    create_nps() >> slack.success_notifying_task()
+    create_nps()

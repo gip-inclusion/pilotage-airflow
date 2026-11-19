@@ -3,7 +3,7 @@ import logging
 from airflow.sdk import DAG, task
 from sqlalchemy import text
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args
 
 
 logger = logging.getLogger(__name__)
@@ -53,4 +53,4 @@ with DAG("copy_metabase_docs_to_pilotage", schedule="0 4 * * *", **dag_args) as 
                 )
                 logger.info("Exported %d rows to documentation.doc_autometa_tables", len(chunk))
 
-    copy_doc_tables() >> slack.success_notifying_task()
+    copy_doc_tables()

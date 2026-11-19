@@ -21,6 +21,6 @@ def tag_build_dag(dag_id, schedule, tag, build_args="", **dag_kwargs):
     with DAG(dag_id=dag_id, schedule=schedule, **dag_args) as dag:
         task = functools.partial(bash.BashOperator, env=db.connection_envvars(), append_env=True)
         build_command = " ".join(filter(None, [f'dbt build --select "+tag:{tag}"', build_args]))
-        task(task_id="dbt_build", bash_command=build_command) >> slack.success_notifying_task()
+        task(task_id="dbt_build", bash_command=build_command)
 
     return dag

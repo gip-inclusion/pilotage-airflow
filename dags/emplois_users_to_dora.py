@@ -3,7 +3,7 @@ import logging
 from airflow.providers.ssh.hooks import ssh
 from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args
 
 
 logger = logging.getLogger(__name__)
@@ -58,4 +58,4 @@ with DAG(
                 )
         logger.info("Exported %d Les-Emplois users to Dora.", len(data_to_store))
 
-    export_users() >> slack.success_notifying_task()
+    export_users()

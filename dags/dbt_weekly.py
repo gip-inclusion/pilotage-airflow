@@ -1,7 +1,7 @@
 from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG, Param, task
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args
 
 
 dag_args = default_dag_args() | {"default_args": dbt.get_default_args()}
@@ -36,4 +36,4 @@ with DAG(
         append_env=True,
     )
 
-    (params_check() >> dbt_run >> dbt_test >> slack.success_notifying_task())
+    (params_check() >> dbt_run >> dbt_test)

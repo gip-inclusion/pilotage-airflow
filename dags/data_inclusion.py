@@ -114,9 +114,4 @@ with DAG("data_inclusion", schedule="0 23 * * *", **dag_args) as dag:
         append_env=True,
     )
 
-    (
-        create_schema(DB_SCHEMA).as_setup()
-        >> import_tables(latest_keys())
-        >> dbt_build
-        >> slack.success_notifying_task()
-    )
+    (create_schema(DB_SCHEMA).as_setup() >> import_tables(latest_keys()) >> dbt_build)

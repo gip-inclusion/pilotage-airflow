@@ -1,7 +1,7 @@
 from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 from sqlalchemy.types import DateTime, Integer
 
-from dags.common import db, default_dag_args, matomo, slack
+from dags.common import db, default_dag_args, matomo
 
 
 with DAG(
@@ -24,4 +24,4 @@ with DAG(
             dtype={"date": DateTime, "duree": Integer},
         )
 
-    get_visits_per_campaign() >> slack.success_notifying_task()
+    get_visits_per_campaign()

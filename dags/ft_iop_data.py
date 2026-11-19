@@ -2,7 +2,7 @@ from io import BytesIO
 
 from airflow.sdk import DAG, task
 
-from dags.common import db, default_dag_args, ftp, slack
+from dags.common import db, default_dag_args, ftp
 
 
 with DAG(
@@ -56,4 +56,4 @@ with DAG(
             "raw_ft_iop_data", con=db.connection_engine(), schema="france_travail", if_exists="replace", index=True
         )
 
-    get_iop() >> slack.success_notifying_task()
+    get_iop()

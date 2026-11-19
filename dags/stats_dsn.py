@@ -11,7 +11,7 @@ import paramiko
 import py7zr
 from airflow.sdk import DAG, Param, Variable, task
 
-from dags.common import dbt, default_dag_args, s3, slack
+from dags.common import dbt, default_dag_args, s3
 from dags.common.anonymize_sensible_data import decrypt_content
 from dags.common.db import create_df_from_db
 
@@ -309,4 +309,4 @@ with DAG(
 
         upload_to_sftp(io.BytesIO(remote_content), remote_name)
 
-    process() >> slack.success_notifying_task()
+    process()

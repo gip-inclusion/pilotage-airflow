@@ -1,6 +1,6 @@
 from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
-from dags.common import db, default_dag_args, slack
+from dags.common import db, default_dag_args
 
 
 RESEAU_IAE_TABLE_CREATE_SQL = """
@@ -29,4 +29,4 @@ with DAG(
         df_rsx["SIRET"] = pd.to_numeric(df_rsx["SIRET"], errors="coerce").astype("Int64")
         db.pg_store("reseau_iae_adherents", df_rsx, RESEAU_IAE_TABLE_CREATE_SQL)
 
-    store_gsheets() >> slack.success_notifying_task()
+    store_gsheets()
