@@ -2,7 +2,7 @@ from io import StringIO
 
 from airflow.sdk import DAG, task
 
-from dags.common import db, default_dag_args, ftp, slack
+from dags.common import db, default_dag_args, ftp
 
 
 with DAG(
@@ -42,4 +42,4 @@ with DAG(
 
         etp_data.to_sql("dgefp_donnees_etp", con=db.connection_engine(), if_exists="replace", index=False)
 
-    store_etp() >> slack.success_notifying_task()
+    store_etp()

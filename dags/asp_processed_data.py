@@ -2,7 +2,7 @@ from io import BytesIO
 
 from airflow.sdk import DAG, task
 
-from dags.common import db, default_dag_args, ftp, slack
+from dags.common import db, default_dag_args, ftp
 
 
 with DAG(
@@ -54,4 +54,4 @@ with DAG(
 
         asp_data.to_sql("fluxIAE_BenefSorties_ASP", con=db.connection_engine(), if_exists="replace", index=False)
 
-    store_asp() >> slack.success_notifying_task()
+    store_asp()

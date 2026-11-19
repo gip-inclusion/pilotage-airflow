@@ -1,7 +1,7 @@
 from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG, CronTriggerTimetable
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args
 
 
 DAG_ID = "dbt_dora"
@@ -22,5 +22,3 @@ with DAG(
         env=env_vars,
         append_env=True,
     )
-
-    dbt_build >> slack.success_notifying_task()

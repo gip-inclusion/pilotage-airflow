@@ -7,7 +7,7 @@ from pyairtable import Table
 from sqlalchemy import text
 from sqlalchemy.orm import declarative_base
 
-from dags.common import db, dbt, default_dag_args, gsheet, slack
+from dags.common import db, dbt, default_dag_args, gsheet
 from dags.common.tasks import create_models
 
 
@@ -109,5 +109,4 @@ with DAG(
         drop_mailing_table()
         >> create_models(Base)
         >> [import_mailing(monrecap_mailing, df), export_data_to_airtable(df)]
-        >> slack.success_notifying_task()
     )

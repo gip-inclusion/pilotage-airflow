@@ -1,6 +1,6 @@
 from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
-from dags.common import db, default_dag_args, slack
+from dags.common import db, default_dag_args
 
 
 NPS_CREATE_TABLE_SQL = """
@@ -59,4 +59,4 @@ with DAG(
 
         db.pg_store("gip_suivi_nps", suivi_satisfaction, NPS_CREATE_TABLE_SQL)
 
-    store_gsheets() >> slack.success_notifying_task()
+    store_gsheets()

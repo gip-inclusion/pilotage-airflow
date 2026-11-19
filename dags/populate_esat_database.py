@@ -4,7 +4,7 @@ import sqlalchemy
 from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG, task
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args
 
 
 SOURCE_SCHEMA = "public"
@@ -57,4 +57,4 @@ with DAG("populate_esat_database", schedule=None, **dag_args) as dag:
         append_env=True,
     )
 
-    export_esat_table() >> dbt_build >> slack.success_notifying_task()
+    export_esat_table() >> dbt_build

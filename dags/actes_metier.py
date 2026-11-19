@@ -3,7 +3,7 @@ import sqlalchemy
 from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG, CronTriggerTimetable, Variable, task
 
-from dags.common import db, dbt, default_dag_args, matomo, slack
+from dags.common import db, dbt, default_dag_args, matomo
 
 
 # Valeurs reprises des scripts actes_metier de Pierre : site et segments Matomo
@@ -181,4 +181,4 @@ with DAG(
 
     fetched = fetch_actes_metier_matomo_data()
 
-    fetched >> dbt_build >> slack.success_notifying_task()
+    fetched >> dbt_build

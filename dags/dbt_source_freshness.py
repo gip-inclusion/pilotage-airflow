@@ -4,7 +4,7 @@ import pendulum
 from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG
 
-from dags.common import db, dbt, default_dag_args, slack
+from dags.common import db, dbt, default_dag_args
 
 
 dag_args = default_dag_args() | {
@@ -17,5 +17,4 @@ with DAG(dag_id="dbt_source_freshness", schedule="0 17 * * *", **dag_args) as da
     (
         task(task_id="dbt_deps", bash_command="dbt deps")
         >> task(task_id="dbt_source_freshness", bash_command="dbt source freshness")
-        >> slack.success_notifying_task()
     )
