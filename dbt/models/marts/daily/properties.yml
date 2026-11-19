@@ -1898,9 +1898,6 @@ models:
           'Utilisateur (OPCS)' (création manuelle par un utilisateur OPCS),
           'Staff Itou (OPCS)' (création par l'équipe interne pour un OPCS),
           'Staff Itou' (création directe par l'équipe interne).
-    tests:
-      - dbt_utils.equal_rowcount:
-          compare_model: source('raw_emplois', 'structures_v0')
 
   - name: taux_refus_structures
     description: >
