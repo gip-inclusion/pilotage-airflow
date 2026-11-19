@@ -29,6 +29,7 @@ select
     candidatures.id_candidat,
     candidatures.origine_candidature,
     candidatures.origine_detaillee,
+    candidatures.type_de_candidature,
     candidatures.statut_candidature,
     candidatures.parcours_de_creation,
     candidatures.date_candidature,
