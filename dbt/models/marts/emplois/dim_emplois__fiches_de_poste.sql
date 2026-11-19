@@ -8,12 +8,18 @@ etablissements as (
     from {{ ref('dim_emplois__etablissements') }}
 ),
 
+types_contrat as (
+    select *
+    from {{ ref('stg_emplois__types_contrat') }}
+),
+
 final as (
     select -- noqa: ST06
         fiche.id                                                     as id_fiche_de_poste,
         fiche.code_rome,
         fiche.nom_rome,
         fiche.type_contrat,
+        type_contrat.label                                           as libelle_type_contrat,
         fiche.recrutement_ouvert,
         etablissement.id                                             as id_employeur,
         fiche.date_creation,
@@ -24,6 +30,8 @@ final as (
     from fiches_de_poste as fiche
     left join etablissements as etablissement
         on fiche.id_employeur = etablissement.id_structure
+    left join types_contrat as type_contrat
+        on fiche.type_contrat = type_contrat.code
 )
 
 select *
