@@ -112,13 +112,13 @@ pg_dump:
 		--table="codes_rome" \
 		--table="collaborations" \
 		--table="communes" \
-		--table="critères_iae" \
+		--table='"critères_iae"' \
 		--table="departements" \
 		--table="fiches_de_poste" \
 		--table="fiches_de_poste_par_candidature" \
 		--table="institutions" \
 		--table="organisations_v0" \
-		--table="pass_agréments" \
+		--table='"pass_agréments"' \
 		--table="suspensions_v0" \
 		--table="structures" \
 		--table="utilisateurs_v0" \

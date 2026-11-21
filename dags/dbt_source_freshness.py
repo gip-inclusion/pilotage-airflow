@@ -1,5 +1,3 @@
-import functools
-
 import pendulum
 from airflow.providers.standard.operators import bash
 from airflow.sdk import DAG
@@ -13,8 +11,9 @@ dag_args = default_dag_args() | {
 }
 
 with DAG(dag_id="dbt_source_freshness", schedule="0 17 * * *", **dag_args) as dag:
-    task = functools.partial(bash.BashOperator, env=db.connection_envvars(), append_env=True)
-    (
-        task(task_id="dbt_deps", bash_command="dbt deps")
-        >> task(task_id="dbt_source_freshness", bash_command="dbt source freshness")
+    bash.BashOperator(
+        task_id="dbt_source_freshness",
+        bash_command="dbt source freshness",
+        env=db.connection_envvars(),
+        append_env=True,
     )
