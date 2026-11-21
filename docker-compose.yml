@@ -29,33 +29,44 @@ x-airflow-common: &airflow-common
 
 services:
   minio:
-    image: minio/minio
+    # MinIO images are no longer published: use RustFS (S3-compatible).
+    image: rustfs/rustfs:1.0.0
     container_name: pilotage_minio
     restart: unless-stopped
     environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
-    command: server /data --console-address ":9001"
+      - RUSTFS_ACCESS_KEY=minioadmin
+      - RUSTFS_SECRET_KEY=minioadmin
     ports:
       - "127.0.0.1:${MINIO_PORT_ON_DOCKER_HOST:-9000}:9000"
       - "127.0.0.1:${MINIO_ADMIN_PORT_ON_DOCKER_HOST:-9001}:9001"
     volumes:
       - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 1s
+      retries: 15
 
   minio_init:
-    image: minio/mc
+    image: amazon/aws-cli:2.37.6
     container_name: pilotage_minio_init
     depends_on:
-      - minio
-    entrypoint: /bin/bash -c
+      minio:
+        condition: service_healthy
+    environment:
+      - AWS_ENDPOINT_URL=http://minio:9000
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_DEFAULT_REGION=us-east-1
+    entrypoint: /bin/bash -ec
     command:
       - |
-        mc alias set minio http://minio:9000 minioadmin minioadmin
-        mc mb --ignore-existing minio/airflow minio/les-emplois minio/pilotage
+        for bucket in airflow les-emplois pilotage; do
+          aws s3api head-bucket --bucket $$bucket 2>/dev/null || aws s3 mb s3://$$bucket
+        done
 
   postgres:
     container_name: pilotage_postgres
-    image: postgis/postgis:17-3.5
+    image: imresamu/postgis:17-3.5
     # Disable some safety switches for a faster postgres: https://www.postgresql.org/docs/current/non-durability.html
     command: -c fsync=off -c full_page_writes=off -c synchronous_commit=off
     environment:
