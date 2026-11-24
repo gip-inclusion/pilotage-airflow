@@ -86,27 +86,28 @@ final as (
         hash_numero_pass_iae,
         injection_ai,
         id_structure,
-        date_debut,
-        date_fin,
+        {{ date_id_from_date("date_debut::date") }}                                           as date_debut_id,
+        {{ date_id_from_date("date_fin::date") }}                                             as date_fin_id,
         duree,
         departement_structure_ou_org_pe,
         nombre_suspensions,
-        date_premiere_suspension,
-        date_derniere_suspension,
-        date_de_fin_derniere_suspension,
+        {{ date_id_from_date("date_premiere_suspension::date") }}                             as date_premiere_suspension_id,
+        {{ date_id_from_date("date_derniere_suspension::date") }}                             as date_derniere_suspension_id,
+        {{ date_id_from_date("date_de_fin_derniere_suspension::date") }}                      as date_de_fin_derniere_suspension_id,
         is_suspension_en_cours,
         nombre_prolongations,
-        date_premiere_prolongation,
-        date_derniere_prolongation,
-        date_debut_derniere_prolongation,
-        date_fin_derniere_prolongation,
+        {{ date_id_from_date("date_premiere_prolongation::date") }}                           as date_premiere_prolongation_id,
+        {{ date_id_from_date("date_derniere_prolongation::date") }}                           as date_derniere_prolongation_id,
+        {{ date_id_from_date("date_debut_derniere_prolongation::date") }}                     as date_debut_derniere_prolongation_id,
+        {{ date_id_from_date("date_fin_derniere_prolongation::date") }}                       as date_fin_derniere_prolongation_id,
         nombre_demandes_prolongation,
         nombre_demandes_acceptees,
         nombre_demandes_refusees,
         nombre_demandes_en_attente,
-        date_premiere_demande_prolongation,
-        date_derniere_demande_prolongation,
+        {{ date_id_from_date("date_premiere_demande_prolongation::date") }}                   as date_premiere_demande_prolongation_id,
+        {{ date_id_from_date("date_derniere_demande_prolongation::date") }}                   as date_derniere_demande_prolongation_id,
         date_dernier_traitement_demande,
+        {{ date_id_from_date("(date_dernier_traitement_demande at time zone 'UTC')::date") }} as date_dernier_traitement_demande_id,
         etat_derniere_demande_prolongation,
         is_pass_valide,
         case
@@ -116,8 +117,8 @@ final as (
             when is_suspension_en_cours then 'Suspendu'
             when is_suspension_en_cours is null then null
             else 'Actif'
-        end                                           as statut_pass,
-        is_pass_valide and not is_suspension_en_cours as is_pass_actif
+        end                                                                                   as statut_pass,
+        is_pass_valide and not is_suspension_en_cours                                         as is_pass_actif
     from validite
 )
 

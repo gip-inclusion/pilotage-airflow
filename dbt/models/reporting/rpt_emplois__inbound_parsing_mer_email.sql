@@ -3,6 +3,15 @@ with mails as (
     from {{ ref('fct_emplois__inbound_parsing_mer_email') }}
 ),
 
+calendrier as (
+    select
+        date_id,
+        date_jour,
+        date_debut_semaine,
+        date_debut_mois
+    from {{ ref('dim_date') }}
+),
+
 imer as (
     select *
     from {{ ref('fct_dora__imer') }}
@@ -40,12 +49,15 @@ communes as (
 )
 
 select
+    calendrier.date_jour               as sent_date,
+    calendrier.date_debut_semaine      as semaine_envoi,
+    calendrier.date_debut_mois         as mois_envoi,
     mails.id,
     mails.imer_id,
     mails.service_uid_di,
     mails.sent_at,
-    mails.sent_date,
     mails.answered_at,
+    mails.answered_date_id,
     mails.is_answered,
     mails.response_time_days,
     mails.date_mise_a_jour_metabase,
@@ -83,3 +95,5 @@ left join structures
     on structure_source_mapping.structure_id = structures.structure_id
 left join communes
     on services.code_insee = communes.code_commune_insee
+left join calendrier
+    on mails.sent_date_id = calendrier.date_id

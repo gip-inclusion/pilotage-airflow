@@ -33,17 +33,17 @@ final as (
     select -- noqa: ST06
         candidature.id_candidature,
         candidature.id_candidat,
-        structure_destinataire.id                       as id_structure_destinataire,
-        coalesce(organisation.id, structure_origine.id) as id_etablissement_origine,
+        structure_destinataire.id                                       as id_structure_destinataire,
+        coalesce(organisation.id, structure_origine.id)                 as id_etablissement_origine,
         candidature.id_utilisateur_origine_candidature,
         candidature.origine_candidature,
         candidature.origine_detaillee,
         candidature.statut_candidature,
         candidature.parcours_de_creation,
-        candidature.date_candidature,
-        candidature.date_traitement,
-        candidature.date_debut_contrat,
-        candidature.date_embauche,
+        {{ date_id_from_date("candidature.date_candidature::date") }}   as date_candidature_id,
+        {{ date_id_from_date("candidature.date_traitement::date") }}    as date_traitement_id,
+        {{ date_id_from_date("candidature.date_debut_contrat::date") }} as date_debut_contrat_id,
+        {{ date_id_from_date("candidature.date_embauche::date") }}      as date_embauche_id,
         candidature.candidature_archivee,
         candidature.candidature_refusee_automatiquement,
         candidature.injection_ai,
@@ -53,15 +53,15 @@ final as (
             when motif.label = 'Autre'
                 then 'Autre (la SIAE a saisi le motif "autre")'
             else motif.label
-        end                                             as motif_refus,
-        coalesce(fiches.nombre_fiches_de_poste, 0)      as nombre_fiches_de_poste,
+        end                                                             as motif_refus,
+        coalesce(fiches.nombre_fiches_de_poste, 0)                      as nombre_fiches_de_poste,
         case
             when
                 candidat.type_auteur_diagnostic = 'Employeur'
                 and candidat.id_auteur_diagnostic_employeur = candidature.id_structure_destinataire
                 then 'Autoprescription'
             else 'Parcours classique'
-        end                                             as type_de_candidature
+        end                                                             as type_de_candidature
     from candidatures as candidature
     left join candidats as candidat
         on candidature.id_candidat = candidat.id

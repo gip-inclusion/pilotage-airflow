@@ -2,6 +2,15 @@ with orientations as (
     select * from {{ ref('fct_dora__orientations') }}
 ),
 
+calendrier as (
+    select
+        date_id,
+        date_jour,
+        date_debut_semaine,
+        date_debut_mois
+    from {{ ref('dim_date') }}
+),
+
 communes as (
     select
         code_commune_insee,
@@ -15,19 +24,25 @@ communes as (
 )
 
 select
+    calendrier.date_jour             as date_de_creation,
+    calendrier.date_debut_semaine    as semaine_de_creation,
+    calendrier.date_debut_mois       as mois_de_creation,
     orientations.id,
     orientations.origin_source,
     orientations.creation_date,
     orientations.processing_date,
+    orientations.processing_date_id,
     orientations.status,
     orientations.requirements,
     orientations.situation,
     orientations.beneficiary_contact_preferences,
-    orientations.beneficiary_availability,
+    orientations.beneficiary_availability_date_id,
     orientations.duration_weekly_hours,
     orientations.duration_weeks,
     orientations.query_expires_at,
+    orientations.query_expires_date_id,
     orientations.last_reminder_email_sent,
+    orientations.last_reminder_email_sent_date_id,
     orientations.data_protection_commitment,
     orientations.is_anonymized,
     orientations.prescriber_id_dora,
@@ -54,3 +69,5 @@ select
 from orientations
 left join communes
     on orientations.oriented_service_code_commune_insee = communes.code_commune_insee
+left join calendrier
+    on orientations.creation_date_id = calendrier.date_id

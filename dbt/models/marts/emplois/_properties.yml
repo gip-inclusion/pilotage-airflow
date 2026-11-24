@@ -152,16 +152,32 @@ models:
           On utilise cette date pour suivre les envois.
         tests:
           - not_null
-      - name: sent_date
+      - name: sent_date_id
         description: >
-          Date extraite du timestamp `sent_at`, utilisée pour les regroupements par date.
-        data_type: date
+          Clé du jour pour `sent_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
         tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
           - not_null
       - name: answered_at
         description: >
           Date (et heure) à laquelle une réponse par mail, de l’offreur de service, a été reçue. Peut être nulle.
           On reprend la valeur enregistrée dans l'export des Emplois.
+      - name: answered_date_id
+        description: >
+          Clé du jour pour `answered_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: is_answered
         description: >
           Dit si le mail a reçu une réponse : `true` quand `answered_at` est renseigné, `false` sinon.
@@ -243,14 +259,53 @@ models:
         description: État actuel de la candidature, sans changement de libellé.
       - name: parcours_de_creation
         description: Parcours technique de création de la candidature, repris de la source.
-      - name: date_candidature
-        description: Date de dépôt de la candidature.
-      - name: date_traitement
-        description: Date de traitement renseignée dans la source.
-      - name: date_debut_contrat
-        description: Date de début du contrat renseignée dans la source.
-      - name: date_embauche
-        description: Date d'embauche renseignée dans la source.
+      - name: date_candidature_id
+        description: >
+          Date de dépôt de la candidature.
+          Clé du jour pour `date_candidature`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_traitement_id
+        description: >
+          Date de traitement renseignée dans la source.
+          Clé du jour pour `date_traitement`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_debut_contrat_id
+        description: >
+          Date de début du contrat renseignée dans la source.
+          Clé du jour pour `date_debut_contrat`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage donne NULL et déclenche un warning.
+          Exception temporaire : la source contient des dates hors plage, dont des dates en 3022. On garde tout le test not_null en warning et on le repassera en error après correction de la source.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null:
+              config:
+                severity: warn  # Source : dates hors plage, dont 3022. À repasser en error après correction.
+      - name: date_embauche_id
+        description: >
+          Date d'embauche renseignée dans la source.
+          Clé du jour pour `date_embauche`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: candidature_archivee
         description: Indique si la candidature est archivée.
         data_type: boolean
@@ -657,14 +712,27 @@ models:
           mais ce code manque pour certains établissements. Comme on analyse souvent les PASS IAE par département
           ou par région, on reprend directement le code département fourni par la source. Pour les anciens
           agréments, c’est le département de l’organisation Pôle emploi.
-      - name: date_debut
-        description: Premier jour de validité du PASS.
+      - name: date_debut_id
+        description: >
+          Premier jour de validité du PASS.
+          Clé du jour pour `date_debut`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
         tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
           - not_null
-      - name: date_fin
-        description: >-
+      - name: date_fin_id
+        description: >
           Dernier jour de validité, inclus.
+          Clé du jour pour `date_fin`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
         tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
           - not_null
       - name: duree
         description: Durée fournie par la source.
@@ -672,15 +740,39 @@ models:
         description: Nombre total de suspensions du PASS, terminées ou en cours. Vaut zéro en l’absence d’événement.
         tests:
           - not_null
-      - name: date_premiere_suspension
-        description: Première date de début de suspension, sans filtre sur son état. Vaut NULL si aucun jalon n’existe.
-      - name: date_derniere_suspension
-        description: Dernière date de début de suspension, sans filtre sur son état. Vaut NULL si aucun jalon n’existe.
-      - name: date_de_fin_derniere_suspension
+      - name: date_premiere_suspension_id
         description: >
-          Date de fin de la dernière suspension, choisie par date de début puis par identifiant décroissant.
-          Les dates de début NULL passent en dernier. On garde la date de fin de la source,
-          même si la suspension est en cours. Vaut NULL si cette date manque ou si le PASS n’a aucune suspension.
+          Première date de début de suspension, sans filtre sur son état.
+          Clé du jour pour `date_premiere_suspension`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_derniere_suspension_id
+        description: >
+          Dernière date de début de suspension, sans filtre sur son état.
+          Clé du jour pour `date_derniere_suspension`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_de_fin_derniere_suspension_id
+        description: >
+          Date de fin de la dernière suspension, choisie par date de début puis par identifiant décroissant. Les dates de début NULL passent en dernier. On garde la date de fin de la source, même si la suspension est en cours.
+          Clé du jour pour `date_de_fin_derniere_suspension`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: is_suspension_en_cours
         description: >
           Vaut true si au moins une suspension a en_cours = true dans la source.
@@ -692,16 +784,50 @@ models:
           acceptées ne sont pas ajoutées à ce nombre. Vaut zéro en l’absence d’événement.
         tests:
           - not_null
-      - name: date_premiere_prolongation
-        description: Première date de création d’une prolongation accordée. Vaut NULL si aucun jalon n’existe.
-      - name: date_derniere_prolongation
-        description: Dernière date de création d’une prolongation accordée. Vaut NULL si aucun jalon n’existe.
-      - name: date_debut_derniere_prolongation
-        description: Début de la dernière prolongation accordée, choisie par date de création puis par identifiant
-          décroissant. Les dates NULL passent en dernier. Vaut NULL si aucun jalon n’existe.
-      - name: date_fin_derniere_prolongation
-        description: Fin de cette même dernière prolongation, conservée telle quelle depuis la source. Vaut NULL si
-          aucun jalon n’existe.
+      - name: date_premiere_prolongation_id
+        description: >
+          Première date de création d’une prolongation accordée.
+          Clé du jour pour `date_premiere_prolongation`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_derniere_prolongation_id
+        description: >
+          Dernière date de création d’une prolongation accordée.
+          Clé du jour pour `date_derniere_prolongation`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_debut_derniere_prolongation_id
+        description: >
+          Début de la dernière prolongation accordée, choisie par date de création puis par identifiant décroissant. Les dates NULL passent en dernier.
+          Clé du jour pour `date_debut_derniere_prolongation`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_fin_derniere_prolongation_id
+        description: >
+          Fin de cette même dernière prolongation, conservée telle quelle depuis la source.
+          Clé du jour pour `date_fin_derniere_prolongation`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: nombre_demandes_prolongation
         description: Nombre total de demandes, indépendamment des prolongations accordées. Vaut zéro en l’absence
           d’événement.
@@ -720,16 +846,45 @@ models:
         description: Nombre de demandes dans l’état À traiter. Vaut zéro en l’absence d’événement.
         tests:
           - not_null
-      - name: date_premiere_demande_prolongation
-        description: Première date de demande de prolongation. Vaut NULL si aucun jalon n’existe.
-      - name: date_derniere_demande_prolongation
-        description: Dernière date de demande de prolongation. Vaut NULL si aucun jalon n’existe.
+      - name: date_premiere_demande_prolongation_id
+        description: >
+          Première date de demande de prolongation.
+          Clé du jour pour `date_premiere_demande_prolongation`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_derniere_demande_prolongation_id
+        description: >
+          Dernière date de demande de prolongation.
+          Clé du jour pour `date_derniere_demande_prolongation`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: date_dernier_traitement_demande
         description: Dernier horodatage de traitement, toutes demandes du PASS confondues. Peut concerner une demande
-          plus ancienne. Vaut NULL si aucun jalon n’existe.
+          plus ancienne.
+      - name: date_dernier_traitement_demande_id
+        description: >
+          Clé du jour pour `date_dernier_traitement_demande`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: etat_derniere_demande_prolongation
         description: État de la dernière demande, choisie par date de demande puis par identifiant décroissant. Les
-          dates NULL passent en dernier. Vaut NULL si aucun jalon n’existe.
+          dates NULL passent en dernier.
       - name: statut_pass
         description: >-
           État à la date d'exécution du modèle, dans cet ordre de priorité : Expiré, À venir, Suspendu, Actif.
@@ -770,6 +925,8 @@ models:
       Les prolongations accordées pour un PASS IAE ou un ancien agrément Pôle emploi.
       Une ligne correspond à une prolongation, avec ses dates, son motif, le candidat concerné
       et les acteurs de la déclaration et de la validation.
+      Les dates sans heure sont remplacées par des clés vers dim_date. On garde les timestamps
+      avec leur clé de jour en UTC. Les dates techniques restent telles quelles.
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -795,10 +952,28 @@ models:
       - name: id_candidat
         description: >-
           Identifiant du candidat titulaire du PASS.
-      - name: date_debut
-        description: Date de début de la prolongation.
-      - name: date_fin
-        description: Date de fin de la prolongation.
+      - name: date_debut_id
+        description: >
+          Date de début de la prolongation.
+          Clé du jour pour `date_debut`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_fin_id
+        description: >
+          Date de fin de la prolongation.
+          Clé du jour pour `date_fin`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: motif
         description: Raison pour laquelle le PASS est prolongé.
       - name: id_utilisateur_declarant
@@ -832,8 +1007,17 @@ models:
                 severity: error
       - name: id_utilisateur_prescripteur
         description: Identifiant du prescripteur qui a traité la demande. Peut être absent.
-      - name: date_creation
-        description: Date de création de la prolongation dans les Emplois.
+      - name: date_creation_id
+        description: >
+          Date de création de la prolongation dans les Emplois.
+          Clé du jour pour `date_creation`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: id_demande_de_prolongation
         description: Identifiant de la demande liée à la prolongation. Peut être absent.
       - name: date_mise_a_jour_metabase
@@ -847,6 +1031,8 @@ models:
       Les demandes de prolongation d'un PASS IAE ou d'un ancien agrément Pôle emploi.
       Une ligne correspond à une demande. On y retrouve la période demandée, le motif, le candidat
       concerné et les informations qui permettent de suivre son traitement.
+      Les dates sans heure sont remplacées par des clés vers dim_date. On garde les timestamps
+      avec leur clé de jour en UTC. Les dates techniques restent telles quelles.
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -872,10 +1058,28 @@ models:
       - name: id_candidat
         description: >-
           Identifiant du candidat titulaire du PASS, repris de fct_emplois__pass.
-      - name: date_debut
-        description: Date de début de la prolongation demandée.
-      - name: date_fin
-        description: Date de fin de la prolongation demandée.
+      - name: date_debut_id
+        description: >
+          Date de début de la prolongation demandée.
+          Clé du jour pour `date_debut`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_fin_id
+        description: >
+          Date de fin de la prolongation demandée.
+          Clé du jour pour `date_fin`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: motif
         description: Raison donnée pour demander la prolongation.
       - name: id_utilisateur_declarant
@@ -917,14 +1121,45 @@ models:
           pas l'historique de ses changements d'état.
       - name: motif_de_refus
         description: Raison du refus, quand elle est renseignée.
-      - name: date_de_demande
-        description: Date à laquelle la demande a été faite.
+      - name: date_de_demande_id
+        description: >
+          Date à laquelle la demande a été faite.
+          Clé du jour pour `date_de_demande`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: date_traitement
         description: Date à laquelle la demande a été traitée. Peut être absente si elle est encore à traiter.
+      - name: date_traitement_id
+        description: >
+          Clé du jour pour `date_traitement`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: id_utilisateur_traitant
         description: Identifiant de l'utilisateur qui a traité la demande, quand il est renseigné.
       - name: date_envoi_rappel
         description: Date d'envoi du rappel lié à la demande, quand elle est renseignée.
+      - name: date_envoi_rappel_id
+        description: >
+          Clé du jour pour `date_envoi_rappel`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: date_mise_a_jour_metabase
         description: Date de la dernière mise à jour de cette ligne dans Metabase, reprise du staging.
 
@@ -936,6 +1171,8 @@ models:
       Les suspensions de PASS IAE ou d'anciens agréments Pôle emploi.
       Une ligne correspond à un épisode de suspension. On y retrouve le candidat concerné,
       les dates, le motif et l'information qui indique si la suspension est en cours.
+      Les dates sans heure sont remplacées par des clés vers dim_date. On garde les timestamps
+      avec leur clé de jour en UTC. Les dates techniques restent telles quelles.
     tests:
       - dbt_utils.equal_rowcount:
           arguments:
@@ -961,10 +1198,28 @@ models:
       - name: id_candidat
         description: >-
           Identifiant du candidat titulaire du PASS, repris de fct_emplois__pass.
-      - name: date_debut
-        description: Date de début de la suspension, telle qu'elle est renseignée dans la source.
-      - name: date_fin
-        description: Date de fin de la suspension, telle qu'elle est renseignée dans la source. Peut être absente.
+      - name: date_debut_id
+        description: >
+          Date de début de la suspension, telle qu'elle est renseignée dans la source.
+          Clé du jour pour `date_debut`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: date_fin_id
+        description: >
+          Date de fin de la suspension, telle qu'elle est renseignée dans la source. Peut être absente.
+          Clé du jour pour `date_fin`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: motif
         description: Raison pour laquelle le PASS est suspendu.
       - name: en_cours
@@ -975,6 +1230,17 @@ models:
         data_type: boolean
       - name: date_creation
         description: Date de création de la suspension dans les Emplois.
+      - name: date_creation_id
+        description: >
+          Clé du jour pour `date_creation`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: date_mise_a_jour_metabase
         description: Date de la dernière mise à jour de cette ligne dans Metabase, reprise du staging.
 

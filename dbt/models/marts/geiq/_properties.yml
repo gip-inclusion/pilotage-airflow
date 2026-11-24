@@ -84,22 +84,46 @@ models:
         description: >
           code du département de l'antenne portant le contrat. Peut différer du département du geiq
           principal, porté par dim_geiq (via fct_geiq__assessments.label_geiq_id et campaign_year).
-      - name: start_at
+      - name: start_date_id
         description: >
           date de début du contrat.
-      - name: planned_end_at
+          Clé du jour pour `start_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: planned_end_date_id
         description: >
           date de fin prévisionnelle du contrat.
-      - name: end_at
+          Clé du jour pour `planned_end_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
+      - name: end_date_id
         description: >
-          date de fin du contrat. Non renseignée tant que le contrat n'est pas terminé.
+          date de fin réelle du contrat. Si elle manque, la clé vaut -1.
+          Clé du jour pour `end_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: real_contract_duration
         description: >
-          durée réelle du contrat en jours, bornes exclues. Nulle tant que end_at n'est pas renseignée.
+          durée réelle du contrat en jours, bornes exclues. Nulle tant que la date de fin n'est pas renseignée.
       - name: theoretical_contract_duration
         description: >
           écart en jours entre la date de fin réelle et la date de fin prévisionnelle. Négatif lorsque le
-          contrat s'est arrêté avant la date prévue. Nul tant que end_at n'est pas renseignée.
+          contrat s'est arrêté avant la date prévue. Nul tant que la date de fin n'est pas renseignée.
       - name: nb_days_in_campaign_year
         description: >
           nombre de jours du contrat couverts par l'année de campagne.
@@ -202,24 +226,101 @@ models:
       - name: created_at
         description: >
           date de création du bilan d'éxecution.
+      - name: created_date_id
+        description: >
+          Clé du jour pour `created_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: contracts_selection_validated_at
         description: >
           date de validation de la sélection des contrats.
+      - name: contracts_selection_validated_date_id
+        description: >
+          Clé du jour pour `contracts_selection_validated_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: submitted_at
         description: >
           date de soumission du bilan d'éxecution.
+      - name: submitted_date_id
+        description: >
+          Clé du jour pour `submitted_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: grants_selection_validated_at
         description: >
           date de validation de la sélection des aides.
+      - name: grants_selection_validated_date_id
+        description: >
+          Clé du jour pour `grants_selection_validated_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: decision_validated_at
         description: >
           date de validation de la décision.
+      - name: decision_validated_date_id
+        description: >
+          Clé du jour pour `decision_validated_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: reviewed_at
         description: >
           date du bilan.
+      - name: reviewed_date_id
+        description: >
+          Clé du jour pour `reviewed_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: final_reviewed_at
         description: >
           date du bilan définitif.
+      - name: final_reviewed_date_id
+        description: >
+          Clé du jour pour `final_reviewed_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: reviewed_by_institution_id
         description: >
           identifiant de l'institution ayant réalisé le bilan.

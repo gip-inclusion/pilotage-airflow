@@ -18,6 +18,13 @@ etablissements as (
     from {{ ref('dim_emplois__etablissements') }}
 ),
 
+calendrier as (
+    select
+        date_id,
+        date_jour
+    from {{ ref('dim_date') }}
+),
+
 candidats_avec_criteres as (
     select
         *,
@@ -31,6 +38,20 @@ candidats_avec_criteres as (
         coalesce(total_criteres_niveau_2 >= 3, false) as has_crit_nv_2,
         coalesce(total_criteres_niveau_2 >= 2, false) as has_crit_nv_2_etti_ai
     from source
+),
+
+pass_iae_dates as (
+    select
+        pass_iae.id_pass,
+        pass_iae.id_candidat,
+        debut.date_jour as date_debut,
+        fin.date_jour   as date_fin,
+        pass_iae.statut_pass
+    from {{ ref('fct_emplois__pass') }} as pass_iae
+    left join calendrier as debut
+        on pass_iae.date_debut_id = debut.date_id
+    left join calendrier as fin
+        on pass_iae.date_fin_id = fin.date_id
 ),
 
 pass_iae_classes as (
@@ -48,7 +69,7 @@ pass_iae_classes as (
                 date_fin desc nulls last,
                 id_pass desc
         )                                               as rang
-    from {{ ref('fct_emplois__pass') }}
+    from pass_iae_dates
 ),
 
 dernier_pass_iae as (

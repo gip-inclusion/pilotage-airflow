@@ -13,11 +13,12 @@ final as (
         suspension.id_suspension,
         suspension.id_pass,
         pass.id_candidat,
-        suspension.date_debut,
-        suspension.date_fin,
+        {{ date_id_from_date("suspension.date_debut::date") }}                         as date_debut_id,
+        {{ date_id_from_date("suspension.date_fin::date") }}                           as date_fin_id,
         suspension.motif,
         suspension.en_cours,
         suspension.date_creation,
+        {{ date_id_from_date("(suspension.date_creation at time zone 'UTC')::date") }} as date_creation_id,
         suspension.date_mise_a_jour_metabase
     from suspensions as suspension
     left join pass_iae as pass

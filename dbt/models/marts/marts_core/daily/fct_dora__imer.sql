@@ -135,10 +135,11 @@ select
         'origin_source',
         'kind',
         'source_imer_id'
-    ]) }} as id,
+    ]) }}                                                      as id,
     origin_source,
     source_imer_id,
     date,
+    {{ date_id_from_date("(date at time zone 'UTC')::date") }} as date_id,
     user_session,
     user_kind,
     is_logged_imer,

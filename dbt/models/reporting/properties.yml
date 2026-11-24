@@ -248,7 +248,8 @@ models:
     description: >
       Table de reporting des orientations DORA et Emplois.
       Une ligne correspond à une orientation, au même grain que `fct_dora__orientations`.
-      Toutes les colonnes du fact sont conservées sans filtre ni agrégation.
+      On reprend les informations du fact sans filtre ni agrégation. La clé du jour de création
+      sert à la jointure avec dim_date ; on expose la date, la semaine et le mois à sa place.
 
 
     columns:
@@ -270,6 +271,10 @@ models:
         description: Date de création de l'orientation, reprise du fact.
       - name: processing_date
         description: Date de traitement de l'orientation, reprise du fact.
+      - name: processing_date_id
+        description: >
+          Clé du jour pour `processing_date`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
       - name: status
         description: Statut de traitement de l'orientation, repris du fact.
       - name: requirements
@@ -278,16 +283,27 @@ models:
         description: Situations ou publics indiqués pour l'orientation, repris du fact.
       - name: beneficiary_contact_preferences
         description: Préférences de contact du bénéficiaire, reprises du fact.
-      - name: beneficiary_availability
-        description: Date de disponibilité du bénéficiaire, reprise du fact.
+      - name: beneficiary_availability_date_id
+        description: >
+          Date de disponibilité du bénéficiaire, reprise du fact.
+          Clé du jour pour `beneficiary_availability`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut NULL si la date est hors plage.
       - name: duration_weekly_hours
         description: Durée hebdomadaire en heures, reprise du fact.
       - name: duration_weeks
         description: Durée en semaines, reprise du fact.
       - name: query_expires_at
         description: Date d'expiration de la demande d'orientation, reprise du fact.
+      - name: query_expires_date_id
+        description: >
+          Clé du jour pour `query_expires_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
       - name: last_reminder_email_sent
         description: Date du dernier email de relance pour l'orientation, reprise du fact.
+      - name: last_reminder_email_sent_date_id
+        description: >
+          Clé du jour pour `last_reminder_email_sent`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
       - name: data_protection_commitment
         description: Engagement de protection des données, repris du fact.
       - name: is_anonymized
@@ -354,6 +370,12 @@ models:
       - name: oriented_service_nom_departement_complet
         description: >
           Code et nom du département du service de destination, issus de `dim_commune.nom_departement_complet`.
+      - name: date_de_creation
+        description: "Jour en UTC de la création de l’orientation, lu dans dim_date."
+      - name: semaine_de_creation
+        description: "Le lundi de la semaine de la création de l’orientation, lu dans dim_date."
+      - name: mois_de_creation
+        description: "Le premier jour du mois de la création de l’orientation, lu dans dim_date."
 
   - name: rpt_emplois__inbound_parsing_mer_email
     description: >
@@ -403,16 +425,15 @@ models:
           Date (et heure) à laquelle le mail de mise en relation a été envoyé. On la reprend du fact des mails.
         tests:
           - not_null
-      - name: sent_date
-        description: >
-          Le jour d'envoi du mail, sans l'heure. On le calcule à partir de `sent_at` pour suivre les envois par jour.
-        tests:
-          - not_null
       - name: answered_at
         description: >
           Date (et heure) à laquelle une réponse par mail, de l’offreur de service, a été reçue. Peut être nulle.
           On reprend la valeur du fact des mails.
           Pour calculer le taux de réponse, on utilise `count(answered_at)::numeric / nullif(count(*), 0)`.
+      - name: answered_date_id
+        description: >
+          Clé du jour pour `answered_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
       - name: is_answered
         description: >
           Dit si le mail a reçu une réponse : `true` quand `answered_at` est renseigné, `false` sinon.
@@ -504,6 +525,12 @@ models:
           elles peuvent donc avoir changé depuis l'envoi du mail.
       - name: service_date_mise_a_jour_metabase
         description: Dernière date de mise à jour du service dans l'export pour Metabase.
+      - name: sent_date
+        description: "Jour en UTC de l’envoi du mail, lu dans dim_date."
+      - name: semaine_envoi
+        description: "Le lundi de la semaine de l’envoi du mail, lu dans dim_date."
+      - name: mois_envoi
+        description: "Le premier jour du mois de l’envoi du mail, lu dans dim_date."
 
   - name: rpt_dora__imer
     config:
@@ -677,6 +704,12 @@ models:
         description: Nom du département de la structure prescriptrice.
       - name: company_source
         description: Source de la structure prescriptrice.
+      - name: date_de_creation
+        description: "Jour en UTC de la création de l’IMER, lu dans dim_date."
+      - name: semaine_de_creation
+        description: "Le lundi de la semaine de la création de l’IMER, lu dans dim_date."
+      - name: mois_de_creation
+        description: "Le premier jour du mois de la création de l’IMER, lu dans dim_date."
 
   - name: rpt_geiq__assessments_contracts
     config:
@@ -868,14 +901,23 @@ models:
         description: État actuel de la candidature, sans changement de libellé.
       - name: parcours_de_creation
         description: Parcours technique de création de la candidature, repris de la source.
-      - name: date_candidature
-        description: Date de dépôt de la candidature.
-      - name: date_traitement
-        description: Date de traitement renseignée dans la source.
-      - name: date_debut_contrat
-        description: Date de début du contrat renseignée dans la source.
-      - name: date_embauche
-        description: Date d'embauche renseignée dans la source.
+      - name: date_candidature_id
+        description: >
+          Date de dépôt de la candidature.
+          Clé du jour pour `date_candidature`, à joindre à `dim_date.date_id` pour retrouver la date.
+      - name: date_traitement_id
+        description: >
+          Date de traitement renseignée dans la source.
+          Clé du jour pour `date_traitement`, à joindre à `dim_date.date_id` pour retrouver la date.
+      - name: date_debut_contrat_id
+        description: >
+          Date de début du contrat renseignée dans la source.
+          Clé du jour pour `date_debut_contrat`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut NULL si la date est hors plage.
+      - name: date_embauche_id
+        description: >
+          Date d'embauche renseignée dans la source.
+          Clé du jour pour `date_embauche`, à joindre à `dim_date.date_id` pour retrouver la date.
       - name: candidature_archivee
         description: Indique si la candidature est archivée.
       - name: candidature_refusee_automatiquement

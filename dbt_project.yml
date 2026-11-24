@@ -4,6 +4,10 @@ config-version: 2
 
 profile: 'dbt_pilotage'
 
+vars:
+  dim_date_start_date: '1990-01-01'
+  dim_date_end_date: '2045-12-31'
+
 model-paths: ["dbt/models"]
 analysis-paths: ["dbt/analyses"]
 test-paths: ["dbt/tests"]
