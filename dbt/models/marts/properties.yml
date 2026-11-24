@@ -1,6 +1,100 @@
 version: 2
 
 models:
+  - name: dim_date
+    description: |
+      Cette table sert à analyser les données par jour, semaine, mois, trimestre ou année.
+      On a une ligne par jour du 1er janvier 1990 au 31 décembre 2045, plus une ligne
+      « Date inconnue ». Cela fait 20 455 lignes au total, dont 20 454 jours.
+      On la crée directement dans les marts, sans source, seed ni staging.
+
+      Les semaines vont du lundi au dimanche, selon la règle ISO : la semaine 1 est celle
+      qui contient le premier jeudi de l'année. Autour du Nouvel An, une semaine peut donc
+      appartenir à l'année précédente ou suivante. Par exemple, le 1er janvier 2021 fait partie
+      de la semaine 53 de 2020. Pour regrouper par semaine, on utilise annee_iso avec semaine_iso,
+      ou directement annee_semaine_iso. Pour les mois, trimestres et années, on utilise annee.
+      Une semaine peut commencer avant 1990 ou finir après 2045.
+
+      Les noms des jours et des mois sont en français.
+      On ne gère pas ici les jours fériés, les exercices fiscaux, les heures ni les repères comme « aujourd'hui ».
+
+      Les faits utilisent une clé de jour calculée sans jointure. Pour les timestamps avec fuseau horaire,
+      on prend le jour en UTC. La clé vaut -1 si la date manque.
+      Une date hors de 1990–2045 fait échouer le test not_null, sauf pour les deux exceptions temporaires
+      en warning, expliquées dans les colonnes concernées.
+      Sur la ligne -1, le libellé est « Date inconnue », est_date_inconnue vaut true et les autres infos sont NULL.
+
+      Si on a besoin d'autres années, il faudra adapter le modèle et les tests.
+    columns:
+      - name: date_id
+        description: "Identifiant au format YYYYMMDD, par exemple 20210101 pour le 1er janvier 2021. Vaut -1 si la date est inconnue."
+        tests:
+          - unique
+          - not_null
+      - name: date_jour
+        description: "Le jour, au type SQL date. Vaut NULL seulement sur la ligne Date inconnue."
+        tests:
+          - unique
+          - not_null:
+              config:
+                where: "date_id != -1"
+      - name: libelle_date
+        description: "La date écrite en français, par exemple 1 janvier 1990. Vaut Date inconnue pour date_id = -1."
+        tests:
+          - not_null
+      - name: est_date_inconnue
+        description: "Vaut true seulement pour la ligne Date inconnue (date_id = -1)."
+        tests:
+          - not_null
+      - name: jour_du_mois
+        description: "Numéro du jour dans le mois, de 1 à 31."
+      - name: jour_de_annee
+        description: "Numéro du jour dans l'année, de 1 à 366. Le 1er janvier vaut 1."
+      - name: jour_semaine_iso
+        description: "Jour de la semaine : 1 pour lundi, 2 pour mardi, jusqu'à 7 pour dimanche."
+      - name: nom_jour
+        description: "Nom du jour en français et en minuscules, par exemple lundi."
+      - name: semaine_iso
+        description: "Numéro de la semaine ISO, de 1 à 53. On l'utilise avec annee_iso pour ne pas mélanger les années."
+      - name: annee_iso
+        description: "Année à laquelle appartient la semaine ISO. Par exemple, pour le 1er janvier 2021, elle vaut 2020."
+      - name: annee_semaine_iso
+        description: "Année et semaine ISO réunies, par exemple 2020-W53 pour la semaine 53 de 2020."
+      - name: date_debut_semaine
+        description: "Le lundi de cette semaine. Il peut tomber avant le début de la table."
+      - name: date_fin_semaine
+        description: "Le dimanche de cette semaine. Il peut tomber après le 31 décembre 2045."
+      - name: mois
+        description: "Numéro du mois : 1 pour janvier, jusqu'à 12 pour décembre."
+      - name: nom_mois
+        description: "Nom du mois en français et en minuscules, par exemple février ou août."
+      - name: annee_mois
+        description: "Année et mois réunis, par exemple 2026-11 pour novembre 2026."
+      - name: date_debut_mois
+        description: "Premier jour du mois."
+      - name: date_fin_mois
+        description: "Dernier jour du mois."
+      - name: trimestre
+        description: "Numéro du trimestre, de 1 à 4. Le trimestre 1 va de janvier à mars."
+      - name: annee_trimestre
+        description: "Année et trimestre réunis, par exemple 2026-T4 pour le dernier trimestre de 2026."
+      - name: annee
+        description: "L'année de la date, du 1er janvier au 31 décembre. Pour le 1er janvier 2021, elle vaut 2021."
+      - name: date_debut_trimestre
+        description: "Premier jour du trimestre."
+      - name: date_fin_trimestre
+        description: "Dernier jour du trimestre."
+      - name: date_debut_annee
+        description: "Le 1er janvier de cette année."
+      - name: date_fin_annee
+        description: "Le 31 décembre de cette année."
+      - name: est_weekend
+        description: "Vaut true le samedi et le dimanche. Les jours fériés ne sont pas pris en compte."
+      - name: est_fin_de_mois
+        description: "Vaut true si c'est le dernier jour du mois."
+      - name: est_annee_bissextile
+        description: "Vaut true si l'année compte 366 jours, comme 2000 ou 2024. Cela vaut pour tous les jours de cette année."
+
   - name: pdi_base_unique_tous_les_pros
     description: |
       Dimension des professionnels de l'inclusion, tous produits confondus : Dora, Les emplois,

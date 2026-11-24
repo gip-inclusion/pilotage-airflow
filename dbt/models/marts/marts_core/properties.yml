@@ -308,6 +308,8 @@ models:
       `source_imer_id` et `user_id`. Elles peuvent donc mélanger des identifiants Emplois et DORA.
       Il ne faut pas les utiliser seules pour faire une jointure. Pour revenir à une source, il faut
       toujours filtrer avec `origin_source` en plus de l'identifiant.
+      Les dates sans heure sont remplacées par des clés vers dim_date. On garde les timestamps
+      avec leur clé de jour en UTC. Les dates techniques restent telles quelles.
     columns:
       - name: id
         description: >
@@ -340,6 +342,17 @@ models:
       - name: date
         description: Date à laquelle l'intention de mise en relation a été enregistrée.
         tests:
+          - not_null
+      - name: date_id
+        description: >
+          Clé du jour pour `date`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
           - not_null
       - name: user_session
         description: >
@@ -490,6 +503,8 @@ models:
       Ce n'est donc pas une table de faits complètement pure. Les identifiants et les dimensions
       Data Inclusion ne sont pas toujours stables dans le temps, donc on garde aussi des noms ici.
       Les orientations restent ainsi lisibles même quand une jointure ne retrouve plus la ligne attendue.
+      Les dates sans heure sont remplacées par des clés vers dim_date. On garde les timestamps
+      avec leur clé de jour en UTC. Les dates techniques restent telles quelles.
     columns:
       - name: id
         description: 'Identifiant canonique en texte : ID DORA pour l''origine dora, UUID Emplois pour l''origine
@@ -511,8 +526,30 @@ models:
         description: Date de création de l'orientation.
         tests:
           - not_null
+      - name: creation_date_id
+        description: >
+          Clé du jour pour `creation_date`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: processing_date
         description: Date de traitement de l'orientation.
+      - name: processing_date_id
+        description: >
+          Clé du jour pour `processing_date`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: status
         description: Statut de traitement de l'orientation dans DORA.
       - name: requirements
@@ -521,17 +558,51 @@ models:
         description: Situation du bénéficiaire dans DORA ; NULL typé pour Emplois car absent de l'export.
       - name: beneficiary_contact_preferences
         description: Préférences de contact DORA ; NULL typé pour Emplois car absent de l'export.
-      - name: beneficiary_availability
-        description: Disponibilité du bénéficiaire DORA ; NULL typé pour Emplois car absent de l'export.
+      - name: beneficiary_availability_date_id
+        description: >
+          Jour de disponibilité du bénéficiaire DORA. Vaut -1 côté Emplois, où cette date manque.
+          Clé du jour pour `beneficiary_availability`, à joindre à `dim_date.date_id` pour retrouver la date.
+          Vaut -1 si la date manque. Une date hors plage donne NULL et déclenche un warning.
+          Exception temporaire : la source contient des dates hors plage, dont des dates en 0025. On garde tout le test not_null en warning et on le repassera en error après correction de la source.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null:
+              config:
+                severity: warn  # Source : dates hors plage, dont 0025. À repasser en error après correction.
       - name: duration_weekly_hours
         description: 'Volume horaire hebdomadaire : formulaire DORA ou catalogue Emplois, sans arrondi ; type numeric dans le mart.'
       - name: duration_weeks
         description: 'Durée en semaines : formulaire DORA ou catalogue Emplois.'
       - name: query_expires_at
         description: Expiration de la demande DORA ; NULL typé pour Emplois car absent de l'export.
+      - name: query_expires_date_id
+        description: >
+          Clé du jour pour `query_expires_at`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: last_reminder_email_sent
         description: >
           Date du dernier email de relance envoyé pour cette orientation.
+      - name: last_reminder_email_sent_date_id
+        description: >
+          Clé du jour pour `last_reminder_email_sent`, à joindre à `dim_date.date_id` pour retrouver la date.
+          On prend le jour en UTC et on garde le timestamp complet dans le fait.
+          Vaut -1 si la date manque. Une date hors plage fait échouer la validation du fait.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+          - not_null
       - name: data_protection_commitment
         description: >
           Booléen représentant l’engagement RGPD de l’utilisateur ayant émis l’orientation.

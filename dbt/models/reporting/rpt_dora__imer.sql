@@ -4,6 +4,7 @@ with imer as (
         origin_source,
         source_imer_id,
         date,
+        date_id,
         user_session,
         user_kind,
         is_logged_imer,
@@ -17,6 +18,15 @@ with imer as (
         source,
         orientation_id
     from {{ ref('fct_dora__imer') }}
+),
+
+calendrier as (
+    select
+        date_id,
+        date_jour,
+        date_debut_semaine,
+        date_debut_mois
+    from {{ ref('dim_date') }}
 ),
 
 communes as (
@@ -107,6 +117,7 @@ imer_enriched as (
         imer.origin_source,
         imer.source_imer_id,
         imer.date,
+        imer.date_id,
         imer.user_session,
         imer.user_kind,
         imer.is_logged_imer,
@@ -186,6 +197,9 @@ imer_enriched as (
 )
 
 select
+    calendrier.date_jour          as date_de_creation,
+    calendrier.date_debut_semaine as semaine_de_creation,
+    calendrier.date_debut_mois    as mois_de_creation,
     id,
     origin_source,
     source_imer_id,
@@ -225,3 +239,5 @@ select
     company_nom_departement,
     company_source
 from imer_enriched
+left join calendrier
+    on imer_enriched.date_id = calendrier.date_id

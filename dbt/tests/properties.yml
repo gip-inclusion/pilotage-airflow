@@ -139,3 +139,17 @@ tests:
       123 mais que la prolongation indique 456, le test échoue. Il échoue aussi si l'identifiant manque
       d'un seul côté. Si les deux valeurs sont NULL, le test passe.
       Les tests relationships vérifient de leur côté que le PASS existe bien.
+  - name: test_dim_date_integrity
+    description: >
+      On vérifie qu'il y a bien tous les jours de 1990 à 2045, sans trou, plus une seule ligne Date inconnue.
+      On vérifie aussi les identifiants YYYYMMDD : chaque jour doit avoir toutes ses infos,
+      et la ligne inconnue doit avoir ses infos de calendrier à NULL.
+  - name: test_dim_date_calendar
+    description: >
+      On vérifie les cas où on peut facilement se tromper : changement d'année ISO, 29 février
+      (y compris en 2000), fins de mois, noms en français et semaines qui commencent ou finissent
+      en dehors des dates de la table.
+  - name: test_date_id_from_date
+    description: >
+      On vérifie les clés sur des dates connues, le 29 février 2000, les limites de la table,
+      les dates absentes ou hors plage et les timestamps proches de minuit en UTC.

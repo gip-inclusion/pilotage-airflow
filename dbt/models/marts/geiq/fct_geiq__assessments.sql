@@ -11,14 +11,21 @@ select
     granted_amount,
     advance_amount,
     created_at,
+    {{ date_id_from_date("(created_at at time zone 'UTC')::date") }}                       as created_date_id,
     contracts_selection_validated_at,
+    {{ date_id_from_date("(contracts_selection_validated_at at time zone 'UTC')::date") }} as contracts_selection_validated_date_id,
     submitted_at,
+    {{ date_id_from_date("(submitted_at at time zone 'UTC')::date") }}                     as submitted_date_id,
     grants_selection_validated_at,
+    {{ date_id_from_date("(grants_selection_validated_at at time zone 'UTC')::date") }}    as grants_selection_validated_date_id,
     decision_validated_at,
+    {{ date_id_from_date("(decision_validated_at at time zone 'UTC')::date") }}            as decision_validated_date_id,
     reviewed_at,
+    {{ date_id_from_date("(reviewed_at at time zone 'UTC')::date") }}                      as reviewed_date_id,
     final_reviewed_at,
+    {{ date_id_from_date("(final_reviewed_at at time zone 'UTC')::date") }}                as final_reviewed_date_id,
     reviewed_by_institution_id,
     final_reviewed_by_institution_id,
     date_mise_à_jour_metabase,
-    final_reviewed_at is not null as is_final_reviewed
+    final_reviewed_at is not null                                                          as is_final_reviewed
 from {{ ref('stg_geiq__assessments') }}
