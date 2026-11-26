@@ -14,6 +14,7 @@ select
     max(structs.code_dept_structure)          as departement_structure,
     max(structs.nom_departement_structure)    as nom_departement_structure,
     max(structs.nom_region_structure)         as nom_region_structure,
+    max(structs.nom_epci_structure)           as nom_epci_structure,
     max(motif_sortie)                         as motif_sortie,
     case
         when max(motif_sortie) is null then 'Non'
