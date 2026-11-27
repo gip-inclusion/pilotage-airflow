@@ -124,3 +124,5 @@ answer_id,field_name,reason,evidence
 019dd806-4283-7213-9d1c-5f3aa4087bdd,nb_worker_mobility_inclusion_card,"Valeur 999 incohérente, à neutraliser",999 > 181 travailleurs accompagnés (ESAT BASTILLE)
 019daf1c-01bd-7ef1-a027-e393831d77d3,nb_worker_cpf_used,"Valeur 999 incohérente, à neutraliser",999 > 112 travailleurs accompagnés (ESAT LES ATELIERS DES GUYARDS)
 019dd832-b11e-7a92-aaf8-114c422c765b,nb_worker_mobility_inclusion_card,"Valeur 9999 incohérente, à neutraliser",9999 > 78 travailleurs accompagnés (ESAT LES OLIVIERS)
+019dceab-7987-75e2-b868-bcff8a779729,nb_worker_mobility_inclusion_card,"Valeur 32767 incohérente, à neutraliser",32767 > 60 travailleurs accompagnés (ESAT LES BOULEAUX)
+019dd819-7e28-74d2-a606-ce79f6dba54a,nb_worker_transport,"Valeur 18185 incohérente, à neutraliser",18185 > 481 travailleurs accompagnés (ESAT ATELIERS DE L'OSTREVENT)
